@@ -1,7 +1,11 @@
 <p align="center">
-  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="200" height="auto">
+  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="240" height="auto">
+  <h6 align="center">Web Exploration Engine </h6>
 
   <h1 align="center">Web Exploration Engine </h1>
+    <h3 align="center">The Web Exploration Engine (WEE) automates the extraction of critical website information. Employing cutting-edge scraping technologies and natural language processing, WEE delivers user-friendly insights and reports through an intuitive Progressive Web Application (PWA). With customised scraping capabilities, users can benefit from the power of web scraping for diverse needs, from market research and competitor analysis to lead generation.
+</h3>
+
 </p>
 
 
