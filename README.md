@@ -10,13 +10,13 @@
   <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="150" height="auto">
 
   <h1 align="center">Meet Tech Odyssey </h1>
-![DSC09654](https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/87725bdf-1b1e-4599-b637-a97dbf9bdfb7)
+  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/87725bdf-1b1e-4599-b637-a97dbf9bdfb7" >
 
 
 </p><table style="border-width: 1px; width: 100%; font-family: Arial, sans-serif; border-collapse: collapse;">
   <tr>
     <td style="vertical-align: top; width:auto; border: 0; padding: 10px;">
-  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/9eca089b-2a3c-4487-a739-47be9d56afd5" width="180" height="auto">
+  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/9eca089b-2a3c-4487-a739-47be9d56afd5" height="auto">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2><b style="font-size: 18px;">Johané Breytenbach
