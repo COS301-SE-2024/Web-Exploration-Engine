@@ -46,7 +46,7 @@
       <a href="https://github.com/MignonErasmus" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github"/>
       </a>
-      <a href="[www.linkedin.com/in/mignon-erasmus-57202b266](http://www.linkedin.com/in/mignon-erasmus-57202b266)" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="www.linkedin.com/in/mignon-erasmus-57202b266" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=linkedin">
       </a>
     </td>
