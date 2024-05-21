@@ -1,12 +1,66 @@
 <p align="center">
   <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="240" height="auto">
-  <h6 align="center">Web Exploration Engine </h6>
 
   <h1 align="center">Web Exploration Engine </h1>
-    <h3 align="center">The Web Exploration Engine (WEE) automates the extraction of critical website information. Employing cutting-edge scraping technologies and natural language processing, WEE delivers user-friendly insights and reports through an intuitive Progressive Web Application (PWA). With customised scraping capabilities, users can benefit from the power of web scraping for diverse needs, from market research and competitor analysis to lead generation.
+  <h3 align="center">A Capstone Project for
+   <a href="https://www.dns.net.za/">
+Domain Name Services (Pty) Ltd.     </a>
+  </h3>
+
+<div align="center">
+  
+![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/Web-Exploration-Engine)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Web-Exploration-Engine)
+  
+</div>
+
+
+
+<h3 align="center">The Web Exploration Engine (WEE) automates the extraction of critical website information. Employing cutting-edge scraping technologies and natural language processing, WEE delivers user-friendly insights and reports through an intuitive Progressive Web Application (PWA). With customised scraping capabilities, users can benefit from the power of web scraping for diverse needs, from market research and competitor analysis to lead generation.
 </h3>
 
 </p>
+
+
+  <h1 align="center"> Documentation </h1>
+
+<div align="center" >
+
+
+  
+| Document                         | Location                                                                   |
+|---------------------------------|-------------------------------------------------------------------------------|
+| Software Requirements Specification | [Details on project requirements](documentation/Software_Requirements_Specification) |
+| Coding Standards                | [Guidelines for writing code](documentation/Coding_Standards)                   |
+| Testing Policy                  | [Rules for testing processes](documentation/Testing_Policy)                     |
+| Architecture Document           | [System design overview](documentation/Architecture_Document)                   |
+| Architecture Diagram            | [Visual representations](documentation/Diagram)                                 |
+| Deployment Diagram              | [Deployment workflow](documentation/Deployment_Diagram)                         |
+| Installation Manual             | [Installation instructions](documentation/Installation_Manual)                  |
+| User Manual                     | [Instructions for users](documentation/User_Manual)                             |
+| Project Board                   | [Project tracking tools](documentation/Project_Board)                           |
+| Research                        | [Project-related research](documentation/Research)                              |
+| Participate in the Development  | [Guidance on contributing to the WEE](documentation/Participate_in_the_Development)        |
+
+  
+</div>
+
+  <h1 align="center">Technologies </h1>
+  <div align="Center">
+
+<p>Frontend</p>
+  <img src="https://skillicons.dev/icons?i=tailwindcss,typescript,react,nextjs"/>
+<p>Backend</p>
+    <img src="https://skillicons.dev/icons?i=typescript,nestjs,tensorflow,postgres"/>
+    
+<p>Project Management & Deployment</p>
+   <img src="https://skillicons.dev/icons?i=npm,docker,git,nestjs"/>
+<p>Testing</p>
+    <img src="https://skillicons.dev/icons?i=jest,cypress,postman"/>
+  </div>
+
+
+
 
 
 
