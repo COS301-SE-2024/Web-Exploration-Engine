@@ -29,8 +29,22 @@ Domain Name Services (Pty) Ltd.     </a>
 
 <div align="center" >
 
+<h2 align="center"> Demo 1 </h2>
 
-| Document                         | Link                                                                   |
+| Resource                        | Link                                                                   |
+|---------------------------------|-------------------------------------------------------------------------------|
+| Software Requirements Specification | [Details on project requirements](documentation/software-requirements-specification.md) |
+| Coding Standards                | [Guidelines for writing code](documentation/coding-standards.md)                   |
+| Architecture Document           | [System design overview](documentation/architecture-document.md)                   |
+| Architecture Diagram            | [Visual representations](documentation/diagram.md)                                 |
+| Deployment Diagram              | [Deployment workflow](documentation/deployment-diagram.md)                         |
+| Project Board                   | [Project tracking tools](documentation/project-board.md)                           |
+| Research                        | [Project-related research](documentation/research.md)                              |
+
+
+<h2 align="center"> Demo 2 </h2>
+
+| Resource                        | Link                                                                   |
 |---------------------------------|-------------------------------------------------------------------------------|
 | Software Requirements Specification | [Details on project requirements](documentation/software-requirements-specification.md) |
 | Coding Standards                | [Guidelines for writing code](documentation/coding-standards.md)                   |
@@ -43,6 +57,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | Project Board                   | [Project tracking tools](documentation/project-board.md)                           |
 | Research                        | [Project-related research](documentation/research.md)                              |
 | Participate in the Development  | [Guidance on contributing](documentation/participate-in-the-development.md)        |
+
 
 
   
