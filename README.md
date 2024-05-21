@@ -170,7 +170,7 @@ Domain Name Services (Pty) Ltd.     </a>
       <b style="font-size: 16px;">Project Manager, Backend Developer</b><br>
       I am a computer science student with a keen interest in software development. My foundation in computer science principles makes me a valuable asset. I have gained practical experience and honed my skills through hands-on projects during my academic journey. I take every situation as an opportunity to learn and grow, leveraging practical experiences in school to enhance my knowledge and expertise. I am driven by the idea of broadening my experiences and developing my abilities further. I view criticism as a constructive tool for improvement and am dedicated to continually challenging myself to reach new standards of performance.
       <br><br>
-      <a href=" https://github.com/katnicole14" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
+      <a href="https://github.com/katnicole14" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
         <img src="https://skillicons.dev/icons?i=github"/>
       </a>
       <a href="http://www.linkedin.com/in/katlegozondo" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
