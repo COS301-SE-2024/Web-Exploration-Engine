@@ -27,20 +27,20 @@ Domain Name Services (Pty) Ltd.     </a>
 <div align="center" >
 
 
-  
-| Document                         | Location                                                                   |
+| Document                         | Link                                                                   |
 |---------------------------------|-------------------------------------------------------------------------------|
-| Software Requirements Specification | [Details on project requirements](documentation/Software_Requirements_Specification) |
-| Coding Standards                | [Guidelines for writing code](documentation/Coding_Standards)                   |
-| Testing Policy                  | [Rules for testing processes](documentation/Testing_Policy)                     |
-| Architecture Document           | [System design overview](documentation/Architecture_Document)                   |
-| Architecture Diagram            | [Visual representations](documentation/Diagram)                                 |
-| Deployment Diagram              | [Deployment workflow](documentation/Deployment_Diagram)                         |
-| Installation Manual             | [Installation instructions](documentation/Installation_Manual)                  |
-| User Manual                     | [Instructions for users](documentation/User_Manual)                             |
-| Project Board                   | [Project tracking tools](documentation/Project_Board)                           |
-| Research                        | [Project-related research](documentation/Research)                              |
-| Participate in the Development  | [Guidance on contributing to the WEE](documentation/Participate_in_the_Development)        |
+| Software Requirements Specification | [Details on project requirements](documentation/software-requirements-specification.md) |
+| Coding Standards                | [Guidelines for writing code](documentation/coding-standards.md)                   |
+| Testing Policy                  | [Rules for testing processes](documentation/testing-policy.md)                     |
+| Architecture Document           | [System design overview](documentation/architecture-document.md)                   |
+| Architecture Diagram            | [Visual representations](documentation/diagram.md)                                 |
+| Deployment Diagram              | [Deployment workflow](documentation/deployment-diagram.md)                         |
+| Installation Manual             | [Installation instructions](documentation/installation-manual.md)                  |
+| User Manual                     | [Instructions for users](documentation/user-manual.md)                             |
+| Project Board                   | [Project tracking tools](documentation/project-board.md)                           |
+| Research                        | [Project-related research](documentation/research.md)                              |
+| Participate in the Development  | [Guidance on contributing](documentation/participate-in-the-development.md)        |
+
 
   
 </div>
