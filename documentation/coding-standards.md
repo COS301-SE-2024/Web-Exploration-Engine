@@ -196,14 +196,12 @@ All branches will follow the conventions listed below:
 
 
 ### 5.4 CI/CD
+
+
 #### Linting
 - We will be using Eslint to mastertain code quality and consistency, ensuring uniform code across the project.
 - The custom rules for our project will correspond to those that were stated in the coding standards.
 - Eslint is well-suited for the task of analysing our React project, with it being a dedicated javascript/typescript linter.
 
 
-#### Deployment
-- We have deployed our product on Vercel, a cloud platform that enables developers to host websites and web services.
-- It can be specifically optimised for React applications, and integrates seamlessly with Github actions.
-- It also provides a suite of additional services like instant rollbacks, security, and privacy-friendly analytics.
-- The ```master``` branch in our GitHub repository is linked to our production deployment. 
+
