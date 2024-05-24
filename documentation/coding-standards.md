@@ -140,6 +140,8 @@ We will have the following branches:
 - Feature
 - Hotfix
 - Documentation
+- Config
+
 
 
 **Master**
@@ -155,7 +157,6 @@ We will have the following branches:
 - A `feature` branch will exist for as long as a feature is in development.
 - Eventually, feature branches are either merged back into `development` or discarded (if the feature was scrapped).
 
-
 **Hotfix**
 - Hotfix branches branch off from master and must merge into `master` and `development`.
 - Their purpose is also to prepare for an unexpected new production release, caused by a bug in the production environment.
@@ -163,6 +164,10 @@ We will have the following branches:
 
 **Documentation**
 - This branch will be used to update the documentation pertaining to the project.
+
+**Config**
+- This branch will be used to update the configuration pertaining to the project.
+- This will include changes to the ci/cd pipeline, changing linter settings, any changes to packages, etc
 
 
 
@@ -172,8 +177,9 @@ All branches will follow the conventions listed below:
 - Descriptive
   - The name should be concise and descriptive, clearly reflecting what work will be done in the branch.
   - e.g.) feature/new-login, backend/python, hotfix/cycle-detection-edge-cases
-- Lowercase and Hyphen-separated
-  - Example: ```feature/new-login```
+- Lowercase and Hyphen-separated, eg: 
+  - ```feature/new-login```
+  - ```config/new```
 - Alphanumeric Characters
 - No Continuous Hyphens
 
