@@ -24,10 +24,6 @@ npm add --global nx@latest
 
 
 ```powershell
-npm install
-```
-
-```powershell
 cd wee
 ```
 
