@@ -1,0 +1,24 @@
+{
+  "name": "webscraper",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "webscraper/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "webscraper:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "webscraper:build:development"
+        },
+        "production": {
+          "buildTarget": "webscraper:build:production"
+        }
+      }
+    }
+  }
+}
