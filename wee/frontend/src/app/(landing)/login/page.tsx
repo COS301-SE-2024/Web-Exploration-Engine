@@ -6,14 +6,19 @@ import { FlipWords } from "../../components/FlipWords";
 export default function Login() {
     return (
         <div className='h-screen'>
-            login!!!!!
+            
             <ThemeSwitch/>
-            <div className="bg-jungleGreen-200 dark:bg-jungleGreen-800">
-                Test light darkmode
+            <div className="w-full">
+                <h1 className="text-center m-4 font-poppins-bold text-2xl text-jungleGreen-800">Welcome back!</h1>
+                {/* <Input type="email" label="Email" className="mb-3"/> */}
+                {/* <Input type="password" label="Password" className="mt-3"/> */}
+                {/* <Button className="w-full mt-3">
+                    Sign in
+                </Button> */}
+                <p>Input</p>
+                <p>Input</p>
             </div>
-            Efficiently
-            <FlipWords words={['categorize', 'analyze', 'extract']}/>
-            data from the web
+
         </div>
     )
 }
