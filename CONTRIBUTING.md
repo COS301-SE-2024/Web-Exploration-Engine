@@ -1,7 +1,7 @@
 # Overview
  This is a guide on how to get started coding in the Web Exploration Repo 
 
-Our repo uses nx in order to manage dep
+Please ensure you're running the code in a linux terminal
 
 # 1. First Time Installation
 
