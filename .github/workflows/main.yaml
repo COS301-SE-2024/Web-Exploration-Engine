@@ -1,0 +1,46 @@
+name: lint-build-test-deploy
+
+on:
+  pull_request:
+    branches: [master, development]
+  push:
+    branches: [master, development]
+
+jobs:
+  lint-build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+
+      - name: Change to repository root
+        run: cd $GITHUB_WORKSPACE
+        
+      - name: Print new build number
+        run: echo "Build number is $BUILD_NUMBER"
+
+      - name: Install dependencies
+        run:  |
+          cd fullstack && npm ci
+
+      - name: Lint
+        run: |
+          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+          
+        #continue-on-error: true
+
+      - name: Build
+        run: |
+          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
+        #continue-on-error: true
+
+      - name: Test
+        run: |
+          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
+        #continue-on-error: true
+
+      - name: Deploy
+        run: |
+          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
+        #continue-on-error: true
