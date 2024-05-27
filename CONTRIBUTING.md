@@ -2,13 +2,9 @@
   <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="240" height="auto">
 
   <h1 align="center">Contributing to The Web Exploration Engine </h1>
-This is a guide on how to get started coding in the Web Exploration Repo 
-
 </p>
 
-
 <div align="center" >
-
 
 | Resource                       | Link                                                       |
 |--------------------------------|------------------------------------------------------------|
