@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run:  |
-          cd fullstack && npm install
+          cd fullstack && npm ci
 
       - name: Lint
         run: |
