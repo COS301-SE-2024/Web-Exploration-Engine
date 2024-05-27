@@ -1,4 +1,4 @@
 #!/user/bin/env bash
-cd fullstack
+cd wee
 npx nx test frontend
 echo "================== test complete =================="

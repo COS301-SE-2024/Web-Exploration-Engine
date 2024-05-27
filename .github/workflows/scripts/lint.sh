@@ -1,6 +1,6 @@
 #first switch directory
 
-cd fullstack
+cd wee
 
 npx nx lint frontend
 echo "================== lint complete =================="

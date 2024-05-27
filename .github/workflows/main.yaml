@@ -2,9 +2,9 @@ name: lint-build-test-deploy
 
 on:
   pull_request:
-    branches: [master, main, development]
+    branches: [master, development]
   push:
-    branches: [master,main, development]
+    branches: [master, development]
 
 jobs:
   lint-build-test-deploy:

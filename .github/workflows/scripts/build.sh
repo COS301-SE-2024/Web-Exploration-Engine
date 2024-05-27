@@ -1,5 +1,5 @@
 #!/user/bin/env bash
-cd fullstack
+cd wee
 npx nx build frontend
 
 echo "================== build complete =================="

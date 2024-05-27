@@ -1,6 +1,5 @@
 #!/user/bin/env bash
-cd fullstack
-
+cd wee
 
 # npx nx dev frontend
 echo "================== deploy complete =================="
