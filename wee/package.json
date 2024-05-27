@@ -11,11 +11,13 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@nestjs/schematics": "^10.0.1",
     "@nx/cypress": "19.1.0",
     "@nx/eslint": "19.1.0",
     "@nx/eslint-plugin": "19.1.0",
     "@nx/jest": "19.1.0",
     "@nx/js": "19.1.0",
+    "@nx/nest": "^19.1.0",
     "@nx/next": "^19.1.0",
     "@nx/workspace": "19.1.0",
     "@swc-node/register": "~1.8.0",
