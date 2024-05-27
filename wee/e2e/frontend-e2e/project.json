@@ -1,7 +1,7 @@
 {
   "name": "frontend-e2e",
-  "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "frontend-e2e/src",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "e2e/frontend-e2e/src",
   "tags": [],
   "implicitDependencies": ["frontend"],
   "// targets": "to see all targets run: nx show project frontend-e2e --web",
