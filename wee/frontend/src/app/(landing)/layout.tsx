@@ -15,7 +15,7 @@ export default function RootLayout({
             <BackgroundGradientAnimation>
               <div className="absolute z-50 inset-0 md:flex md:min-h-screen">
 
-                <div className='text-white min-h-[10rem] p-4 font-poppins-bold text-2xl sm:min-h-[15rem] md:flex-1'>
+                <div className='text-white min-h-[10rem] p-4 font-poppins-bold text-2xl sm:min-h-[15rem] md:flex-1 md:text-4xl md:m-auto'>
                   <p>Efficiently</p>
                   <FlipWords words={['categorize', 'analyze', 'extract']}/> 
                   <p>data from the web</p>              
