@@ -1,16 +1,16 @@
 'use client'
 import React from "react";
 import ThemeSwitch from "../../components/ThemeSwitch";
-import { FlipWords } from "../../components/FlipWords";
+import Link from 'next/link'
 
 export default function Login() {
     return (
 
-            <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between">
+            <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full">
                 <div className="">
                     <ThemeSwitch/>
-                    <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">Welcome back!</h1>
-                    <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">Please sign in to continue</h3>
+                    <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">Ready to Dive Back In?</h1>
+                    <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">Log in to your account and let's get started!</h3>
 
                     <p>Input</p>
                     <p>Input</p>
@@ -23,7 +23,9 @@ export default function Login() {
                         Don't have an account?
                     </span> 
                     <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
-                        Sign up
+                        <Link href={"/signup"}>
+                            Sign up
+                        </Link>
                     </span>
                 </div>
 
