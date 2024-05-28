@@ -7,6 +7,14 @@ export class RobotsController {
 
   @Get('allowed-paths')
   async getAllowedPaths(@Query('url') url: string) {
-    return this.robotsService.getAllowedPaths(url);
+    if (!url) {
+      return { error: 'URL parameter is required' };
+    }
+    try {
+      const allowedPaths = await this.robotsService.getAllowedPaths(url);
+      return { allowedPaths: Array.from(allowedPaths) };
+    } catch (error) {
+      return { error: 'An error occurred while fetching allowed paths' };
+    }
   }
 }
