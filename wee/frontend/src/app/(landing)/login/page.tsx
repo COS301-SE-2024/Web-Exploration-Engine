@@ -3,6 +3,7 @@ import React from 'react';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
+import {Input} from "@nextui-org/react";
 
 export default function Login() {
   return (
@@ -18,6 +19,8 @@ export default function Login() {
 
         <p>Input</p>
         <p>Input</p>
+        <Input type="email" label="Email" />
+        <Input type="email" label="Email" placeholder="Enter your email" />
         <p>Button Says </p>
 
         <Button color="primary">

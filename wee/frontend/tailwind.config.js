@@ -12,7 +12,7 @@ module.exports = {
     ),
 
     ...createGlobPatternsForDependencies(__dirname),
-    '../../node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
+    '../node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
