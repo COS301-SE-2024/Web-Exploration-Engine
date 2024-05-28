@@ -1,15 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
-import axios from 'axios';
-import RobotsParser from 'robots-parser';
 
 @Injectable()
 export class ScrapingService {
     async scrapeImages(url: string): Promise<string[]> {
-        if (!(await this.isCrawlingAllowed(url))) {
-            throw new NotFoundException('Crawling is not allowed for this URL.');
-        }
-
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(url);
@@ -18,25 +12,35 @@ export class ScrapingService {
             return Array.from(images).map((img: HTMLImageElement) => img.src);
         });
         await browser.close();
-
-        return imageUrls.slice(0, 50);
+        return imageUrls;
     }
 
-    async scrapeLogos(url: string): Promise<string> {
-        if (!(await this.isCrawlingAllowed(url))) {
-            throw new NotFoundException('Crawling is not allowed for this URL.');
-        }
-
+    async scrapeLogos(url: string): Promise<string | null> { 
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         await page.goto(url);
 
-        const logoPattern = 'logo';
+        const metadata = await page.evaluate(() => {
+            const getMetaTagContent = (name: string) => {
+                const element = document.querySelector(`meta[name='${name}']`) || document.querySelector(`meta[property='og:${name}']`);
+                return element ? element.getAttribute('content') : null;
+            };
+            return {
+                ogImage: getMetaTagContent('image'),
+            };
+        });
+
+        if (metadata.ogImage && metadata.ogImage.toLowerCase().includes('logo')) {
+            await browser.close();
+            return metadata.ogImage;
+        }
+
+        const logoPattern = 'logo'; 
         const imageUrls = await page.evaluate((pattern) => {
             const images = document.querySelectorAll('img');
-            const regex = new RegExp(pattern, 'i');
+            const regex = new RegExp(pattern, 'i'); 
             return Array.from(images)
-                .filter((img: HTMLImageElement) =>
+                .filter((img: HTMLImageElement) => 
                     regex.test(img.src) || regex.test(img.alt))
                 .map((img: HTMLImageElement) => img.src);
         }, logoPattern);
@@ -46,14 +50,29 @@ export class ScrapingService {
         return imageUrls.length > 0 ? imageUrls[0] : null;
     }
 
-    async isCrawlingAllowed(url: string): Promise<boolean> {
-        try {
-            const robotsUrl = new URL('/robots.txt', url).href;
-            const response = await axios.get(robotsUrl);
-            const robots = RobotsParser(robotsUrl, response.data);
-            return robots.isAllowed(url, 'User-agent: *');
-        } catch (error) {
-            return false; 
-        }
+    async scrapeMetadata(url: string): Promise<any> {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+        const metadata = await page.evaluate(() => {
+            const getMetaTagContent = (name: string) => {
+                const element = document.querySelector(`meta[name='${name}']`) || document.querySelector(`meta[property='og:${name}']`);
+                return element ? element.getAttribute('content') : null;
+            };
+
+            return {
+                title: document.title,
+                description: getMetaTagContent('description'),
+                keywords: getMetaTagContent('keywords'),
+                ogTitle: getMetaTagContent('title'),
+                ogDescription: getMetaTagContent('description'),
+                ogImage: getMetaTagContent('image'),
+            };
+        });
+
+        await browser.close();
+        return metadata;
     }
+
 }

@@ -20,4 +20,9 @@ export class ScrapingController {
     async scrapeLogos(@Query('url') url: string): Promise<string> { 
         return this.scrapingService.scrapeLogos(url);
     }
+
+    @Get('/scrape-metadata')
+    async scrapeMetadata(@Query('url') url: string): Promise<any> {
+        return this.scrapingService.scrapeMetadata(url);
+    }
 }
