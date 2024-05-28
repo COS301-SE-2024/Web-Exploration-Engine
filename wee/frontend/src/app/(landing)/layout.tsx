@@ -17,15 +17,18 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body>
           <Providers>
-            <div className='bg-jungleGreen-300'>
-              <div className='min-h-[13rem] p-4 font-poppins-bold text-2xl '>
+            <div className='bg-jungleGreen-300 dark:bg-jungleGreen-700'>
+
+              <div className='min-h-[10rem] p-4 font-poppins-bold text-2xl '>
                 <p>Efficiently</p>
                 <FlipWords words={['categorize', 'analyze', 'extract']}/> 
                 <p>data from the web</p>              
               </div>
-              <div className='p-4 bg-white rounded-t-2xl min-h-[calc(100vh-13rem)]'>
+
+              <div className='p-4 bg-primaryBackgroundColor text-primaryTextColor rounded-t-2xl min-h-[calc(100vh-10rem)] dark:bg-dark-primaryBackgroundColor dark:text-dark-primaryTextColor'>
                 {children}
               </div>
+
             </div>
           </Providers>
         </body>

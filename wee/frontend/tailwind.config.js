@@ -14,6 +14,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primaryBackgroundColor: '#ffffff',
+        primaryTextColor: '#212121',
         'jungleGreen' : {
           50: '#effaf5',
           100: '#d9f2e4',
@@ -26,6 +28,10 @@ module.exports = {
           800: '#184d3d',
           900: '#144033',
           950: '#0a241d',
+        },
+        dark: {
+          primaryBackgroundColor: '#222222',
+          primaryTextColor: '#fafafa',
         }
       }
     },
