@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
+import { industries } from './classification';
 
 interface Metadata {
   title: string | null;
@@ -12,7 +13,7 @@ interface Metadata {
 
 @Injectable()
 export class ScrapingService {
-  async scrapeMetadata(url: string): Promise<Metadata> {
+  async scrapeMetadata(url: string): Promise<{ metadata: Metadata; industry: string | null }> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -34,8 +35,29 @@ export class ScrapingService {
       };
     });
 
+    const industry: string | null = this.classifyIndustry(metadata);
+
     await browser.close();
 
-    return metadata;
+    return {metadata, industry};
   }
+
+  private classifyIndustry(metadata: Metadata): string | null {
+    let maxMatchCount = 0;
+    let industryName: string | null = null;
+
+    industries.forEach(industry => {
+        const matchCount = industry.keywords.filter(keyword => {
+            const regex = new RegExp(`\\b${keyword}\\b`, "i");
+            return regex.test(metadata.title) || regex.test(metadata.description) || (metadata.keywords && regex.test(metadata.keywords));
+        }).length;
+
+        if (matchCount > maxMatchCount) {
+            maxMatchCount = matchCount;
+            industryName = industry.name;
+        }
+    });
+
+    return industryName;
+}
 }
