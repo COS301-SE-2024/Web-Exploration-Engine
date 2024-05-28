@@ -20,14 +20,14 @@ export default function SignUp() {
                 </h3>
             </div>
             <div className="flex flex-col justify-center items-center">
-                <Input type="text" label="First name" className="my-3 w-full sm:w-4/5 md:w-full"/>
-                <Input type="text" label="Last name" className="my-3 sm:w-4/5 md:w-full"/>
-                <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full"/>
-                <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full"/>              
+                <Input type="text" label="First name" className="my-3 w-full sm:w-4/5 md:w-full lg:w-4/5"/>
+                <Input type="text" label="Last name" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>
+                <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>
+                <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>              
             </div>
 
             <div className="flex flex-col justify-center items-center">
-                <Button className="font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full">
+                <Button className="font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
                     Create Account
                 </Button>
             </div>
@@ -35,7 +35,7 @@ export default function SignUp() {
             <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
                 <span>Already have an account?</span>
                 <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
-                    <Link href={'/login'}>Sign in</Link>
+                    <Link href={'/login'}>Log in</Link>
                 </span>
             </div>
         </div>

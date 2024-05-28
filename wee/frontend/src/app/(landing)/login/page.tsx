@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@nextui-org/react';
 import {Input} from "@nextui-org/react";
 import { BsApple } from "react-icons/bs";
+import {Divider} from "@nextui-org/react";
 
 export default function Login() {
   return (
@@ -22,16 +23,17 @@ export default function Login() {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-          <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full"/>
-          <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full"/> 
-          <Button className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full">
-              Sign in
+          <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>
+          <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/> 
+          <Button className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
+              Login
           </Button>             
       </div>
 
       <div className="flex flex-col justify-center items-center">
+        <Divider className='mb-6'/>
         <Button 
-          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full border-primaryTextColor dark:border-dark-primaryTextColor'
+          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
           variant="bordered" 
           startContent={
             <svg
@@ -58,15 +60,15 @@ export default function Login() {
               />
             </svg>
           }>
-            Sign in with Google
+            Login with Google
         </Button>
         <Button 
-          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full border-primaryTextColor dark:border-dark-primaryTextColor'
+          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
           variant="bordered" 
           startContent={
             <BsApple />
           }>
-            Sign in with Apple
+            Login with Apple
         </Button>
       </div>
 
