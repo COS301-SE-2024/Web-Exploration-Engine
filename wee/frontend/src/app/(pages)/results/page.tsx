@@ -88,6 +88,26 @@ export default function Results() {
                     </TableBody>
                 </Table>
             </div>
+
+            <div className='py-3'>
+                <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+                    Logo
+                </h3>
+                <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
+                    <Card shadow="sm">
+                        <CardBody className="overflow-visible p-0">
+                            <Image
+                                shadow="sm"
+                                radius="lg"
+                                width="100%"
+                                alt={"https://nextui.org/images/breathing-app-icon.jpeg"}
+                                className="w-full object-cover h-[140px]"
+                                src={"https://nextui.org/images/breathing-app-icon.jpeg"}
+                            />
+                        </CardBody>
+                    </Card>
+                </div>
+            </div>
             
             <div className='py-3'>
                 <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
@@ -95,7 +115,7 @@ export default function Results() {
                 </h3>
                 <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
                     {list.map((item, index) => (
-                        <Card shadow="sm" key={index} isPressable onPress={() => console.log("item pressed")}>
+                        <Card shadow="sm" key={index} >
                             <CardBody className="overflow-visible p-0">
                                 <Image
                                     shadow="sm"
@@ -110,7 +130,6 @@ export default function Results() {
                     ))}
                 </div>
             </div>
-
         </div>
     )
 }
