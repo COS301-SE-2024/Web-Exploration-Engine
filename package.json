@@ -1,5 +1,7 @@
 {
   "devDependencies": {
-    "@nextui-org/react": "^2.4.0"
+    "@nextui-org/react": "^2.4.0",
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.1.4"
   }
 }
