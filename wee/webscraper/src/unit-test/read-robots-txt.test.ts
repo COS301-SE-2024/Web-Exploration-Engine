@@ -1,6 +1,4 @@
 import { extractAllowedPaths ,extractDomain } from '../robots-app/robots';
-import fetch from 'node-fetch';
-
 
 //test if it can extract the domain name in the given url
 describe('extractDomain', () => {
@@ -48,48 +46,113 @@ describe('extractDomain', () => {
 //test if the it extracts the correct paths
 describe('extractAllowedPaths', () => {
   it('should correctly parse Amazon robots.txt and return allowed paths for user agent *', async () => {
-      // Define the URL to fetch the robots.txt file from
-      const url = 'https://www.amazon.com';
-      try {
-          // Fetch the robots.txt file from the server
-          const response = await fetch(url);
+    // Define the URL to fetch the robots.txt file from
+    const url = 'https://www.amazon.com';
 
-          if (!response.ok) {
-              throw new Error('Failed to fetch robots.txt');
-          }
+    // Define the expected result
+    const expectedPaths = [
+      "/wishlist/universal*",
+      "/wishlist/vendor-button*",
+      "/wishlist/get-button*",
+      "/gp/wishlist/universal*",
+      "/gp/wishlist/vendor-button*",
+      "/gp/wishlist/ipad-install*",
+      "/gp/dmusic/promotions/PrimeMusic",
+      "/gp/dmusic/promotions/AmazonMusicUnlimited",
+      "/-/es/",
+      "/-/en$",
+      "/-/zh_TW/",
+      "/-/zh_TW$",
+      "/-/he/",
+      "/-/he$",
+      "/gp/offer-listing/B000",
+      "/gp/offer-listing/9000",
+      "/gp/aag/main?*seller=ABVFEJU8LS620"
+    ];
 
-          // Extract the text content from the response
-          const robotsTxt = await response.text();
+    try {
 
-          // Call the extractAllowedPaths function with the fetched content
-          const result = await extractAllowedPaths(robotsTxt);
+      // Call the extractAllowedPaths function with the fetched content
+      const result = await extractAllowedPaths(url);
 
-          // Define the expected result
-          const expectedPaths = [
-            "/wishlist/universal*",
-            "/wishlist/vendor-button*",
-            "/wishlist/get-button*",
-            "/gp/wishlist/universal*",
-            "/gp/wishlist/vendor-button*",
-            "/gp/wishlist/ipad-install*",
-            "/gp/dmusic/promotions/PrimeMusic",
-            "/gp/dmusic/promotions/AmazonMusicUnlimited",
-            "/-/es/",
-            "/-/en$",
-            "/-/zh_TW/",
-            "/-/zh_TW$",
-            "/-/he/",
-            "/-/he$",
-            "/gp/offer-listing/B000",
-            "/gp/offer-listing/9000",
-            "/gp/aag/main?*seller=ABVFEJU8LS620"
-        ];
+      // Convert the Set to an array before the comparison
+      const resultArray = Array.from(result);
 
-          // Assert that the result matches the expectedPaths
-          expect(result).toEqual(expectedPaths);
-      } catch (error) {
-
-        throw new Error(error);
-      }
+      // Assert that the result matches the expectedPaths
+      expect(resultArray).toEqual(expectedPaths);
+    } catch (error) {
+      throw new Error(error);
+    }
   });
+
+  it('should correctly parse chatgbt robots.txt and return allowed paths for user agent *', async () => {
+    // Define the URL to fetch the robots.txt file from
+    jest.setTimeout(18000);
+    const url = 'https://www.chatgpt.com';
+
+    // Define the expected result
+    const expectedPaths =  [
+      "/$",
+      "/api/share/og/*",
+      "/g/*",
+      "/share/*",
+      "/images/*",
+      "/auth/*",
+      "/gpts$"
+  ]
+
+    try {
+
+      // Call the extractAllowedPaths function with the fetched content
+      const result = await extractAllowedPaths(url);
+
+      // Convert the Set to an array before the comparison
+      const resultArray = Array.from(result);
+
+      // Assert that the result matches the expectedPaths
+      expect(resultArray).toEqual(expectedPaths);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
+
+  it('should correctly parse takealot robots.txt and return allowed paths for user agent *', async () => {
+    // Define the URL to fetch the robots.txt file from
+    const url = 'https://www.takealot.com';
+
+    // Define the expected result
+    const expectedPaths = ["/"];
+
+    try {
+
+      // Call the extractAllowedPaths function with the fetched content
+      const result = await extractAllowedPaths(url);
+
+      // Convert the Set to an array before the comparison
+      const resultArray = Array.from(result);
+
+      // Assert that the result matches the expectedPaths
+      expect(resultArray).toEqual(expectedPaths);
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
+  it('should correctly parse pnp robots.txt and return allowed paths for user agent *', async () => {
+    // Define the URL to fetch the robots.txt file from
+    const url = 'https://www.pnp.com';
+
+    // Define the expected error message
+    const expectedErrorMessage = 'An error occurred while fetching allowed paths';
+
+    try {
+      // Call the extractAllowedPaths function with the fetched content
+      await extractAllowedPaths(url);
+
+      // If no error is thrown, fail the test
+    } catch (error) {
+      expect(error.message).toBe(expectedErrorMessage);
+    }
+  });
+
+
 });
