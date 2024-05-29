@@ -1,5 +1,6 @@
 import '../global.css'
 import { Providers } from "../providers";
+import NavBar from '../components/NavBar';
 
 export default function RootLayout({
     children,
@@ -8,8 +9,9 @@ export default function RootLayout({
 }>) {
     return (
       <html lang="en" suppressHydrationWarning>
-        <body>
+        <body className='font-poppins-regular bg-primaryBackgroundColor text-primaryTextColor dark:bg-dark-primaryBackgroundColor dark:text-dark-primaryTextColor'>
           <Providers>
+            <NavBar/>
             {children}
           </Providers>
         </body>
