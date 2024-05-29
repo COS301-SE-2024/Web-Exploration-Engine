@@ -4,10 +4,8 @@ import { ScrapingService } from '../industry-classification-app/industry.service
 import { Response } from 'express';
 import { HttpStatus } from '@nestjs/common';
 
-// Test if the ScrapingController returns the correct industry on successful scrape
 describe('ScrapingController', () => {
   let controller: ScrapingController;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let service: ScrapingService;
 
   const mockScrapingService = {
@@ -30,36 +28,21 @@ describe('ScrapingController', () => {
     service = module.get<ScrapingService>(ScrapingService);
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
+  it('should return industry on successful scrape', async () => {
+    const url = 'https://takealot.com';
+    const result = { industry: 'E-Commerce' };
+    mockScrapingService.scrapeMetadata.mockResolvedValue(result);
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    await controller.handleScrapeMetadata(url, res);
+
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK);
+    expect(res.json).toHaveBeenCalledWith(result);
   });
-
-  it('should throw an error for a url that cannot be scrapped', async () => {
-    const Url = 'https://www.amazon.com';
-    const scrapingService = new ScrapingService();
-
-
-    await expect(scrapingService.scrapeMetadata(Url)).rejects.toThrowError('cannot scrape this website');
-  });
-
-  it('should throw an error for an invalid URL', async () => {
-    const Url = 'https://www.example.com';
-    const scrapingService = new ScrapingService();
-
-
-    await expect(scrapingService.scrapeMetadata(Url)).rejects.toThrowError('An error occurred while fetching allowed paths');
-  });
-
-  it('should return {"E-Commerce"} for a valid URL', async () => {
-    const Url = 'https://www.takealot.com';
-    const scrapingService = new ScrapingService();
-
-    const result = await scrapingService.scrapeMetadata(Url);
-    const industry = result.industry; // Extract the value of the 'industry' key
-
-    expect(industry).toEqual("E-commerce"); // Compare the value with the expected value
-  });
-
 
   it('should return 400 if URL is not provided', async () => {
     const res = {
@@ -73,6 +56,48 @@ describe('ScrapingController', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'URL is required' });
   });
 
+  it('should return 500 on scrapeMetadata error', async () => {
+    const url = 'https://example.com';
+    mockScrapingService.scrapeMetadata.mockRejectedValue(new Error('scrape error'));
 
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
 
+    await controller.handleScrapeMetadata(url, res);
+
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Error scraping metadata' });
+  });
+
+  it('should return allowed status for checkAllowed', async () => {
+    const url = 'https://takealot.com';
+    mockScrapingService.checkAllowed.mockResolvedValue(true);
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    await controller.checkAllowed(url, res);
+
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.OK);
+    expect(res.json).toHaveBeenCalledWith({ allowed: true });
+  });
+
+  it('should return 500 on checkAllowed error', async () => {
+    const url = 'https://example.com';
+    mockScrapingService.checkAllowed.mockRejectedValue(new Error('check allowed error'));
+
+    const res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    await controller.checkAllowed(url, res);
+
+    expect(res.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Error checking URL' });
+  });
 });

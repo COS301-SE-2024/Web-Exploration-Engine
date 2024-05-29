@@ -2,6 +2,9 @@ import { extractAllowedPaths, extractDomain } from '../robots-app/robots';
 
 //test if it can extract the domain name in the given url
 describe('extractDomain', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
 
   it('should return the domain for a valid URL with www subdomain', () => {
     const validUrl = 'https://www.example.com/path/to/resource';
