@@ -3,12 +3,10 @@ import { ScrapingService } from '../images-app/scraping.service';
 import * as puppeteer from 'puppeteer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-
 jest.mock('axios');
 
 jest.mock('puppeteer');
 const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
-
 
 jest.mock('../images-app/robot', () => ({
   isCrawlingAllowed: jest.fn(),
@@ -19,6 +17,9 @@ const mockedIsCrawlingAllowed = isCrawlingAllowed as jest.MockedFunction<typeof 
 describe('ScrapingService', () => {
   let service: ScrapingService;
 
+  /**
+   * Setup the testing module and initialize the ScrapingService before each test.
+   */
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [ScrapingService],
@@ -26,11 +27,15 @@ describe('ScrapingService', () => {
 
     service = module.get<ScrapingService>(ScrapingService);
   });
-
+  /**
+   * Test if the ScrapingService is defined.
+   */
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
+  /**
+   * Test that an exception is thrown if crawling is not allowed.
+   */
   it('should throw an exception if crawling is not allowed', async () => {
     mockedIsCrawlingAllowed.mockResolvedValueOnce(false);
 
@@ -38,7 +43,9 @@ describe('ScrapingService', () => {
       new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN),
     );
   });
-
+  /**
+   * Test that an array of image URLs is returned when images are found.
+   */
   it('should return an array of image URLs', async () => {
     mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
 
@@ -57,7 +64,9 @@ describe('ScrapingService', () => {
     expect(browser.newPage).toHaveBeenCalledTimes(1);
     expect(browser.close).toHaveBeenCalledTimes(1);
   });
-
+  /**
+   * Test that an empty array is returned if no images are found.
+   */
   it('should return an empty array if no images are found', async () => {
     mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
 
@@ -76,7 +85,9 @@ describe('ScrapingService', () => {
     expect(browser.newPage).toHaveBeenCalledTimes(1);
     expect(browser.close).toHaveBeenCalledTimes(1);
   });
-
+  /**
+  *Test that an exception is thrown if scraping fails.
+  */
   it('should throw an exception if scraping fails', async () => {
     mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
 

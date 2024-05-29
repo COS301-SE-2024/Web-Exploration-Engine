@@ -1,9 +1,16 @@
 import { Injectable,  HttpException, HttpStatus } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { isCrawlingAllowed } from './robot'; 
-
+/**
+ * Service for handling website status related functionality.
+ */
 @Injectable()
 export class ScrapingService {
+     /**
+     * Scrapes images from the given URL.
+     * @param url - The URL to scrape images from.
+     * @returns {Promise<string[]>} - Returns a promise that resolves to an array of image URLs.
+     */
     async scrapeImages(url: string): Promise<string[]> {
         if (!(await isCrawlingAllowed(url))) {
             throw new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN);
@@ -23,7 +30,11 @@ export class ScrapingService {
             throw new HttpException(`Failed to scrape images: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    /**
+     * Scrapes the logo from the given URL.
+     * @param  url - The URL to scrape the logo from.
+     * @returns {Promise<string | null>} - Returns a promise that resolves to the URL of the logo or null if no logo is found.
+     */
     async scrapeLogos(url: string): Promise<string | null> {
         if (!(await isCrawlingAllowed(url))) {
             throw new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN);
@@ -70,7 +81,11 @@ export class ScrapingService {
             throw new HttpException(`Failed to scrape logos: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    /**
+     * Scrapes metadata from the given URL.
+     * @param url - The URL to scrape metadata from.
+     * @returns {Promise<any>} - Returns a promise that resolves to an object containing the scraped metadata.
+     */
     async scrapeMetadata(url: string): Promise<any> {
         if (!(await isCrawlingAllowed(url))) {
             throw new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN);
