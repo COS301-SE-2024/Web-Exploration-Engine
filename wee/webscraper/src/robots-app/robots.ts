@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 
+//retruns all the paths user agent can scrape in a form of array
 export async function extractAllowedPaths(url: string): Promise<Set<string>> {
   const domain = extractDomain(url);
   const robotstxtUrl = `${domain}/robots.txt`;
@@ -32,6 +33,7 @@ export async function extractAllowedPaths(url: string): Promise<Set<string>> {
   return allowedPaths;
 }
 
+//cleans up the url to get the domain name 
 function extractDomain(url: string): string {
   try {
     const parsedUrl = new URL(url);
@@ -41,3 +43,4 @@ function extractDomain(url: string): string {
     throw new Error('Invalid URL');
   }
 }
+
