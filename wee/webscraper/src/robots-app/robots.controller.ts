@@ -14,7 +14,7 @@ export class RobotsController {
       const allowedPaths = await this.robotsService.getAllowedPaths(url);
       return { allowedPaths: Array.from(allowedPaths) };
     } catch (error) {
-      return { error: 'An error occurred while fetching allowed paths' };
+      return { error: 'website does not have robots.txt file, it cannot be scraped' };
     }
   }
 }
