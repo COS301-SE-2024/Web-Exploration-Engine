@@ -16,7 +16,7 @@ export class ScrapingController {
       const metadata = await this.scrapingService.scrapeMetadata(url);
       res.status(HttpStatus.OK).json(metadata);
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error scraping metadata' });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Cannot Scrape this URL' });
     }
   }
 
