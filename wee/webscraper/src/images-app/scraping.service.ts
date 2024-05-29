@@ -1,6 +1,6 @@
 import { Injectable,  HttpException, HttpStatus } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
-import { isCrawlingAllowed } from './robot'; // Adjust the path as needed
+import { isCrawlingAllowed } from './robot'; 
 
 @Injectable()
 export class ScrapingService {
