@@ -1,0 +1,64 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ScrapingService } from '../status-app/scraping.service';
+import axios from 'axios';
+
+jest.mock('axios');
+
+describe('ScrapingService', () => {
+  let service: ScrapingService;
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [ScrapingService],
+    }).compile();
+
+    service = module.get<ScrapingService>(ScrapingService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  it('should return true for status code 200', async () => {
+    mockedAxios.head.mockResolvedValueOnce({ status: 200 });
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(true);
+  });
+
+  it('should return true for status code 299', async () => {
+    mockedAxios.head.mockResolvedValueOnce({ status: 299 });
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(true);
+  });
+
+  it('should return false for status code 300', async () => {
+    mockedAxios.head.mockResolvedValueOnce({ status: 300 });
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(false);
+  });
+
+  it('should return false for status code 404', async () => {
+    mockedAxios.head.mockResolvedValueOnce({ status: 404 });
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(false);
+  });
+
+  it('should return false for status code 500', async () => {
+    mockedAxios.head.mockResolvedValueOnce({ status: 500 });
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(false);
+  });
+
+  it('should return false for network error', async () => {
+    mockedAxios.head.mockRejectedValueOnce(new Error('Network Error'));
+
+    const result = await service.status('http://example.com');
+    expect(result).toBe(false);
+  });
+});
