@@ -18,7 +18,7 @@ export class ScrapingService {
                 return Array.from(images).map((img: HTMLImageElement) => img.src);
             });
             await browser.close();
-            return imageUrls;
+            return imageUrls.slice(0, 50);
         } catch (error) {
             throw new HttpException(`Failed to scrape images: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
