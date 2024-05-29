@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import puppeteer from 'puppeteer';
-import { industries } from './classification';
+// import puppeteer from 'puppeteer';
+// import { industries } from './classification';
+import {extractAllowedPaths} from './extractor'
 
 interface Metadata {
   title: string | null;
@@ -14,50 +15,73 @@ interface Metadata {
 @Injectable()
 export class ScrapingService {
   async scrapeMetadata(url: string): Promise<{ metadata: Metadata; industry: string | null }> {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    //  const paths = extractAllowedPaths(url);
 
-    await page.goto(url, { waitUntil: 'domcontentloaded' });
+     const allowed = await this.checkAllowed(url);
+     if (!allowed) {
+       throw new Error('URL not allowed');
+     }
 
-    const metadata = await page.evaluate(() => {
-      const getMetaTagContent = (name: string) => {
-        const element = document.querySelector(`meta[name='${name}']`) || document.querySelector(`meta[property='og:${name}']`);
-        return element ? element.getAttribute('content') : null;
-      };
+  //   const browser = await puppeteer.launch();
+  //   const page = await browser.newPage();
 
-      return {
-        title: document.title,
-        description: getMetaTagContent('description'),
-        keywords: getMetaTagContent('keywords'),
-        ogTitle: getMetaTagContent('title'),
-        ogDescription: getMetaTagContent('description'),
-        ogImage: getMetaTagContent('image'),
-      };
-    });
+  //   await page.goto(url, { waitUntil: 'domcontentloaded' });
 
-    const industry: string | null = this.classifyIndustry(metadata);
+  //   const metadata = await page.evaluate(() => {
+  //     const getMetaTagContent = (name: string) => {
+  //       const element = document.querySelector(`meta[name='${name}']`) || document.querySelector(`meta[property='og:${name}']`);
+  //       return element ? element.getAttribute('content') : null;
+  //     };
 
-    await browser.close();
+  //     return {
+  //       title: document.title,
+  //       description: getMetaTagContent('description'),
+  //       keywords: getMetaTagContent('keywords'),
+  //       ogTitle: getMetaTagContent('title'),
+  //       ogDescription: getMetaTagContent('description'),
+  //       ogImage: getMetaTagContent('image'),
+  //     };
+  //   });
 
-    return {metadata, industry};
-  }
+  //   const industry: string | null = this.classifyIndustry(metadata);
 
-  private classifyIndustry(metadata: Metadata): string | null {
-    let maxMatchCount = 0;
-    let industryName: string | null = null;
+  //   await browser.close();
 
-    industries.forEach(industry => {
-        const matchCount = industry.keywords.filter(keyword => {
-            const regex = new RegExp(`\\b${keyword}\\b`, "i");
-            return regex.test(metadata.title) || regex.test(metadata.description) || (metadata.keywords && regex.test(metadata.keywords));
-        }).length;
+  //   return {metadata, industry};
+  // }
 
-        if (matchCount > maxMatchCount) {
-            maxMatchCount = matchCount;
-            industryName = industry.name;
-        }
-    });
+  // private classifyIndustry(metadata: Metadata): string | null {
+  //   let maxMatchCount = 0;
+  //   let industryName: string | null = null;
 
-    return industryName;
+  //   industries.forEach(industry => {
+  //       const matchCount = industry.keywords.filter(keyword => {
+  //           const regex = new RegExp(`\\b${keyword}\\b`, "i");
+  //           return regex.test(metadata.title) || regex.test(metadata.description) || (metadata.keywords && regex.test(metadata.keywords));
+  //       }).length;
+
+  //       if (matchCount > maxMatchCount) {
+  //           maxMatchCount = matchCount;
+  //           industryName = industry.name;
+  //       }
+  //   });
+
+  //   return industryName;
+
+  return { metadata: { title: null, description: null, keywords: null, ogTitle: null, ogDescription: null, ogImage: null }, industry: null };
+}
+
+ async checkAllowed(url: string): Promise<boolean> {
+  const paths = await extractAllowedPaths(url);
+ // Extract the path from the URL
+ const urlObject = new URL(url);
+ const path = urlObject.pathname;
+
+ // Check if the path is contained in the set of allowed paths
+ if (paths.has(path)) {
+   return true;
+ }
+
+  return false;
 }
 }

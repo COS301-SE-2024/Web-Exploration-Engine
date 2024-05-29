@@ -19,4 +19,10 @@ export class ScrapingController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error scraping metadata' });
     }
   }
+
+  @Get('check-allowed')
+  async checkAllowed(@Query('url') url: string): Promise<{ allowed: boolean }> {
+    const allowed = await this.scrapingService.checkAllowed(url);
+    return { allowed };
+  }
 }
