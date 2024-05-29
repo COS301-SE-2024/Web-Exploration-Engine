@@ -36,12 +36,12 @@ export default function NavBar() {
             <p className="font-bold text-inherit">WEE</p>
           </NavbarBrand>
           <NavbarItem>
-            <Link color="foreground" href="#">
+            <Link className="text-dark-primaryTextColor dark:text-primaryTextColor" href="/home">
               Home
             </Link>
           </NavbarItem>
-          <NavbarItem isActive>
-            <Link href="#" aria-current="page">
+          <NavbarItem isActive>            
+            <Link href="/results" aria-current="page">
               Results
             </Link>
           </NavbarItem>
@@ -59,10 +59,6 @@ export default function NavBar() {
               Sign Up
             </Button>
           </NavbarItem>
-          <div>
-
-          
-          </div>
         </NavbarContent>
   
         <NavbarMenu>
@@ -71,9 +67,9 @@ export default function NavBar() {
               <Link
                 className="w-full"
                 color={
-                  index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
+                  index === menuItems.length - 1 ? "danger" : "foreground"
                 }
-                href="#"
+                href={`/${item.toLowerCase()}`}
                 size="lg"
               >
                 {item}
