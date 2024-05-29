@@ -44,10 +44,14 @@ export class ScrapingService {
                 };
             });
 
-            if (metadata.ogImage && metadata.ogImage.toLowerCase().includes('logo')) {
+            // if (metadata.ogImage && metadata.ogImage.toLowerCase().includes('logo')) {
+            //     await browser.close();
+            //     return metadata.ogImage;
+            // }
+            if (metadata.ogImage && metadata.ogImage.trim() !== '') {
                 await browser.close();
                 return metadata.ogImage;
-            }
+            }   
 
             const logoPattern = 'logo';
             const imageUrls = await page.evaluate((pattern) => {
