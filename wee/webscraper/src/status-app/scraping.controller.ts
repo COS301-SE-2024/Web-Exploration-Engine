@@ -1,7 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { isCrawlingAllowed } from './robot';
 import { ScrapingService } from './scraping.service';
-import { status } from './status'; 
 
 @Controller()
 export class ScrapingController {
@@ -14,6 +13,6 @@ export class ScrapingController {
 
     @Get('/status') 
     async checkWebsiteStatus(@Query('url') url: string): Promise<boolean> {
-        return status(url);
+        return this.scrapingService.status(url);
     }
 }
