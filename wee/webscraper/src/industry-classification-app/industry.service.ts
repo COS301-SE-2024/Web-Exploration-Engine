@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
-import { industries } from './classification';
-import { extractAllowedPaths } from './extractor'; //import the correct one once robot-checker is merged
+import { industries } from '../industry-classification-app/classification';
+import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged
 
 
 interface Metadata {
@@ -15,9 +15,10 @@ interface Metadata {
 
 @Injectable()
 export class ScrapingService {
+  //this function scrapes the website and returns metadata and metadata
   async scrapeMetadata(
     url: string
-  ): Promise<{ metadata: Metadata; industry: string | null }> {
+  ): Promise<{ metadata: Metadata; industry: string}> {
     //  const paths = extractAllowedPaths(url);
 
     const allowed = await this.checkAllowed(url);
@@ -27,7 +28,7 @@ export class ScrapingService {
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-
+    try {
     await page.goto(url, { waitUntil: 'domcontentloaded' });
 
     const metadata = await page.evaluate(() => {
@@ -48,16 +49,20 @@ export class ScrapingService {
       };
     });
 
-    const industry: string | null = this.classifyIndustry(metadata);
+    const industry: string = this.classifyIndustry(metadata);
 
     await browser.close();
 
     return { metadata, industry };
+  } catch (error) {
+    throw new Error('Error scraping metadata');
+  } finally {
+    await browser.close();
   }
-
-  private classifyIndustry(metadata: Metadata): string | null {
+}
+  private classifyIndustry(metadata: Metadata): string {
     let maxMatchCount = 0;
-    let industryName: string | null = null;
+    let industryName = "No classification";
 
     industries.forEach((industry) => {
       const matchCount = industry.keywords.filter((keyword) => {
@@ -77,10 +82,11 @@ export class ScrapingService {
 
     return industryName;
 
-    // return { metadata: { title: null, description: null, keywords: null, ogTitle: null, ogDescription: null, ogImage: null }, industry: null };
+    
   }
 
   async checkAllowed(url: string): Promise<boolean> {
+
     if (url === 'https://example.com') {
       return false;
     }
