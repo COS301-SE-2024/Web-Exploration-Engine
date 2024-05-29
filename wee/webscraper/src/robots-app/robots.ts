@@ -19,11 +19,8 @@ export async function extractAllowedPaths(url: string): Promise<Set<string>> {
       const userAgent = line.substring(11).trim();
       isGlobalUserAgent = userAgent === '*';
     } else if (line.startsWith('Allow:') && isGlobalUserAgent) {
-      let path = line.substring(6).trim();
-      if (path.includes('*')) {
-        // Remove everything after the asterisk (*) - handle this differently in the future
-        path = path.substring(0, path.indexOf('*'));
-      }
+      const path = line.substring(6).trim();
+
       if (path.startsWith('/')) {
         allowedPaths.add(path);
       }
@@ -33,13 +30,12 @@ export async function extractAllowedPaths(url: string): Promise<Set<string>> {
   return allowedPaths;
 }
 
-//cleans up the url to get the domain name 
-function extractDomain(url: string): string {
+//cleans up the url to get the domain name
+export function extractDomain(url: string): string {
   try {
     const parsedUrl = new URL(url);
     return parsedUrl.origin;
   } catch (error) {
-    console.error('Invalid URL:', error);
     throw new Error('Invalid URL');
   }
 }
