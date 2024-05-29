@@ -23,7 +23,7 @@ export class ScrapingService {
 
     const allowed = await this.checkAllowed(url);
     if (!allowed) {
-      throw new Error('URL not allowed');
+      throw new Error('cannot scrape this website');
     }
 
     const browser = await puppeteer.launch();
@@ -82,7 +82,7 @@ export class ScrapingService {
 
     return industryName;
 
-    
+
   }
 
   async checkAllowed(url: string): Promise<boolean> {
