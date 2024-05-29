@@ -1,5 +1,9 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import fetch from 'node-fetch';
+/**
+ * Extracts the allowed paths from robots.txt for a given URL.
+ * @param url The URL for which to extract allowed paths.
+ */
 
 export async function extractAllowedPaths(url: string): Promise<Set<string>> {
   const domain = extractDomain(url);
@@ -38,7 +42,11 @@ export async function extractAllowedPaths(url: string): Promise<Set<string>> {
     throw new Error(`An error occurred while fetching allowed paths: ${error.message}`);
   }
 }
-
+/**
+ * Extracts the domain from a given URL.
+ * @param url The URL from which to extract the domain.
+ * @returns The domain extracted from the URL.
+ */
 export function extractDomain(url: string): string {
   try {
     const parsedUrl = new URL(url);
@@ -47,7 +55,11 @@ export function extractDomain(url: string): string {
     throw new Error('Invalid URL');
   }
 }
-
+/**
+ * Checks if crawling is allowed for a given URL.
+ * @param url The URL to check.
+ * @returns A Promise that resolves to true if crawling is allowed, false otherwise.
+ */
 export async function isCrawlingAllowed(url: string): Promise<boolean> {
   try {
     const paths = await extractAllowedPaths(url);

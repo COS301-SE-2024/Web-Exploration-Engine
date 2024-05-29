@@ -16,10 +16,12 @@ describe('ScrapingService', () => {
     service = module.get<ScrapingService>(ScrapingService);
   });
 
+  // Test case to ensure that the service is defined
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
+  // Test case to check if the service returns true for status code 200
   it('should return true for status code 200', async () => {
     mockedAxios.head.mockResolvedValueOnce({ status: 200 });
 
@@ -27,6 +29,7 @@ describe('ScrapingService', () => {
     expect(result).toBe(true);
   });
 
+  // Test case to check if the service returns true for status code 299
   it('should return true for status code 299', async () => {
     mockedAxios.head.mockResolvedValueOnce({ status: 299 });
 
@@ -34,6 +37,7 @@ describe('ScrapingService', () => {
     expect(result).toBe(true);
   });
 
+  // Test case to check if the service returns false for status code 300
   it('should return false for status code 300', async () => {
     mockedAxios.head.mockResolvedValueOnce({ status: 300 });
 
@@ -41,6 +45,7 @@ describe('ScrapingService', () => {
     expect(result).toBe(false);
   });
 
+  // Test case to check if the service returns false for status code 404
   it('should return false for status code 404', async () => {
     mockedAxios.head.mockResolvedValueOnce({ status: 404 });
 
@@ -48,6 +53,7 @@ describe('ScrapingService', () => {
     expect(result).toBe(false);
   });
 
+  // Test case to check if the service returns false for status code 500
   it('should return false for status code 500', async () => {
     mockedAxios.head.mockResolvedValueOnce({ status: 500 });
 
@@ -55,6 +61,7 @@ describe('ScrapingService', () => {
     expect(result).toBe(false);
   });
 
+  // Test case to check if the service returns false for network error
   it('should return false for network error', async () => {
     mockedAxios.head.mockRejectedValueOnce(new Error('Network Error'));
 
