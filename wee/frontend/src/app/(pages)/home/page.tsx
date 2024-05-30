@@ -1,20 +1,37 @@
 'use client'
-import React from "react";
-import {Input} from "@nextui-org/react";
+import React, { useState } from "react";
+import { Input } from "@nextui-org/react";
 import { FiSearch } from "react-icons/fi";
 import { Button } from '@nextui-org/react';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const router = useRouter();
     const [url, setUrl] = useState('');
+    const [error, setError] = useState('');
 
-  const handleScraping = () => {
-    // Navigate to Results page with the entered URL as query parameter
-    router.push(`/results?url=${encodeURIComponent(url)}`);
-  };
+    const isValidUrl = (urlString: string) => {
+        try {
+            new URL(urlString);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    };
 
+    const handleScraping = () => {
+        if (!url) {
+            setError('URL cannot be empty');
+            return;
+        }
+        if (!isValidUrl(url)) {
+            setError('Please enter a valid URL');
+            return;
+        }
+        setError('');
+        // Navigate to Results page with the entered URL as query parameter
+        router.push(`/results?url=${encodeURIComponent(url)}`);
+    };
 
     return (
         <div className='h-screen p-4 flex flex-col items-center'>
@@ -37,13 +54,14 @@ export default function Home() {
                     startContent={
                         <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     }
-                    />
+                />
                 <Button className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={handleScraping}
                 >
                     Start scraping
                 </Button>
             </div>
+            {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
     )
 }

@@ -1,83 +1,96 @@
 'use client';
-import React,{ useEffect, useState } from 'react';
-import {Card, CardBody, Image} from "@nextui-org/react";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
-import {Chip} from "@nextui-org/react";
-import { useSearchParams  } from 'next/navigation';
-
+import React, { useEffect, useState } from 'react';
+import { Card, CardBody, Image } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
+import { useSearchParams } from 'next/navigation';
 
 export default function Results() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
     const [websiteStatus, setWebsiteStatus] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (url) {
-        // Fetch website status when component mounts or URL changes
-        fetchWebsiteStatus(url);
+            // Fetch website status when component mounts or URL changes
+            fetchWebsiteStatus(url);
         }
     }, [url]);
 
     const fetchWebsiteStatus = async (url: string) => {
         try {
-        const response = await fetch(`http://localhost:3000/api/status?url=${encodeURIComponent(url)}`);
-        const data = await response.json();
-        console.log('Website status:', data);
-        if (data === false) {
-            setWebsiteStatus('Parked');
-        } else {
-            setWebsiteStatus('Live');
-        }
+            const response = await fetch(`http://localhost:3000/api/status?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            console.log('Website status:', data);
+            if (data === false) {
+                setWebsiteStatus('Parked');
+            } else {
+                setWebsiteStatus('Live');
+            }
         } catch (error) {
-        console.error('Error fetching website status:', error);
-        setWebsiteStatus('Unknown');
+            console.error('Error fetching website status:', error);
+            setWebsiteStatus('Unknown');
+        } finally {
+            setIsLoading(false);
         }
     };
 
-
     const list = [
         {
-          title: "Orange",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$5.50",
+            title: "Orange",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$5.50",
         },
         {
-          title: "Tangerine",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$3.00",
+            title: "Tangerine",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$3.00",
         },
         {
-          title: "Raspberry",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$10.00",
+            title: "Raspberry",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$10.00",
         },
         {
-          title: "Lemon",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$5.30",
+            title: "Lemon",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$5.30",
         },
         {
-          title: "Avocado",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$15.70",
+            title: "Avocado",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$15.70",
         },
         {
-          title: "Lemon 2",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$8.00",
+            title: "Lemon 2",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$8.00",
         },
         {
-          title: "Banana",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$7.50",
+            title: "Banana",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$7.50",
         },
         {
-          title: "Watermelon",
-          img: "https://nextui.org/images/breathing-app-icon.jpeg",
-          price: "$12.20",
+            title: "Watermelon",
+            img: "https://nextui.org/images/breathing-app-icon.jpeg",
+            price: "$12.20",
         },
     ];
-
+    
+    if (isLoading) {
+        return (
+            <div className='min-h-screen flex justify-center items-center'>
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" role="status">
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                        Loading...
+                    </span>
+                </div>
+            </div>
+        );
+    }
+    
     return (
         <div className='min-h-screen p-4'>
             <div className="mb-8 text-center">
@@ -108,7 +121,6 @@ export default function Results() {
                                 <Chip radius="sm" color="secondary" variant="flat">E-commerce</Chip>
                             </TableCell>
                         </TableRow>
-
                     </TableBody>
                 </Table>
             </div>
@@ -132,7 +144,7 @@ export default function Results() {
                     </Card>
                 </div>
             </div>
-            
+
             <div className='py-3'>
                 <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     Images
