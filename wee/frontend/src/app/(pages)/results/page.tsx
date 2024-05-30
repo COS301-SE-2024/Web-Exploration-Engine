@@ -22,7 +22,6 @@ export default function Results() {
         try {
             const response = await fetch(`http://localhost:3000/api/status?url=${encodeURIComponent(url)}`);
             const data = await response.json();
-            console.log('Website status:', data);
             if (data === false) {
                 setWebsiteStatus('Parked');
             } else {
