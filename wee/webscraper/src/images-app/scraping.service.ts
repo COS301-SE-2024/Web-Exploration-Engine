@@ -5,7 +5,7 @@ import { isCrawlingAllowed } from './robot';
  * Service for handling website status related functionality.
  */
 @Injectable()
-export class ScrapingService {
+export class ImagesService {
      /**
      * Scrapes images from the given URL.
      * @param url - The URL to scrape images from.

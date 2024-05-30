@@ -1,13 +1,13 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { isCrawlingAllowed } from './robot';
-import { ScrapingService } from './scraping.service';
+import { StatusService } from './scraping.service';
 
 /**
  * Controller responsible for handling scraping-related HTTP requests.
  */
 @Controller()
-export class ScrapingController {
-    constructor(private readonly scrapingService: ScrapingService) {}
+export class StatusController {
+    constructor(private readonly scrapingService: StatusService) {}
     /**
      * Checks if crawling is allowed for a given URL.
      * @param url The URL to check.
