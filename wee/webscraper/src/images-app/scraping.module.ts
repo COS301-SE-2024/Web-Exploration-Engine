@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ImagesService } from './scraping.service';
-import { ImagesController } from './scraping.controller';
+import { ScrapingService } from './scraping.service';
+import { ScrapingController } from './scraping.controller';
 /**
  * Module for handling scraping-related functionality.
  */
 @Module({
-    providers: [ImagesService],
-    controllers: [ImagesController],
+    providers: [ScrapingService],
+    controllers: [ScrapingController],
 })
-export class ImagesModule {}
+export class ScrapingModule {}
