@@ -18,6 +18,7 @@
     "@nextui-org/system": "^2.2.0",
     "@nextui-org/table": "^2.0.34",
     "@nextui-org/theme": "^2.2.4",
+    "@supabase/supabase-js": "^2.43.4",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.6",
