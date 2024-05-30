@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "@nextui-org/react": "^2.4.0",
+    "nx": "^19.1.1"
+  }
+}
