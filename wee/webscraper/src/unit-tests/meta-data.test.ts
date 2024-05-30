@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapingService } from '../images-app/images.service'; 
+import { ImagesService } from '../images-app/images.service'; 
 import * as puppeteer from 'puppeteer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -17,15 +17,15 @@ jest.mock('../images-app/robot', () => ({
 import { isCrawlingAllowed } from '../images-app/robot'; 
 const mockedIsCrawlingAllowed = isCrawlingAllowed as jest.MockedFunction<typeof isCrawlingAllowed>;
 
-describe('ScrapingService', () => {
-  let service: ScrapingService;
+describe('Meta Data Tests', () => {
+  let service: ImagesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScrapingService],
+      providers: [ImagesService],
     }).compile();
 
-    service = module.get<ScrapingService>(ScrapingService);
+    service = module.get<ImagesService>(ImagesService);
   });
 
   it('should be defined', () => {

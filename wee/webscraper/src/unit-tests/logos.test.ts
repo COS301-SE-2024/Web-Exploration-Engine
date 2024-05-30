@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapingService } from '../images-app/images.service'; // Adjust the import path
+import { ImagesService } from '../images-app/images.service'; // Adjust the import path
 import * as puppeteer from 'puppeteer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -15,17 +15,17 @@ jest.mock('../images-app/robot', () => ({
 import { isCrawlingAllowed } from '../images-app/robot'; // Adjust the import path
 const mockedIsCrawlingAllowed = isCrawlingAllowed as jest.MockedFunction<typeof isCrawlingAllowed>;
 
-describe('ScrapingService', () => {
-  let service: ScrapingService;
+describe('ImagesService for logos', () => {
+  let service: ImagesService;
   /**
    * Setup the testing module and initialize the ScrapingService before each test.
    */
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScrapingService],
+      providers: [ImagesService],
     }).compile();
 
-    service = module.get<ScrapingService>(ScrapingService);
+    service = module.get<ImagesService>(ImagesService);
   });
   /**
    * Test if the ScrapingService is defined.

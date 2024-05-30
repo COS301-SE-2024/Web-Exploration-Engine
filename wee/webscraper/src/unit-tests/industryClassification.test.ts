@@ -1,5 +1,5 @@
 
-import { ScrapingService } from '../industry-classification-app/industry.service';
+import { IndustryService } from '../industry-classification-app/industry.service';
 
 
 // Test if the ScrapingController returns the correct industry on successful scrape
@@ -11,7 +11,7 @@ describe('ScrapingController', () => {
 
   it('should throw an error for a url that cannot be scrapped', async () => {
     const Url = 'https://www.amazon.com';
-    const scrapingService = new ScrapingService();
+    const scrapingService = new IndustryService();
 
 
     await expect(scrapingService.scrapeMetadata(Url)).rejects.toThrowError('cannot scrape this website');
@@ -19,7 +19,7 @@ describe('ScrapingController', () => {
 
   it('should throw an error for an invalid URL', async () => {
     const Url = 'https://www.example.com';
-    const scrapingService = new ScrapingService();
+    const scrapingService = new IndustryService();
 
 
     await expect(scrapingService.scrapeMetadata(Url)).rejects.toThrowError('An error occurred while fetching allowed paths');
@@ -27,7 +27,7 @@ describe('ScrapingController', () => {
 
   it('should return {"E-Commerce"} for a valid URL', async () => {
     const Url = 'https://www.takealot.com';
-    const scrapingService = new ScrapingService();
+    const scrapingService = new IndustryService();
 
     const result = await scrapingService.scrapeMetadata(Url);
     const industry = result.industry; // Extract the value of the 'industry' key
