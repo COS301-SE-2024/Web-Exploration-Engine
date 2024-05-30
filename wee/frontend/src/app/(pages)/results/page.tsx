@@ -4,6 +4,7 @@ import { Card, CardBody, Image } from "@nextui-org/react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
 import { useSearchParams } from 'next/navigation';
+import { IndustryClassification } from '../../models/IndustryModel';
 
 export default function Results() {
     return (
@@ -18,11 +19,17 @@ function ResultsComponent() {
     const url = searchParams.get('url');
     const [websiteStatus, setWebsiteStatus] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [industryClassification, setIndustryClassification] = useState('');
+    const [logo, setLogo] = useState('');
+    const [imageList, setImageList] = useState([]);
 
     useEffect(() => {
         if (url) {
             // Fetch website status when component mounts or URL changes
             fetchWebsiteStatus(url);
+            fetchIndustryClassifications(url);
+            fetchLogo(url);
+            fetchImages(url);
         }
     }, [url]);
 
@@ -38,54 +45,41 @@ function ResultsComponent() {
         } catch (error) {
             console.error('Error fetching website status:', error);
             setWebsiteStatus('Unknown');
-        } finally {
-            setIsLoading(false);
+        } 
+    };
+
+    const fetchIndustryClassifications = async (url: string) => {
+        try {
+          const response = await fetch(`http://localhost:3000/api/scrapeIndustry?url=${encodeURIComponent(url)}`);
+          const data = await response.json() as IndustryClassification;
+          setIndustryClassification(data.industry);
+        } catch (error) {
+          console.error('Error fetching industry classifications:', error);
         }
     };
 
-    const list = [
-        {
-            title: "Orange",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$5.50",
-        },
-        {
-            title: "Tangerine",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$3.00",
-        },
-        {
-            title: "Raspberry",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$10.00",
-        },
-        {
-            title: "Lemon",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$5.30",
-        },
-        {
-            title: "Avocado",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$15.70",
-        },
-        {
-            title: "Lemon 2",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$8.00",
-        },
-        {
-            title: "Banana",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$7.50",
-        },
-        {
-            title: "Watermelon",
-            img: "https://nextui.org/images/breathing-app-icon.jpeg",
-            price: "$12.20",
-        },
-    ];
-    
+    const fetchLogo = async (url: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/scrapeLogos?url=${encodeURIComponent(url)}`);
+            setLogo(await response.text());
+        } catch (error) {
+            console.error('Error fetching logo:', error);
+        } 
+    }
+
+    const fetchImages = async (url: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/scrapeImages?url=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            console.log(data);
+            setImageList(data);
+        } catch (error) {
+            console.error('Error fetching images:', error);
+        } finally { 
+            setIsLoading(false);
+        }
+    }
+
     if (isLoading) {
         return (
             <div className='min-h-screen flex justify-center items-center'>
@@ -125,13 +119,14 @@ function ResultsComponent() {
                         <TableRow key="2">
                             <TableCell>Industry</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color="secondary" variant="flat">E-commerce</Chip>
+                                <Chip radius="sm" color="secondary" variant="flat">{industryClassification}</Chip>
                             </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
             </div>
 
+            {logo && (
             <div className='py-3'>
                 <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     Logo
@@ -143,36 +138,45 @@ function ResultsComponent() {
                                 shadow="sm"
                                 radius="lg"
                                 width="100%"
-                                alt={"https://nextui.org/images/breathing-app-icon.jpeg"}
+                                alt={"Logo"}
                                 className="w-full object-cover h-[140px]"
-                                src={"https://nextui.org/images/breathing-app-icon.jpeg"}
+                                src={logo}
                             />
                         </CardBody>
                     </Card>
                 </div>
             </div>
+            )}
+            {!logo && (
+                <p>No logo available.</p>
+            )}
 
-            <div className='py-3'>
-                <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-                    Images
-                </h3>
-                <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
-                    {list.map((item, index) => (
-                        <Card shadow="sm" key={index} >
-                            <CardBody className="overflow-visible p-0">
-                                <Image
-                                    shadow="sm"
-                                    radius="lg"
-                                    width="100%"
-                                    alt={item.title}
-                                    className="w-full object-cover h-[140px]"
-                                    src={item.img}
-                                />
-                            </CardBody>
-                        </Card>
-                    ))}
-                </div>
-            </div>
+            {imageList.length > 0 && (
+                    <div className='py-3'>
+                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+                            Images
+                        </h3>
+                        <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
+                            {imageList.map((item, index) => (
+                                <Card shadow="sm" key={index} >
+                                    <CardBody className="overflow-visible p-0">
+                                        <Image
+                                            shadow="sm"
+                                            radius="lg"
+                                            width="100%"
+                                            alt={"Image"}
+                                            className="w-full object-cover h-[140px]"
+                                            src={item}
+                                        />
+                                    </CardBody>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {imageList.length === 0 && (
+                    <p>No images available.</p>
+                )}
         </div>
     )
 }

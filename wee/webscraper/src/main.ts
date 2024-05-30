@@ -18,8 +18,7 @@ async function bootstrap() {
 
    // Enable CORS with specific origin
    app.enableCors({
-    origin: 'http://localhost:3001', // Allow requests from this origin
-    // You can configure other CORS options here if needed
+    origin: ['http://localhost:3001', 'http://localhost:3000'],// Allow requests from this origin
   });
 
   const config = new DocumentBuilder()
