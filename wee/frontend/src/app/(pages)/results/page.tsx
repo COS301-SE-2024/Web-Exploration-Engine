@@ -3,25 +3,37 @@ import React,{ useEffect, useState } from 'react';
 import {Card, CardBody, Image} from "@nextui-org/react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
 import {Chip} from "@nextui-org/react";
-import axios from 'axios';
+import { useSearchParams  } from 'next/navigation';
+
 
 export default function Results() {
+    const searchParams = useSearchParams();
+    const url = searchParams.get('url');
     const [websiteStatus, setWebsiteStatus] = useState('');
 
     useEffect(() => {
-        // Fetch website status when component mounts
-        fetchWebsiteStatus();
-    }, []);
+        if (url) {
+        // Fetch website status when component mounts or URL changes
+        fetchWebsiteStatus(url);
+        }
+    }, [url]);
 
-    const fetchWebsiteStatus = async () => {
+    const fetchWebsiteStatus = async (url: string) => {
         try {
-            const response = await axios.get('/status?url=https://www.takealot.com/'); // Replace example.com with your URL
-            setWebsiteStatus(response.data ? 'Live' : 'Parked');
+        const response = await fetch(`http://localhost:3000/api/status?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+        console.log('Website status:', data);
+        if (data === false) {
+            setWebsiteStatus('Parked');
+        } else {
+            setWebsiteStatus('Live');
+        }
         } catch (error) {
-            console.error('Error fetching website status:', error);
-            setWebsiteStatus('Unknown');
+        console.error('Error fetching website status:', error);
+        setWebsiteStatus('Unknown');
         }
     };
+
 
     const list = [
         {
