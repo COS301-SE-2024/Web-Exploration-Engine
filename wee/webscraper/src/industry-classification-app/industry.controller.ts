@@ -1,10 +1,10 @@
 import { Controller, Get, Query, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { IndustryService } from '../industry-classification-app/industry.service';
+import { ScrapingService } from '../industry-classification-app/industry.service';
 
 @Controller('scrapeIndustry')
-export class IndustryController {
-  constructor(private readonly scrapingService: IndustryService) {}
+export class ScrapingController {
+  constructor(private readonly scrapingService: ScrapingService) {}
 
   @Get()
   async handleScrapeMetadata(@Query('url') url: string, @Res() res: Response) {

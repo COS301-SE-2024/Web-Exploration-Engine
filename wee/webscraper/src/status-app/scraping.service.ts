@@ -4,7 +4,7 @@ import axios from 'axios';
  * Service for handling website status related functionality.
  */
 @Injectable()
-export class StatusService {
+export class ScrapingService {
     /**
      * Checks the status of a website at the given URL.
      * @param url The URL of the website to check.
