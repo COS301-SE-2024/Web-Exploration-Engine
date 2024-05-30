@@ -14,7 +14,7 @@ interface Metadata {
 }
 
 @Injectable()
-export class ScrapingService {
+export class IndustryService {
   //this function scrapes the website and returns metadata and metadata
   async scrapeMetadata(
     url: string

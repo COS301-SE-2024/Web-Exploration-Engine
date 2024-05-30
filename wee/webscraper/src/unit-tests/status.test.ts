@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapingService } from '../status-app/scraping.service';
+import { ScrapingService } from '../status-app/status.service';
 import axios from 'axios';
 
 jest.mock('axios');

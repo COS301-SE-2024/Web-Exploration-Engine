@@ -1,10 +1,28 @@
 'use client';
-import React from 'react';
+import React,{ useEffect, useState } from 'react';
 import {Card, CardBody, Image} from "@nextui-org/react";
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell} from "@nextui-org/react";
 import {Chip} from "@nextui-org/react";
+import axios from 'axios';
 
 export default function Results() {
+    const [websiteStatus, setWebsiteStatus] = useState('');
+
+    useEffect(() => {
+        // Fetch website status when component mounts
+        fetchWebsiteStatus();
+    }, []);
+
+    const fetchWebsiteStatus = async () => {
+        try {
+            const response = await axios.get('/status?url=https://www.takealot.com/'); // Replace example.com with your URL
+            setWebsiteStatus(response.data ? 'Live' : 'Parked');
+        } catch (error) {
+            console.error('Error fetching website status:', error);
+            setWebsiteStatus('Unknown');
+        }
+    };
+
     const list = [
         {
           title: "Orange",
@@ -69,16 +87,10 @@ export default function Results() {
                         <TableRow key="1">
                             <TableCell>Status</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color="warning" variant="flat">Parked</Chip>
+                                <Chip radius="sm" color={websiteStatus === 'Live' ? 'success' : 'warning'} variant="flat">{websiteStatus}</Chip>
                             </TableCell>
                         </TableRow>
                         <TableRow key="2">
-                            <TableCell>Status</TableCell>
-                            <TableCell>
-                                <Chip radius="sm" color="success" variant="flat">Live</Chip>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow key="3">
                             <TableCell>Industry</TableCell>
                             <TableCell>
                                 <Chip radius="sm" color="secondary" variant="flat">E-commerce</Chip>

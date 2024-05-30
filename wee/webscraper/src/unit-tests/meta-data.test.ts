@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapingService } from '../images-app/scraping.service'; 
+import { ScrapingService } from '../images-app/images.service'; 
 import * as puppeteer from 'puppeteer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 

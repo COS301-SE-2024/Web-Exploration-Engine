@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ScrapingService } from '../industry-classification-app/industry.service';
-import { ScrapingController } from '../industry-classification-app/industry.controller';
+import { IndustryService } from '../industry-classification-app/industry.service';
+import { IndustryController } from '../industry-classification-app/industry.controller';
 
 @Module({
-  controllers: [ScrapingController],
-  providers: [ScrapingService],
+  controllers: [IndustryController],
+  providers: [IndustryService],
 })
-export class ScrapingModule {}
+export class IndustryModule {}
