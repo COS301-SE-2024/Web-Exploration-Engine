@@ -1,11 +1,19 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Card, CardBody, Image } from "@nextui-org/react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
 import { useSearchParams } from 'next/navigation';
 
 export default function Results() {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ResultsComponent />
+      </Suspense>
+    )
+}
+
+function ResultsComponent() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
     const [websiteStatus, setWebsiteStatus] = useState('');
