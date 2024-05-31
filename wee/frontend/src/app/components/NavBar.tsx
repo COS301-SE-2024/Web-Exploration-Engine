@@ -36,7 +36,7 @@ export default function NavBar() {
             <p className="font-bold text-inherit">WEE</p>
           </NavbarBrand>
           <NavbarItem>
-            <Link className="text-dark-primaryTextColor dark:text-primaryTextColor" href="/home">
+            <Link className="text-dark-primaryTextColor dark:text-primaryTextColor" href="/">
               Home
             </Link>
           </NavbarItem>
@@ -69,7 +69,7 @@ export default function NavBar() {
                 color={
                   index === menuItems.length - 1 ? "danger" : "foreground"
                 }
-                href={`/${item.toLowerCase()}`}
+                href={item == 'Home' ? `/` : `/${item.toLowerCase()}`}
                 size="lg"
               >
                 {item}
