@@ -55,7 +55,7 @@ keywords: [
 ]
 },
 {
-  name: "healthcare",
+  name: "Healthcare",
    keywords: [
   "healthcare",
   "medical",
@@ -87,7 +87,7 @@ keywords: [
   },
 
   {
-  name: "technology",
+  name: "Technology",
   keywords: [
   "technology",
   "tech",
@@ -114,7 +114,7 @@ keywords: [
   }
   ,
   {
-  name: "education",
+  name: "Education",
   keywords: [
   "education",
   "e-learning",
@@ -164,7 +164,7 @@ keywords: [
 ]},
 {
 
-name: "real estate",
+name: "Real Estate",
 keywords: [
   "real estate",
   "properties",
@@ -189,7 +189,7 @@ keywords: [
 ]
 
 },{
-name: "automotive",
+name: "Automotive",
 keywords: [
   "automotive",
   "cars",

@@ -1,19 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ScrapingService } from '../status-app/scraping.service';
+import { StatusService } from '../status-app/status.service';
 import axios from 'axios';
 
 jest.mock('axios');
 
 describe('ScrapingService', () => {
-  let service: ScrapingService;
+  let service: StatusService;
   const mockedAxios = axios as jest.Mocked<typeof axios>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ScrapingService],
+      providers: [StatusService],
     }).compile();
 
-    service = module.get<ScrapingService>(ScrapingService);
+    service = module.get<StatusService>(StatusService);
   });
 
   // Test case to ensure that the service is defined
