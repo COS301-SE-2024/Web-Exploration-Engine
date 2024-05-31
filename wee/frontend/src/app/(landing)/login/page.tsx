@@ -7,10 +7,14 @@ import {Input} from "@nextui-org/react";
 import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
-import { LoginRequest } from '../../models/AuthModels';
+import { LoginRequest, AuthResponse } from '../../models/AuthModels';
 import { login } from '../../services/AuthService';
+import { useRouter } from 'next/navigation';
+
 
 export default function Login() {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -53,9 +57,11 @@ export default function Login() {
       return;
     }
 
+    const authResponse = response as AuthResponse;
+
     // Redirect to home page
-    console.log('Login successful');
-    console.log(response);
+    router.push(`/home?url=${authResponse.accessToken}&uuid=${authResponse.uuid}`);
+    
   };
   
 
