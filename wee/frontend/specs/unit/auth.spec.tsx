@@ -131,5 +131,35 @@ describe('Auth functions', () => {
         },
       });
     });
+
+    it ('should return error code and message if email is already in use', async () => {
+      // Mock response for existing email check
+    const mockUsersResponse = {
+      data: [{ id: 'existingUserId', email: 'test@example.com' }],
+      error: null,
+    };
+
+    // Mock response for Supabase signUp function
+    (supabase.from as jest.Mock).mockReturnValue({
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockResolvedValue(mockUsersResponse),
+      }),
+    });
+
+    const req = {
+      email: 'test@example.com',
+      password: 'password123',
+      firstName: 'John',
+      lastName: 'Doe',
+    };
+    const result = await signUp(req);
+
+    expect(result).toEqual({
+      code: 'auth/email-already-in-use',
+      message: 'Email already in use',
+    });
+
+    
+    });
   });
 });
