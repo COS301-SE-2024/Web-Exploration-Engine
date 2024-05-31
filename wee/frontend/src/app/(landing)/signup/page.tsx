@@ -1,15 +1,15 @@
 'use client'
 import React from "react";
 import ThemeSwitch from "../../components/ThemeSwitch";
-import { Button } from '@nextui-org/react';
-import {Input} from "@nextui-org/react";
 import Link from 'next/link';
+import {Modal, ModalContent, ModalBody, Button, useDisclosure, Input, Divider} from "@nextui-org/react";
 import { useState } from "react";
 import { SignUpRequest } from "../../models/AuthModels";
 import { signUp } from "../../services/AuthService";
 
-
 export default function SignUp() {
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
@@ -71,14 +71,14 @@ export default function SignUp() {
 
     
     return (
-        <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
-            <div >
-                <ThemeSwitch />
+        <>
+            <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
+                <div >
+                    <ThemeSwitch />
 
-                <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Become a Member!
-                </h1>
-
+                    <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                        Become a Member!
+                    </h1>
                 <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                     Sign up to unlock all the benefits and features we offer.
                 </h3>
@@ -104,6 +104,30 @@ export default function SignUp() {
                     <Link href={'/login'}>Log in</Link>
                 </span>
             </div>
-        </div>
+
+            {/* Verify email popup */}
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true} className="font-poppins-regular">
+                <ModalContent>
+                    <ModalBody>
+                        <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                            Verify your email address
+                        </h1>
+
+                        <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                            In order to start using your Web Exploration Engine account, you need to confirm your email address
+                        </h3>
+
+                        <div className="flex justify-center">
+
+                            <Divider className="w-[5rem]"/>
+                        </div>
+
+                        <p className="text-center text-xs text-jungleGreen-700 dark:text-jungleGreen-100 my-5">
+                            If you did not sign up for this account you can ignore this email and the account will be deleted
+                        </p>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
+        </>
     )
 }
