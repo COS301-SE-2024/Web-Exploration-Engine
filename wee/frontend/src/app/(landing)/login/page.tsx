@@ -6,8 +6,59 @@ import { Button } from '@nextui-org/react';
 import {Input} from "@nextui-org/react";
 import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
+import { useState } from 'react';
+import { LoginRequest } from '../../models/AuthModels';
+import { login } from '../../services/AuthService';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      setError('All fields are required');
+      return;
+    }
+
+    // Email validation with regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    // Create request object
+    const request: LoginRequest = {
+      email,
+      password
+    };
+
+    // Call API
+    const response = await login(request);
+
+    // Error if user does not exist
+    // Check if this is correct error code
+    if ('message' in response && response.message === 'Invalid login credentials') {
+      setError('Invalid email or password');
+      return;
+    }
+
+    if ('code' in response) {
+      setError('An error occurred. Please try again later');
+      console.log(response);
+      return;
+    }
+
+    // Redirect to home page
+    console.log('Login successful');
+    console.log(response);
+  };
+  
+
   return (
     <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
       <div >
@@ -21,14 +72,17 @@ export default function Login() {
             Log in to your account and let&apos;s get started!
           </h3>
       </div>
-
-      <div className="flex flex-col justify-center items-center">
-          <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>
-          <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/> 
-          <Button className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
+      
+      <form onSubmit={handleLogin}  className="flex flex-col justify-center items-center">
+          {error && <p className="text-red-500">{error}</p>}
+          <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+            value={email} onChange={(e) => setEmail(e.target.value)}/>
+          <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+            value={password} onChange={(e) => setPassword(e.target.value)}/> 
+          <Button type="submit" className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
               Login
           </Button>             
-      </div>
+      </form>
 
       <div className="flex flex-col justify-center items-center">
         <Divider className='mb-6'/>
