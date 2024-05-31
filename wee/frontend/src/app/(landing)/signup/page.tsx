@@ -79,9 +79,11 @@ export default function SignUp() {
                     <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                         Become a Member!
                     </h1>
-                <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-                    Sign up to unlock all the benefits and features we offer.
-                </h3>
+
+                    <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                        Sign up to unlock all the benefits and features we offer.
+                    </h3>
+                </div>
             </div>
             <form onSubmit={handleSignUp} className="flex flex-col justify-center items-center">
                 {error && <p className="text-red-500">{error}</p>}
@@ -129,5 +131,5 @@ export default function SignUp() {
                 </ModalContent>
             </Modal>
         </>
-    )
+    );
 }
