@@ -59,6 +59,7 @@ module.exports = {
         },
       },
       colors: {
+        default: '#54b38e',
         primaryBackgroundColor: '#ffffff',
         primaryTextColor: '#212121',
         jungleGreen: {
