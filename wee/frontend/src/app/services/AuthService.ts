@@ -55,8 +55,6 @@ export async function signUp(req: SignUpRequest) {
     },
   })
 
-
-
   if (error) {
     console.log(error)
     return {

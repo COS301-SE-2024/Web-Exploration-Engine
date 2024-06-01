@@ -1,17 +1,25 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import Login from '../../src/app/(landing)/login/page';
 import { login } from '../../src/app/services/AuthService';
+import { useRouter } from 'next/navigation'; 
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}));
 
 // Mocking login function
 jest.mock('../../src/app/services/AuthService', () => ({
   login: jest.fn(),
 }));
 
+
 describe('Login Component', () => {
 
-  it('should render the Login form', () => {
-    render(<Login />);
+  it('should render the Login form', async () =>  {
+    await act(async () => {
+      render(<Login />);
+    });
 
     expect(screen.getByLabelText(/Email/i)).toBeDefined();
     expect(screen.getByLabelText(/Password/i)).toBeDefined();
@@ -38,20 +46,26 @@ describe('Login Component', () => {
   });
 
   it('should call login function on valid submission', async () => {
+    const push = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({ push });
+
     (login as jest.Mock).mockResolvedValue({ accessToken: 'mockToken', uuid: 'mockUuid' });
 
-    render(<Login />);
-
+        
+    await act(async () => {
+      render(<Login />);
+    });
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    const button = screen.getByTestId('login-button');
+    expect(button).toBeDefined();
 
-    fireEvent.click(screen.getByText(/^Login$/));
-
+    fireEvent.click(button);
     expect(login).toHaveBeenCalledWith({
       email: 'test@example.com',
       password: 'password',
     });
-
     expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeNull();
+    // expect(push).toHaveBeenCalled();
   });
 });

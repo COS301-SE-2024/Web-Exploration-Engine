@@ -1,12 +1,17 @@
-import { login, signUp } from '../src/app/services/AuthService';
-import { supabase } from '../src/app/utils/supabase_anon_client';
+import { login, signUp } from '../../src/app/services/AuthService';
+import { supabase } from '../../src/app/utils/supabase_service_client';
 
-jest.mock('../src/app/utils/supabase_anon_client', () => ({
+jest.mock('../../src/app/utils/supabase_service_client', () => ({
   supabase: {
     auth: {
       signInWithPassword: jest.fn(),
       signUp: jest.fn(),
     },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      // Add other methods if needed
+    })),
   },
 }));
 

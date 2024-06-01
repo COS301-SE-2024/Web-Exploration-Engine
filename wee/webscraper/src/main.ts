@@ -17,8 +17,8 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
    // Enable CORS with specific origin
-   app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:3000'],// Allow requests from this origin
+  app.enableCors({
+    origin: true,
   });
 
   const config = new DocumentBuilder()
