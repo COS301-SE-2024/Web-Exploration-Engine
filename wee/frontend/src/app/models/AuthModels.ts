@@ -20,3 +20,20 @@ export interface ErrorResponse {
   code: string;
   message: string;
 }
+
+export interface User {
+  user: {
+    id: string;
+    aud: string;
+    role: string;
+    email: string;
+    email_confirmed_at: string;
+    phone: string;
+    confirmed_at: string;
+    last_sign_in_at: string;
+    app_metadata: {
+      provider: string;
+      providers: string[];
+    };
+  }
+}

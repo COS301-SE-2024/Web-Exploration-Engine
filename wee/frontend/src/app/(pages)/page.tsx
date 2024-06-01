@@ -10,7 +10,7 @@ export default function Home() {
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
-
+   
     const isValidUrl = (urlString: string) => {
         try {
             new URL(urlString);

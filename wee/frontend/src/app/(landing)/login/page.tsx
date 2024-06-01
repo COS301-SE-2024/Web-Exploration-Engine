@@ -6,8 +6,82 @@ import { Button } from '@nextui-org/react';
 import {Input} from "@nextui-org/react";
 import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
+import { useState } from 'react';
+import { LoginRequest, AuthResponse } from '../../models/AuthModels';
+import { login } from '../../services/AuthService';
+import { useRouter } from 'next/navigation';
+import { MdErrorOutline } from "react-icons/md"
+
+
 
 export default function Login() {
+  const router = useRouter();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!email || !password) {
+      setError('All fields are required');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Email validation with regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Create request object
+    const request: LoginRequest = {
+      email,
+      password
+    };
+
+    // Call API
+    const response = await login(request);
+
+    // Error if user does not exist
+    // Check if this is correct error code
+    if ('message' in response && response.message === 'Invalid login credentials') {
+      setError('Invalid email or password');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    if ('code' in response) {
+      setError('An error occurred. Please try again later');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    const authResponse = response as AuthResponse;
+
+    // Redirect to home page
+    router.push(`/?url=${authResponse.accessToken}&uuid=${authResponse.uuid}`);
+    
+  };
+  
+
   return (
     <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
       <div >
@@ -23,11 +97,28 @@ export default function Login() {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-          <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/>
-          <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"/> 
-          <Button className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
-              Login
-          </Button>             
+      {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[2.5rem]"></p>}
+        <Input
+          type="email"
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+        />
+        <Input
+          type="password"
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+        />
+        <Button
+          data-testid="login-button"
+          onClick={handleLogin}
+          className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+        >
+          Login
+        </Button>
       </div>
 
       <div className="flex flex-col justify-center items-center">

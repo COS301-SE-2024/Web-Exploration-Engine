@@ -1,10 +1,14 @@
 'use client'
-import React from "react";
-import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
+import React, { useEffect } from "react";
+import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
+import { supabase } from "../utils/supabase_service_client";
+import { User } from "../models/AuthModels";
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [user, setUser] = React.useState<User | null>(null);
+
 
     const menuItems = [
       "Home",
@@ -13,6 +17,28 @@ export default function NavBar() {
       // "Analytics",
       // "Log Out",
     ];
+
+    useEffect(() => {
+      const fetchUserData = async () => {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              setUser(user as unknown as User);
+          } catch (error) {
+              console.error("Error fetching user data:", error);
+          }
+      };
+  
+      fetchUserData();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+        await supabase.auth.signOut();
+        setUser(null); // Update the user state to reflect the user is signed out
+    } catch (error) {
+        console.error("Error signing out:", error);
+    }
+};
 
     return (
         <Navbar
@@ -48,19 +74,36 @@ export default function NavBar() {
         </NavbarContent>
   
         <NavbarContent justify="end">
-          <NavbarItem>
+        <NavbarItem>
             <ThemeSwitch/>
           </NavbarItem>
-          <NavbarItem className="hidden lg:flex">
-            <Button as={Link} href="/login" variant="bordered" className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor border-dark-primaryTextColor dark:border-primaryTextColor">
-              Login
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button as={Link} href="/signup" className="font-poppins-semibold dark:text-jungleGreen-400 text-jungleGreen-700 bg-dark-primaryTextColor dark:bg-dark-primaryBackgroundColor">
-              Sign Up
-            </Button>
-          </NavbarItem>
+
+          {user ? (
+              <>
+                  <NavbarItem className="hidden lg:flex">
+                    <Avatar showFallback src='https://images.unsplash.com/broken' />
+                  </NavbarItem>
+                  <NavbarItem>
+                      <Button as={Link}  variant="bordered" className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor border-dark-primaryTextColor dark:border-primaryTextColor"
+                        onClick={handleSignOut}>
+                          Log Out
+                      </Button>
+                  </NavbarItem>
+              </>
+          ) : (
+              <>
+                  <NavbarItem className="hidden lg:flex">
+                      <Button as={Link} href="/login" variant="bordered" className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor border-dark-primaryTextColor dark:border-primaryTextColor">
+                          Login
+                      </Button>
+                  </NavbarItem>
+                  <NavbarItem>
+                      <Button as={Link} href="/signup" className="font-poppins-semibold dark:text-jungleGreen-400 text-jungleGreen-700 bg-dark-primaryTextColor dark:bg-dark-primaryBackgroundColor">
+                          Sign Up
+                      </Button>
+                  </NavbarItem>
+              </>
+          )}
         </NavbarContent>
   
         <NavbarMenu>
