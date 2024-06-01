@@ -17,7 +17,7 @@ export default function RootLayout({
 
                 <div className='text-white min-h-[8rem] p-4 font-poppins-bold text-2xl sm:min-h-[15rem] md:flex-1 md:text-4xl lg:text-5xl md:m-auto'>
                   <p>Efficiently</p>
-                  <FlipWords words={['categorise', 'analyse', 'extract']}/> 
+                  <FlipWords words={['categorize', 'analyze', 'extract']}/> 
                   <p>data from the web</p>              
                 </div>
 
