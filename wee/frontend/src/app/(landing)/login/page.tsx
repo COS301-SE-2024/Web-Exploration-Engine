@@ -10,6 +10,8 @@ import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
 import { login } from '../../services/AuthService';
 import { useRouter } from 'next/navigation';
+import { MdErrorOutline } from "react-icons/md"
+
 
 
 export default function Login() {
@@ -25,14 +27,22 @@ export default function Login() {
     // Basic validation
     if (!email || !password) {
       setError('All fields are required');
-      return;
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
 
     // Email validation with regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email address');
-      return;
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
 
     // Create request object
@@ -48,13 +58,20 @@ export default function Login() {
     // Check if this is correct error code
     if ('message' in response && response.message === 'Invalid login credentials') {
       setError('Invalid email or password');
-      return;
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
 
     if ('code' in response) {
       setError('An error occurred. Please try again later');
-      console.log(response);
-      return;
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
 
     const authResponse = response as AuthResponse;
@@ -80,7 +97,7 @@ export default function Login() {
       </div>
 
       <div className="flex flex-col justify-center items-center">
-        {error && <p className="text-red-500">{error}</p>}
+      {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[2.5rem]"></p>}
         <Input
           type="email"
           label="Email"

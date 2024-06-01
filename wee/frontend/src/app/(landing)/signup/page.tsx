@@ -6,6 +6,8 @@ import {Modal, ModalContent, ModalBody, Button, useDisclosure, Input, Divider} f
 import { useState } from "react";
 import { SignUpRequest } from "../../models/AuthModels";
 import { signUp } from "../../services/AuthService";
+import { MdErrorOutline } from "react-icons/md"
+
 
 export default function SignUp() {
     const {isOpen, onOpenChange} = useDisclosure();
@@ -23,20 +25,32 @@ export default function SignUp() {
         // Basic validation
         if (!firstName || !lastName || !email || !password) {
             setError('All fields are required');
-            return;
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
 
         // Email validation with regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setError('Please enter a valid email address');
-            return;
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
 
         // Password validation
         if (password.length < 6) {
             setError('Password must be at least 6 characters long');
-            return;
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
 
         // Create request object
@@ -54,12 +68,20 @@ export default function SignUp() {
         // Check is this the correct message
         if ('message' in response && response.message === 'Email already in use') {
             setError('An account with this email already exists.');
-            return;
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
         
         if ('code' in response) {
             setError('An error occurred while signing up. Please try again later.');
-            return;
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
     };
 
@@ -78,7 +100,7 @@ export default function SignUp() {
                     </h3>
                 </div>
                 <form onSubmit={handleSignUp} className="flex flex-col justify-center items-center">
-                    {error && <p className="text-red-500">{error}</p>}
+                    {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[2.5rem]"></p>}
                     <Input type="text" label="First name" className="my-3 w-full sm:w-4/5 md:w-full lg:w-4/5"
                         value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                     <Input type="text" label="Last name" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
