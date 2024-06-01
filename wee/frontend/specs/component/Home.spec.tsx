@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Home from '../../src/app/(pages)/home/page';
+import Home from '../../src/app/(pages)/page';
 import { useRouter } from 'next/navigation';
 
 // Mock the useRouter hook

@@ -4,6 +4,7 @@ import { Input } from "@nextui-org/react";
 import { FiSearch } from "react-icons/fi";
 import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
+import { MdErrorOutline } from "react-icons/md"
 
 export default function Home() {
     const router = useRouter();
@@ -22,11 +23,21 @@ export default function Home() {
     const handleScraping = () => {
         if (!url) {
             setError('URL cannot be empty');
-            return;
+
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
         if (!isValidUrl(url)) {
             setError('Please enter a valid URL');
-            return;
+
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
         }
         setError('');
         // Navigate to Results page with the entered URL as query parameter
@@ -61,7 +72,7 @@ export default function Home() {
                     Start scraping
                 </Button>
             </div>
-            {error && <p className="mt-4 text-red-500">{error}</p>}
+            {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[2.5rem]"></p>}
         </div>
     )
 }
