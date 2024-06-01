@@ -131,7 +131,7 @@ function ResultsComponent() {
                     </TableHeader>
                     <TableBody>
                         <TableRow key="1">
-                            <TableCell>Is crawlable</TableCell>
+                            <TableCell>Crawlable</TableCell>
                             <TableCell>
                                 <Chip radius="sm" color={isCrawlable === 'Yes' ? 'success' : 'warning'} variant="flat">{isCrawlable}</Chip>
                             </TableCell>

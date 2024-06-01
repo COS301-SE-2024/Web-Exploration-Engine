@@ -45,7 +45,7 @@ export default function Home() {
     };
 
     return (
-        <div className='h-screen p-4 flex flex-col items-center'>
+        <div className='p-4 flex flex-col items-center'>
             <div className="mb-8 text-center">
                 <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                     Ready to start scraping?
