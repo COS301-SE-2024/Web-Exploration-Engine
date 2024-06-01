@@ -32,13 +32,13 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                        | Link                                                                   |
 |---------------------------------|-------------------------------------------------------------------------------|
-| Software Requirements Specification | [Details on project requirements]([documentation/software-requirements-specification.md](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link)) |
-| Architectural Specification         | [System design overview]([documentation/architecture-document.md](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link))                   |
-| Architecture Diagram                | [Visual representations]([documentation/diagram.md](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link))                                 |
-| Class Diagram                    | [Guidelines for writing code]([documentation/coding-standards.md](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link))                   |
-| Deployment Diagram                    | [Guidelines for writing code]([documentation/coding-standards.md](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link))                   |
-| Coding Standards                    | [Guidelines for writing code](documentation/coding-standards.md)                   |
-| Project Board                       | [Project tracking tools]([documentation/project-board.md](https://github.com/orgs/COS301-SE-2024/projects/71))                           |
+| Software Requirements Specification  | [Details on project requirements](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link) |
+| Architectural Specification          | [System design overview](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)                   |
+| Architecture Diagram                 | [Visual representations](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)                             |
+| Class Diagram                        | [Guidelines for writing code](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                   |
+| Deployment Diagram                   | [Guidelines for writing code](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   |
+| Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                   |
+| Project Board                        | [Project tracking tools](https://github.com/orgs/COS301-SE-2024/projects/71)                           |
 
 
   
