@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_SRV_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
 
     steps:
       - name: Code Checkout
