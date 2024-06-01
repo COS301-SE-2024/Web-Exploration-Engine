@@ -10,7 +10,7 @@ jobs:
   lint-build-test-deploy:
     runs-on: ubuntu-latest
 
-     env:
+    env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SRV_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
 
