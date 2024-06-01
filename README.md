@@ -25,20 +25,21 @@ Domain Name Services (Pty) Ltd.     </a>
 </p>
 
 
-  <h1 align="center"> Documentation </h1>
+  <h1 align="center"> Documentation and Resources </h1>
 
 <div align="center" >
 
 
-| Resource                        | Link                                                                   |
+| Resource                        | Description                                                                   |
 |---------------------------------|-------------------------------------------------------------------------------|
-| Software Requirements Specification | [Details on project requirements](documentation/software-requirements-specification.md) |
-| Coding Standards                | [Guidelines for writing code](documentation/coding-standards.md)                   |
-| Architecture Document           | [System design overview](documentation/architecture-document.md)                   |
-| Architecture Diagram            | [Visual representations](documentation/diagram.md)                                 |
-| Deployment Diagram              | [Deployment workflow](documentation/deployment-diagram.md)                         |
-| Project Board                   | [Project tracking tools](documentation/project-board.md)                           |
-| Research                        | [Project-related research](documentation/research.md)                              |
+| [Software Requirements Specification]() | Details on project requirements|
+| [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)  | Details on subsystems   |
+| [Architecture Document](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)          | System design overview  |
+| [Architecture Diagram](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)           | Visual representations of our architecture                           |
+| [Coding Standards](documentation/coding-standards.md)               | Guidelines for writing code                   |
+| [Deployment Diagram]()              | Deployment workflow                      |
+| [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71/views/3)                   | Project tracking tools                       |
+| [View all documentation](https://drive.google.com/drive/folders/1XgOCsLwyHEWbSHfm7hKvSmmVvgarLZ0M?usp=sharing)                        | Link to view all documentation in one folder                              |
 
   
 </div>
