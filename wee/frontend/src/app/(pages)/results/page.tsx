@@ -174,7 +174,7 @@ function ResultsComponent() {
             </div>
             )}
             {!logo && (
-                <p>No logo available.</p>
+                <p className='p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700'>No logo available.</p>
             )}
 
             {imageList.length > 0 && (
@@ -199,10 +199,12 @@ function ResultsComponent() {
                             ))}
                         </div>
                     </div>
-                )}
-                {imageList.length === 0 && (
-                    <p>No images available.</p>
-                )}
+            )}
+
+            {imageList.length === 0 && (
+                <p className='p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700'>No images available.</p>
+            )}
+
         </div>
     )
 }

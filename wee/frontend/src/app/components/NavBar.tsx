@@ -9,9 +9,9 @@ export default function NavBar() {
     const menuItems = [
       "Home",
       "Results",
-      "Profile",
-      "Analytics",
-      "Log Out",
+      // "Profile",
+      // "Analytics",
+      // "Log Out",
     ];
 
     return (
@@ -19,7 +19,7 @@ export default function NavBar() {
           isBordered
           isMenuOpen={isMenuOpen}
           onMenuOpenChange={setIsMenuOpen}
-          className="bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-500 dark:text-primaryTextColor"
+          className="bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
         >
         <NavbarContent className="sm:hidden" justify="start">
           <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
@@ -40,8 +40,8 @@ export default function NavBar() {
               Home
             </Link>
           </NavbarItem>
-          <NavbarItem isActive>            
-            <Link href="/results" aria-current="page">
+          <NavbarItem >            
+            <Link href="/results" className="text-dark-primaryTextColor dark:text-primaryTextColor">
               Results
             </Link>
           </NavbarItem>
@@ -52,10 +52,12 @@ export default function NavBar() {
             <ThemeSwitch/>
           </NavbarItem>
           <NavbarItem className="hidden lg:flex">
-            <Link href="/login">Login</Link>
+            <Button as={Link} href="/login" variant="bordered" className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor border-dark-primaryTextColor dark:border-primaryTextColor">
+              Login
+            </Button>
           </NavbarItem>
           <NavbarItem>
-            <Button as={Link} color="warning" href="/signup" variant="flat">
+            <Button as={Link} href="/signup" className="font-poppins-semibold dark:text-jungleGreen-400 text-jungleGreen-700 bg-dark-primaryTextColor dark:bg-dark-primaryBackgroundColor">
               Sign Up
             </Button>
           </NavbarItem>
@@ -66,9 +68,7 @@ export default function NavBar() {
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 className="w-full"
-                color={
-                  index === menuItems.length - 1 ? "danger" : "foreground"
-                }
+                color="foreground"                
                 href={item == 'Home' ? `/` : `/${item.toLowerCase()}`}
                 size="lg"
               >
