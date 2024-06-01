@@ -32,12 +32,12 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                        | Description                                                                   |
 |---------------------------------|-------------------------------------------------------------------------------|
-| [Software Requirements Specification]() | Details on project requirements|
+| [Software Requirements Specification](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link) | Details on project requirements|
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)  | Details on subsystems   |
 | [Architecture Document](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)          | System design overview  |
 | [Architecture Diagram](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)           | Visual representations of our architecture                           |
 | [Coding Standards](documentation/coding-standards.md)               | Guidelines for writing code                   |
-| [Deployment Diagram]()              | Deployment workflow                      |
+| [Deployment Diagram](https://drive.google.com/file/d/1pmDSzTYIPZ7fnkGET1D05lQ51oJ_RZN-/view?usp=drive_link)              | Deployment workflow                      |
 | [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71/views/3)                   | Project tracking tools                       |
 | [View all documentation](https://drive.google.com/drive/folders/1XgOCsLwyHEWbSHfm7hKvSmmVvgarLZ0M?usp=sharing)                        | Link to view all documentation in one folder                              |
 
