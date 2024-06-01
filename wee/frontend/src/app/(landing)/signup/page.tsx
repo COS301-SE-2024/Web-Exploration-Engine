@@ -83,6 +83,11 @@ export default function SignUp() {
 
             return () => clearTimeout(timer);
         }
+
+        if ('uuid' in response) {
+            onOpenChange();
+        }
+
     };
 
     
