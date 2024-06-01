@@ -15,6 +15,9 @@ Domain Name Services (Pty) Ltd.     </a>
 ![GitHub pull requests](https://img.shields.io/github/last-commit/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/repo-size/COS301-SE-2024/Web-Exploration-Engine)
 [![lint-build-test-deploy](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml/badge.svg?branch=master)](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml)
+
+<!-- ![NodePing uptime](https://img.shields.io/nodeping/uptime/techodyssey.co.za) -->
+
 </div>
 
 
@@ -30,16 +33,16 @@ Domain Name Services (Pty) Ltd.     </a>
 <div align="center" >
 
 
-| Resource                        | Link                                                                   |
-|---------------------------------|-------------------------------------------------------------------------------|
-| Software Requirements Specification  | [Details on project requirements](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link) |
-| Architectural Specification          | [System design overview](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)          |
-| Architecture Diagram                 | [Diagram of system overview](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)          |
+| Resource                             | Link                                                                                                                                |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| Software Requirements Specification  | [Details on project requirements](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link)            |
+| Architectural Specification          | [System design overview](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)                     |
+| Architecture Diagram                 | [Diagram of system overview](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)                 |
 | Class Diagram                        | [Visual representation of WEE structure](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)     |
-| Deployment Diagram                   | [Plan for project deployment](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)     |
-| Project Board                        | [Team organisation and progress tracking](https://github.com/orgs/COS301-SE-2024/projects/71)                           |
-| Contributing                         | [Guidelines for contributing to WEE](contributing.md)                   |
-| Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                   |
+| Deployment Diagram                   | [Plan for project deployment](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                |
+| Project Board                        | [Team organisation and progress tracking](https://github.com/orgs/COS301-SE-2024/projects/71)                                       |
+| Contributing                         | [Guidelines for contributing to WEE](contributing.md)                                                                               |
+| Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                                                                    |
 
 
   
@@ -47,8 +50,10 @@ Domain Name Services (Pty) Ltd.     </a>
 
 
 
-  <h1 align="center"> Demo 1 Video </h1>
+<h1 align="center"> Demo 1 Video </h1>
 
+  
+[Final Demo Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=sharing)
 
 
   <h1 align="center">Technologies </h1>
@@ -57,9 +62,9 @@ Domain Name Services (Pty) Ltd.     </a>
 <p>Frontend</p>
   <img src="https://skillicons.dev/icons?i=tailwindcss,typescript,react,nextjs"/>
 <p>Backend</p>
-    <img src="https://skillicons.dev/icons?i=typescript,nestjs,tensorflow,postgres"/>
+    <img src="https://skillicons.dev/icons?i=typescript,nestjs,supabase,tensorflow,postgres"/>
 <p>Project Management & Deployment</p>
-   <img src="https://skillicons.dev/icons?i=nx,npm,docker,git,nestjs"/>
+   <img src="https://skillicons.dev/icons?i=npm,docker,git,githubactions"/>
 <p>Testing</p>
     <img src="https://skillicons.dev/icons?i=jest,cypress,postman"/>
   </div>
@@ -68,10 +73,8 @@ Domain Name Services (Pty) Ltd.     </a>
 
 
 
+<br>
 
-<p align="center">
-  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="150" height="auto">
-</p>
 <h1 align="center">Meet Tech Odyssey</h1>
 <p align="center">
   <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/87725bdf-1b1e-4599-b637-a97dbf9bdfb7" width="600" height="auto" style="display: block; margin: 0 auto;">
