@@ -40,6 +40,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | Architecture Diagram                 | [Diagram of system overview](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)                 |
 | Class Diagram                        | [Visual representation of WEE structure](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)     |
 | Deployment Diagram                   | [Plan for project deployment](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                |
+| Demo 1 Video                         | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link)                               |
 | Project Board                        | [Team organisation and progress tracking](https://github.com/orgs/COS301-SE-2024/projects/71)                                       |
 | Contributing                         | [Guidelines for contributing to WEE](contributing.md)                                                                               |
 | Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                                                                    |
@@ -48,12 +49,6 @@ Domain Name Services (Pty) Ltd.     </a>
   
 </div>
 
-
-
-<h1 align="center"> Demo 1 Video </h1>
-
-  
-[Final Demo Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=sharing)
 
 
   <h1 align="center">Technologies </h1>
