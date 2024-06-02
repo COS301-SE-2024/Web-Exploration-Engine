@@ -115,6 +115,57 @@ describe('IndustryController', () => {
     });
 
 
+    it('should return metadata when URL is provided - ChatGPT', async () => {
+      const url = 'https://www.chatgpt.com/$';
+      const metadata = {
+        title: "",
+        description: null,
+        keywords: null,
+        ogTitle: null,
+        ogDescription: null,
+        ogImage: null
+      };
+      const industry = "No classification";
+
+      jest.spyOn(service, 'scrapeMetadata').mockResolvedValue({ metadata, industry });
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      await controller.handleScrapeMetadata(url, res as any);
+
+      expect(res.status).toHaveBeenCalledWith(HttpStatus.OK);
+      expect(res.json).toHaveBeenCalledWith({ metadata, industry });
+    });
+
+    it('should return metadata when URL is provided - TheHealthSite', async () => {
+      const url = 'https://www.thehealthsite.com/';
+      const metadata = {
+        title: "Health Tips, Health Care and Fitness Tips, Health News | TheHealthSite.com",
+        description: "Complete health guide which includes fitness, beauty, diet, yoga, weight training, pregnancy, parenting, diseases & home remedies. Get weight loss tips, food & healthy recipes. Also watch health related videos at thehealthsite.com",
+        keywords: "health,diet and fitness,health and fitness,weight loss,healthy recipes,beauty tips,home remedies,health articles,diseases and conditions,health videos,workout tips,weight training,beauty home remedies,yoga asanas",
+        ogTitle: "Health Tips, Health Care and Fitness Tips, Health News | TheHealthSite.com",
+        ogDescription: "Complete health guide which includes fitness, beauty, diet, yoga, weight training, pregnancy, parenting, diseases & home remedies. Get weight loss tips, food & healthy recipes. Also watch health related videos at thehealthsite.com",
+        ogImage: "https://st1.thehealthsite.com/wp-content/uploads/2015/05/Banner_01.jpg"
+      };
+      const industry = "Healthcare";
+
+      jest.spyOn(service, 'scrapeMetadata').mockResolvedValue({ metadata, industry });
+
+      const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+
+      await controller.handleScrapeMetadata(url, res as any);
+
+      expect(res.status).toHaveBeenCalledWith(HttpStatus.OK);
+      expect(res.json).toHaveBeenCalledWith({ metadata, industry });
+    });
+
+
   });
 
 
