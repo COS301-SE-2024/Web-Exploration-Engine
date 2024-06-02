@@ -15,6 +15,8 @@ Domain Name Services (Pty) Ltd.     </a>
 ![GitHub pull requests](https://img.shields.io/github/last-commit/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/repo-size/COS301-SE-2024/Web-Exploration-Engine)
 [![lint-build-test-deploy](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml/badge.svg?branch=master)](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml)
+[![codecov](https://codecov.io/gh/COS301-SE-2024/Web-Exploration-Engine/graph/badge.svg?token=YpKw4Ek8cq)](https://codecov.io/gh/COS301-SE-2024/Web-Exploration-Engine)
+
 </div>
 
 
