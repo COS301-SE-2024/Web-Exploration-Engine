@@ -50,8 +50,8 @@ jobs:
       - name: Test
         run: |
           cd wee    
-          npx nx test webscraper
-          npx nx test frontend
+          npx nx test webscraper --coverage=true
+          npx nx test frontend --coverage=true
           echo "================== test complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
         #continue-on-error: true
