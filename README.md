@@ -42,7 +42,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | Deployment Diagram                   | [Plan for project deployment](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                |
 | Demo 1 Video                         | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link)                               |
 | Project Board                        | [Team organisation and progress tracking](https://github.com/orgs/COS301-SE-2024/projects/71)                                       |
-| Contributing                         | [Guidelines for contributing to WEE](contributing.md)                                                                               |
+| Contributing                         | [Guidelines for contributing to WEE](CONTRIBUTING.md)                                                                               |
 | Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                                                                    |
 
 
