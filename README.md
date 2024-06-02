@@ -28,7 +28,7 @@ Domain Name Services (Pty) Ltd.     </a>
 </p>
 
 
-  <h1 align="center"> Documentation </h1>
+  <h1 align="center"> Documentation and Resources </h1>
 
 <div align="center" >
 
@@ -44,7 +44,6 @@ Domain Name Services (Pty) Ltd.     </a>
 | Project Board                        | [Team organisation and progress tracking](https://github.com/orgs/COS301-SE-2024/projects/71)                                       |
 | Contributing                         | [Guidelines for contributing to WEE](CONTRIBUTING.md)                                                                               |
 | Coding Standards                     | [Guidelines for writing code](documentation/coding-standards.md)                                                                    |
-
 
   
 </div>

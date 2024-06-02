@@ -10,6 +10,10 @@ jobs:
   lint-build-test-deploy:
     runs-on: ubuntu-latest
 
+    env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+
     steps:
       - name: Code Checkout
         uses: actions/checkout@v2
@@ -23,24 +27,39 @@ jobs:
       - name: Install dependencies
         run:  |
           cd wee && npm install
-
+          
       - name: Lint
         run: |
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
-          
-        #continue-on-error: true
-
-      - name: Build
-        run: |
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
+          cd wee
+          npx nx lint webscraper
+          npx nx lint frontend
+          echo "================== lint complete =================="
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
         #continue-on-error: true
 
       - name: Test
         run: |
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
+          cd wee    
+          npx nx test webscraper
+          npx nx test frontend
+          echo "================== test complete =================="
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
         #continue-on-error: true
+
+        
+      - name: Build
+        run: |
+          cd wee
+          npx nx build webscraper
+          npx nx build frontend
+          echo "================== build complete =================="
+          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+          
+        #continue-on-error: true
+
 
       - name: Deploy
         run: |
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
+          echo "================== test complete =================="
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
         #continue-on-error: true
