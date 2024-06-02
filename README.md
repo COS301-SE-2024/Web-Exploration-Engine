@@ -34,7 +34,7 @@ Domain Name Services (Pty) Ltd.     </a>
 <div align="center" >
 
 
-| Resource                             | Link                                                                                                                                |
+| Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | [Software Requirements Specification](https://drive.google.com/file/d/1SIfKK4d5_f3lxxtSpEv-k2myBYSQJW7H/view?usp=drive_link)  | Details on project requirements            |
 | [Architectural Specification](https://drive.google.com/file/d/1QCfD2HvfU_gTcmQn_UaTrwcKcE-vauE_/view?usp=drive_link)          | System design overview                     |
