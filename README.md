@@ -46,12 +46,10 @@ Domain Name Services (Pty) Ltd.     </a>
 <div align="center" >
 
 
-| Resource                        | 
-|---------------------------------|
-| [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) |
-| [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)  |
+| Demo                        | Video | Slides |
+|---------------------------------|---------------------------------|---------------------------------|
+| Demo 1 | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 
-  
 </div>
 
   <h1 align="center">Technologies </h1>
