@@ -48,7 +48,7 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                        | 
 |---------------------------------|
-| [Demo 1 Video]([https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link)) |
+| [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) |
 | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)  |
 
   
