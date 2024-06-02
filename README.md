@@ -41,6 +41,16 @@ Domain Name Services (Pty) Ltd.     </a>
 | [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71/views/3)                   | Project tracking tools                       |
 | [View all documentation](https://drive.google.com/drive/folders/1XgOCsLwyHEWbSHfm7hKvSmmVvgarLZ0M?usp=sharing)                        | Link to view all documentation in one folder                              |
 
+ <h1 align="center"> Demo Resources </h1>
+
+<div align="center" >
+
+
+| Resource                        | 
+|---------------------------------|
+| [Demo 1 Video]([https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link)) |
+| [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)  |
+
   
 </div>
 
