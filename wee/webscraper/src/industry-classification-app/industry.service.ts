@@ -82,7 +82,7 @@ export class IndustryService {
     return industryName;
   }
 
-  async checkAllowed(url: string): Promise<boolean> {
+   async  checkAllowed(url: string): Promise<boolean> {
     const paths = await extractAllowedPaths(url);
     // Extract the path from the URL
     const urlObject = new URL(url);
