@@ -8,14 +8,15 @@ Domain Name Services (Pty) Ltd.     </a>
   </h3>
 
 <div align="center">
-  
+
 ![GitHub issues](https://img.shields.io/github/issues/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/languages/count/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/last-commit/COS301-SE-2024/Web-Exploration-Engine)
 ![GitHub pull requests](https://img.shields.io/github/repo-size/COS301-SE-2024/Web-Exploration-Engine)
 [![lint-build-test-deploy](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml/badge.svg?branch=master)](https://github.com/COS301-SE-2024/Web-Exploration-Engine/actions/workflows/main.yaml)
-</div>
+[![codecov](https://codecov.io/gh/COS301-SE-2024/Web-Exploration-Engine/graph/badge.svg?token=YpKw4Ek8cq)](https://codecov.io/gh/COS301-SE-2024/Web-Exploration-Engine)
+
 
 
 
@@ -30,16 +31,16 @@ Domain Name Services (Pty) Ltd.     </a>
 <div align="center" >
 
 
-| Resource                        | Description                                                                   |
-|---------------------------------|-------------------------------------------------------------------------------|
-| [Software Requirements Specification](https://drive.google.com/file/d/16kiRwl5eHVP-V9YrZT4Y8Iqn01-1G1iX/view?usp=drive_link) | Details on project requirements|
-| [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)  | Details on subsystems   |
-| [Architecture Document](https://drive.google.com/file/d/1D_FA_h3FgwasQ_4Nm36L8gM3ZiPhjlf-/view?usp=drive_link)          | System design overview  |
-| [Architecture Diagram](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)           | Visual representations of our architecture                           |
-| [Coding Standards](documentation/coding-standards.md)               | Guidelines for writing code                   |
-| [Deployment Diagram](https://drive.google.com/file/d/1pmDSzTYIPZ7fnkGET1D05lQ51oJ_RZN-/view?usp=drive_link)              | Deployment workflow                      |
-| [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71/views/3)                   | Project tracking tools                       |
-| [View all documentation](https://drive.google.com/drive/folders/1XgOCsLwyHEWbSHfm7hKvSmmVvgarLZ0M?usp=sharing)                        | Link to view all documentation in one folder                              |
+| Resource                             | Description                                                                                                                         |
+|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| [Software Requirements Specification](https://drive.google.com/file/d/1SIfKK4d5_f3lxxtSpEv-k2myBYSQJW7H/view?usp=drive_link)  | Details on project requirements            |
+| [Architectural Specification](https://drive.google.com/file/d/1QCfD2HvfU_gTcmQn_UaTrwcKcE-vauE_/view?usp=drive_link)          | System design overview                     |
+| [Architecture Diagram](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)                 | Diagram of system overview                 |
+| [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
+| [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
+| [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71)                                                           | Team organisation and progress tracking    |
+| [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
+| [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
 
  <h1 align="center"> Demo Resources </h1>
 
@@ -52,16 +53,29 @@ Domain Name Services (Pty) Ltd.     </a>
 
 </div>
 
+
+ <h1 align="center"> Demo Resources </h1>
+
+<div align="center" >
+
+
+| Demo                        | Video | Slides |
+|---------------------------------|---------------------------------|---------------------------------|
+| Demo 1  | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
+
+</div>
+
+
+
   <h1 align="center">Technologies </h1>
   <div align="Center">
 
 <p>Frontend</p>
   <img src="https://skillicons.dev/icons?i=tailwindcss,typescript,react,nextjs"/>
 <p>Backend</p>
-    <img src="https://skillicons.dev/icons?i=typescript,nestjs,tensorflow,postgres"/>
-    
+    <img src="https://skillicons.dev/icons?i=typescript,nestjs,supabase,tensorflow,postgres"/>
 <p>Project Management & Deployment</p>
-   <img src="https://skillicons.dev/icons?i=npm,docker,git,nestjs"/>
+   <img src="https://skillicons.dev/icons?i=npm,docker,git,githubactions"/>
 <p>Testing</p>
     <img src="https://skillicons.dev/icons?i=jest,cypress,postman"/>
   </div>
@@ -70,10 +84,8 @@ Domain Name Services (Pty) Ltd.     </a>
 
 
 
+<br>
 
-<p align="center">
-  <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7688d67d-ddc7-4ef2-abc4-1b5ebb145d96" width="150" height="auto">
-</p>
 <h1 align="center">Meet Tech Odyssey</h1>
 <p align="center">
   <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/87725bdf-1b1e-4599-b637-a97dbf9bdfb7" width="600" height="auto" style="display: block; margin: 0 auto;">

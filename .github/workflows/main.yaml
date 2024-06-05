@@ -37,16 +37,6 @@ jobs:
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
         #continue-on-error: true
 
-      - name: Test
-        run: |
-          cd wee    
-          npx nx test webscraper
-          npx nx test frontend
-          echo "================== test complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
-        #continue-on-error: true
-
-        
       - name: Build
         run: |
           cd wee
@@ -57,6 +47,19 @@ jobs:
           
         #continue-on-error: true
 
+      - name: Test
+        run: |
+          cd wee    
+          npx nx test webscraper --coverage=true
+          npx nx test frontend --coverage=true
+          echo "================== test complete =================="
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
+        #continue-on-error: true
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Deploy
         run: |
