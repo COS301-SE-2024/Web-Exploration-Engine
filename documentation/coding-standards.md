@@ -15,11 +15,12 @@
    
 | Resource                       | Link                                                       |
 |--------------------------------|------------------------------------------------------------|
-| Coding Standards               | [The first item](#1-coding-standards)                |
-| Code Layout and Structure      | [The second item](#2-code-layout-and-structure)      |
-| Error Handling                 | [The third title](#3-error-handling)                 |
-| Testing and Debugging          | [The third title](#4-testing-and-debugging)          |
-| Git Repository and Strategy    | [The third title](#5-git-repository-and-strategy)    |
+| Naming Standards               | [Guidelines on nameing files and variables](#1-coding-standards)    |
+| Code Structure                 | [Code Layout and Structure](#2-code-layout-and-structure)           |
+| Error Handling                 | [Guidelines on handling errors](#3-error-handling)                  |
+| Testing Standards              | [Guidelines on testing and debugging](#4-testing-and-debugging)     |
+| Git and GitHub Standards       | [Repository management](#5-git-repository-and-strategy)             |
+
 </div>
 
 
