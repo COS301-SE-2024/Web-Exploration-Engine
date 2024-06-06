@@ -26,7 +26,6 @@ export class IndustryService {
     //  const paths = extractAllowedPaths(url);
 
     const allowed = await IndustryService.checkAllowed(url);
-    console.log('Is scraping allowed?', allowed);
 
     if (!allowed) {
       throw new Error('URL IS NOT ALLOWED TO SCRAPE');
@@ -36,14 +35,11 @@ export class IndustryService {
     console.log(allowed);
 
     const browser = await puppeteer.launch();
-    console.log('Browser launched');
 
     const page = await browser.newPage();
-    console.log('New page created');
 
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded' });
-      console.log('Page loaded');
 
       const metadata = await page.evaluate(() => {
         const getMetaTagContent = (name: string) => {
@@ -63,14 +59,9 @@ export class IndustryService {
         };
       });
 
-      console.log('Metadata extracted:', metadata);
-
       const industry: string =await this.classifyIndustry(metadata);
 
-      console.log('Industry classified:', industry);
-
       await browser.close();
-      console.log('Browser closed');
 
        console.log(industry);
       return { metadata, industry };
@@ -83,10 +74,8 @@ export class IndustryService {
 
 
   private async classifyIndustry(metadata: Metadata):  Promise<string> {
-    console.log('Classifying industry with metadata:', metadata);
 
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
-    console.log('Input text for classification:', inputText);
 
     try {
     const response = await axios.post(
