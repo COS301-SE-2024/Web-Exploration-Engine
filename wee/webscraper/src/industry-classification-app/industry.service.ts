@@ -102,8 +102,9 @@ export class IndustryService {
 
     console.log('Response from Hugging Face API:', response.data);
 
-    if (response.data && response.data[0]) {
-      return response.data[0].label;
+    if (response.data && response.data[0][0]) {
+      console.log('this is our final classification',response.data[0][0].label);
+      return response.data[0][0].label;
     } else {
       throw new Error('Failed to classify industry using Hugging Face model');
     }
