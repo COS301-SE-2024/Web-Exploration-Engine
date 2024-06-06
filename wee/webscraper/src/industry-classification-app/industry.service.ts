@@ -15,7 +15,8 @@ interface Metadata {
 @Injectable()
 export class IndustryService {
 
-  private readonly HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification';
+  private readonly HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
+
   private readonly HUGGING_FACE_API_TOKEN = process.env.access_Token;
 
   //this function scrapes the website and returns metadata and metadata
@@ -97,6 +98,7 @@ export class IndustryService {
         },
       }
     );
+
 
     console.log('Response from Hugging Face API:', response.data);
 
