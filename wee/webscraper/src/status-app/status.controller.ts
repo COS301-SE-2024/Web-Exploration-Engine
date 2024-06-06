@@ -11,21 +11,23 @@ import { StatusService } from './status.service';
 export class StatusController {
     constructor(private readonly scrapingService: StatusService) {}
 
-    @ApiOperation({ summary: 'Check if crawling is allowed for a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL to check crawling permissions for', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns true if crawling is allowed, otherwise false.', type: Boolean })
+    @ApiOperation({ summary: 'Check if crawling is allowed for given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs to check crawling permissions for', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of booleans indicating if crawling is allowed for each URL.', type: [Boolean] })
     @ApiResponse({ status: 403, description: 'Crawling not allowed or robots.txt not accessible.' })
     @Get('/isCrawlingAllowed')
-    async isCrawlingAllowed(@Query('url') url: string): Promise<boolean> {
-        return isCrawlingAllowed(url);
+    async isCrawlingAllowed(@Query('urls') urls: string[]): Promise<boolean[]> {
+        const crawlingPromises = urls.map(url => isCrawlingAllowed(url));
+        return Promise.all(crawlingPromises);
     }
 
-    @ApiOperation({ summary: 'Check the status of a website at a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL of the website to check', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns true if the website is reachable and status is 2xx, otherwise false.', type: Boolean })
+    @ApiOperation({ summary: 'Check the status of websites at given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs of the websites to check', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of booleans indicating if each website is reachable and status is 2xx.', type: [Boolean] })
     @ApiResponse({ status: 500, description: 'Failed to check the website status.' })
     @Get('/status')
-    async checkWebsiteStatus(@Query('url') url: string): Promise<boolean> {
-        return this.scrapingService.status(url);
+    async checkWebsiteStatus(@Query('urls') urls: string[]): Promise<boolean[]> {
+        const statusPromises = urls.map(url => this.scrapingService.status(url));
+        return Promise.all(statusPromises);
     }
 }
