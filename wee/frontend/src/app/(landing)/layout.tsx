@@ -13,15 +13,15 @@ export default function RootLayout({
         <body>
           <Providers>
             <BackgroundGradientAnimation>
-              <div className="absolute z-50 inset-0 md:flex md:min-h-screen">
+              <div className="absolute z-50 inset-0 flex flex-col min-h-screen md:flex-row overflow-y-auto">
 
-                <div className='text-white min-h-[8rem] p-4 font-poppins-bold text-2xl sm:min-h-[15rem] md:flex-1 md:text-4xl lg:text-5xl md:m-auto'>
+                <div className='flex-1 p-4 text-2xl font-bold text-white sm:min-h-[15rem] md:m-auto md:text-4xl lg:text-5xl min-h-[8rem] font-poppins-bold'>
                   <p>Efficiently</p>
                   <FlipWords words={['categorize', 'analyze', 'extract']}/> 
                   <p>data from the web</p>              
                 </div>
 
-                <div className='p-4 bg-primaryBackgroundColor text-primaryTextColor rounded-t-2xl min-h-[calc(100vh-8rem)] dark:bg-dark-primaryBackgroundColor dark:text-dark-primaryTextColor sm:min-h-[calc(100vh-15rem)] md:flex-1 md:rounded-l-2xl md:rounded-r-none'>
+                <div className='flex-1 p-4 bg-primaryBackgroundColor text-primaryTextColor rounded-t-2xl dark:bg-dark-primaryBackgroundColor dark:text-dark-primaryTextColor md:rounded-l-2xl md:rounded-r-none'> 
                   {children}
                 </div>
                 
