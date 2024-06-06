@@ -8,42 +8,46 @@ import { ImagesService } from './images.service';
 export class ImagesController {
     constructor(private readonly scrapingService: ImagesService) {}
 
-    @ApiOperation({ summary: 'Check if crawling is allowed for a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL to check crawling permissions for', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns true if crawling is allowed, otherwise false.' })
+    @ApiOperation({ summary: 'Check if crawling is allowed for given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs to check crawling permissions for', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of booleans indicating if crawling is allowed for each URL.' })
     @ApiResponse({ status: 403, description: 'Crawling not allowed or robots.txt not accessible.' })
     @Get('/isCrawlingAllowed')
-    async isCrawlingAllowed(@Query('url') url: string): Promise<boolean> {
-        return isCrawlingAllowed(url);
+    async isCrawlingAllowed(@Query('urls') urls: string[]): Promise<boolean[]> {
+        const results = await Promise.all(urls.map(url => isCrawlingAllowed(url)));
+        return results;
     }
 
-    @ApiOperation({ summary: 'Scrape images from a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL to scrape images from', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns an array of image URLs', type: [String] })
+    @ApiOperation({ summary: 'Scrape images from given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs to scrape images from', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of arrays of image URLs', type: [String] })
     @ApiResponse({ status: 403, description: 'Crawling not allowed or robots.txt not accessible.' })
     @ApiResponse({ status: 500, description: 'Failed to scrape images.' })
     @Get('/scrapeImages')
-    async scrapeImages(@Query('url') url: string): Promise<string[]> {
-        return this.scrapingService.scrapeImages(url);
+    async scrapeImages(@Query('urls') urls: string[]): Promise<string[][]> {
+        const results = await Promise.all(urls.map(url => this.scrapingService.scrapeImages(url)));
+        return results;
     }
 
-    @ApiOperation({ summary: 'Scrape logos from a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL to scrape logos from', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns the URL of the logo if found, otherwise null', type: String })
+    @ApiOperation({ summary: 'Scrape logos from given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs to scrape logos from', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of logo URLs or null if no logo is found', type: [String] })
     @ApiResponse({ status: 403, description: 'Crawling not allowed or robots.txt not accessible.' })
     @ApiResponse({ status: 500, description: 'Failed to scrape logos.' })
     @Get('/scrapeLogos')
-    async scrapeLogos(@Query('url') url: string): Promise<string | null> { 
-        return this.scrapingService.scrapeLogos(url);
+    async scrapeLogos(@Query('urls') urls: string[]): Promise<(string | null)[]> {
+        const results = await Promise.all(urls.map(url => this.scrapingService.scrapeLogos(url)));
+        return results;
     }
 
-    @ApiOperation({ summary: 'Scrape metadata from a given URL' })
-    @ApiQuery({ name: 'url', description: 'The URL to scrape metadata from', required: true, type: String })
-    @ApiResponse({ status: 200, description: 'Returns an object containing the scraped metadata', type: Object })
+    @ApiOperation({ summary: 'Scrape metadata from given URLs' })
+    @ApiQuery({ name: 'urls', description: 'The URLs to scrape metadata from', required: true, type: [String] })
+    @ApiResponse({ status: 200, description: 'Returns an array of objects containing the scraped metadata', type: [Object] })
     @ApiResponse({ status: 403, description: 'Crawling not allowed or robots.txt not accessible.' })
     @ApiResponse({ status: 500, description: 'Failed to scrape metadata.' })
-    @Get('/scrape-metadata')
-    async scrapeMetadata(@Query('url') url: string): Promise<any> {
-        return this.scrapingService.scrapeMetadata(url);
+    @Get('/scrapeMetadata')
+    async scrapeMetadata(@Query('urls') urls: string[]): Promise<any[]> {
+        const results = await Promise.all(urls.map(url => this.scrapingService.scrapeMetadata(url)));
+        return results;
     }
 }
