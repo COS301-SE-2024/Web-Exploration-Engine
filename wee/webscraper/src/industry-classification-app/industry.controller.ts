@@ -36,7 +36,7 @@ export class IndustryController {
       console.error('Error scraping metadata:', error);
       res
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ error: 'Cannot Scrape this URL' });
+        .json({ error: 'Cannot Scrape this Website' });
     }
   }
 
