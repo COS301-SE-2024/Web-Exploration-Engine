@@ -12,7 +12,7 @@ describe('IndustryService', () => {
 
   beforeEach(() => {
     service = new IndustryService();
-    process.env.access_Token = '';
+    
   });
 
   afterEach(() => {
