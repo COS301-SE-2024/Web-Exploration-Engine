@@ -54,8 +54,7 @@ describe('IndustryService', () => {
 
       const result = await service.scrapeMetadata(mockUrl);
 
-      console.log('Scraped Metadata:', result.metadata);
-      console.log('Classified Industry:', result.industry);
+   
 
       expect(result.metadata).toEqual(mockMetadata);
       expect(result.industry).toBe('Internet & Direct Marketing Retail');
