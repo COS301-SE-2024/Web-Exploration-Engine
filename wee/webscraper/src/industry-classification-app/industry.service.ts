@@ -14,6 +14,9 @@ interface Metadata {
 
 @Injectable()
 export class IndustryService {
+  static scrapeMetadata(mockUrl: string) {
+    throw new Error('Method not implemented.');
+  }
 
   private readonly HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
@@ -30,14 +33,11 @@ export class IndustryService {
     if (!allowed) {
       throw new Error('URL IS NOT ALLOWED TO SCRAPE');
     }
-    console.log(this.HUGGING_FACE_API_TOKEN);
 
-    console.log(allowed);
+
 
     const browser = await puppeteer.launch();
-
     const page = await browser.newPage();
-
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded' });
 
@@ -59,12 +59,31 @@ export class IndustryService {
         };
       });
 
-      const industry: string =await this.classifyIndustry(metadata);
+      const tryClassifyIndustry = async (metadata: any): Promise<string> => {
+        let attempt = 0;
+        while (attempt < 2) {
+          try {
+            const industry: string = await this.classifyIndustry(metadata);
+            return industry;
+          } catch (error) {
+            attempt++;
+            if (attempt === 2) {
+              console.error('Classification failed after two attempts:', error);
+              return 'No classification';
+            }
+          }
+        }
+        return 'No classification'; // This line will never be reached but is needed to satisfy TypeScript's type checker.
+      };
+
+
+      const industry: string = await tryClassifyIndustry(metadata);
 
       await browser.close();
 
-       console.log(industry);
-      return { metadata, industry };
+
+
+      return { metadata, industry};
     } catch (error) {
       throw new Error('Error scraping metadata');
     } finally {
@@ -89,10 +108,9 @@ export class IndustryService {
     );
 
 
-    console.log('Response from Hugging Face API:', response.data);
+    //console.log('Response from Hugging Face API:', response.data);
 
     if (response.data && response.data[0][0]) {
-      console.log('this is our final classification',response.data[0][0].label);
       return response.data[0][0].label;
     } else {
       throw new Error('Failed to classify industry using Hugging Face model');
