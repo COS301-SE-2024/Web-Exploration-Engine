@@ -12,7 +12,7 @@ describe('IndustryService', () => {
 
   beforeEach(() => {
     service = new IndustryService();
-    process.env.access_Token = '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';
+    process.env.access_Token = '';
   });
 
   afterEach(() => {
@@ -54,7 +54,7 @@ describe('IndustryService', () => {
 
       const result = await service.scrapeMetadata(mockUrl);
 
-   
+
 
       expect(result.metadata).toEqual(mockMetadata);
       expect(result.industry).toBe('Internet & Direct Marketing Retail');
