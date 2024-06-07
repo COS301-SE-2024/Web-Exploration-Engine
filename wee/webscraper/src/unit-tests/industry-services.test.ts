@@ -21,7 +21,6 @@ describe('IndustryService', () => {
 
   describe('scrapeMetadata', () => {
     it('should scrape metadata and classify industry successfully', async () => {
-
       jest.setTimeout(60000);
       const mockUrl = 'https://www.takealot.co.za';
       const mockMetadata = {
@@ -50,12 +49,10 @@ describe('IndustryService', () => {
       (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
 
       (axios.post as jest.Mock).mockResolvedValue({
-        data: [{ label: 'Internet & Direct Marketing Retail' }],
+        data: [[{ label: 'Internet & Direct Marketing Retail' }]],
       });
 
       const result = await service.scrapeMetadata(mockUrl);
-
-     console.log('Classified results:', result);
 
       console.log('Scraped Metadata:', result.metadata);
       console.log('Classified Industry:', result.industry);
@@ -92,30 +89,33 @@ describe('IndustryService', () => {
   });
 
   describe('classifyIndustry', () => {
-    // it('should classify industry successfully', async () => {
-    //   const mockMetadata = {
-    //         title: "Takealot.com: Online Shopping | SA's leading online store",
-    //         description:
-    //           "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
-    //         keywords: null,
-    //         ogTitle: "Takealot.com: Online Shopping | SA's leading online store",
-    //         ogDescription:
-    //           "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
-    //         ogImage: 'https://www.takealot.com/static/images/logo_transparent.png',
-    //       };
-    //   const mockResponse = {
-    //     data: [[[{ label: 'Internet & Direct Marketing Retail' }]]],
-    //   };
-    //   (axios.post as jest.Mock).mockResolvedValue(mockResponse);
-    //   const result = await service['classifyIndustry'](mockMetadata);
-    //   expect(result).toBe('Internet & Direct Marketing Retail');
-    //   expect(axios.post).toHaveBeenCalledWith(
-    //     service['HUGGING_FACE_API_URL'],
-    //     { inputs: 'Test Title Test Description test,keywords' },
-    //     { headers: { Authorization: 'Bearer test_token' } }
-    //   );
-    // });
+    it('should classify industry successfully', async () => {
+      const mockMetadata = {
+        title: "Takealot.com: Online Shopping | SA's leading online store",
+        description:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        keywords: null,
+        ogTitle: "Takealot.com: Online Shopping | SA's leading online store",
+        ogDescription:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        ogImage: 'https://www.takealot.com/static/images/logo_transparent.png',
+      };
 
+      const mockResponse = {
+        data: [[{ label: 'Internet & Direct Marketing Retail' }]],
+      };
+
+      (axios.post as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await service['classifyIndustry'](mockMetadata);
+
+      expect(result).toBe('Internet & Direct Marketing Retail');
+      expect(axios.post).toHaveBeenCalledWith(
+        service['HUGGING_FACE_API_URL'],
+        { inputs: expect.stringContaining('Takealot') },
+        { headers: { Authorization: `Bearer ${process.env.access_Token}` } }
+      );
+    });
   });
 
   describe('checkAllowed', () => {
@@ -126,14 +126,12 @@ describe('IndustryService', () => {
       expect(result).toBe(true);
     });
 
-
     it('should return false if path is not allowed', async () => {
       const mockUrl = 'https://example.com/not-allowed';
       (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path']));
       const result = await IndustryService.checkAllowed(mockUrl);
       expect(result).toBe(false);
     });
-
 
     it('should return true if wildcard path is allowed', async () => {
       const mockUrl = 'https://example.com/allowed-path/subpath';
