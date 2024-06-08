@@ -3,6 +3,16 @@ import puppeteer from 'puppeteer';
 import axios from 'axios';
 import { extractAllowedPaths } from '../robots-app/robots';
 
+
+interface Metadata {
+  title: string | null;
+  description: string | null;
+  keywords: string | null;
+  ogTitle: string | null;
+  ogDescription: string | null;
+  ogImage: string | null;
+}
+
 jest.mock('puppeteer');
 jest.mock('axios');
 jest.mock('../robots-app/robots');
@@ -158,6 +168,71 @@ describe('IndustryService', () => {
       );
       const result = await IndustryService.checkAllowed(mockUrl);
       expect(result).toBe(true);
+    });
+  });
+
+
+  describe('tryClassifyIndustry', () => {
+    it('should classify industry successfully on first attempt', async () => {
+      const mockMetadata: Metadata = {
+        title: 'Mock Title',
+        description: 'Mock Description',
+        keywords: 'Mock Keywords',
+        ogTitle: null,
+        ogDescription: null,
+        ogImage: null,
+      };
+      const expectedIndustry = 'Some Industry';
+
+      // Mock the classifyIndustry function to succeed
+      const service = new IndustryService();
+      service['classifyIndustry'] = jest.fn().mockResolvedValueOnce(expectedIndustry);
+
+      const result = await service['tryClassifyIndustry'](mockMetadata);
+
+      expect(result).toBe(expectedIndustry);
+    });
+
+    it('should retry and classify industry successfully after one failed attempt', async () => {
+      const mockMetadata: Metadata = {
+        title: 'Mock Title',
+        description: 'Mock Description',
+        keywords: 'Mock Keywords',
+        ogTitle: null,
+        ogDescription: null,
+        ogImage: null,
+      };
+      const expectedIndustry = 'Some Industry';
+
+      // Mock the classifyIndustry function to fail once and then succeed
+      const service = new IndustryService();
+      service['classifyIndustry'] = jest.fn()
+        .mockRejectedValueOnce(new Error('Error on first attempt'))
+        .mockResolvedValueOnce(expectedIndustry);
+
+      const result = await service['tryClassifyIndustry'](mockMetadata);
+
+      expect(result).toBe(expectedIndustry);
+    });
+
+    it('should return "No classification" after two failed attempts', async () => {
+      const mockMetadata: Metadata = {
+        title: 'Mock Title',
+        description: 'Mock Description',
+        keywords: 'Mock Keywords',
+        ogTitle: null,
+        ogDescription: null,
+        ogImage: null,
+      };
+
+
+      // Mock the classifyIndustry function to fail twice
+      const service = new IndustryService();
+      service['classifyIndustry'] = jest.fn().mockRejectedValue(new Error('Error on every attempt'));
+
+      const result = await service['tryClassifyIndustry'](mockMetadata);
+
+      expect(result).toBe('No classification');
     });
   });
 });
