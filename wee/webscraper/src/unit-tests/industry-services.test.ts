@@ -1,125 +1,141 @@
 import { IndustryService } from '../industry-classification-app/industry.service';
-import * as robots from '../robots-app/robots';
-import * as puppeteer from 'puppeteer';
-
-
-// metadata.interface.ts
-export interface Metadata {
-  title: string | null;
-  description: string | null;
-  keywords: string | null;
-  ogTitle: string | null;
-  ogDescription: string | null;
-  ogImage: string | null;
-}
+import puppeteer from 'puppeteer';
+import axios from 'axios';
+import { extractAllowedPaths } from '../robots-app/robots';
 
 jest.mock('puppeteer');
-const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
+jest.mock('axios');
+jest.mock('../robots-app/robots');
 
-jest.mock('../industry-classification-app/industry.service', () => ({
-  ...jest.requireActual('../industry-classification-app/industry.service'),
-  checkAllowed: jest.fn(),
-}));
-
-jest.mock('../robots-app/robots', () => ({
-  extractAllowedPaths: jest.fn(),
-}));
 describe('IndustryService', () => {
-  let industryService: IndustryService;
-  let mockedCheckAllowed: jest.SpyInstance;
+  let service: IndustryService;
 
   beforeEach(() => {
-    industryService = new IndustryService();
-    mockedCheckAllowed = jest.spyOn(industryService, 'checkAllowed').mockResolvedValue(true);
+    service = new IndustryService();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(industryService).toBeDefined();
-  });
-
-  it('should throw an exception if crawling is not allowed', async () => {
-    mockedCheckAllowed.mockResolvedValueOnce(false);
-
-    await expect(industryService.scrapeMetadata('http://example.com')).rejects.toThrow(
-      'cannot scrape this website'
-    );
-  });
-
-  it('should throw an exception if scraping fails', async () => {
-    mockedCheckAllowed.mockResolvedValueOnce(true);
-
-    const page = {
-      goto: jest.fn().mockImplementation(() => {
-        throw new Error('cannot scrape this website');
-      }),
-      close: jest.fn(),
-    };
-    const browser = {
-      newPage: jest.fn().mockResolvedValue(page),
-      close: jest.fn(),
-    };
-
-    (puppeteer.launch as jest.Mock).mockResolvedValue(browser as any);
-
-    await expect(industryService.scrapeMetadata('http://example.com')).rejects.toThrow(
-      'Error scraping metadata'
-    );
-  });
-
   describe('scrapeMetadata', () => {
-    it('should throw an error if website scraping is not allowed', async () => {
-      // Mock extractAllowedPaths to return empty paths
-      (robots.extractAllowedPaths as jest.Mock).mockResolvedValue(new Set());
+    it('should scrape metadata and classify industry successfully', async () => {
+      jest.setTimeout(60000);
+      const mockUrl = 'https://www.takealot.co.za';
+      const mockMetadata = {
+        title: "Takealot.com: Online Shopping | SA's leading online store",
+        description:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        keywords: null,
+        ogTitle: "Takealot.com: Online Shopping | SA's leading online store",
+        ogDescription:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        ogImage: 'https://www.takealot.com/static/images/logo_transparent.png',
+      };
 
-      await expect(industryService.scrapeMetadata('https://www.amazon.com')).rejects.toThrowError(
-        'Error scraping metadata'
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/']));
+
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(mockMetadata),
+      };
+
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      };
+
+      (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
+
+      (axios.post as jest.Mock).mockResolvedValue({
+        data: [[{ label: 'Internet & Direct Marketing Retail' }]],
+      });
+
+      const result = await service.scrapeMetadata(mockUrl);
+
+
+
+      expect(result.metadata).toEqual(mockMetadata);
+      expect(result.industry).toBe('Internet & Direct Marketing Retail');
+      expect(mockPage.goto).toHaveBeenCalledWith(mockUrl, { waitUntil: 'domcontentloaded' });
+      expect(mockBrowser.close).toHaveBeenCalled();
+    });
+
+    it('should throw an error if URL is not allowed to scrape', async () => {
+      const mockUrl = 'https://example.com';
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/not-allowed']));
+
+      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow('URL IS NOT ALLOWED TO SCRAPE');
+    });
+
+    it('should handle errors during scraping', async () => {
+      const mockUrl = 'https://example.com';
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/']));
+
+      const mockPage = {
+        goto: jest.fn().mockRejectedValue(new Error('Page error')),
+      };
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      };
+      (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
+
+      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow('Error scraping metadata');
+      expect(mockBrowser.close).toHaveBeenCalled();
+    });
+  });
+
+  describe('classifyIndustry', () => {
+    it('should classify industry successfully', async () => {
+      const mockMetadata = {
+        title: "Takealot.com: Online Shopping | SA's leading online store",
+        description:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        keywords: null,
+        ogTitle: "Takealot.com: Online Shopping | SA's leading online store",
+        ogDescription:
+          "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+        ogImage: 'https://www.takealot.com/static/images/logo_transparent.png',
+      };
+
+      const mockResponse = {
+        data: [[{ label: 'Internet & Direct Marketing Retail' }]],
+      };
+
+      (axios.post as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await service['classifyIndustry'](mockMetadata);
+
+      expect(result).toBe('Internet & Direct Marketing Retail');
+      expect(axios.post).toHaveBeenCalledWith(
+        service['HUGGING_FACE_API_URL'],
+        { inputs: expect.stringContaining('Takealot') },
+        { headers: { Authorization: `Bearer ${process.env.access_Token}` } }
       );
     });
   });
 
   describe('checkAllowed', () => {
     it('should return true if path is allowed', async () => {
-      // Mock extractAllowedPaths to return allowed paths
-      (robots.extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/']));
+      const mockUrl = 'https://example.com/allowed-path';
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path']));
+      const result = await IndustryService.checkAllowed(mockUrl);
+      expect(result).toBe(true);
+    });
 
-      expect(await industryService.checkAllowed('https://www.takealot.com')).toBe(true);
+    it('should return false if path is not allowed', async () => {
+      const mockUrl = 'https://example.com/not-allowed';
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path']));
+      const result = await IndustryService.checkAllowed(mockUrl);
+      expect(result).toBe(false);
+    });
+
+    it('should return true if wildcard path is allowed', async () => {
+      const mockUrl = 'https://example.com/allowed-path/subpath';
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path/*']));
+      const result = await IndustryService.checkAllowed(mockUrl);
+      expect(result).toBe(true);
     });
   });
-
-  describe('classifyIndustry', () => {
-    it('should classify the industry based on metadata', () => {
-      const metadata: Metadata = {
-        title: 'Technology News',
-        description: 'The latest technology updates.',
-        keywords: 'tech, news, updates',
-        ogTitle: null,
-        ogDescription: null,
-        ogImage: null,
-      };
-
-      const industryName = industryService['classifyIndustry'](metadata);
-
-      expect(industryName).toBe('Technology'); // Adjust based on your industries
-    });
-
-    it('should return "No classification" if no match is found', () => {
-      const metadata: Metadata = {
-        title: 'Random Title',
-        description: 'Random Description',
-        keywords: 'random, words',
-        ogTitle: null,
-        ogDescription: null,
-        ogImage: null,
-      };
-
-      const industryName = industryService['classifyIndustry'](metadata);
-
-      expect(industryName).toBe('No classification');
-    });
-  });
-
 });

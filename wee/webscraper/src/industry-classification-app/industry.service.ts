@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
-import { industries } from '../industry-classification-app/classification';
 import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged
+import axios from 'axios';
 
 interface Metadata {
   title: string | null;
@@ -14,16 +14,27 @@ interface Metadata {
 
 @Injectable()
 export class IndustryService {
+  static scrapeMetadata(mockUrl: string) {
+    throw new Error('Method not implemented.');
+  }
+
+  private readonly HUGGING_FACE_API_URL = 'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
+
+  private readonly HUGGING_FACE_API_TOKEN = process.env.access_Token;
+
   //this function scrapes the website and returns metadata and metadata
   async scrapeMetadata(
     url: string
   ): Promise<{ metadata: Metadata; industry: string }> {
     //  const paths = extractAllowedPaths(url);
 
-    const allowed = await this.checkAllowed(url);
+    const allowed = await IndustryService.checkAllowed(url);
+
     if (!allowed) {
-      throw new Error('cannot scrape this website');
+      throw new Error('URL IS NOT ALLOWED TO SCRAPE');
     }
+
+
 
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -48,41 +59,70 @@ export class IndustryService {
         };
       });
 
-      const industry: string = this.classifyIndustry(metadata);
+      const tryClassifyIndustry = async (metadata: any): Promise<string> => {
+        let attempt = 0;
+        while (attempt < 2) {
+          try {
+            const industry: string = await this.classifyIndustry(metadata);
+            return industry;
+          } catch (error) {
+            attempt++;
+            if (attempt === 2) {
+              console.error('Classification failed after two attempts:', error);
+              return 'No classification';
+            }
+          }
+        }
+        return 'No classification'; // This line will never be reached but is needed to satisfy TypeScript's type checker.
+      };
+
+
+      const industry: string = await tryClassifyIndustry(metadata);
 
       await browser.close();
 
-      return { metadata, industry };
+
+
+      return { metadata, industry};
     } catch (error) {
       throw new Error('Error scraping metadata');
     } finally {
       await browser.close();
     }
   }
-  private classifyIndustry(metadata: Metadata): string {
-    let maxMatchCount = 0;
-    let industryName = 'No classification';
 
-    industries.forEach((industry) => {
-      const matchCount = industry.keywords.filter((keyword) => {
-        const regex = new RegExp(`\\b${keyword}\\b`, 'i');
-        return (
-          regex.test(metadata.title) ||
-          regex.test(metadata.description) ||
-          (metadata.keywords && regex.test(metadata.keywords))
-        );
-      }).length;
 
-      if (matchCount > maxMatchCount) {
-        maxMatchCount = matchCount;
-        industryName = industry.name;
+  private async classifyIndustry(metadata: Metadata):  Promise<string> {
+
+    const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
+
+    try {
+    const response = await axios.post(
+      this.HUGGING_FACE_API_URL,
+      { inputs: inputText },
+      {
+        headers: {
+          Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+        },
       }
-    });
+    );
 
-    return industryName;
+
+    //console.log('Response from Hugging Face API:', response.data);
+
+    if (response.data && response.data[0][0]) {
+      return response.data[0][0].label;
+    } else {
+      throw new Error('Failed to classify industry using Hugging Face model');
+    }
+  } catch (error) {
+    console.error('Error classifying industry:', error);
+    throw new Error('Error classifying industry');
   }
 
-   async  checkAllowed(url: string): Promise<boolean> {
+  }
+
+   static async  checkAllowed(url: string): Promise<boolean> {
     const paths = await extractAllowedPaths(url);
     // Extract the path from the URL
     const urlObject = new URL(url);
