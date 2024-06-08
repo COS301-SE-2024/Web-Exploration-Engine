@@ -56,14 +56,11 @@ export async function signUp(req: SignUpRequest) {
   })
 
   if (error) {
-    console.log(error)
     return {
       code: error.code,
       message: error.message,
     }
   }
-
-  console.log(data)
 
   return { 
     accessToken: data?.session?.access_token,
