@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged

@@ -19,6 +19,16 @@ describe('IndustryService', () => {
   });
 
   describe('scrapeMetadata', () => {
+    it('should throw "Method not implemented" error', async () => {
+      // Mock the URL to be passed to the scrapeMetadata method
+      const mockUrl = 'https://example.com';
+
+      // Test whether calling scrapeMetadata throws an error with the expected message
+      expect(() => IndustryService.scrapeMetadata(mockUrl)).toThrow(
+        'Method not implemented.'
+      );
+    });
+
     it('should scrape metadata and classify industry successfully', async () => {
       jest.setTimeout(60000);
       const mockUrl = 'https://www.takealot.co.za';
@@ -53,19 +63,23 @@ describe('IndustryService', () => {
 
       const result = await service.scrapeMetadata(mockUrl);
 
-
-
       expect(result.metadata).toEqual(mockMetadata);
       expect(result.industry).toBe('Internet & Direct Marketing Retail');
-      expect(mockPage.goto).toHaveBeenCalledWith(mockUrl, { waitUntil: 'domcontentloaded' });
+      expect(mockPage.goto).toHaveBeenCalledWith(mockUrl, {
+        waitUntil: 'domcontentloaded',
+      });
       expect(mockBrowser.close).toHaveBeenCalled();
     });
 
     it('should throw an error if URL is not allowed to scrape', async () => {
       const mockUrl = 'https://example.com';
-      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/not-allowed']));
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(
+        new Set(['/not-allowed'])
+      );
 
-      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow('URL IS NOT ALLOWED TO SCRAPE');
+      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow(
+        'URL IS NOT ALLOWED TO SCRAPE'
+      );
     });
 
     it('should handle errors during scraping', async () => {
@@ -81,7 +95,9 @@ describe('IndustryService', () => {
       };
       (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
 
-      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow('Error scraping metadata');
+      await expect(service.scrapeMetadata(mockUrl)).rejects.toThrow(
+        'Error scraping metadata'
+      );
       expect(mockBrowser.close).toHaveBeenCalled();
     });
   });
@@ -119,21 +135,27 @@ describe('IndustryService', () => {
   describe('checkAllowed', () => {
     it('should return true if path is allowed', async () => {
       const mockUrl = 'https://example.com/allowed-path';
-      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path']));
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(
+        new Set(['/allowed-path'])
+      );
       const result = await IndustryService.checkAllowed(mockUrl);
       expect(result).toBe(true);
     });
 
     it('should return false if path is not allowed', async () => {
       const mockUrl = 'https://example.com/not-allowed';
-      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path']));
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(
+        new Set(['/allowed-path'])
+      );
       const result = await IndustryService.checkAllowed(mockUrl);
       expect(result).toBe(false);
     });
 
     it('should return true if wildcard path is allowed', async () => {
       const mockUrl = 'https://example.com/allowed-path/subpath';
-      (extractAllowedPaths as jest.Mock).mockResolvedValue(new Set(['/allowed-path/*']));
+      (extractAllowedPaths as jest.Mock).mockResolvedValue(
+        new Set(['/allowed-path/*'])
+      );
       const result = await IndustryService.checkAllowed(mockUrl);
       expect(result).toBe(true);
     });
