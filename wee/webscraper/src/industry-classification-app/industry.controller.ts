@@ -32,7 +32,7 @@ export class IndustryController {
   @ApiResponse({ status: 200, description: 'Scraping permission status' })
   @Get('check-allowed')
   async checkAllowed(@Query('url') url: string): Promise<{ allowed: boolean }> {
-    const allowed = await this.scrapingService.checkAllowed(url);
+  const allowed = await IndustryService.checkAllowed(url);
     return { allowed };
   }
 }
