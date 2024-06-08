@@ -12,7 +12,7 @@ describe('IndustryService', () => {
 
   beforeEach(() => {
     service = new IndustryService();
-    
+
   });
 
   afterEach(() => {
@@ -21,7 +21,7 @@ describe('IndustryService', () => {
 
   describe('scrapeMetadata', () => {
     it('should scrape metadata and classify industry successfully', async () => {
-      jest.setTimeout(60000);
+     
       const mockUrl = 'https://www.takealot.co.za';
       const mockMetadata = {
         title: "Takealot.com: Online Shopping | SA's leading online store",

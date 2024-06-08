@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged
@@ -68,7 +70,6 @@ export class IndustryService {
           } catch (error) {
             attempt++;
             if (attempt === 2) {
-              console.error('Classification failed after two attempts:', error);
               return 'No classification';
             }
           }
@@ -116,7 +117,7 @@ export class IndustryService {
       throw new Error('Failed to classify industry using Hugging Face model');
     }
   } catch (error) {
-    console.error('Error classifying industry:', error);
+   
     throw new Error('Error classifying industry');
   }
 
