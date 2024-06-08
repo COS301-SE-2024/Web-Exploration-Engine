@@ -60,24 +60,7 @@ export class IndustryService {
         };
       });
 
-      const tryClassifyIndustry = async (metadata: any): Promise<string> => {
-        let attempt = 0;
-        while (attempt < 2) {
-          try {
-            const industry: string = await this.classifyIndustry(metadata);
-            return industry;
-          } catch (error) {
-            attempt++;
-            if (attempt === 2) {
-              return 'No classification';
-            }
-          }
-        }
-        return 'No classification'; // This line will never be reached but is needed to satisfy TypeScript's type checker.
-      };
-
-
-      const industry: string = await tryClassifyIndustry(metadata);
+      const industry: string = await this.tryClassifyIndustry(metadata);
 
       await browser.close();
 
@@ -89,7 +72,21 @@ export class IndustryService {
     }
   }
 
-
+  private async tryClassifyIndustry(metadata: Metadata): Promise<string> {
+    let attempt = 0;
+    while (attempt < 2) {
+      try {
+        const industry: string = await this.classifyIndustry(metadata);
+        return industry;
+      } catch (error) {
+        attempt++;
+        if (attempt === 2) {
+          return 'No classification';
+        }
+      }
+    }
+    return 'No classification';
+  }
   private async classifyIndustry(metadata: Metadata):  Promise<string> {
 
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
