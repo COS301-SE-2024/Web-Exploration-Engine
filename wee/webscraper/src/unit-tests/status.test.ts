@@ -68,4 +68,86 @@ describe('ScrapingService', () => {
     const result = await service.status('http://example.com');
     expect(result).toBe(false);
   });
+  it('should calculate the correct percentages of live and parked URLs', async () => {
+    const urls = [
+      'http://example1.com',
+      'http://example2.com',
+      'http://example3.com',
+      'http://example4.com'
+    ];
+
+    mockedAxios.head
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 404 })
+      .mockResolvedValueOnce({ status: 500 });
+
+    const result = await service.calculatePercentages(urls);
+
+    expect(result.live).toBeCloseTo(50);
+    expect(result.parked).toBeCloseTo(50);
+  });
+
+  // Test case for all live URLs
+  it('should return 100% live and 0% parked for all live URLs', async () => {
+    const urls = [
+      'http://example1.com',
+      'http://example2.com',
+      'http://example3.com',
+      'http://example4.com'
+    ];
+
+    mockedAxios.head
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 200 });
+
+    const result = await service.calculatePercentages(urls);
+
+    expect(result.live).toBeCloseTo(100);
+    expect(result.parked).toBeCloseTo(0);
+  });
+
+  // Test case for all parked URLs
+  it('should return 0% live and 100% parked for all parked URLs', async () => {
+    const urls = [
+      'http://example1.com',
+      'http://example2.com',
+      'http://example3.com',
+      'http://example4.com'
+    ];
+
+    mockedAxios.head
+      .mockResolvedValueOnce({ status: 404 })
+      .mockResolvedValueOnce({ status: 500 })
+      .mockResolvedValueOnce({ status: 404 })
+      .mockResolvedValueOnce({ status: 500 });
+
+    const result = await service.calculatePercentages(urls);
+
+    expect(result.live).toBeCloseTo(0);
+    expect(result.parked).toBeCloseTo(100);
+  });
+
+  // Test case for a mix of live, parked, and network error URLs
+  it('should calculate the correct percentages with mixed live, parked, and network error URLs', async () => {
+    const urls = [
+      'http://example1.com',
+      'http://example2.com',
+      'http://example3.com',
+      'http://example4.com'
+    ];
+
+    mockedAxios.head
+      .mockResolvedValueOnce({ status: 200 })
+      .mockResolvedValueOnce({ status: 404 })
+      .mockResolvedValueOnce({ status: 500 })
+      .mockRejectedValueOnce(new Error('Network Error'));
+
+    const result = await service.calculatePercentages(urls);
+
+    expect(result.live).toBeCloseTo(25);
+    expect(result.parked).toBeCloseTo(75);
+  });
 });
