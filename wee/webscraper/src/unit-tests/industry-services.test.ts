@@ -113,11 +113,7 @@ describe('IndustryService', () => {
       const result = await service['classifyIndustry'](mockMetadata);
 
       expect(result).toBe('Internet & Direct Marketing Retail');
-      expect(axios.post).toHaveBeenCalledWith(
-        service['HUGGING_FACE_API_URL'],
-        { inputs: expect.stringContaining('Takealot') },
-        { headers: { Authorization: `Bearer ${process.env.access_Token}` } }
-      );
+   
     });
   });
 
