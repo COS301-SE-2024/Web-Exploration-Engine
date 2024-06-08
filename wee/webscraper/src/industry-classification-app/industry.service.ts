@@ -68,7 +68,6 @@ export class IndustryService {
           } catch (error) {
             attempt++;
             if (attempt === 2) {
-              console.error('Classification failed after two attempts:', error);
               return 'No classification';
             }
           }
@@ -80,8 +79,6 @@ export class IndustryService {
       const industry: string = await tryClassifyIndustry(metadata);
 
       await browser.close();
-
-
 
       return { metadata, industry};
     } catch (error) {
@@ -116,7 +113,7 @@ export class IndustryService {
       throw new Error('Failed to classify industry using Hugging Face model');
     }
   } catch (error) {
-    console.error('Error classifying industry:', error);
+
     throw new Error('Error classifying industry');
   }
 
