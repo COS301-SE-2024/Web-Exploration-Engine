@@ -42,6 +42,6 @@ describe('Home Component', () => {
         fireEvent.change(input, { target: { value: 'https://www.example.com' } });
         fireEvent.click(button);
 
-        expect(push).toHaveBeenCalledWith('/results?url=https%3A%2F%2Fwww.example.com');
+        expect(push).toHaveBeenCalledWith('/scraperesults?urls=https%3A%2F%2Fwww.example.com');
     });
 });
