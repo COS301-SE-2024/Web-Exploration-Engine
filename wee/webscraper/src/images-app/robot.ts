@@ -105,3 +105,22 @@ export async function isCrawlingAllowed(url: string): Promise<boolean> {
     }
   }
 }
+
+/**
+ * Checks if crawling is allowed for multiple URLs.
+ * @param urls Array of URLs to check.
+ * @returns A Promise that resolves to an object with URLs as keys and crawling status as values.
+ */
+export async function areMultipleCrawlingAllowed(urls: string[]): Promise<{ [key: string]: boolean }> {
+  const results = {};
+
+  for (const url of urls) {
+    try {
+      results[url] = await isCrawlingAllowed(url);
+    } catch (error) {
+      results[url] = `Error: ${error.message}`;
+    }
+  }
+
+  return results;
+}
