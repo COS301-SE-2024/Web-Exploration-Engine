@@ -9,7 +9,7 @@ export class IndustryController {
   constructor(private readonly scrapingService: IndustryService) {}
 
   @ApiOperation({ summary: 'Scrape metadata from given URLs' })
-  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated list of URLs to scrape metadata from' })
+  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated URLs to scrape metadata from' })
   @ApiResponse({ status: 200, description: 'Metadata successfully scraped' })
   @ApiResponse({ status: 400, description: 'Bad Request. URLs are required' })
   @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot scrape one or more websites' })
@@ -19,23 +19,13 @@ export class IndustryController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
     }
 
-    const urlList = urls.split(',');
-
     try {
-      const results = await Promise.all(
-        urlList.map(async (url) => {
-          try {
-            const metadata = await this.scrapingService.scrapeMetadata(url.trim());
-            return { url, metadata, error: null };
-          } catch (error) {
-            return { url, metadata: null, error: 'Cannot scrape this website' };
-          }
-        })
-      );
-
-      res.status(HttpStatus.OK).json(results);
+      const urlArray = urls.split(',').map(url => url.trim()); 
+      const metadataPromises = urlArray.map(url => this.scrapingService.scrapeMetadata(url)); 
+      const metadata = await Promise.all(metadataPromises); 
+      res.status(HttpStatus.OK).json(metadata);
     } catch (error) {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'An unexpected error occurred' });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Cannot Scrape one or more Websites' });
     }
   }
 
