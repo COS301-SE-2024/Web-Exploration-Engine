@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+
 /**
  * Service for handling website status related functionality.
  */
@@ -16,5 +17,23 @@ export class StatusService {
         } catch (error) {
             return false;
         }
+    }
+
+    /**
+     * Calculates the percentage of live and parked URLs.
+     * @param urls Array of URLs to check.
+     */
+    async calculatePercentages(urls: string[]): Promise<{ live: number; parked: number }> {
+        const statuses = await Promise.all(urls.map(url => this.status(url)));
+        const liveCount = statuses.filter(status => status).length;
+        const parkedCount = statuses.length - liveCount;
+
+        const livePercentage = (liveCount / statuses.length) * 100;
+        const parkedPercentage = (parkedCount / statuses.length) * 100;
+
+        return {
+            live: livePercentage,
+            parked: parkedPercentage,
+        };
     }
 }
