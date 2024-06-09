@@ -17,66 +17,23 @@ export default function Results() {
 function ResultsComponent() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
+    const websiteStatusUrl = searchParams.get('websiteStatus');
+    const isCrawlableUrl = searchParams.get('isCrawlable');
+    const industryUrl = searchParams.get('industry');
     const [websiteStatus, setWebsiteStatus] = useState('');
     const [isCrawlable, setIsCrawlable] = useState('No');
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [industryClassification, setIndustryClassification] = useState('');
     const [logo, setLogo] = useState('');
     const [imageList, setImageList] = useState([]);
 
     useEffect(() => {
-        if (url) {
-            // Fetch website status when component mounts or URL changes
-            fetchIsCrawlingAllowed(url);
-            fetchWebsiteStatus(url);
-            fetchIndustryClassifications(url);
-            fetchLogo(url);
-            fetchImages(url);
+        if (websiteStatusUrl && isCrawlableUrl && industryUrl) {
+            setWebsiteStatus(websiteStatusUrl);
+            setIsCrawlable(isCrawlableUrl);
+            setIndustryClassification(industryUrl);
         }
-    }, [url]);
-
-    const fetchIsCrawlingAllowed = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/isCrawlingAllowed?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            console.log(data);
-            if (data == true) {
-                setIsCrawlable('Yes');
-            }
-            else {
-                setIsCrawlable('No');
-            }
-        }
-        catch (error) {
-            console.error('Error fetching whether website is crawlable:', error);
-            setIsCrawlable('Unknown')
-        }
-    }
-
-    const fetchWebsiteStatus = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/status?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            if (data === false) {
-                setWebsiteStatus('Parked');
-            } else {
-                setWebsiteStatus('Live');
-            }
-        } catch (error) {
-            console.error('Error fetching website status:', error);
-            setWebsiteStatus('Unknown');
-        } 
-    };
-
-    const fetchIndustryClassifications = async (url: string) => {
-        try {
-          const response = await fetch(`http://localhost:3000/api/scrapeIndustry?url=${encodeURIComponent(url)}`);
-          const data = await response.json() as IndustryClassification;
-          setIndustryClassification(data.industry);
-        } catch (error) {
-          console.error('Error fetching industry classifications:', error);
-        }
-    };
+    }, [websiteStatusUrl, isCrawlableUrl, industryUrl]);
 
     const fetchLogo = async (url: string) => {
         try {
@@ -116,7 +73,7 @@ function ResultsComponent() {
         <div className='min-h-screen p-4'>
             <div className="mb-8 text-center">
                 <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Results
+                    Results of {url}
                 </h1>
             </div>
 
@@ -133,19 +90,19 @@ function ResultsComponent() {
                         <TableRow key="1">
                             <TableCell>Crawlable</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color={isCrawlable === 'Yes' ? 'success' : 'warning'} variant="flat">{isCrawlable}</Chip>
+                                <Chip radius="sm" color={isCrawlable === 'true' ? 'success' : 'warning'} variant="flat">{isCrawlable === 'true' ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                         </TableRow>
                         <TableRow key="2">
                             <TableCell>Status</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color={websiteStatus === 'Live' ? 'success' : 'warning'} variant="flat">{websiteStatus}</Chip>
+                                <Chip radius="sm" color={websiteStatus === 'true' ? 'success' : 'warning'} variant="flat">{websiteStatus === 'true' ? 'Live' : 'Parked'}</Chip>
                             </TableCell>
                         </TableRow>
                         <TableRow key="3">
                             <TableCell>Industry</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color="secondary" variant="flat">{isCrawlable == "Yes" ? industryClassification : 'N/A'}</Chip>
+                                <Chip radius="sm" color="secondary" variant="flat">{isCrawlable === "true" ? industryClassification : 'N/A'}</Chip>
                             </TableCell>
                         </TableRow>
                     </TableBody>

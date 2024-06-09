@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import Results from '../../src/app/(pages)/results/page'; // Adjust the import according to your file structure
 import { useSearchParams } from 'next/navigation';
 
@@ -8,27 +8,23 @@ jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
 }));
 
-// Mock the fetch API
-global.fetch = jest.fn();
-
 describe('Results Component', () => {
     const mockUrl = 'https://www.example.com';
-    const mockResponse = {
-        json: jest.fn().mockResolvedValue(true),
-    };
+    const mockWebsiteStatus = 'true';
+    const mockIsCrawlable = 'true';
+    const mockIndustry = 'E-commerce';
 
     beforeEach(() => {
-        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`url=${mockUrl}`));
-        (fetch as jest.Mock).mockResolvedValue(mockResponse);
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`url=${mockUrl}&websiteStatus=${mockWebsiteStatus}&isCrawlable=${mockIsCrawlable}&industry=${mockIndustry}`));       
     });
 
-    it('should fetch and display website status', async () => {
+    it('should display website status, crawlable status, and industry classification', async () => {
         await act(async () => {
             render(<Results />);
         });
 
-        await waitFor(() => expect(fetch).toHaveBeenCalledWith(`http://localhost:3000/api/status?url=${encodeURIComponent(mockUrl)}`));
-        
-        await waitFor(() => expect(screen.getByText('Live')).toBeDefined());
+        expect(screen.getByText('Yes')).toBeDefined();
+        expect(screen.getByText('Live')).toBeDefined();
+        expect(screen.getByText('E-commerce')).toBeDefined();
     });
 });
