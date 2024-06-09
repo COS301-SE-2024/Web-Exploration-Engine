@@ -1,13 +1,17 @@
 'use client'
 import React, { useEffect, Suspense } from 'react';
-import { Input } from "@nextui-org/react";
 import { FiSearch } from "react-icons/fi";
-import {Pagination} from "@nextui-org/react";
+import {Pagination, Select, SelectItem, Input} from "@nextui-org/react";
 import ScrapeResultsCard from '../../components/ScrapeResultCard';
 import { useSearchParams } from 'next/navigation';
 
 interface CrawlableStatus {
     [url: string]: boolean;
+}
+
+interface Industry {
+    url: string;
+    industry : string;
 }
 
 function ResultsComponent() {
@@ -17,6 +21,8 @@ function ResultsComponent() {
     const [isLoading, setIsLoading] = React.useState(true);
 
     const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
+    const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
+    const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
 
     useEffect(() => {
         if (urls) {
@@ -25,6 +31,8 @@ function ResultsComponent() {
             console.log(decoded); 
 
             fetchIsCrawlingAllowed(urls);
+            fetchWebsiteStatus(urls);
+            fetchIndustryClassifications(urls);
         }
     }, [urls])
 
@@ -37,6 +45,35 @@ function ResultsComponent() {
         }
         catch (error) {
             console.error('Error fetching whether website is crawlable:', error);
+        }
+    };
+
+    const fetchWebsiteStatus = async (url: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/status?urls=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            console.log(data);
+            setWebsiteStatus(data);
+        }
+        catch (error) {
+            console.error('Error fetching website status:', error);
+        }
+    };
+
+    const fetchIndustryClassifications = async (url: string) => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/scrapeIndustry?urls=${encodeURIComponent(url)}`);
+            const data = await response.json();
+            console.log('industry classification', data);
+            data.forEach((item:any) => {
+                setIndustryClassification(prev => [
+                    ...prev, 
+                    { url: item.url, industry: item.metadata.industry }
+                ]);
+            })
+        }
+        catch (error) {
+            console.error('Error fetching industry classifications:', error);
         }
         finally {
             setIsLoading(false);
@@ -56,7 +93,7 @@ function ResultsComponent() {
     }
 
     return (
-        <div className='p-4'>
+        <div className='p-4'>            
             <div className='flex justify-center'>
                 <Input
                     type="text"
@@ -68,14 +105,34 @@ function ResultsComponent() {
                     } 
                 />
             </div>
+            <div className='md:flex md:justify-between md:w-4/5 md:m-auto md:px-5'>
+                <Select
+                    label="Live/Parked"
+                    className="w-full pb-3 md:w-1/3"
+                >
+                    <SelectItem key={"Parked"}>Parked</SelectItem>
+                    <SelectItem key={"Live"}>Live</SelectItem>
+                </Select>
 
+                <Select
+                    label="Crawlable"
+                    className="w-full pb-3 md:w-1/3"
+                >
+                    <SelectItem key={"Yes"}>Yes</SelectItem>
+                    <SelectItem key={"No"}>No</SelectItem>
+                </Select>
+            </div>
+
+            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                Results
+            </h1>
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {decodedUrls && decodedUrls.map((link, index) => (
-                    <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]}/>
+                    <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
                 ))}
             </div>
 
-            <div className='flex justify-center'>
+            <div className='flex justify-center pt-3'>
                 <Pagination loop showControls color="default" total={5} initialPage={1} />
             </div>
         </div>
