@@ -64,7 +64,7 @@ export default function Faq() {
         </div>
 
         <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle ">
-          <Accordion className="mx-auto px-32">
+          <Accordion className="mx-auto ">
             {faqs.map((faq, index) => (
               <AccordionItem
                 className=""
