@@ -136,17 +136,20 @@ export default function Faq() {
           </h3>
         </div>
 
+        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
+          
+     
         {error ? (
-          <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+          <span className="mx-auto mt-4 p-2  w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
             <p>{error}</p>
           </span>
         ) : (
           <p className="hidden"></p>
-        )}
-        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-1">
+        )}     
+          
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">
             <Input
-              className="my-2 md:my-6"
+              className="my-2"
               variant="bordered"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -154,7 +157,7 @@ export default function Faq() {
               label="Name"
             />
             <Input
-              className="my-2 md:my-6  "
+              className="my-2   "
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -176,7 +179,7 @@ export default function Faq() {
           <Button
             data-testid="send-message-button"
             onClick={sendMessage}
-            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-11/12 lg:w-full"
+            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full"
           >
             Send Message
           </Button>
