@@ -113,3 +113,8 @@ export default function Faq() {
           </Button>
         </div>
       </div>
+
+      
+    </div>
+  );
+}
