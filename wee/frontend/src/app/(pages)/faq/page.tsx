@@ -61,21 +61,20 @@ export default function Faq() {
           </h3>
         </div>
 
-        
-        <Accordion>
-          {faqs.map((faq, index) => (
-            <AccordionItem
-            className=""
-              key={index}
-              aria-label={`Accordion ${index + 1}`}
-              title={faq.question}
-            >
-              {faq.answer}
-            </AccordionItem>
-          ))}
-        </Accordion>
-
-
+        <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle ">
+          <Accordion className="mx-auto px-32">
+            {faqs.map((faq, index) => (
+              <AccordionItem
+                className=""
+                key={index}
+                aria-label={`Accordion ${index + 1}`}
+                title={faq.question}
+              >
+                {faq.answer}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
       </div>
     );
 }
