@@ -89,7 +89,35 @@ export default function Faq() {
             </h3>
           </div>
 
+          <div className="flex flex-col justify-center items-center">
+            <Input
+
+              type="email"
+              label="Email" /* 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} */
+              className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+            />
+ 
+       
+            <Button
+              data-testid="login-button"
+              /*  onClick={handleLogin} */
+              className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+            >
+              Send Message
+            </Button>
+          </div>
         </div>
+
+        {/*         <Textarea
+          minRows={1}
+          label="URLs to scrape"
+          placeholder="Enter the URLs you want to scrape comma seperated"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}  
+        />
+ */}
       </div>
     );
 }
