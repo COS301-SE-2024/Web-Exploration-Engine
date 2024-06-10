@@ -8,7 +8,7 @@ export default function Faq() {
             Frequently Asked Questions
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-            Start by entering the URL of the website you wish to scrape
+            How can we help you?{' '}
           </h3>
         </div>
       </div>
