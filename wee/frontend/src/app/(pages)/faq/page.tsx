@@ -63,32 +63,7 @@ export default function Faq() {
           </h3>
         </div>
 
-        <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle ">
-          <Accordion className="mx-auto ">
-            {faqs.map((faq, index) => (
-              <AccordionItem
-                className=""
-                key={index}
-                aria-label={`Accordion ${index + 1}`}
-                title={faq.question}
-              >
-                {faq.answer}
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-
-        <div id="report"></div>
-        <div id="sect-report" className="">
-          <div className="my-16 text-center">
-            <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-              Contact Us
-            </h1>
-            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-              Have a question or an issue you&apos;re experiencing?{' '}
-            </h3>
-          </div>
-
+        <div className="h-full flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
             <Input type="email" label="Email" />
             <Input type="email" label="Email" placeholder="Enter your email" />
