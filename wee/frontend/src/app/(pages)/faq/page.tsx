@@ -53,6 +53,11 @@ const faqs = [
 ];
 
 export default function Faq() {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
   return (
     <div className="">
       <div className="my-16 text-center">
