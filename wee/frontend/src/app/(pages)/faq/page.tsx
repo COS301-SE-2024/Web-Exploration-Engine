@@ -75,6 +75,18 @@ export default function Faq() {
             ))}
           </Accordion>
         </div>
+
+        <div id="report"></div>
+        <div className="h-screen">
+          <div className="my-16 text-center">
+            <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+              Contact Us
+            </h1>
+            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+              Have a question or an issue you&apos;re experiencing?{' '}
+            </h3>
+          </div>
+        </div>
       </div>
     );
 }
