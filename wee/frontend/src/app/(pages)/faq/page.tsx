@@ -59,6 +59,15 @@ export default function Faq() {
   const [error, setError] = useState('');
 
   const sendMessage = async (e: React.FormEvent) => {
+    //Ensure Fields Are Filled In
+    if (!email || !name || !message) {
+      setError('All fields are required');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
   };
 
   return (
