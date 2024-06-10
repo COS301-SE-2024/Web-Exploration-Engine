@@ -95,7 +95,13 @@ export default function Faq() {
           </div>
           <div className="flex flex-col justify-center items-center">
             <Input
-
+              className=" my-6 "
+              variant="bordered"
+              type="text"
+              label="Name"
+            />
+            <Input
+              className=" my-6 "
               type="email"
               variant="bordered"
               label="Email"
