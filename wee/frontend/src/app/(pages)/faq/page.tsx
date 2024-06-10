@@ -104,19 +104,19 @@ export default function Faq() {
               label="Email"
             />
           </div>
-          <div className="w-full grid grid-cols-12 gap-1">
+          <div className="w-full grid grid-cols-12 gap-1 px-3">
             <Textarea
               variant="bordered"
-              label="Description"
+              label="Message"
               labelPlacement="inside"
-              className="col-span-12 my-6 "
+              className="col-span-12 my-2 md:my-6"
             />
           </div>
 
           <Button
             data-testid="send-message-button"
-            /*  onClick={handleLogin} */
-            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+            /*  onClick={sendMessage} */
+            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-11/12 lg:w-full"
           >
             Send Message
           </Button>
