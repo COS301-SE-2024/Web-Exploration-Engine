@@ -114,14 +114,6 @@ export default function Faq() {
           </div>
         </div>
 
-        {/*         <Textarea
-          minRows={1}
-          label="URLs to scrape"
-          placeholder="Enter the URLs you want to scrape comma seperated"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}  
-        />
- */}
           <Button
             data-testid="send-message-button"
             /*  onClick={handleLogin} */
