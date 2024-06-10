@@ -89,20 +89,16 @@ export default function Faq() {
           </h3>
         </div>
 
-        <div className="h-full flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-            <Input type="email" label="Email" />
-            <Input type="email" label="Email" placeholder="Enter your email" />
-          </div>
-          <div className="flex flex-col justify-center items-center">
+        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-1">
             <Input
-              className=" my-6 "
+              className="my-2 md:my-6 mx-3"
               variant="bordered"
               type="text"
               label="Name"
             />
             <Input
-              className=" my-6 "
+              className="my-2 md:my-6 mx-3"
               type="email"
               variant="bordered"
               label="Email"
