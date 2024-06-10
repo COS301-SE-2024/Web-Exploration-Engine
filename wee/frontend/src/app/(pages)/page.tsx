@@ -1,10 +1,9 @@
 'use client'
 import React, { useState } from "react";
-import { Input } from "@nextui-org/react";
-import { FiSearch } from "react-icons/fi";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
-import { MdErrorOutline } from "react-icons/md"
+import { MdErrorOutline } from "react-icons/md";
+import {Textarea} from "@nextui-org/input";
 
 export default function Home() {
     const router = useRouter();
@@ -55,16 +54,12 @@ export default function Home() {
                 </h3>
             </div>
             <div className="flex flex-col sm:flex-row w-full justify-center items-center">
-                <Input
-                    type="text"
-                    placeholder="https://www.takealot.com/"
-                    labelPlacement="outside"
-                    className="py-3 sm:pr-3 w-full md:w-4/5"
+                <Textarea
+                    minRows={1}
+                    label="URLs to scrape"
+                    placeholder="Enter the URLs you want to scrape comma seperated"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    startContent={
-                        <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                    }
                 />
                 <Button className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={handleScraping}

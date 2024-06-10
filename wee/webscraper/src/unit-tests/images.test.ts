@@ -106,4 +106,62 @@ describe('ImagesService for images', () => {
       new HttpException('Failed to scrape images: Page not found', HttpStatus.INTERNAL_SERVER_ERROR),
     );
   });
+  it('should limit the number of image URLs to 50', async () => {
+    mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+  
+    // Generate an array of more than 50 image URLs
+    const imageUrls = Array.from({ length: 60 }, (_, index) => `http://example.com/image${index}.png`);
+  
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(imageUrls),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+  
+    const result = await service.scrapeImages('http://example.com');
+    expect(result.length).toBe(50);
+    expect(browser.newPage).toHaveBeenCalledTimes(1);
+    expect(browser.close).toHaveBeenCalledTimes(1);
+  });
+  it('should return an empty array if no image URLs are found', async () => {
+    mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+  
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue([]),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+  
+    const result = await service.scrapeImages('http://example.com');
+    expect(result).toEqual([]);
+    expect(browser.newPage).toHaveBeenCalledTimes(1);
+    expect(browser.close).toHaveBeenCalledTimes(1);
+  });
+  it('should throw an exception if scraping fails', async () => {
+    mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+  
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn().mockImplementation(() => {
+          throw new Error('Page not found');
+        }),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+  
+    await expect(service.scrapeImages('http://example.com')).rejects.toThrow(
+      new HttpException('Failed to scrape images: Page not found', HttpStatus.INTERNAL_SERVER_ERROR),
+    );
+  }); 
+  
 });

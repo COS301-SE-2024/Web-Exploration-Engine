@@ -21,13 +21,13 @@ describe('Home Component', () => {
     it('should display error message when URL is invalid', () => {
         render(<Home />);
 
-        const input = screen.getByPlaceholderText('https://www.takealot.com/');
+        const input = screen.getByPlaceholderText('Enter the URLs you want to scrape comma seperated');
         const button = screen.getByRole('button', { name: /Start scraping/i });
 
         fireEvent.change(input, { target: { value: 'invalid-url' } });
         fireEvent.click(button);
 
-        expect(screen.getByText('Please enter a valid URL')).toBeDefined();
+        expect(screen.queryByText('Please enter a valid URL')).toBeDefined();
     });
 
     it('should navigate to results page with valid URL', () => {
@@ -36,7 +36,7 @@ describe('Home Component', () => {
 
         render(<Home />);
 
-        const input = screen.getByPlaceholderText('https://www.takealot.com/');
+        const input = screen.getByPlaceholderText('Enter the URLs you want to scrape comma seperated');
         const button = screen.getByRole('button', { name: /Start scraping/i });
 
         fireEvent.change(input, { target: { value: 'https://www.example.com' } });

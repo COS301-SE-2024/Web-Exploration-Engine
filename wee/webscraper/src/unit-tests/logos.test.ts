@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ImagesService } from '../images-app/images.service'; // Adjust the import path
+import { ImagesService } from '../images-app/images.service'; 
 import * as puppeteer from 'puppeteer';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
@@ -12,7 +12,7 @@ const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
 jest.mock('../images-app/robot', () => ({
   isCrawlingAllowed: jest.fn(),
 }));
-import { isCrawlingAllowed } from '../images-app/robot'; // Adjust the import path
+import { isCrawlingAllowed } from '../images-app/robot'; 
 const mockedIsCrawlingAllowed = isCrawlingAllowed as jest.MockedFunction<typeof isCrawlingAllowed>;
 
 describe('ImagesService for logos', () => {
@@ -131,4 +131,23 @@ describe('ImagesService for logos', () => {
       new HttpException('Failed to scrape logos: Page not found', HttpStatus.INTERNAL_SERVER_ERROR),
     );
   });
+  it('should return ogImage if it does not contain "logo"', async () => {
+    mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+  
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue({ ogImage: 'http://example.com/image.png' }),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+  
+    const result = await service.scrapeLogos('http://example.com');
+    expect(result).toBe('http://example.com/image.png');
+    expect(browser.newPage).toHaveBeenCalledTimes(1);
+    expect(browser.close).toHaveBeenCalledTimes(1);
+  });
+  
 });
