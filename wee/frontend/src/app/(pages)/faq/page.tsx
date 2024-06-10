@@ -97,10 +97,16 @@ export default function Faq() {
             <Input
 
               type="email"
-              label="Email" /* 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)} */
-              className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+              variant="bordered"
+              label="Email"
+            />
+          </div>
+          <div className="w-full grid grid-cols-12 gap-1">
+            <Textarea
+              variant="bordered"
+              label="Description"
+              labelPlacement="inside"
+              className="col-span-12 my-6 "
             />
           </div>
 
