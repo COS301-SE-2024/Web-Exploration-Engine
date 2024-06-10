@@ -58,6 +58,9 @@ export default function Faq() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  const sendMessage = async (e: React.FormEvent) => {
+  };
+
   return (
     <div className="">
       <div className="my-16 text-center">
