@@ -82,7 +82,7 @@ export default function Faq() {
       <div id="sect-report" className="">
         <div className="my-16 text-center">
           <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-            Report Something
+            Feedback
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
             Have a question or an issue you&apos;re experiencing?{' '}
