@@ -126,9 +126,9 @@ export default function Faq() {
 
       <div id="report"></div>
 
-      <div id="sect-report" className="mx-6">
+      <div id="sect-report" className="mx-6 md:px-6">
         <div className="my-16 text-center">
-          <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          <h1 className="my-4   font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Feedback
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
@@ -137,7 +137,7 @@ export default function Faq() {
         </div>
 
         {error ? (
-          <span className="mt-4 p-2 mx-4 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+          <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
             <p>{error}</p>
           </span>
         ) : (
@@ -146,7 +146,7 @@ export default function Faq() {
         <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
           <div className="flex w-full flex-wrap md:flex-nowrap gap-1">
             <Input
-              className="my-2 md:my-6 mx-3"
+              className="my-2 md:my-6"
               variant="bordered"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -154,7 +154,7 @@ export default function Faq() {
               label="Name"
             />
             <Input
-              className="my-2 md:my-6 mx-3"
+              className="my-2 md:my-6  "
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -162,7 +162,7 @@ export default function Faq() {
               label="Email"
             />
           </div>
-          <div className="w-full grid grid-cols-12 gap-1 px-3">
+          <div className="w-full grid grid-cols-12 gap-1 ">
             <Textarea
               variant="bordered"
               label="Message"
