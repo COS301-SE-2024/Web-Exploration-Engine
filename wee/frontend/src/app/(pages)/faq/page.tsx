@@ -88,6 +88,7 @@ export default function Faq() {
               Have a question or an issue you&apos;re experiencing?{' '}
             </h3>
           </div>
+
         </div>
       </div>
     );
