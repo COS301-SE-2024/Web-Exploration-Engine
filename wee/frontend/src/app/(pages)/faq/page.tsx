@@ -1,9 +1,10 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Textarea } from '@nextui-org/input';
 import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
+
 const faqs = [
   {
     question: 'What is web scraping?',
@@ -79,7 +80,8 @@ export default function Faq() {
       </div>
 
       <div id="report"></div>
-      <div id="sect-report" className="">
+
+      <div id="sect-report" className="mx-6">
         <div className="my-16 text-center">
           <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Feedback
@@ -89,17 +91,28 @@ export default function Faq() {
           </h3>
         </div>
 
+        {error ? (
+          <span className="mt-4 p-2 mx-4 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+            <p>{error}</p>
+          </span>
+        ) : (
+          <p className="hidden"></p>
+        )}
         <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
           <div className="flex w-full flex-wrap md:flex-nowrap gap-1">
             <Input
               className="my-2 md:my-6 mx-3"
               variant="bordered"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
               label="Name"
             />
             <Input
               className="my-2 md:my-6 mx-3"
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               variant="bordered"
               label="Email"
             />
@@ -108,6 +121,8 @@ export default function Faq() {
             <Textarea
               variant="bordered"
               label="Message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               labelPlacement="inside"
               className="col-span-12 my-2 md:my-6"
             />
@@ -115,7 +130,7 @@ export default function Faq() {
 
           <Button
             data-testid="send-message-button"
-            /*  onClick={sendMessage} */
+            onClick={sendMessage}
             className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-11/12 lg:w-full"
           >
             Send Message
