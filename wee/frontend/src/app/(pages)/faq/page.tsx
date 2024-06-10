@@ -122,6 +122,14 @@ export default function Faq() {
           onChange={(e) => setUrl(e.target.value)}  
         />
  */}
+          <Button
+            data-testid="send-message-button"
+            /*  onClick={handleLogin} */
+            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+          >
+            Send Message
+          </Button>
+        </div>
       </div>
     );
 }
