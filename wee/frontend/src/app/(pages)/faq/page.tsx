@@ -79,7 +79,7 @@ export default function Faq() {
         </div>
 
         <div id="report"></div>
-        <div className="h-screen">
+        <div id="sect-report" className="">
           <div className="my-16 text-center">
             <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
               Contact Us
