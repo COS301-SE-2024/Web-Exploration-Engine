@@ -8,7 +8,8 @@ import { Input } from '@nextui-org/react';
 const faqs = [
   {
     question: 'What is web scraping?',
-    answer: 'Web scraping is the process of extracting data from websites.',
+    answer:
+      'Web scraping is the process of extracting data from websites. It is a technique that allows for the gathering of useful information from the internet for various purposes, such as data analysis, market research, and competitive intelligence',
   },
   {
     question: 'Is web scraping legal?',
@@ -16,29 +17,19 @@ const faqs = [
       "Web scraping is legal as long as it is done within the boundaries of the law and respects the website's terms of service.",
   },
   {
-    question: 'How does WEE ensure data accuracy?',
+    question: 'Can the WEE handle large-scale scraping projects?',
     answer:
-      'WEE employs advanced algorithms and natural language processing techniques to ensure the extracted data is accurate and reliable.',
+      'Yes, the WEE is designed to handle projects of any scale, providing efficient and scalable data extraction solutions.',
   },
   {
-    question: 'Can WEE handle large-scale scraping projects?',
+    question: 'Is there a limit to the number of websites the WEE can scrape?',
     answer:
-      'Yes, WEE is designed to handle projects of any scale, providing efficient and scalable data extraction solutions.',
-  },
-  {
-    question: 'Is there a limit to the number of websites WEE can scrape?',
-    answer:
-      'No, WEE can scrape an unlimited number of websites, depending on the requirements of the project.',
-  },
-  {
-    question: 'How does WEE protect user data?',
-    answer:
-      'WEE uses robust security measures, including encryption and secure servers, to protect user data and ensure privacy.',
+      'No, the WEE can scrape an unlimited number of websites, depending on the requirements of the user.',
   },
   {
     question: 'What types of reports can WEE generate?',
     answer:
-      'WEE can generate a variety of reports, including summaries, detailed analytics, and custom insights based on the extracted data.',
+      'These reports can include summaries, detailed analytics, and custom insights. The specific type of report generated depends on the requirements and preferences of the user.',
   },
   {
     question: 'Does WEE require any technical expertise to use?',
@@ -84,7 +75,7 @@ export default function Faq() {
     }
 
     // Validate Message
-    if (message.length<2) {
+    if (message.length < 2) {
       setError('Message is too short');
       const timer = setTimeout(() => {
         setError('');
@@ -94,8 +85,6 @@ export default function Faq() {
     }
 
     // Create Request Object
-
-    
   };
 
   return (
@@ -115,6 +104,7 @@ export default function Faq() {
             <AccordionItem
               className=""
               key={index}
+              id={"faq-"+index}
               aria-label={`Accordion ${index + 1}`}
               title={faq.question}
             >
@@ -124,10 +114,18 @@ export default function Faq() {
         </Accordion>
       </div>
 
-
-      <div id="feedback"></div>
-
-      <div id="sect-report" className="mx-6 h-screen md:px-6 place-content-center">
+{/*       <div id="tutorials" className="mx-6 h-screen md:px-6 place-content-center">
+        <div className="my-16 text-center">
+          <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Tutorials
+          </h1>
+          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+            Some video guides if you need them.{' '}
+          </h3>
+        </div>
+      </div>
+ */}
+      <div id="feedback" className="mx-6 h-screen md:px-6 place-content-center">
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Feedback
@@ -138,16 +136,14 @@ export default function Faq() {
         </div>
 
         <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
-          
-     
-        {error ? (
-          <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-            <p>{error}</p>
-          </span>
-        ) : (
-          <p className="hidden"></p>
-        )}     
-          
+          {error ? (
+            <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+              <p>{error}</p>
+            </span>
+          ) : (
+            <p className="hidden"></p>
+          )}
+
           <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">
             <Input
               className="my-2"
