@@ -34,12 +34,12 @@ const faqs = [
   {
     question: 'Does WEE require any technical expertise to use?',
     answer:
-      'No, WEE is designed to be user-friendly and intuitive, making it accessible to users without technical expertise.',
+      'No, the WEE is designed to be user-friendly and intuitive, making it accessible to users without technical expertise.',
   },
   {
     question: 'Can WEE extract data from dynamic websites?',
     answer:
-      'Yes, WEE is equipped to handle dynamic websites and can extract data from sites that use JavaScript and AJAX.',
+      'Yes, the WEE is equipped to handle dynamic websites and can extract data from sites that use JavaScript and AJAX.',
   },
 ];
 
@@ -99,12 +99,16 @@ export default function Faq() {
       </div>
 
       <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle ">
-        <Accordion className="mx-auto ">
+        <Accordion
+          className="mx-auto "
+          selectionMode="multiple"
+          variant="splitted"
+        >
           {faqs.map((faq, index) => (
             <AccordionItem
               className=""
               key={index}
-              id={"faq-"+index}
+              id={'faq-' + index}
               aria-label={`Accordion ${index + 1}`}
               title={faq.question}
             >
@@ -114,7 +118,8 @@ export default function Faq() {
         </Accordion>
       </div>
 
-{/*       <div id="tutorials" className="mx-6 h-screen md:px-6 place-content-center">
+      {/*       
+      <div id="tutorials" className="mx-6 h-screen md:px-6 place-content-center">
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Tutorials
