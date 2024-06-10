@@ -99,9 +99,9 @@ export default function Faq() {
   };
 
   return (
-    <div className="">
+    <main className="">
       <div className="my-16 text-center">
-        <h1 className="my-4  mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+        <h1 className="my-4 mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Frequently Asked Questions
         </h1>
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
@@ -124,11 +124,12 @@ export default function Faq() {
         </Accordion>
       </div>
 
-      <div id="report"></div>
 
-      <div id="sect-report" className="mx-6 md:px-6">
+      <div id="feedback"></div>
+
+      <div id="sect-report" className="mx-6 h-screen md:px-6 place-content-center">
         <div className="my-16 text-center">
-          <h1 className="my-4   font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Feedback
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
@@ -140,7 +141,7 @@ export default function Faq() {
           
      
         {error ? (
-          <span className="mx-auto mt-4 p-2  w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+          <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
             <p>{error}</p>
           </span>
         ) : (
@@ -157,7 +158,7 @@ export default function Faq() {
               label="Name"
             />
             <Input
-              className="my-2   "
+              className="my-2"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -185,6 +186,6 @@ export default function Faq() {
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
