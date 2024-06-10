@@ -68,6 +68,27 @@ export default function Faq() {
 
       return () => clearTimeout(timer);
     }
+
+    //Validate Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Validate Message
+    if (message.length<2) {
+      setError('Message is too short');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
   };
 
   return (
