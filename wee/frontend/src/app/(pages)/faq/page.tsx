@@ -1,7 +1,9 @@
 'use client';
 import React from 'react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-
+import { Textarea } from '@nextui-org/input';
+import { Button } from '@nextui-org/react';
+import { Input } from '@nextui-org/react';
 const faqs = [
   {
     question: 'What is web scraping?',
