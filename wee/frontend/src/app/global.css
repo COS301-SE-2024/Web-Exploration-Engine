@@ -23,3 +23,10 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
 }
+
+.help-popup {
+    position: fixed;
+    bottom: 16px; 
+    right: 16px; 
+    z-index: 1000; 
+}
