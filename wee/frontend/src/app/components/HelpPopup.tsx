@@ -16,16 +16,15 @@ export default function App() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex help-popup flex-col gap-2">
       <Button onPress={onOpen} className="max-w-fit">
         Open Modal
       </Button>
-    
+
       <Modal
         isOpen={isOpen}
-        placement={"bottom"}
+        placement={'bottom'}
         backdrop="transparent"
-        
         onOpenChange={onOpenChange}
         className="border-2 border-jungleGreen-600 bg-white"
       >
