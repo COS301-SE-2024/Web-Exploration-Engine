@@ -13,6 +13,22 @@ import {
   Radio,
 } from '@nextui-org/react';
 
+
+const CardLink: React.FC<{ message: string }> = ({ message }) => {
+  return (
+    <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-2 hover:cursor-pointer">
+      <h3 className=" font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100">
+        {message}
+      </h3>
+      <h3 className=" font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100">
+        ↗
+      </h3>
+
+    </div>
+  );
+};
+
+
 export default function App() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
