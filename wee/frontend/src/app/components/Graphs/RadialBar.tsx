@@ -12,36 +12,27 @@ export function RadialBar() {
 
     const [options, setOptions] = useState<ApexOptions>({
         chart: {
-            height: 280,
+            id: 'apexchart-radialbar',
+            fontFamily: "'Poppins', sans-serif",
+            background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
             type: "radialBar",
           },
-        
-          series: [67],
-          colors: ["#20E647"],
+          colors: ["#F66C6D"],
           plotOptions: {
             radialBar: {
               hollow: {
                 margin: 0,
                 size: "70%",
-                background: "#293450"
-              },
-              track: {
-                dropShadow: {
-                  enabled: true,
-                  top: 2,
-                  left: 0,
-                  blur: 4,
-                  opacity: 0.15
-                }
               },
               dataLabels: {
                 name: {
                   offsetY: -10,
-                  color: "#fff",
+                  color: theme === 'dark' ? '#fff' : '#000',
                   fontSize: "13px"
                 },
                 value: {
-                  color: "#fff",
                   fontSize: "30px",
                   show: true
                 }
@@ -51,77 +42,37 @@ export function RadialBar() {
           fill: {
             type: "gradient",
             gradient: {
-              shade: "dark",
               type: "vertical",
-              gradientToColors: ["#87D4F9"],
+              gradientToColors: ["#F8B121"],
               stops: [0, 100]
             }
           },
           stroke: {
             lineCap: "round"
           },
-          labels: ["Progress"]
+          labels: ["Match"]
 
     });
-
-    // var options = {
-    //     chart: {
-    //       height: 280,
-    //       type: "radialBar",
-    //     },
-      
-    //     series: [67],
-    //     colors: ["#20E647"],
-    //     plotOptions: {
-    //       radialBar: {
-    //         hollow: {
-    //           margin: 0,
-    //           size: "70%",
-    //           background: "#293450"
-    //         },
-    //         track: {
-    //           dropShadow: {
-    //             enabled: true,
-    //             top: 2,
-    //             left: 0,
-    //             blur: 4,
-    //             opacity: 0.15
-    //           }
-    //         },
-    //         dataLabels: {
-    //           name: {
-    //             offsetY: -10,
-    //             color: "#fff",
-    //             fontSize: "13px"
-    //           },
-    //           value: {
-    //             color: "#fff",
-    //             fontSize: "30px",
-    //             show: true
-    //           }
-    //         }
-    //       }
-    //     },
-    //     fill: {
-    //       type: "gradient",
-    //       gradient: {
-    //         shade: "dark",
-    //         type: "vertical",
-    //         gradientToColors: ["#87D4F9"],
-    //         stops: [0, 100]
-    //       }
-    //     },
-    //     stroke: {
-    //       lineCap: "round"
-    //     },
-    //     labels: ["Progress"]
-    //   };
 
     useEffect(() => {
         setOptions(prevOptions => ({
             ...prevOptions,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
+            plotOptions: {
+                ...prevOptions.plotOptions,
+                radialBar: {
+                    ...prevOptions.plotOptions?.radialBar,
+                    dataLabels: {
+                        ...prevOptions.plotOptions?.radialBar?.dataLabels,
+                        name: {
+                            ...prevOptions.plotOptions?.radialBar?.dataLabels?.name,
+                            color: theme === 'dark' ? '#fff' : '#000',
+                        },
+                        value: {
+                            ...prevOptions.plotOptions?.radialBar?.dataLabels?.value,
+                            color: theme === 'dark' ? '#fff' : '#000',
+                        }
+                    }
+                }
             }
         }));
     }, [theme]);
