@@ -15,6 +15,9 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
             background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'bar',
             toolbar: {
                 tools: {
                     zoom: false,
@@ -50,9 +53,22 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
     }, [theme]);
 
     return (
-        <>
-            <Chart type="bar" options={options} series={series} height={300} width={400} />
-        </>
+        // <>
+        //     <Chart type="bar" options={options} series={series} height={300} width={400} />
+        // </>
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="bar"
+                        height={280}
+                        width="100%"
+                    />
+                </div>
+            </div>
+        </div>
         
     );
 }
