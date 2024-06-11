@@ -34,8 +34,8 @@ export default function App() {
 
   return (
     <div className="flex help-popup flex-col gap-2">
-      <Button onPress={onOpen} className="max-w-fit">
-        Open Modal
+      <Button onPress={onOpen} size="sm" className="w-2 rounded-full px-0">
+        ?
       </Button>
 
       <Modal
