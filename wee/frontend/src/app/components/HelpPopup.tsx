@@ -62,6 +62,11 @@ export default function App() {
                 <CardLink message="What formats can I export the scraped data?"/>
                 <CardLink message="What is a webscraper?"/>
                 
+                <h3 className="py-3 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                  Tutorials
+                </h3>
+            
+                </div>
               </ModalBody>
          
             </>
