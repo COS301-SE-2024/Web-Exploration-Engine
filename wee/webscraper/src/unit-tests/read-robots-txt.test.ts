@@ -77,8 +77,7 @@ describe('extractAllowedPaths', () => {
       '/auth/*',
       '/g/*',
       '/gpts$',
-      '/images/*',
-      '/share/*'
+      '/images/*'
     ]);
 
     const result = await extractAllowedPaths(url);
