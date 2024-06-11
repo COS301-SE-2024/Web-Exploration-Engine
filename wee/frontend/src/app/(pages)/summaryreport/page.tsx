@@ -1,8 +1,8 @@
 import React from 'react';
-import { ExampleChart } from '../../components/chart';
+// import { ExampleChart } from '../../components/chart';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
-// import { RadialBar } from '../../components/Graphs/RadialBar';
+import { RadialBar } from '../../components/Graphs';
 
 export default function SummaryReport() {
     return (
@@ -29,6 +29,7 @@ export default function SummaryReport() {
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
                         Domain watch/match
                     </h3>
+                    <RadialBar/>
                 </div>
             </div>
         </div>

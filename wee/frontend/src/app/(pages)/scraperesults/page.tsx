@@ -21,7 +21,7 @@ function ResultsComponent() {
     const searchParams = useSearchParams();
     const urls = searchParams.get('urls');
     const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
     const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
