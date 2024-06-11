@@ -1,3 +1,3 @@
 import { PieChart } from "./PieChart";  
-
-export {PieChart};
+import { BarChart } from "./BarChart";
+export {PieChart, BarChart};
