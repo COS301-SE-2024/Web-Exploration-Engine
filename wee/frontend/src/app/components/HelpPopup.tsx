@@ -16,8 +16,8 @@ import {
 
 const CardLink: React.FC<{ message: string }> = ({ message }) => {
   return (
-    <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-2 hover:cursor-pointer">
-      <h3 className=" font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100">
+    <div className="flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer dark:">
+      <h3 className=" font-poppins text-md">
         {message}
       </h3>
       <h3 className=" font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100">
