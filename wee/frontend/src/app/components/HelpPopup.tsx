@@ -31,7 +31,7 @@ export default function App() {
         <ModalContent className="">
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+          {/*     <ModalHeader className="flex flex-col gap-1">
                 Modal Title
               </ModalHeader>
               <ModalBody>
@@ -46,14 +46,14 @@ export default function App() {
                   Pellentesque sit amet hendrerit risus, sed porttitor quam.
                 </p>
               </ModalBody>
-              <ModalFooter>
+            {/*   <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="primary" onPress={onClose}>
                   Action
                 </Button>
-              </ModalFooter>
+              </ModalFooter> */}
             </>
           )}
         </ModalContent>
