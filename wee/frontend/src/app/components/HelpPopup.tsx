@@ -56,6 +56,11 @@ export default function App() {
                 <h3 className="py-3 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   FAQs
                 </h3>
+                <Link href={"/faq"}>
+                <CardLink message="What is a webscraper?" />
+                </Link>
+                <CardLink message="What formats can I export the scraped data?"/>
+                <CardLink message="What is a webscraper?"/>
                 
               </ModalBody>
          
