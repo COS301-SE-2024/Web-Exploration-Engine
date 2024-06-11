@@ -53,7 +53,7 @@ export default function App() {
               </h1>
 
               <ModalBody className="px-3">
-                <h3 className="py-3 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   FAQs
                 </h3>
                 <Link href={'/faq'}>
