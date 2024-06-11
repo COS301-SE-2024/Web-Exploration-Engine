@@ -53,9 +53,6 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
     }, [theme]);
 
     return (
-        // <>
-        //     <Chart type="bar" options={options} series={series} height={300} width={400} />
-        // </>
         <div className="app">
             <div className="row">
                 <div className="mixed-chart">
@@ -68,7 +65,6 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
                     />
                 </div>
             </div>
-        </div>
-        
+        </div>        
     );
 }

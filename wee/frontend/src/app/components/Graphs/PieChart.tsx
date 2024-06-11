@@ -31,7 +31,7 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
         },
         legend: {
           position: 'right',
-          horizontalAlign: 'center',
+          horizontalAlign: 'left',
         },
   
     });
@@ -48,8 +48,18 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
     }, [theme]);
 
     return (
-        <>
-            <Chart type="pie" options={options} series={series} height={300} width={400}/>
-        </>
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="pie"
+                        height={280}
+                        width="100%"
+                    />
+                </div>
+            </div>
+        </div>      
     );
 }
