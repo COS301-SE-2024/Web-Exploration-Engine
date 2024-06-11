@@ -54,7 +54,7 @@ export default function App() {
 
               <ModalBody className="px-3">
                 <h3 className="py-3 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-                  Start by entering the URL of the website you wish to scrape
+                  FAQs
                 </h3>
                 
               </ModalBody>
