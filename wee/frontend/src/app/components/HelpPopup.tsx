@@ -43,7 +43,7 @@ export default function App() {
         placement={'bottom'}
         backdrop="transparent"
         onOpenChange={onOpenChange}
-        className="border-2 border-jungleGreen-600 bg-white"
+        className="border-2 border-jungleGreen-600 bg-primaryBackgroundColor dark:bg-dark-primaryBackgroundColor"
       >
         <ModalContent className="">
           {(onClose) => (
