@@ -2,12 +2,12 @@
 import React from "react";
 import ThemeSwitch from "../../components/ThemeSwitch";
 import Link from 'next/link';
-import {Modal, ModalContent, ModalBody, Button, useDisclosure, Input, Divider} from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody, Button, useDisclosure, Divider } from "@nextui-org/react";
 import { useState } from "react";
 import { SignUpRequest } from "../../models/AuthModels";
 import { signUp } from "../../services/AuthService";
 import { MdErrorOutline } from "react-icons/md"
-
+import WEEInput from '../../components/Util/Input';
 
 export default function SignUp() {
     const {isOpen, onOpenChange} = useDisclosure();
@@ -106,14 +106,34 @@ export default function SignUp() {
                 </div>
                 <form onSubmit={handleSignUp} className="flex flex-col justify-center items-center">
                     {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
-                    <Input type="text" label="First name" className="my-3 w-full sm:w-4/5 md:w-full lg:w-4/5"
-                        value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                    <Input type="text" label="Last name" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
-                        value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                    <Input type="email" label="Email" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
-                        value={email} onChange={(e) => setEmail(e.target.value)} />
-                    <Input type="password" label="Password" className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
-                        value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <WEEInput 
+                        type="text" 
+                        label="First name" 
+                        className="my-3 w-full sm:w-4/5 md:w-full lg:w-4/5"
+                        value={firstName} 
+                        onChange={(e) => setFirstName(e.target.value)} 
+                    />
+                    <WEEInput 
+                        type="text" 
+                        label="Last name" 
+                        className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+                        value={lastName} 
+                        onChange={(e) => setLastName(e.target.value)} 
+                    />
+                    <WEEInput 
+                        type="email" 
+                        label="Email" 
+                        className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                    />
+                    <WEEInput 
+                        type="password" 
+                        label="Password" 
+                        className="my-3 mb-6 sm:w-4/5 md:w-full lg:w-4/5"
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                    />
                     <Button type="submit" className="font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
                         Create Account
                     </Button>

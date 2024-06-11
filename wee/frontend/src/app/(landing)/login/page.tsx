@@ -3,7 +3,6 @@ import React from 'react';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
-import {Input} from "@nextui-org/react";
 import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
@@ -11,7 +10,7 @@ import { LoginRequest, AuthResponse } from '../../models/AuthModels';
 import { login } from '../../services/AuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
-
+import WEEInput from '../../components/Util/Input';
 
 
 export default function Login() {
@@ -98,14 +97,28 @@ export default function Login() {
 
       <div className="flex flex-col justify-center items-center">
       {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
-        <Input
+        {/* <Input
+          type="email"
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+        /> */}
+        <WEEInput 
           type="email"
           label="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
-        <Input
+        {/* <Input
+          type="password"
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+        /> */}
+        <WEEInput 
           type="password"
           label="Password"
           value={password}
