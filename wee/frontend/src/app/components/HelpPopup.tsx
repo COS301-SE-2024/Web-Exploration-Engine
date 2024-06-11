@@ -20,7 +20,7 @@ const CardLink: React.FC<{ message: string }> = ({ message }) => {
       <h3 className=" font-poppins text-md">
         {message}
       </h3>
-      <h3 className=" font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100">
+      <h3 className=" font-poppins-semibold text-xl">
         ↗
       </h3>
 
