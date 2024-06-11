@@ -65,7 +65,7 @@ export default function App() {
                 <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   Tutorials
                 </h3>
-            
+
                 <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-4 hover:cursor-pointer">
                   <h3 className=" font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                     Provide Feedback
