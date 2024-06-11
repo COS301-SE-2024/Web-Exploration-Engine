@@ -1,10 +1,10 @@
 import {extendVariants, Input} from "@nextui-org/react";
 
 const WEEInput = extendVariants(Input, {
-    variants: { // <- modify/add variants
+    variants: {
       color: {
-        stone: { // <- add a new color variant
-          inputWrapper: [ // <- Input wrapper slot
+        stone: { 
+          inputWrapper: [ 
             "bg-zinc-200",
             "focus-within:bg-zinc-200",
             "data-[hover=true]:bg-zinc-100",
