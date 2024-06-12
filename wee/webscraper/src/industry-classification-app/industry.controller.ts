@@ -54,39 +54,8 @@ export class IndustryController {
     if (!urls) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
     }
-
-    const urlArray = urls.split(',').map(url => url.trim());
-
     try {
-      // Fetch industries
-      const response = await axios.get('http://localhost:3000/api/scrapeIndustry', { params: { urls } });
-      const data = response.data;
-
-      // Count occurrences of each industry
-      const industryCounts: Record<string, number> = {};
-      let noClassificationCount = 0;
-      for (const item of data) {
-        if (item.success && item.metadata && item.metadata.industry) {
-          const industry = item.metadata.industry;
-          industryCounts[industry] = (industryCounts[industry] || 0) + 1;
-        } else {
-          noClassificationCount++;
-        }
-      }
-
-      const totalUrls = data.length;
-
-      const industryPercentages = Object.entries(industryCounts).map(([industry, count]) => ({
-        industry,
-        percentage: ((count as number) / totalUrls * 100).toFixed(2)
-      }));
-
-      // Add "No classification" category if there are URLs with classification errors
-      if (noClassificationCount > 0) {
-        const noClassificationPercentage = ((noClassificationCount / totalUrls) * 100).toFixed(2);
-        industryPercentages.push({ industry: 'No classification', percentage: noClassificationPercentage });
-      }
-
+      const { industryPercentages } = await this.scrapingService.calculateIndustryPercentages(urls);
       res.status(HttpStatus.OK).json({ industryPercentages });
     } catch (error) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating industry percentages' });
