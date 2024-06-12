@@ -29,18 +29,23 @@ export default function Home() {
 
             return () => clearTimeout(timer);
         }
-        if (!isValidUrl(url)) {
-            setError('Please enter a valid URL');
 
-            const timer = setTimeout(() => {
-                setError('');
-            }, 3000);
+        const urls = url.split(',').map(u => u.trim());
+        for (const singleUrl of urls) {
 
-            return () => clearTimeout(timer);
+            if (!isValidUrl(singleUrl)) {
+                setError('Please enter valid URLs');
+    
+                const timer = setTimeout(() => {
+                    setError('');
+                }, 3000);
+    
+                return () => clearTimeout(timer);
+            }
         }
         setError('');
         // Navigate to Results page with the entered URL as query parameter
-        router.push(`/results?url=${encodeURIComponent(url)}`);
+        router.push(`/scraperesults?urls=${encodeURIComponent(url)}`)
     };
 
     return (
@@ -67,7 +72,7 @@ export default function Home() {
                     Start scraping
                 </Button>
             </div>
-            {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[2.5rem]"></p>}
+            {error ? <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="mt-4 p-2 min-h-[3.5rem]"></p>}
 
             <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
                 <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
