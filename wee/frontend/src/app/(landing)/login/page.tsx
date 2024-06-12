@@ -97,13 +97,6 @@ export default function Login() {
 
       <div className="flex flex-col justify-center items-center">
       {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
-        {/* <Input
-          type="email"
-          label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
-        /> */}
         <WEEInput 
           type="email"
           label="Email"
@@ -111,13 +104,6 @@ export default function Login() {
           onChange={(e) => setEmail(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
-        {/* <Input
-          type="password"
-          label="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
-        /> */}
         <WEEInput 
           type="password"
           label="Password"

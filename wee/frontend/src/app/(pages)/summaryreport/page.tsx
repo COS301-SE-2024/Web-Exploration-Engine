@@ -1,5 +1,4 @@
 import React from 'react';
-// import { ExampleChart } from '../../components/chart';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
 import { RadialBar } from '../../components/Graphs';
