@@ -67,8 +67,9 @@ describe('extractAllowedPaths', () => {
     expect(result).toEqual(expectedPaths);
   });
 
- 
+
   it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
+
     const url = 'https://www.takealot.com';
 
     const expectedPaths = new Set<string>(['/']);
