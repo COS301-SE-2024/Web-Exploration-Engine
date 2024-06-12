@@ -84,6 +84,18 @@ export default function App() {
                   Tutorials
                 </h3>
 
+                <div>
+
+                <VideoThumbnail
+                  message="What formats can I export the scraped data?"
+                  link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
+                  />
+                <VideoThumbnail
+                  message="What is a webscraper?"
+                  link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
+                  />
+                  </div>
+
                 <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-4 hover:cursor-pointer">
                   <h3 className=" font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                     Provide Feedback
