@@ -52,7 +52,7 @@ function ResultsComponent() {
 
             fetchIsCrawlingAllowed(urls);
             fetchWebsiteStatus(urls);
-            // fetchIndustryClassifications(urls);
+            fetchIndustryClassifications(urls);
         }
     }, [urls])
 
@@ -151,7 +151,8 @@ function ResultsComponent() {
                     <span className='m-2'>Number of results per page:</span>
                     <span className='w-[5rem]'>
                         <WEESelect
-                            defaultSelectedKeys={["2"]}                            
+                            defaultSelectedKeys={["2"]}    
+                            aria-label="Number of results per page"                         
                         >
                             <SelectItem key={"2"}>2</SelectItem>
                             <SelectItem key={"5"}>5</SelectItem>
@@ -175,6 +176,7 @@ function ResultsComponent() {
                     total={totalPages} 
                     initialPage={currentPage}
                     onChange={onPageChange}
+                    aria-label="Pagination"
                 />
             </div>
         </div>
