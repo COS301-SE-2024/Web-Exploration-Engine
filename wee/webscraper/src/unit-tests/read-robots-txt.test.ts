@@ -67,6 +67,7 @@ describe('extractAllowedPaths', () => {
     expect(result).toEqual(expectedPaths);
   });
 
+
   it('should correctly parse ChatGPT robots.txt and return allowed paths for user agent *', async () => {
     jest.setTimeout(18000);
     const url = 'https://www.chatgpt.com';
@@ -85,6 +86,7 @@ describe('extractAllowedPaths', () => {
   });
 
   it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
+
     const url = 'https://www.takealot.com';
 
     const expectedPaths = new Set<string>(['/']);

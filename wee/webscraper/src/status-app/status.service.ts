@@ -23,7 +23,7 @@ export class StatusService {
      * Calculates the percentage of live and parked URLs.
      * @param urls Array of URLs to check.
      */
-    async calculatePercentages(urls: string[]): Promise<{ live: number; parked: number }> {
+    async calculateSummary(urls: string[]): Promise<{ live: number; parked: number }> {
         const statuses = await Promise.all(urls.map(url => this.status(url)));
         const liveCount = statuses.filter(status => status).length;
         const parkedCount = statuses.length - liveCount;
@@ -32,8 +32,8 @@ export class StatusService {
         const parkedPercentage = (parkedCount / statuses.length) * 100;
 
         return {
-            live: livePercentage,
-            parked: parkedPercentage,
+            live: liveCount,
+            parked: parkedCount,
         };
     }
 }

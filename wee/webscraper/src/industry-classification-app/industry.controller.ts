@@ -2,6 +2,7 @@ import { Controller, Get, Query, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { IndustryService } from '../industry-classification-app/industry.service';
+import axios from 'axios';
 
 @ApiTags('Industry')
 @Controller('scrapeIndustry')
@@ -41,5 +42,23 @@ export class IndustryController {
   async checkAllowed(@Query('url') url: string): Promise<{ allowed: boolean }> {
     const allowed = await IndustryService.checkAllowed(url); 
     return { allowed };
+  }
+
+  @Get('percentages')
+  @ApiOperation({ summary: 'Calculate percentage of each industry from given URLs' })
+  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated URLs to scrape metadata from' })
+  @ApiResponse({ status: 200, description: 'Industry percentages calculated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URLs are required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot calculate industry percentages' })
+  async getPercentage(@Query('urls') urls: string, @Res() res: Response) {
+    if (!urls) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
+    }
+    try {
+      const { industryPercentages } = await this.scrapingService.calculateIndustryPercentages(urls);
+      res.status(HttpStatus.OK).json({ industryPercentages });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating industry percentages' });
+    }
   }
 }

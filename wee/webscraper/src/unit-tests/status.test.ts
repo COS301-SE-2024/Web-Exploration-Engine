@@ -82,10 +82,10 @@ describe('ScrapingService', () => {
       .mockResolvedValueOnce({ status: 404 })
       .mockResolvedValueOnce({ status: 500 });
 
-    const result = await service.calculatePercentages(urls);
+    const result = await service.calculateSummary(urls);
 
-    expect(result.live).toBeCloseTo(50);
-    expect(result.parked).toBeCloseTo(50);
+    expect(result.live).toBeCloseTo(2);
+    expect(result.parked).toBeCloseTo(2);
   });
 
   // Test case for all live URLs
@@ -103,9 +103,9 @@ describe('ScrapingService', () => {
       .mockResolvedValueOnce({ status: 200 })
       .mockResolvedValueOnce({ status: 200 });
 
-    const result = await service.calculatePercentages(urls);
+    const result = await service.calculateSummary(urls);
 
-    expect(result.live).toBeCloseTo(100);
+    expect(result.live).toBeCloseTo(4);
     expect(result.parked).toBeCloseTo(0);
   });
 
@@ -124,10 +124,10 @@ describe('ScrapingService', () => {
       .mockResolvedValueOnce({ status: 404 })
       .mockResolvedValueOnce({ status: 500 });
 
-    const result = await service.calculatePercentages(urls);
+    const result = await service.calculateSummary(urls);
 
     expect(result.live).toBeCloseTo(0);
-    expect(result.parked).toBeCloseTo(100);
+    expect(result.parked).toBeCloseTo(4);
   });
 
   // Test case for a mix of live, parked, and network error URLs
@@ -145,9 +145,9 @@ describe('ScrapingService', () => {
       .mockResolvedValueOnce({ status: 500 })
       .mockRejectedValueOnce(new Error('Network Error'));
 
-    const result = await service.calculatePercentages(urls);
+    const result = await service.calculateSummary(urls);
 
-    expect(result.live).toBeCloseTo(25);
-    expect(result.parked).toBeCloseTo(75);
+    expect(result.live).toBeCloseTo(1);
+    expect(result.parked).toBeCloseTo(3);
   });
 });
