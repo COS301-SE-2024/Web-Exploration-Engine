@@ -235,4 +235,70 @@ describe('IndustryService', () => {
       expect(result).toBe('No classification');
     });
   });
+  describe('calculateIndustryPercentages', () => {
+    it('should calculate industry percentages correctly', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+      const mockData = [
+        { success: true, metadata: { industry: 'Technology' } },
+        { success: true, metadata: { industry: 'Finance' } },
+        { success: true, metadata: { industry: 'Technology' } },
+      ];
+
+      (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+
+      const result = await service.calculateIndustryPercentages(mockUrls);
+
+      expect(result.industryPercentages).toEqual([
+        { industry: 'Technology', percentage: '66.67' },
+        { industry: 'Finance', percentage: '33.33' },
+      ]);
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/scrapeIndustry', { params: { urls: mockUrls } });
+    });
+
+    it('should handle no classification cases correctly', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+      const mockData = [
+        { success: true, metadata: { industry: 'Technology' } },
+        { success: true, metadata: { industry: 'Finance' } },
+        { success: false, metadata: null },
+      ];
+
+      (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+
+      const result = await service.calculateIndustryPercentages(mockUrls);
+
+      expect(result.industryPercentages).toEqual([
+        { industry: 'Technology', percentage: '33.33' },
+        { industry: 'Finance', percentage: '33.33' },
+        { industry: 'No classification', percentage: '33.33' },
+      ]);
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/scrapeIndustry', { params: { urls: mockUrls } });
+    });
+
+    it('should return "No classification" if all classifications fail', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+      const mockData = [
+        { success: false, metadata: null },
+        { success: false, metadata: null },
+        { success: false, metadata: null },
+      ];
+
+      (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+
+      const result = await service.calculateIndustryPercentages(mockUrls);
+
+      expect(result.industryPercentages).toEqual([
+        { industry: 'No classification', percentage: '100.00' },
+      ]);
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/scrapeIndustry', { params: { urls: mockUrls } });
+    });
+
+    it('should throw an error if axios request fails', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+      (axios.get as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      await expect(service.calculateIndustryPercentages(mockUrls)).rejects.toThrow('Error calculating industry percentages');
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/scrapeIndustry', { params: { urls: mockUrls } });
+    });
+  });
 });
