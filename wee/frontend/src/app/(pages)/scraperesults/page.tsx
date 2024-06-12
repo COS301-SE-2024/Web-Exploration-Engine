@@ -30,15 +30,21 @@ function ResultsComponent() {
 
     // Pagination
     const [page, setPage] = React.useState(1);
-    const resultsPerPage = 3;
+    const [resultsPerPage, setResultsPerPage] = React.useState(2);
     const pages = Math.ceil(decodedUrls.length/resultsPerPage);
+
+    const handleResultsPerPageChange = (keys:any) => {
+        const newResultsPerPage = parseInt(keys.values().next().value, 10);
+        setResultsPerPage(newResultsPerPage);
+        setPage(1);
+    };
 
     const items = React.useMemo(() => {
         const start = (page - 1) * resultsPerPage;
         const end = start + resultsPerPage;
 
         return decodedUrls.slice(start,end);
-    }, [page, decodedUrls])
+    }, [page, decodedUrls, resultsPerPage])
 
     useEffect(() => {
         if (urls) {
@@ -148,7 +154,8 @@ function ResultsComponent() {
                     <span className='w-[5rem]'>
                         <WEESelect
                             defaultSelectedKeys={["2"]}    
-                            aria-label="Number of results per page"                         
+                            aria-label="Number of results per page"      
+                            onSelectionChange={handleResultsPerPageChange}                   
                         >
                             <SelectItem key={"2"}>2</SelectItem>
                             <SelectItem key={"5"}>5</SelectItem>
