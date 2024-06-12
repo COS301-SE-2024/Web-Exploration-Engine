@@ -13,39 +13,28 @@ import {
   Radio,
 } from '@nextui-org/react';
 
-
 const CardLink: React.FC<{ message: string }> = ({ message }) => {
   return (
     <div className="flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer dark:">
-      <h3 className=" font-poppins text-md">
-        {message}
-      </h3>
-      <h3 className="font-poppins-semibold text-xl">
-        ↗
-      </h3>
-
+      <h3 className=" font-poppins text-md">{message}</h3>
+      <h3 className="font-poppins-semibold text-xl">↗</h3>
     </div>
   );
 };
 
-const VideoThumbnail: React.FC<{ message: string, link : string }> = ({ message,link }) => {
+const VideoThumbnail: React.FC<{ message: string; link: string }> = ({
+  message,
+  link,
+}) => {
   return (
     <a href={link}>
-
-
-    <div className="w-1/2 h-20 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer ">
-      
-      <h3 className=" font-poppins text-md">
-        {message}
-      </h3>
-      <h3 className="font-poppins-semibold text-xl">
-        ↗
-      </h3>
-
-    </div>    </a>
+      <div className="w-1/2 h-20 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer ">
+        <h3 className=" font-poppins text-md">{message}</h3>
+        <h3 className="font-poppins-semibold text-xl">↗</h3>
+      </div>{' '}
+    </a>
   );
 };
-
 
 export default function App() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -85,16 +74,15 @@ export default function App() {
                 </h3>
 
                 <div>
-
-                <VideoThumbnail
-                  message="What formats can I export the scraped data?"
-                  link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
+                  <VideoThumbnail
+                    message="What formats can I export the scraped data?"
+                    link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
                   />
-                <VideoThumbnail
-                  message="What is a webscraper?"
-                  link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
+                  <VideoThumbnail
+                    message="What is a webscraper?"
+                    link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
                   />
-                  </div>
+                </div>
 
                 <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-4 hover:cursor-pointer">
                   <h3 className=" font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
