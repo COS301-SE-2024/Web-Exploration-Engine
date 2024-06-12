@@ -38,15 +38,21 @@ export default function App() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div className="flex help-popup flex-col gap-2">
-      <Button onPress={onOpen} size="sm" className="w-2 rounded-full px-0">
-        ?
+    <div className="flex flex-col gap-2">
+      <Button
+        onPress={onOpen}
+        isIconOnly
+        className="rounded-full p-0 help-popup-button"
+        style={{ bottom: '16px', right: '16px' }}
+      >
+        <p className="text-2xl">?</p>
       </Button>
 
       <Modal
         isOpen={isOpen}
         backdrop="transparent"
         onOpenChange={onOpenChange}
+        className="my-0 md:help-popup border-2 border-jungleGreen-600 bg-primaryBackgroundColor dark:bg-dark-primaryBackgroundColor"
       >
         <ModalContent className="">
           {(onClose) => (
