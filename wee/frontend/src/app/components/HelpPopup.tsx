@@ -23,13 +23,11 @@ const CardLink: React.FC<{ message: string }> = ({ message }) => {
 };
 
 const VideoThumbnail: React.FC<{ message: string; link: string }> = ({
+const CardLink: React.FC<{ message: string; link: string }> = ({
   message,
   link,
 }) => {
   return (
-    <a href={link}>
-      <div className="w-1/2 h-20 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer ">
-        <h3 className=" font-poppins text-md">{message}</h3>
         <h3 className="font-poppins-semibold text-xl">↗</h3>
       </div>{' '}
     </a>
@@ -84,12 +82,14 @@ export default function App() {
                   />
                 </div>
 
-                <div className="flex justify-between bg-jungleGreen-200 border border-jungleGreen-500 rounded-2xl p-4 hover:cursor-pointer">
-                  <h3 className=" font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-                    Provide Feedback
-                  </h3>
-                  <h3 className="font-poppins-semibold text-xl">↗</h3>
-                </div>
+                <a href={'/faq#contact'} target="_blank">
+                  <div className="mb-2 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-600 hover:dark:bg-jungleGreen-800 border border-jungleGreen-500 hover:bg-jungleGreen-400 duration-500 rounded-2xl p-4 hover:cursor-pointer">
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                      Provide Feedback
+                    </h3>
+                    <h3 className="font-poppins-semibold text-xl">↗</h3>
+                  </div>
+                </a>
               </ModalBody>
             </>
           )}
