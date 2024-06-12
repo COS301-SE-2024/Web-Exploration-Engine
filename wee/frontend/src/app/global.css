@@ -45,10 +45,3 @@
   font-weight: 700;
 }
 
-.help-popup {
-    position: fixed;
-  /*   float: right; */
-    bottom: 16px; 
-    right: 16px; 
-    z-index: 1000; 
-}
