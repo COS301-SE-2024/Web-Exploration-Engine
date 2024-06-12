@@ -28,8 +28,27 @@ const CardLink: React.FC<{ message: string; link: string }> = ({
   link,
 }) => {
   return (
+    <a href={link} target="_blank">
+      <div className="flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-400 hover:dark:bg-jungleGreen-800 rounded-2xl p-2 hover:cursor-pointer duration-500">
+        <h3 className="font-poppins text-md">{message}</h3>
         <h3 className="font-poppins-semibold text-xl">↗</h3>
-      </div>{' '}
+      </div>
+    </a>
+  );
+};
+
+const VideoThumbnail: React.FC<{
+  message: string;
+  link: string;
+  thumbnail: string;
+}> = ({ message, link, thumbnail }) => {
+  return (
+    <a href={link} target="_blank">
+      <img
+        className="border hover:opacity-90 border-jungleGreen-500 mr-3 rounded-xl "
+        src={thumbnail}
+        alt="scraping video thumbnail"
+      />
     </a>
   );
 };
