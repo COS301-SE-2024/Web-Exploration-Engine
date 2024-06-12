@@ -142,4 +142,40 @@ export class IndustryService {
 
     return false;
   }
+
+  async calculateIndustryPercentages(urls: string): Promise<{ industryPercentages: { industry: string, percentage: string }[] }> {
+    const urlArray = urls.split(',').map(url => url.trim());
+
+    try {
+      const response = await axios.get('http://localhost:3000/api/scrapeIndustry', { params: { urls } });
+      const data = response.data;
+
+      const industryCounts: Record<string, number> = {};
+      let noClassificationCount = 0;
+      for (const item of data) {
+        if (item.success && item.metadata && item.metadata.industry) {
+          const industry = item.metadata.industry;
+          industryCounts[industry] = (industryCounts[industry] || 0) + 1;
+        } else {
+          noClassificationCount++;
+        }
+      }
+
+      const totalUrls = data.length;
+
+      const industryPercentages = Object.entries(industryCounts).map(([industry, count]) => ({
+        industry,
+        percentage: ((count as number) / totalUrls * 100).toFixed(2)
+      }));
+
+      if (noClassificationCount > 0) {
+        const noClassificationPercentage = ((noClassificationCount / totalUrls) * 100).toFixed(2);
+        industryPercentages.push({ industry: 'No classification', percentage: noClassificationPercentage });
+      }
+
+      return { industryPercentages };
+    } catch (error) {
+      throw new Error('Error calculating industry percentages');
+    }
+  }
 }

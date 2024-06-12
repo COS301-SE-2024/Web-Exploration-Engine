@@ -25,9 +25,9 @@ export class StatusController {
     @ApiQuery({ name: 'urls', description: 'Comma-separated list of URLs of the websites to check', required: true, type: String })
     @ApiResponse({ status: 200, description: 'Returns the percentage of live and parked websites.', type: Object })
     @ApiResponse({ status: 500, description: 'Failed to calculate the website percentages.' })
-    @Get('/status/percentages')
+    @Get('/status/summary')
     async getWebsiteStatusPercentages(@Query('urls') urls: string): Promise<{ live: number; parked: number }> {
         const urlsArray = urls.split(',');
-        return this.statusService.calculatePercentages(urlsArray);
+        return this.statusService.calculateSummary(urlsArray);
     }
 }
