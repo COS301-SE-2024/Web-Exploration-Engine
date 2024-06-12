@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from './http/http.service';
-import { HtmlParserService } from './html-parser/html-parser.service';
-import { DataExtractorService } from './data-extractor/data-extractor.service';
+
+// Services
+import { RobotsService } from './robots/robots.service';
+
 
 @Injectable()
 export class ScraperService {
   constructor(
-    private readonly httpService: HttpService,
-    private readonly htmlParserService: HtmlParserService,
-    private readonly dataExtractorService: DataExtractorService
+    private readonly robotsService: RobotsService,
   ) {}
 
   async scrape(url: string) {
-    const html = await this.httpService.fetch(url);
-    const $ = this.htmlParserService.parse(html);
-    const data = this.dataExtractorService.extract($);
-    return data;
+    // check if scraping is allowed
+    const allowedToScrape = await this.robotsService.getAllowedPaths(url);
+    
+    return allowedToScrape;
   }
 }
