@@ -35,27 +35,27 @@ function ResultsComponent() {
         }
     }, [websiteStatusUrl, isCrawlableUrl, industryUrl]);
 
-    const fetchLogo = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/scrapeLogos?url=${encodeURIComponent(url)}`);
-            setLogo(await response.text());
-        } catch (error) {
-            console.error('Error fetching logo:', error);
-        } 
-    }
+    // const fetchLogo = async (url: string) => {
+    //     try {
+    //         const response = await fetch(`http://localhost:3000/api/scrapeLogos?url=${encodeURIComponent(url)}`);
+    //         setLogo(await response.text());
+    //     } catch (error) {
+    //         console.error('Error fetching logo:', error);
+    //     } 
+    // }
 
-    const fetchImages = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/scrapeImages?url=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            console.log(data);
-            setImageList(data);
-        } catch (error) {
-            console.error('Error fetching images:', error);
-        } finally { 
-            setIsLoading(false);
-        }
-    }
+    // const fetchImages = async (url: string) => {
+    //     try {
+    //         const response = await fetch(`http://localhost:3000/api/scrapeImages?url=${encodeURIComponent(url)}`);
+    //         const data = await response.json();
+    //         console.log(data);
+    //         setImageList(data);
+    //     } catch (error) {
+    //         console.error('Error fetching images:', error);
+    //     } finally { 
+    //         setIsLoading(false);
+    //     }
+    // }
 
     if (isLoading) {
         return (
