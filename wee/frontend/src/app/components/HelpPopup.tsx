@@ -45,10 +45,8 @@ export default function App() {
 
       <Modal
         isOpen={isOpen}
-        placement={'bottom'}
         backdrop="transparent"
         onOpenChange={onOpenChange}
-        className="border-2 border-jungleGreen-600 bg-primaryBackgroundColor dark:bg-dark-primaryBackgroundColor"
       >
         <ModalContent className="">
           {(onClose) => (
@@ -62,9 +60,7 @@ export default function App() {
                   FAQs
                 </h3>
 
-                <CardLink 
-                  message="What is a webscraper?" 
-                  link="/faq" />
+                <CardLink message="What is a webscraper?" link="/faq" />
                 <CardLink
                   message="What formats can I export the data in?"
                   link="/faq"
