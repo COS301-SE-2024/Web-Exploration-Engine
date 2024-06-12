@@ -20,7 +20,7 @@ const CardLink: React.FC<{ message: string }> = ({ message }) => {
       <h3 className=" font-poppins text-md">
         {message}
       </h3>
-      <h3 className=" font-poppins-semibold text-xl">
+      <h3 className="font-poppins-semibold text-xl">
         ↗
       </h3>
 
@@ -34,7 +34,7 @@ const VideoThumbnail: React.FC<{ message: string }> = ({ message }) => {
       <h3 className=" font-poppins text-md">
         {message}
       </h3>
-      <h3 className=" font-poppins-semibold text-xl">
+      <h3 className="font-poppins-semibold text-xl">
         ↗
       </h3>
 
