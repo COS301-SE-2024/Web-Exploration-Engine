@@ -53,7 +53,7 @@ export default function App() {
         <ModalContent className="">
           {(onClose) => (
             <>
-              <h1 className="my-4 text-center font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+              <h1 className="mt-4 text-center font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                 Help
               </h1>
 
