@@ -66,8 +66,8 @@ export default function App() {
                 <Link href={'/faq'}>
                   <CardLink message="What is a webscraper?" />
                 </Link>
-                <CardLink message="What formats can I export the scraped data?" />
-                <CardLink message="What is a webscraper?" />
+                <CardLink message="What formats can I export the data in?" />
+                <CardLink message="See all frequently asked questions" />
 
                 <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   Tutorials
