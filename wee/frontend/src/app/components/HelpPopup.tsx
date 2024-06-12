@@ -71,13 +71,15 @@ export default function App() {
                   Tutorials
                 </h3>
 
-                <div>
+                <div className="flex justify-left gap-2">
                   <VideoThumbnail
                     message="What formats can I export the scraped data?"
+                    thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/8550b8190548687.6669b4f198c2f.png"
                     link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
                   />
                   <VideoThumbnail
-                    message="What is a webscraper?"
+                    message="How to scrape multiple reports?"
+                    thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/4e6daa190548687.6669b4f199391.png"
                     link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
                   />
                 </div>
