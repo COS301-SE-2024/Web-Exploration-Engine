@@ -4,25 +4,11 @@ import Link from 'next/link';
 import {
   Modal,
   ModalContent,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
   Button,
   useDisclosure,
-  RadioGroup,
-  Radio,
 } from '@nextui-org/react';
 
-const CardLink: React.FC<{ message: string }> = ({ message }) => {
-  return (
-    <div className="flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer dark:">
-      <h3 className=" font-poppins text-md">{message}</h3>
-      <h3 className="font-poppins-semibold text-xl">↗</h3>
-    </div>
-  );
-};
-
-const VideoThumbnail: React.FC<{ message: string; link: string }> = ({
 const CardLink: React.FC<{ message: string; link: string }> = ({
   message,
   link,
