@@ -61,11 +61,18 @@ export default function App() {
                 <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   FAQs
                 </h3>
-                <Link href={'/faq'}>
-                  <CardLink message="What is a webscraper?" />
-                </Link>
-                <CardLink message="What formats can I export the data in?" />
-                <CardLink message="See all frequently asked questions" />
+
+                <CardLink 
+                  message="What is a webscraper?" 
+                  link="/faq" />
+                <CardLink
+                  message="What formats can I export the data in?"
+                  link="/faq"
+                />
+                <CardLink
+                  message="See all frequently asked questions"
+                  link="/faq"
+                />
 
                 <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                   Tutorials
