@@ -28,7 +28,7 @@ const CardLink: React.FC<{ message: string }> = ({ message }) => {
   );
 };
 
-const VideoThumbnail: React.FC<{ message: string }> = ({ message }) => {
+const VideoThumbnail: React.FC<{ message: string, link : string }> = ({ message,link }) => {
   return (
     <div className="flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-700 border border-jungleGreen-500 hover:bg-jungleGreen-200 hover:text-white dark:hover:text-jungleGreen-950 rounded-2xl p-2 hover:cursor-pointer ">
       <h3 className=" font-poppins text-md">
