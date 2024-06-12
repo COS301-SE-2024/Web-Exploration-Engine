@@ -22,6 +22,7 @@
     "@nextui-org/theme": "^2.2.4",
     "@supabase/supabase-js": "^2.43.4",
     "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.6",
     "next": "14.2.3",

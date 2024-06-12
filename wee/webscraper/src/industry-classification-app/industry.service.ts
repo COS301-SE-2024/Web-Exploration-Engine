@@ -35,8 +35,6 @@ export class IndustryService {
       throw new Error('URL IS NOT ALLOWED TO SCRAPE');
     }
 
-
-
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     try {
@@ -60,7 +58,7 @@ export class IndustryService {
         };
       });
 
-      const industry: string = await this.tryClassifyIndustry(metadata);
+      const industry: string = await this.tryClassifyIndustry(metadata, url);
 
       await browser.close();
 
@@ -72,11 +70,11 @@ export class IndustryService {
     }
   }
 
-  private async tryClassifyIndustry(metadata: Metadata): Promise<string> {
+  private async tryClassifyIndustry(metadata: Metadata, url: string): Promise<string> {
     let attempt = 0;
     while (attempt < 2) {
       try {
-        const industry: string = await this.classifyIndustry(metadata);
+        const industry: string = await this.classifyIndustry(metadata, url);
         return industry;
       } catch (error) {
         attempt++;
@@ -87,9 +85,9 @@ export class IndustryService {
     }
     return 'No classification';
   }
-  private async classifyIndustry(metadata: Metadata):  Promise<string> {
+  private async classifyIndustry(metadata: Metadata, url: string):  Promise<string> {
 
-    const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
+    const inputText = `${url}`;
 
     try {
     const response = await axios.post(
@@ -106,7 +104,7 @@ export class IndustryService {
     //console.log('Response from Hugging Face API:', response.data);
 
     if (response.data && response.data[0][0]) {
-      return response.data[0][0].label;
+      return response.data[0][0];
     } else {
       throw new Error('Failed to classify industry using Hugging Face model');
     }
