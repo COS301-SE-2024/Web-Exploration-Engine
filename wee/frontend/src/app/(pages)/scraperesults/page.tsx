@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, Suspense, useState } from 'react';
 import { FiSearch } from "react-icons/fi";
 import { SelectItem } from "@nextui-org/react";
 import ScrapeResultsCard from '../../components/ScrapeResultCard';
@@ -27,6 +27,23 @@ function ResultsComponent() {
     const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
     const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
 
+    const [currentPage, setCurrentPage] = React.useState(2);
+    const totalItems = 30; // For example, total items count
+    const pageSize = 6; // Number of items per page
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    const onPageChange = (page: number) => {
+        alert(page)
+        setCurrentPage(page);
+    }
+
+    // Calculate start and end indices for the current page
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    // Slice the array to get the items for the current page
+    const currentItems = decodedUrls.slice(startIndex, endIndex);
+
     useEffect(() => {
         if (urls) {
             const decoded = decodeURIComponent(urls).split(',');
@@ -35,7 +52,7 @@ function ResultsComponent() {
 
             fetchIsCrawlingAllowed(urls);
             fetchWebsiteStatus(urls);
-            fetchIndustryClassifications(urls);
+            // fetchIndustryClassifications(urls);
         }
     }, [urls])
 
@@ -126,9 +143,24 @@ function ResultsComponent() {
                 </WEESelect>
             </div>
 
-            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                Results
-            </h1>
+            <div className='md:flex md:justify-between'>
+                <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                    Results
+                </h1>
+                <div className='flex my-auto md:w-1/3 w-full'>
+                    <span className='m-2'>Number of results per page:</span>
+                    <span className='w-[5rem]'>
+                        <WEESelect
+                            defaultSelectedKeys={["2"]}                            
+                        >
+                            <SelectItem key={"2"}>2</SelectItem>
+                            <SelectItem key={"5"}>5</SelectItem>
+                            <SelectItem key={"7"}>7</SelectItem>
+                            <SelectItem key={"9"}>9</SelectItem>
+                        </WEESelect>
+                    </span>
+                </div>
+            </div>
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {decodedUrls && decodedUrls.map((link, index) => (
                     <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
@@ -136,7 +168,14 @@ function ResultsComponent() {
             </div>
 
             <div className='flex justify-center pt-3'>
-                <WEEPagination loop showControls color="stone" total={5} initialPage={1}/>
+                <WEEPagination 
+                    loop 
+                    showControls 
+                    color="stone" 
+                    total={totalPages} 
+                    initialPage={currentPage}
+                    onChange={onPageChange}
+                />
             </div>
         </div>
     )

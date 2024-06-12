@@ -7,7 +7,7 @@ import IChart from "../../models/ChartModel";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function RadialBar() {
+export function RadialBar({ dataLabel, dataSeries }: IChart) {
     const { theme } = useTheme();
 
     const [options, setOptions] = useState<ApexOptions>({
@@ -50,7 +50,7 @@ export function RadialBar() {
           stroke: {
             lineCap: "round"
           },
-          labels: ["Match"]
+          labels: dataLabel
 
     });
 
@@ -83,7 +83,7 @@ export function RadialBar() {
                 <div className="mixed-chart">
                     <Chart
                         options={options}
-                        series={[67]}
+                        series={dataSeries}
                         type="radialBar"
                         height={280}
                         width="100%"

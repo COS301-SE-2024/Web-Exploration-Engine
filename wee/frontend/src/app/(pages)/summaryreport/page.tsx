@@ -29,7 +29,7 @@ export default function SummaryReport() {
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
                         Domain watch/match
                     </h3>
-                    <RadialBar/>
+                    <RadialBar dataLabel={['Match']} dataSeries={[83]}/>
                 </div>
             </div>
         </div>
