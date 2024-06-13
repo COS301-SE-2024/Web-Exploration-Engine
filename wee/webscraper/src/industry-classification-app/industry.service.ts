@@ -194,16 +194,23 @@ export class IndustryService {
       throw new Error('Error classifying industry based on URL');
     }
   }
-  async compareIndustries(url: string): Promise<{ url: string; scrapeIndustry: string; domainMatchIndustry: string; match: boolean }> {
-    const { industry: scrapeIndustry } = await this.scrapeMetadata(url);
-    const domainMatchIndustry = await this.domainMatch(url);
-    const match = scrapeIndustry === domainMatchIndustry;
+  async compareIndustries(urls: string): Promise<{ comparisons: { url: string; scrapeIndustry: string; domainMatchIndustry: string; match: boolean }[] }> {
+    const urlArray = urls.split(',').map(url => url.trim());
+    const comparisons = [];
 
-    return {
-      url,
-      scrapeIndustry,
-      domainMatchIndustry,
-      match
-    };
+    for (const url of urlArray) {
+      const { industry: scrapeIndustry } = await this.scrapeMetadata(url);
+      const domainMatchIndustry = await this.domainMatch(url);
+      const match = scrapeIndustry === domainMatchIndustry;
+
+      comparisons.push({
+        url,
+        scrapeIndustry,
+        domainMatchIndustry,
+        match
+      });
+    }
+
+    return { comparisons };
   }
 }
