@@ -44,6 +44,22 @@ const faqs = [
   },
 ];
 
+const VideoThumbnail: React.FC<{
+  message: string;
+  link: string;
+  thumbnail: string;
+}> = ({ message, link, thumbnail }) => {
+  return (
+    <a href={link} target="_blank" className="">
+      <img
+        className="my-2 border hover:scale-95 border-jungleGreen-500 rounded-xl duration-300"
+        src={thumbnail}
+        alt="scraping video thumbnail"
+      />
+    </a>
+  );
+};
+
 export default function Faq() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
