@@ -8,6 +8,8 @@ import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
 import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Spinner, getKeyValue, Chip, Button} from "@nextui-org/react";
+import { useRouter } from 'next/navigation';
+import Link from 'next/link'
 
 interface CrawlableStatus {
     [url: string]: boolean;
@@ -23,17 +25,23 @@ function ResultsComponent() {
     const urls = searchParams.get('urls');
     const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
+    
+    const router = useRouter();
 
+    const handleResultPage = (url:string, status:boolean, crawlable:boolean) => {
+        router.push(`/results?url=${encodeURIComponent(url)}&websiteStatus=${encodeURIComponent(status)}&isCrawlable=${encodeURIComponent(crawlable)}`);
+    };
+    
     // arrays that holds results returned from API
     const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
     const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
     const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
-
+    
     // Pagination
     const [page, setPage] = React.useState(1);
-    const [resultsPerPage, setResultsPerPage] = React.useState(2);
+    const [resultsPerPage, setResultsPerPage] = React.useState(5);
     const pages = Math.ceil(decodedUrls.length/resultsPerPage);
-
+    
     const handleResultsPerPageChange = (keys:any) => {
         const newResultsPerPage = parseInt(keys.values().next().value, 10);
         setResultsPerPage(newResultsPerPage);
@@ -157,7 +165,7 @@ function ResultsComponent() {
 
                 <WEESelect
                     label="Results per page"
-                    defaultSelectedKeys={["2"]}    
+                    defaultSelectedKeys={["5"]}    
                     aria-label="Number of results per page"      
                     onSelectionChange={handleResultsPerPageChange} 
                     className='w-[9rem]'                  
@@ -205,14 +213,16 @@ function ResultsComponent() {
                     {items.map((item, index) => (
                         <TableRow key={index}>
                             <TableCell>
-                                {item}
+                                <Link href={`/results?url=${encodeURIComponent(item)}&websiteStatus=${encodeURIComponent(websiteStatus[index])}&isCrawlable=${encodeURIComponent(isCrawlable[item])}`}>                               
+                                    {item}
+                                </Link>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                                    // onClick={handleResultPage}
+                                   onClick={() => handleResultPage(item, websiteStatus[index], isCrawlable[item])}
                                 >
                                     View
                                 </Button>
@@ -221,6 +231,13 @@ function ResultsComponent() {
                     ))}
                 </TableBody>
             </Table>
+
+            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                Summary
+            </h1>
+            <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor">
+                View overall summary report
+            </Button>
 
         </div>
     )
