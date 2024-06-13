@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Spinner, getKeyValue, Chip, Button} from "@nextui-org/react";
 
 interface CrawlableStatus {
     [url: string]: boolean;
@@ -54,7 +55,7 @@ function ResultsComponent() {
 
             fetchIsCrawlingAllowed(urls);
             fetchWebsiteStatus(urls);
-            fetchIndustryClassifications(urls);
+            // fetchIndustryClassifications(urls);
         }
     }, [urls])
 
@@ -62,7 +63,7 @@ function ResultsComponent() {
         try {
             const response = await fetch(`http://localhost:3000/api/isCrawlingAllowed?urls=${encodeURIComponent(url)}`);
             const data = await response.json();
-            console.log(data);
+            console.log('Crawling allowed', data);
             setIsCrawlable(data);
         }
         catch (error) {
@@ -79,6 +80,9 @@ function ResultsComponent() {
         }
         catch (error) {
             console.error('Error fetching website status:', error);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -150,7 +154,7 @@ function ResultsComponent() {
                     Results
                 </h1>
                 <div className='flex my-auto md:w-1/3 w-full'>
-                    <span className='m-2'>Number of results per page:</span>
+                    <span className='m-2 text-xs'>Number of results per page:</span>
                     <span className='w-[5rem]'>
                         <WEESelect
                             defaultSelectedKeys={["2"]}    
@@ -165,23 +169,64 @@ function ResultsComponent() {
                     </span>
                 </div>
             </div>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {/* <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((link, index) => (
                     <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
                 ))}
-            </div>
+            </div> */}
 
-            <div className='flex justify-center pt-3'>
-                <WEEPagination 
-                    loop 
-                    showControls 
-                    color="stone" 
-                    page={page}
-                    total={pages}
-                    onChange={(page) => setPage(page)}
-                    aria-label="Pagination"
-                />
-            </div>
+            <Table 
+                aria-label="Example table with client side pagination"
+                bottomContent={
+                    <div className="flex w-full justify-center">
+                        <WEEPagination 
+                            loop 
+                            showControls 
+                            color="stone" 
+                            page={page}
+                            total={pages}
+                            onChange={(page) => setPage(page)}
+                            aria-label="Pagination"
+                        />
+                    </div>
+                }
+                classNames={{
+                    wrapper: "min-h-[222px]",
+                }}
+                >
+                <TableHeader>
+                    <TableColumn key="name">
+                        URL
+                    </TableColumn>
+                    <TableColumn key="role" className='hidden md:table-cell'>
+                        CRAWLABLE
+                    </TableColumn>
+                    <TableColumn key="status">
+                        RESULT &amp; REPORT
+                    </TableColumn>
+                </TableHeader>
+
+                <TableBody>
+                    {items.map((item, index) => (
+                    <TableRow key={index}>
+                        <TableCell>
+                            {item}
+                        </TableCell>
+                        <TableCell className='hidden md:table-cell'>
+                            <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
+                        </TableCell>
+                        <TableCell>
+                            <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                                // onClick={handleResultPage}
+                            >
+                                View
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
         </div>
     )
 }
