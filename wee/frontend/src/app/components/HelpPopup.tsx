@@ -67,7 +67,7 @@ export default function App() {
               </h1>
 
               <ModalBody className="px-3">
-                <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                <h3 className="py-1 text-center font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100">
                   FAQs
                 </h3>
 
@@ -81,7 +81,7 @@ export default function App() {
                   link="/faq"
                 />
 
-                <h3 className="py-1 font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+                <h3 className="py-1 text-center font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100">
                   Tutorials
                 </h3>
 
