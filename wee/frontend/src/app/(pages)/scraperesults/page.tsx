@@ -1,13 +1,12 @@
 'use client'
-import React, { useEffect, Suspense, useState } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { FiSearch } from "react-icons/fi";
 import { SelectItem } from "@nextui-org/react";
-import ScrapeResultsCard from '../../components/ScrapeResultCard';
 import { useSearchParams } from 'next/navigation';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Pagination, Spinner, getKeyValue, Chip, Button} from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 
@@ -57,8 +56,8 @@ function ResultsComponent() {
     const [resultsPerPage, setResultsPerPage] = React.useState(5);
     const pages = Math.ceil(filteredItems.length/resultsPerPage);
     
-    const handleResultsPerPageChange = (keys:any) => {
-        const newResultsPerPage = parseInt(keys.values().next().value, 10);
+    const handleResultsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newResultsPerPage = parseInt(event.target.value, 10);
         setResultsPerPage(newResultsPerPage);
         setPage(1);
     };
@@ -187,25 +186,26 @@ function ResultsComponent() {
                 </WEESelect>
             </div>
 
-            <div className='flex justify-between mt-4'>
-    
-                <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Results
-                </h1>
+            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                Results
+            </h1>
 
-                <WEESelect
-                    label="Results per page"
-                    defaultSelectedKeys={["5"]}    
-                    aria-label="Number of results per page"      
-                    onSelectionChange={handleResultsPerPageChange} 
-                    className='w-[9rem]'                  
-                >
-                    <SelectItem key={"2"}>2</SelectItem>
-                    <SelectItem key={"5"}>5</SelectItem>
-                    <SelectItem key={"7"}>7</SelectItem>
-                    <SelectItem key={"9"}>9</SelectItem>
-                </WEESelect>
-
+            <div className="flex justify-between items-center mb-2">
+                <span className="text-default-400 text-small">Total {filteredItems.length} users</span>
+                <label className="flex items-center text-default-400 text-small">
+                    Results per page:
+                    <select
+                        value={resultsPerPage}
+                        className="bg-transparent outline-none text-default-400 text-small"
+                        onChange={handleResultsPerPageChange}
+                        aria-label="Number of results per page" 
+                    >
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                        <option value="9">9</option>
+                    </select>
+                </label>
             </div>
 
             <Table 
