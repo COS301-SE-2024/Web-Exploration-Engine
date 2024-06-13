@@ -158,6 +158,7 @@ function ResultsComponent() {
         <div className='p-4'>            
             <div className='flex justify-center'>
                 <WEEInput
+                    isClearable
                     type="text"
                     placeholder="https://www.takealot.com/"
                     labelPlacement="outside"
