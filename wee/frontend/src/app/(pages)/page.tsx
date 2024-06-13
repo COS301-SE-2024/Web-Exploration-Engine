@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
-import {Textarea} from "@nextui-org/input";
+import WEETextarea from "../components/Util/Textarea";
 
 export default function Home() {
     const router = useRouter();
