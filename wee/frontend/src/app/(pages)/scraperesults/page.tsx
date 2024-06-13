@@ -25,6 +25,21 @@ function ResultsComponent() {
     const urls = searchParams.get('urls');
     const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
+
+    const [searchValue, setSearchValue] = React.useState("");
+    const hasSearchFilter = Boolean(searchValue);
+
+    const filteredItems = React.useMemo(() => {
+        let filteredUrls = [...decodedUrls];
+
+        if (hasSearchFilter) {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.toLowerCase().includes(searchValue.toLowerCase()),
+          );
+        }
+    
+        return filteredUrls;
+      }, [decodedUrls, searchValue]);
     
     const router = useRouter();
 
@@ -40,7 +55,7 @@ function ResultsComponent() {
     // Pagination
     const [page, setPage] = React.useState(1);
     const [resultsPerPage, setResultsPerPage] = React.useState(5);
-    const pages = Math.ceil(decodedUrls.length/resultsPerPage);
+    const pages = Math.ceil(filteredItems.length/resultsPerPage);
     
     const handleResultsPerPageChange = (keys:any) => {
         const newResultsPerPage = parseInt(keys.values().next().value, 10);
@@ -52,8 +67,8 @@ function ResultsComponent() {
         const start = (page - 1) * resultsPerPage;
         const end = start + resultsPerPage;
 
-        return decodedUrls.slice(start,end);
-    }, [page, decodedUrls, resultsPerPage])
+        return filteredItems.slice(start,end);
+    }, [page, filteredItems, resultsPerPage])
 
     useEffect(() => {
         if (urls) {
@@ -126,6 +141,15 @@ function ResultsComponent() {
         );
     }
 
+    const onSearchChange = (value: string) => {
+        if (value) {
+          setSearchValue(value);
+          setPage(1);
+        } else {
+          setSearchValue("");
+        }
+    };
+
     return (
         <div className='p-4'>            
             <div className='flex justify-center'>
@@ -137,6 +161,8 @@ function ResultsComponent() {
                     startContent={
                         <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     } 
+                    value={searchValue}
+                    onValueChange={onSearchChange}
                 />
             </div>
             <div className='md:flex md:justify-between md:w-4/5 md:m-auto md:px-5'>
