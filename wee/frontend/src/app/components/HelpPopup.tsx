@@ -5,10 +5,10 @@ import {
   Modal,
   ModalContent,
   ModalBody,
-  Button,
   useDisclosure,
-} from '@nextui-org/react';
+} from '@nextui-org/modal';
 
+import { Button } from '@nextui-org/button';
 const CardLink: React.FC<{ message: string; link: string }> = ({
   message,
   link,
