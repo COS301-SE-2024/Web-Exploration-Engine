@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import React from 'react';
-import Link from 'next/link';
 import {
   Modal,
   ModalContent,
@@ -89,18 +88,18 @@ export default function App() {
                 <div className="flex justify-left gap-2">
                   <VideoThumbnail
                     message="What formats can I export the scraped data?"
-                    thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/8550b8190548687.6669b4f198c2f.png"
+                    thumbnail="images/video-thumbnail.svg"
                     link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
                   />
                   <VideoThumbnail
                     message="How to scrape multiple reports?"
-                    thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/4e6daa190548687.6669b4f199391.png"
+                    thumbnail="images/video-thumbnail.svg"
                     link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
                   />
                 </div>
 
                 <a href={'/faq#contact'} target="_blank">
-                  <div className="mb-2 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-600 hover:dark:bg-jungleGreen-800 border border-jungleGreen-500 hover:bg-jungleGreen-400 duration-500 rounded-2xl p-4 hover:cursor-pointer">
+                  <div className="mb-2 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-800 hover:dark:bg-jungleGreen-800 border border-jungleGreen-500 hover:bg-jungleGreen-400 duration-500 rounded-2xl p-4 hover:cursor-pointer">
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                       Provide Feedback
                     </h3>
