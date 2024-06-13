@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
-import {Textarea} from "@nextui-org/input";
+import WEETextarea from "../components/Util/Textarea";
 
 export default function Home() {
     const router = useRouter();
@@ -59,7 +59,7 @@ export default function Home() {
                 </h3>
             </div>
             <div className="flex flex-col sm:flex-row w-full justify-center items-center">
-                <Textarea
+                <WEETextarea
                     minRows={1}
                     label="URLs to scrape"
                     placeholder="Enter the URLs you want to scrape comma seperated"

@@ -23,26 +23,28 @@ function ResultsComponent() {
     const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
+    // arrays that holds results returned from API
     const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
     const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
     const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
 
-    const [currentPage, setCurrentPage] = React.useState(2);
-    const totalItems = 30; // For example, total items count
-    const pageSize = 6; // Number of items per page
-    const totalPages = Math.ceil(totalItems / pageSize);
+    // Pagination
+    const [page, setPage] = React.useState(1);
+    const [resultsPerPage, setResultsPerPage] = React.useState(2);
+    const pages = Math.ceil(decodedUrls.length/resultsPerPage);
 
-    const onPageChange = (page: number) => {
-        alert(page)
-        setCurrentPage(page);
-    }
+    const handleResultsPerPageChange = (keys:any) => {
+        const newResultsPerPage = parseInt(keys.values().next().value, 10);
+        setResultsPerPage(newResultsPerPage);
+        setPage(1);
+    };
 
-    // Calculate start and end indices for the current page
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
+    const items = React.useMemo(() => {
+        const start = (page - 1) * resultsPerPage;
+        const end = start + resultsPerPage;
 
-    // Slice the array to get the items for the current page
-    const currentItems = decodedUrls.slice(startIndex, endIndex);
+        return decodedUrls.slice(start,end);
+    }, [page, decodedUrls, resultsPerPage])
 
     useEffect(() => {
         if (urls) {
@@ -152,7 +154,8 @@ function ResultsComponent() {
                     <span className='w-[5rem]'>
                         <WEESelect
                             defaultSelectedKeys={["2"]}    
-                            aria-label="Number of results per page"                         
+                            aria-label="Number of results per page"      
+                            onSelectionChange={handleResultsPerPageChange}                   
                         >
                             <SelectItem key={"2"}>2</SelectItem>
                             <SelectItem key={"5"}>5</SelectItem>
@@ -163,7 +166,7 @@ function ResultsComponent() {
                 </div>
             </div>
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {decodedUrls && decodedUrls.map((link, index) => (
+                {items.map((link, index) => (
                     <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
                 ))}
             </div>
@@ -173,9 +176,9 @@ function ResultsComponent() {
                     loop 
                     showControls 
                     color="stone" 
-                    total={totalPages} 
-                    initialPage={currentPage}
-                    onChange={onPageChange}
+                    page={page}
+                    total={pages}
+                    onChange={(page) => setPage(page)}
                     aria-label="Pagination"
                 />
             </div>
