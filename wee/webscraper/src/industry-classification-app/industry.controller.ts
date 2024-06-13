@@ -40,7 +40,7 @@ export class IndustryController {
   @ApiResponse({ status: 200, description: 'Scraping permission status' })
   @Get('check-allowed')
   async checkAllowed(@Query('url') url: string): Promise<{ allowed: boolean }> {
-    const allowed = await IndustryService.checkAllowed(url); 
+    const allowed = await IndustryService.checkAllowed(url);
     return { allowed };
   }
 
@@ -61,4 +61,23 @@ export class IndustryController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating industry percentages' });
     }
   }
+
+  @Get('domain-match')
+  @ApiOperation({ summary: 'Classify industry based on the URL' })
+  @ApiQuery({ name: 'url', required: true, description: 'The URL to classify the industry for' })
+  @ApiResponse({ status: 200, description: 'Industry classified successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URL is required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot classify the industry' })
+  async domainMatch(@Query('url') url: string, @Res() res: Response) {
+    if (!url) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URL is required' });
+    }
+    try {
+      const industry = await this.scrapingService.domainMatch(url);
+      res.status(HttpStatus.OK).json({ url, industry });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error classifying the industry' });
+    }
+  }
+
 }

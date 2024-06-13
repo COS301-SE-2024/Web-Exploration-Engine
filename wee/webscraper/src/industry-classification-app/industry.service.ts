@@ -35,8 +35,6 @@ export class IndustryService {
       throw new Error('URL IS NOT ALLOWED TO SCRAPE');
     }
 
-
-
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     try {
@@ -87,37 +85,32 @@ export class IndustryService {
     }
     return 'No classification';
   }
-  private async classifyIndustry(metadata: Metadata):  Promise<string> {
 
+  private async classifyIndustry(metadata: Metadata):  Promise<string> {
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
 
     try {
-    const response = await axios.post(
-      this.HUGGING_FACE_API_URL,
-      { inputs: inputText },
-      {
-        headers: {
-          Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-        },
+      const response = await axios.post(
+        this.HUGGING_FACE_API_URL,
+        { inputs: inputText },
+        {
+          headers: {
+            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+          },
+        }
+      );
+
+      if (response.data && response.data[0][0]) {
+        return response.data[0][0].label;
+      } else {
+        throw new Error('Failed to classify industry using Hugging Face model');
       }
-    );
-
-
-    //console.log('Response from Hugging Face API:', response.data);
-
-    if (response.data && response.data[0][0]) {
-      return response.data[0][0].label;
-    } else {
-      throw new Error('Failed to classify industry using Hugging Face model');
+    } catch (error) {
+      throw new Error('Error classifying industry');
     }
-  } catch (error) {
-
-    throw new Error('Error classifying industry');
   }
 
-  }
-
-   static async  checkAllowed(url: string): Promise<boolean> {
+  static async checkAllowed(url: string): Promise<boolean> {
     const paths = await extractAllowedPaths(url);
     // Extract the path from the URL
     const urlObject = new URL(url);
@@ -176,6 +169,29 @@ export class IndustryService {
       return { industryPercentages };
     } catch (error) {
       throw new Error('Error calculating industry percentages');
+    }
+  }
+
+  // New function to classify industry based on URL
+  async domainMatch(url: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        this.HUGGING_FACE_API_URL,
+        { inputs: url },
+        {
+          headers: {
+            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+          },
+        }
+      );
+
+      if (response.data && response.data[0][0]) {
+        return response.data[0][0].label;
+      } else {
+        throw new Error('Failed to classify industry using Hugging Face model');
+      }
+    } catch (error) {
+      throw new Error('Error classifying industry based on URL');
     }
   }
 }
