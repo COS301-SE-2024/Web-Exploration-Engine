@@ -133,7 +133,7 @@ describe('IndustryService', () => {
 
       const result = await service['classifyIndustry'](mockMetadata);
 
-      expect(result).toBe('Internet & Direct Marketing Retail');
+      expect(result.label).toBe('Internet & Direct Marketing Retail');
       expect(axios.post).toHaveBeenCalledWith(
         service['HUGGING_FACE_API_URL'],
         { inputs: expect.stringContaining('Takealot') },
@@ -232,7 +232,8 @@ describe('IndustryService', () => {
 
       const result = await service['tryClassifyIndustry'](mockMetadata);
 
-      expect(result).toBe('No classification');
+      expect(result.label).toBe(' ');
+
     });
   });
   describe('calculateIndustryPercentages', () => {
@@ -299,6 +300,172 @@ describe('IndustryService', () => {
 
       await expect(service.calculateIndustryPercentages(mockUrls)).rejects.toThrow('Error calculating industry percentages');
       expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/api/scrapeIndustry', { params: { urls: mockUrls } });
+    });
+  });
+  describe('domainMatch', () => {
+    it('should classify industry based on the URL successfully', async () => {
+      const mockUrl = 'https://example.com';
+      const expectedLabelScore = {
+        label: 'Technology',
+        score: 0.95,
+      };
+
+      (axios.post as jest.Mock).mockResolvedValue({
+        data: [[{ label: 'Technology', score: 0.95 }]],
+      });
+
+      const result = await service.domainMatch(mockUrl);
+
+      expect(result).toEqual(expectedLabelScore);
+      expect(axios.post).toHaveBeenCalledWith(
+        service['HUGGING_FACE_API_URL'],
+        { inputs: mockUrl },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.access_Token}`,
+          },
+        }
+      );
+    });
+
+    it('should throw an error if classification fails', async () => {
+      const mockUrl = 'https://example.com';
+
+      (axios.post as jest.Mock).mockRejectedValue(new Error('Network error'));
+
+      await expect(service.domainMatch(mockUrl)).rejects.toThrow(
+        'Error classifying industry based on URL'
+      );
+    });
+  });
+
+  describe('compareIndustries', () => {
+    it('should compare industry classifications from scrapeMetadata and domainMatch', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com';
+      const mockScrapeMetadata = {
+        metadata: {
+          title: 'Example 1',
+          description: 'Description 1',
+          keywords: 'Keywords 1',
+          ogTitle: 'OG Title 1',
+          ogDescription: 'OG Description 1',
+          ogImage: 'OG Image 1',
+        },
+        industry: 'Technology',
+        score: 0.9,
+      };
+      const mockDomainMatch = {
+        label: 'Technology',
+        score: 0.95,
+      };
+
+      jest
+        .spyOn(service, 'scrapeMetadata')
+        .mockResolvedValueOnce(mockScrapeMetadata)
+        .mockResolvedValueOnce(mockScrapeMetadata);
+      jest.spyOn(service, 'domainMatch').mockResolvedValueOnce(mockDomainMatch).mockResolvedValueOnce(mockDomainMatch);
+
+      const result = await service.compareIndustries(mockUrls);
+
+      expect(result.comparisons).toEqual([
+        {
+          url: 'https://example1.com',
+          scrapeMetadata: {
+            scrapeIndustry: 'Technology',
+            scrapeScore: 0.9,
+          },
+          domainMatchIndustry: mockDomainMatch,
+          match: true,
+        },
+        {
+          url: 'https://example2.com',
+          scrapeMetadata: {
+            scrapeIndustry: 'Technology',
+            scrapeScore: 0.9,
+          },
+          domainMatchIndustry: mockDomainMatch,
+          match: true,
+        },
+      ]);
+    });
+
+    it('should handle different classifications between scrapeMetadata and domainMatch', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com';
+      const mockScrapeMetadata1 = {
+        metadata: {
+          title: 'Example 1',
+          description: 'Description 1',
+          keywords: 'Keywords 1',
+          ogTitle: 'OG Title 1',
+          ogDescription: 'OG Description 1',
+          ogImage: 'OG Image 1',
+        },
+        industry: 'Technology',
+        score: 0.9,
+      };
+      const mockScrapeMetadata2 = {
+        metadata: {
+          title: 'Example 2',
+          description: 'Description 2',
+          keywords: 'Keywords 2',
+          ogTitle: 'OG Title 2',
+          ogDescription: 'OG Description 2',
+          ogImage: 'OG Image 2',
+        },
+        industry: 'Finance',
+        score: 0.8,
+      };
+      const mockDomainMatch1 = {
+        label: 'Technology',
+        score: 0.95,
+      };
+      const mockDomainMatch2 = {
+        label: 'Healthcare',
+        score: 0.85,
+      };
+
+      jest
+        .spyOn(service, 'scrapeMetadata')
+        .mockResolvedValueOnce(mockScrapeMetadata1)
+        .mockResolvedValueOnce(mockScrapeMetadata2);
+      jest
+        .spyOn(service, 'domainMatch')
+        .mockResolvedValueOnce(mockDomainMatch1)
+        .mockResolvedValueOnce(mockDomainMatch2);
+
+      const result = await service.compareIndustries(mockUrls);
+
+      expect(result.comparisons).toEqual([
+        {
+          url: 'https://example1.com',
+          scrapeMetadata: {
+            scrapeIndustry: 'Technology',
+            scrapeScore: 0.9,
+          },
+          domainMatchIndustry: mockDomainMatch1,
+          match: true,
+        },
+        {
+          url: 'https://example2.com',
+          scrapeMetadata: {
+            scrapeIndustry: 'Finance',
+            scrapeScore: 0.8,
+          },
+          domainMatchIndustry: mockDomainMatch2,
+          match: false,
+        },
+      ]);
+    });
+
+    it('should throw an error if comparison fails', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com';
+
+      jest.spyOn(service, 'scrapeMetadata').mockRejectedValue(new Error('Error comparing industry classifications'));
+      jest.spyOn(service, 'domainMatch').mockRejectedValue(new Error('Domain match error'));
+
+      await expect(service.compareIndustries(mockUrls)).rejects.toThrow(
+        'Error comparing industry classifications'
+      );
     });
   });
 });
