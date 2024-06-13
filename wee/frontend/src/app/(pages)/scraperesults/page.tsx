@@ -35,7 +35,7 @@ function ResultsComponent() {
         if (hasSearchFilter) {
             filteredUrls = filteredUrls.filter((url) =>
                 url.toLowerCase().includes(searchValue.toLowerCase()),
-          );
+            );
         }
     
         return filteredUrls;
@@ -150,6 +150,10 @@ function ResultsComponent() {
         }
     };
 
+    const handleSummaryPage = () => {
+        router.push(`/summaryreport`);
+    }
+
     return (
         <div className='p-4'>            
             <div className='flex justify-center'>
@@ -261,7 +265,10 @@ function ResultsComponent() {
             <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                 Summary
             </h1>
-            <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor">
+            <Button 
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                onClick={handleSummaryPage}
+            >
                 View overall summary report
             </Button>
 
