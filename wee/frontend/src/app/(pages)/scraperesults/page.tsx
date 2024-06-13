@@ -9,6 +9,7 @@ import WEEPagination from '../../components/Util/Pagination';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
+import WEETable from '../../components/Util/Table';
 
 interface CrawlableStatus {
     [url: string]: boolean;
@@ -208,7 +209,7 @@ function ResultsComponent() {
                 </label>
             </div>
 
-            <Table 
+            <WEETable 
                 aria-label="Scrape result table"
                 bottomContent={
                     <div className="flex w-full justify-center">
@@ -228,7 +229,7 @@ function ResultsComponent() {
                 }}
                 >
                 <TableHeader>
-                    <TableColumn key="name">
+                    <TableColumn key="name" className='rounded-lg sm:rounded-none'>
                         URL
                     </TableColumn>
                     <TableColumn key="role" className='text-center hidden sm:table-cell'>
@@ -260,9 +261,9 @@ function ResultsComponent() {
                         </TableRow>
                     ))}
                 </TableBody>
-            </Table>
+            </WEETable>
 
-            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                 Summary
             </h1>
             <Button 
