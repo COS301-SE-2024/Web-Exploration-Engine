@@ -79,5 +79,21 @@ export class IndustryController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error classifying the industry' });
     }
   }
-
+  @Get('compare')
+  @ApiOperation({ summary: 'Compare industry classifications from scrapeMetadata and domainMatch' })
+  @ApiQuery({ name: 'url', required: true, description: 'The URL to compare industry classifications for' })
+  @ApiResponse({ status: 200, description: 'Comparison result' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URL is required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot compare industry classifications' })
+  async compareIndustries(@Query('url') url: string, @Res() res: Response) {
+    if (!url) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URL is required' });
+    }
+    try {
+      const comparison = await this.scrapingService.compareIndustries(url);
+      res.status(HttpStatus.OK).json(comparison);
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error comparing industry classifications' });
+    }
+  }
 }

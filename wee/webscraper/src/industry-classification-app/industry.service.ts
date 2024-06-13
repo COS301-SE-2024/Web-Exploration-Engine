@@ -194,4 +194,16 @@ export class IndustryService {
       throw new Error('Error classifying industry based on URL');
     }
   }
+  async compareIndustries(url: string): Promise<{ url: string; scrapeIndustry: string; domainMatchIndustry: string; match: boolean }> {
+    const { industry: scrapeIndustry } = await this.scrapeMetadata(url);
+    const domainMatchIndustry = await this.domainMatch(url);
+    const match = scrapeIndustry === domainMatchIndustry;
+
+    return {
+      url,
+      scrapeIndustry,
+      domainMatchIndustry,
+      match
+    };
+  }
 }
