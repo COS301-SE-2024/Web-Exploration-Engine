@@ -276,6 +276,7 @@ export class IndustryService {
         }
       } catch (error) {
         console.error(`Error processing URL: ${url}`, error);
+        throw new Error(`Error processing URL: ${url}`);
       }
     }
 

@@ -468,4 +468,60 @@ describe('IndustryService', () => {
       );
     });
   });
+
+  describe('countTrueDomainMatches', () => {
+    it('should count true domain matches correctly', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+      const mockScrapeResults = [
+        { industry: 'Technology' },
+        { industry: 'Finance' },
+        { industry: 'Technology' },
+      ];
+      const mockDomainMatches = [
+        { label: 'Technology' },
+        { label: 'Technology' },
+        { label: 'Finance' },
+      ];
+
+      jest.spyOn(service, 'scrapeMetadata').mockImplementation(async (url) => {
+        const index = mockUrls.split(',').indexOf(url);
+        return {
+          metadata: {
+            title: 'Mock Title',
+            description: 'Mock Description',
+            keywords: 'Mock Keywords',
+            ogTitle: null,
+            ogDescription: null,
+            ogImage: null,
+          },
+          industry: mockScrapeResults[index].industry,
+          score: 0.9,
+        };
+      });
+      
+
+      jest.spyOn(service, 'domainMatch').mockImplementation(async (url) => {
+        const index = mockUrls.split(',').indexOf(url);
+        return {
+          label: mockDomainMatches[index].label,
+          score: 0.8, 
+        };
+      });
+      
+
+      const result = await service.countTrueDomainMatches(mockUrls);
+
+      expect(result).toBe(33.33333333333333); // 1 matches out of three URLs
+    });
+
+    it('should handle error gracefully', async () => {
+      const mockUrls = 'https://example1.com,https://example2.com,https://example3.com';
+
+      jest.spyOn(service, 'scrapeMetadata').mockRejectedValue(new Error('Scrape metadata error'));
+
+      await expect(service.countTrueDomainMatches(mockUrls)).rejects.toThrow(
+        'Error processing URL: https://example1.com'
+      );
+    });
+  });
 });
