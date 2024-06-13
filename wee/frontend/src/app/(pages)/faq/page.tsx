@@ -153,12 +153,12 @@ export default function Faq() {
         <div className=" md:flex md:justify-left gap-2 lg:px-36 md:">
           <VideoThumbnail
             message="What formats can I export the scraped data?"
-            thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/8550b8190548687.6669b4f198c2f.png"
+            thumbnail="images/video-thumbnail.svg"
             link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
           />
           <VideoThumbnail
             message="How to scrape multiple reports?"
-            thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/4e6daa190548687.6669b4f199391.png"
+            thumbnail="images/video-thumbnail.svg"
             link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
           />
         </div>
