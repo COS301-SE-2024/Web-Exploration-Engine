@@ -149,34 +149,29 @@ function ResultsComponent() {
                 </WEESelect>
             </div>
 
-            <div className='md:flex md:justify-between'>
+            <div className='flex justify-between mt-4'>
+    
                 <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                     Results
                 </h1>
-                <div className='flex my-auto md:w-1/3 w-full'>
-                    <span className='m-2 text-xs'>Number of results per page:</span>
-                    <span className='w-[5rem]'>
-                        <WEESelect
-                            defaultSelectedKeys={["2"]}    
-                            aria-label="Number of results per page"      
-                            onSelectionChange={handleResultsPerPageChange}                   
-                        >
-                            <SelectItem key={"2"}>2</SelectItem>
-                            <SelectItem key={"5"}>5</SelectItem>
-                            <SelectItem key={"7"}>7</SelectItem>
-                            <SelectItem key={"9"}>9</SelectItem>
-                        </WEESelect>
-                    </span>
-                </div>
+
+                <WEESelect
+                    label="Results per page"
+                    defaultSelectedKeys={["2"]}    
+                    aria-label="Number of results per page"      
+                    onSelectionChange={handleResultsPerPageChange} 
+                    className='w-[9rem]'                  
+                >
+                    <SelectItem key={"2"}>2</SelectItem>
+                    <SelectItem key={"5"}>5</SelectItem>
+                    <SelectItem key={"7"}>7</SelectItem>
+                    <SelectItem key={"9"}>9</SelectItem>
+                </WEESelect>
+
             </div>
-            {/* <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((link, index) => (
-                    <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
-                ))}
-            </div> */}
 
             <Table 
-                aria-label="Example table with client side pagination"
+                aria-label="Scrape result table"
                 bottomContent={
                     <div className="flex w-full justify-center">
                         <WEEPagination 
@@ -198,31 +193,31 @@ function ResultsComponent() {
                     <TableColumn key="name">
                         URL
                     </TableColumn>
-                    <TableColumn key="role" className='hidden md:table-cell'>
+                    <TableColumn key="role" className='text-center hidden sm:table-cell'>
                         CRAWLABLE
                     </TableColumn>
-                    <TableColumn key="status">
+                    <TableColumn key="status" className='text-center hidden sm:table-cell'>
                         RESULT &amp; REPORT
                     </TableColumn>
                 </TableHeader>
 
                 <TableBody>
                     {items.map((item, index) => (
-                    <TableRow key={index}>
-                        <TableCell>
-                            {item}
-                        </TableCell>
-                        <TableCell className='hidden md:table-cell'>
-                            <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
-                        </TableCell>
-                        <TableCell>
-                            <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                                // onClick={handleResultPage}
-                            >
-                                View
-                            </Button>
-                        </TableCell>
-                    </TableRow>
+                        <TableRow key={index}>
+                            <TableCell>
+                                {item}
+                            </TableCell>
+                            <TableCell className='text-center hidden sm:table-cell'>
+                                <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
+                            </TableCell>
+                            <TableCell className='text-center hidden sm:table-cell'>
+                                <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                                    // onClick={handleResultPage}
+                                >
+                                    View
+                                </Button>
+                            </TableCell>
+                        </TableRow>
                     ))}
                 </TableBody>
             </Table>
