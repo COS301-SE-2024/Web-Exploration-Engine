@@ -192,7 +192,7 @@ function ResultsComponent() {
             </h1>
 
             <div className="flex justify-between items-center mb-2">
-                <span className="text-default-400 text-small">Total {filteredItems.length} users</span>
+                <span className="text-default-400 text-small">Total {filteredItems.length} results</span>
                 <label className="flex items-center text-default-400 text-small">
                     Results per page:
                     <select
