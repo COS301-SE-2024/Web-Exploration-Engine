@@ -149,8 +149,21 @@ export default function Faq() {
             Some video guides if you need them.{' '}
           </h3>
         </div>
+
+        <div className=" md:flex md:justify-left gap-2 lg:px-36 md:">
+          <VideoThumbnail
+            message="What formats can I export the scraped data?"
+            thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/8550b8190548687.6669b4f198c2f.png"
+            link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
+          />
+          <VideoThumbnail
+            message="How to scrape multiple reports?"
+            thumbnail="https://mir-s3-cdn-cf.behance.net/project_modules/fs/4e6daa190548687.6669b4f199391.png"
+            link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
+          />
+        </div>
       </div>
- */}
+
       <div id="feedback" className="mx-6 h-screen md:px-6 place-content-center">
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
