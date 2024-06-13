@@ -102,11 +102,13 @@ export default function Faq() {
     }
 
     // Create Request Object
+
+    //Integration Code Goes Here
   };
 
   return (
     <main className="">
-      <div className="my-16 text-center">
+      <div id="faq" className="my-16 text-center">
         <h1 className="my-4 mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Frequently Asked Questions
         </h1>
@@ -135,8 +137,10 @@ export default function Faq() {
         </Accordion>
       </div>
 
-      {/*       
-      <div id="tutorials" className="mx-6 h-screen md:px-6 place-content-center">
+      <div
+        id="tutorials"
+        className="mx-6 md:px-6 h-screen place-content-center"
+      >
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Tutorials
