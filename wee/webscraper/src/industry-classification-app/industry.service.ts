@@ -260,4 +260,27 @@ export class IndustryService {
 
     return { comparisons };
   }
+  async countTrueDomainMatches(urls: string): Promise<number> {
+    const urlArray = urls.split(',').map((url) => url.trim());
+    let trueDomainMatchCount = 0;
+    let totalUrlsChecked = 0;
+
+    for (const url of urlArray) {
+      try {
+        const { industry: scrapeIndustry } = await this.scrapeMetadata(url);
+        const { label: domainMatchIndustry } = await this.domainMatch(url);
+        totalUrlsChecked++;
+
+        if (scrapeIndustry === domainMatchIndustry) {
+          trueDomainMatchCount++;
+        }
+      } catch (error) {
+        console.error(`Error processing URL: ${url}`, error);
+      }
+    }
+
+    // Calculate the percentage of true domain matches
+    const percentage = totalUrlsChecked === 0 ? 0 : (trueDomainMatchCount / totalUrlsChecked) * 100;
+    return percentage;
+  }
 }

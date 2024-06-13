@@ -96,4 +96,22 @@ export class IndustryController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error comparing industry classifications' });
     }
   }
+
+  @Get('domain-percentage-match')
+  @ApiOperation({ summary: 'Count the number of true domain matches from given URLs' })
+  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated URLs to compare industry classifications for' })
+  @ApiResponse({ status: 200, description: 'Count of true domain matches' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URLs are required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot count true domain matches' })
+  async countTrueDomainMatches(@Query('urls') urls: string, @Res() res: Response) {
+    if (!urls) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
+    }
+    try {
+      const percentage = await this.scrapingService.countTrueDomainMatches(urls);
+      res.status(HttpStatus.OK).json({ percentage });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating true domain match percentage' });
+    }
+  }
 }
