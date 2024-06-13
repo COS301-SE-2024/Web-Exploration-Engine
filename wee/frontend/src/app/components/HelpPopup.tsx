@@ -71,14 +71,14 @@ export default function App() {
                   FAQs
                 </h3>
 
-                <CardLink message="What is a webscraper?" link="/faq" />
+                <CardLink message="What is a webscraper?" link="/help" />
                 <CardLink
                   message="What formats can I export the data in?"
-                  link="/faq"
+                  link="/help"
                 />
                 <CardLink
                   message="See all frequently asked questions"
-                  link="/faq"
+                  link="/help"
                 />
 
                 <h3 className="py-1 text-center font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100">
@@ -98,7 +98,7 @@ export default function App() {
                   />
                 </div>
 
-                <a href={'/faq#contact'} target="_blank">
+                <a href={'/help#contact'} target="_blank">
                   <div className="mb-2 flex justify-between bg-jungleGreen-200 dark:bg-jungleGreen-800 hover:dark:bg-jungleGreen-800 border border-jungleGreen-500 hover:bg-jungleGreen-400 duration-500 rounded-2xl p-4 hover:cursor-pointer">
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
                       Provide Feedback
