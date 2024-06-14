@@ -1,59 +1,74 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import puppeteer from 'puppeteer';
-import axios from 'axios';
-
 
 @Injectable()
 export class ScrapeMetadataService {
   async scrapeMetadata(
-    url: string, data: RobotsResponse | ErrorResponse
+    url: string, data: RobotsResponse
   ): Promise< Metadata | ErrorResponse> {
 
-    if ("status" in data) {
-      throw new Error('Error fetching robots.txt');
-    }
-
     const allowed = data.isBaseUrlAllowed;
+
     if (!allowed) {
-      throw new Error('URL cannot be scraped');
+      return {
+        errorStatus: 403,
+        errorCode: '403 Forbidden',
+        errorMessage: 'Not allowed to scrape root URL for metadata',
+      } as ErrorResponse;
     }
 
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let browser: any;
+
     try {
+      // would Cheerio be a better option here? - is metadata always in the head?
+      browser = await puppeteer.launch();
+      const page = await browser.newPage();
+
       await page.goto(url, { waitUntil: 'domcontentloaded' });
       const metadata = await page.evaluate(() => {
-        const getMetaTagContent = (name: string) => {
-          const element =
-            document.querySelector(`meta[name='${name}']`) ||
-            document.querySelector(`meta[property='og:${name}']`);
-          return element ? element.getAttribute('content') : null;
-        };
-
         return {
           title: document.title,
-          description: getMetaTagContent('description'),
-          keywords: getMetaTagContent('keywords'),
-          ogTitle: getMetaTagContent('title'),
-          ogDescription: getMetaTagContent('description'),
-          ogImage: getMetaTagContent('image'),
+          description: this.getMetaTagContent('description'),
+          keywords: this.getMetaTagContent('keywords'),
+          ogTitle: this.getMetaTagContent('title'),
+          ogDescription: this.getMetaTagContent('description'),
+          ogImage: this.getMetaTagContent('image'),
         } as Metadata;
       });
 
-      await browser.close();
+      if(!metadata) {
+        return {
+          title: null,
+          description: null,
+          keywords: null,
+          ogTitle: null,
+          ogDescription: null,
+          ogImage: null,
+        } as Metadata;
+      }
 
       return { ...metadata };
 
     } catch (error) {
       return {
-        status: 500,
-        code: 'INTERNAL_SERVER_ERROR',
-        message: `Error scraping metadata: ${error.message}`,
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Error scraping metadata',
       } as ErrorResponse;
     } finally {
-      await browser.close();
+      if(browser) {
+        await browser.close();
+      }
     }
   }
+
+  getMetaTagContent (name: string) {
+    const element =
+      document.querySelector(`meta[name='${name}']`) ||
+      document.querySelector(`meta[property='og:${name}']`);
+    return element ? element.getAttribute('content') : null;
+  };
 
 }

@@ -7,6 +7,7 @@ import { IndustryClassificationService } from './industry-classification/industr
 
 // Models
 import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
+import { title } from 'process';
 
 @Injectable()
 export class ScraperService {
@@ -71,7 +72,21 @@ export class ScraperService {
 
     data.robots = robotsResponse as RobotsResponse;
 
-    // scrape metadata
+    // scrape metadata & html - can we do this in parallel?
+    const metadataResponse = await this.metadataService.scrapeMetadata(data.url, data.robots);
+    if ("errorStatus" in metadataResponse) {
+      data.metadataError = {
+        title: null,
+        description: null,
+        keywords: null,
+        ogTitle: null,
+        ogDescription: null,
+        ogImage: null,
+      } as Metadata;
+    } else {
+      data.metadata = metadataResponse as Metadata;
+    }
+
 
     // classify industry based on metadata
 
@@ -88,21 +103,17 @@ export class ScraperService {
 
   }
 
-  async extractDomain(url: string) {
-    return this.robotsService.extractDomain(url);
-  }
-
-  async getAllowedPaths(url: string) {
-    return this.robotsService.extractAllowedPaths(url);
-  }
-
-  async isCrawlingAllowed(url: string) {
-    const paths = await this.getAllowedPaths(url);
-    return this.robotsService.isCrawlingAllowed(url, new Set(paths.allowedPaths));
-  }
-
   async readRobotsFile(url: string) {
     return this.robotsService.readRobotsFile(url);
+  }
+
+  async scrapeMetadata(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+
+    return this.metadataService.scrapeMetadata(url, robotsResponse as RobotsResponse);
   }
 
   // async scrapeMetadata(url: string) {
