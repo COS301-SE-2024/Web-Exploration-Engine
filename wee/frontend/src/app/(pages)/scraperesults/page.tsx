@@ -1,12 +1,15 @@
 'use client'
-import React, { useEffect, Suspense, useState } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { FiSearch } from "react-icons/fi";
 import { SelectItem } from "@nextui-org/react";
-import ScrapeResultsCard from '../../components/ScrapeResultCard';
 import { useSearchParams } from 'next/navigation';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
+import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import WEETable from '../../components/Util/Table';
 
 interface CrawlableStatus {
     [url: string]: boolean;
@@ -23,18 +26,39 @@ function ResultsComponent() {
     const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
+    const [searchValue, setSearchValue] = React.useState("");
+    const hasSearchFilter = Boolean(searchValue);
+
+    const filteredItems = React.useMemo(() => {
+        let filteredUrls = [...decodedUrls];
+
+        if (hasSearchFilter) {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.toLowerCase().includes(searchValue.toLowerCase()),
+            );
+        }
+    
+        return filteredUrls;
+      }, [decodedUrls, searchValue]);
+    
+    const router = useRouter();
+
+    const handleResultPage = (url:string, status:boolean, crawlable:boolean) => {
+        router.push(`/results?url=${encodeURIComponent(url)}&websiteStatus=${encodeURIComponent(status)}&isCrawlable=${encodeURIComponent(crawlable)}`);
+    };
+    
     // arrays that holds results returned from API
     const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
     const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
     const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
-
+    
     // Pagination
     const [page, setPage] = React.useState(1);
-    const [resultsPerPage, setResultsPerPage] = React.useState(2);
-    const pages = Math.ceil(decodedUrls.length/resultsPerPage);
-
-    const handleResultsPerPageChange = (keys:any) => {
-        const newResultsPerPage = parseInt(keys.values().next().value, 10);
+    const [resultsPerPage, setResultsPerPage] = React.useState(5);
+    const pages = Math.ceil(filteredItems.length/resultsPerPage);
+    
+    const handleResultsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newResultsPerPage = parseInt(event.target.value, 10);
         setResultsPerPage(newResultsPerPage);
         setPage(1);
     };
@@ -43,8 +67,8 @@ function ResultsComponent() {
         const start = (page - 1) * resultsPerPage;
         const end = start + resultsPerPage;
 
-        return decodedUrls.slice(start,end);
-    }, [page, decodedUrls, resultsPerPage])
+        return filteredItems.slice(start,end);
+    }, [page, filteredItems, resultsPerPage])
 
     useEffect(() => {
         if (urls) {
@@ -54,7 +78,7 @@ function ResultsComponent() {
 
             fetchIsCrawlingAllowed(urls);
             fetchWebsiteStatus(urls);
-            fetchIndustryClassifications(urls);
+            // fetchIndustryClassifications(urls);
         }
     }, [urls])
 
@@ -62,7 +86,7 @@ function ResultsComponent() {
         try {
             const response = await fetch(`http://localhost:3000/api/isCrawlingAllowed?urls=${encodeURIComponent(url)}`);
             const data = await response.json();
-            console.log(data);
+            console.log('Crawling allowed', data);
             setIsCrawlable(data);
         }
         catch (error) {
@@ -79,6 +103,9 @@ function ResultsComponent() {
         }
         catch (error) {
             console.error('Error fetching website status:', error);
+        }
+        finally {
+            setIsLoading(false);
         }
     };
 
@@ -114,10 +141,24 @@ function ResultsComponent() {
         );
     }
 
+    const onSearchChange = (value: string) => {
+        if (value) {
+          setSearchValue(value);
+          setPage(1);
+        } else {
+          setSearchValue("");
+        }
+    };
+
+    const handleSummaryPage = () => {
+        router.push(`/summaryreport`);
+    }
+
     return (
         <div className='p-4'>            
             <div className='flex justify-center'>
                 <WEEInput
+                    isClearable
                     type="text"
                     placeholder="https://www.takealot.com/"
                     labelPlacement="outside"
@@ -125,6 +166,8 @@ function ResultsComponent() {
                     startContent={
                         <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                     } 
+                    value={searchValue}
+                    onValueChange={onSearchChange}
                 />
             </div>
             <div className='md:flex md:justify-between md:w-4/5 md:m-auto md:px-5'>
@@ -145,43 +188,92 @@ function ResultsComponent() {
                 </WEESelect>
             </div>
 
-            <div className='md:flex md:justify-between'>
-                <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Results
-                </h1>
-                <div className='flex my-auto md:w-1/3 w-full'>
-                    <span className='m-2'>Number of results per page:</span>
-                    <span className='w-[5rem]'>
-                        <WEESelect
-                            defaultSelectedKeys={["2"]}    
-                            aria-label="Number of results per page"      
-                            onSelectionChange={handleResultsPerPageChange}                   
-                        >
-                            <SelectItem key={"2"}>2</SelectItem>
-                            <SelectItem key={"5"}>5</SelectItem>
-                            <SelectItem key={"7"}>7</SelectItem>
-                            <SelectItem key={"9"}>9</SelectItem>
-                        </WEESelect>
-                    </span>
-                </div>
-            </div>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((link, index) => (
-                    <ScrapeResultsCard key={link + index} url={link} isCrawlable={isCrawlable[link]} websiteStatus={websiteStatus[index]} industryClassification={industryClassification[index].industry}/>
-                ))}
+            <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                Results
+            </h1>
+
+            <div className="flex justify-between items-center mb-2">
+                <span className="text-default-400 text-small">Total {filteredItems.length} results</span>
+                <label className="flex items-center text-default-400 text-small">
+                    Results per page:
+                    <select
+                        value={resultsPerPage}
+                        className="bg-transparent outline-none text-default-400 text-small"
+                        onChange={handleResultsPerPageChange}
+                        aria-label="Number of results per page" 
+                    >
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                        <option value="9">9</option>
+                    </select>
+                </label>
             </div>
 
-            <div className='flex justify-center pt-3'>
-                <WEEPagination 
-                    loop 
-                    showControls 
-                    color="stone" 
-                    page={page}
-                    total={pages}
-                    onChange={(page) => setPage(page)}
-                    aria-label="Pagination"
-                />
-            </div>
+            <WEETable 
+                aria-label="Scrape result table"
+                bottomContent={
+                    <div className="flex w-full justify-center">
+                        <WEEPagination 
+                            loop 
+                            showControls 
+                            color="stone" 
+                            page={page}
+                            total={pages}
+                            onChange={(page) => setPage(page)}
+                            aria-label="Pagination"
+                        />
+                    </div>
+                }
+                classNames={{
+                    wrapper: "min-h-[222px]",
+                }}
+                >
+                <TableHeader>
+                    <TableColumn key="name" className='rounded-lg sm:rounded-none'>
+                        URL
+                    </TableColumn>
+                    <TableColumn key="role" className='text-center hidden sm:table-cell'>
+                        CRAWLABLE
+                    </TableColumn>
+                    <TableColumn key="status" className='text-center hidden sm:table-cell'>
+                        RESULT &amp; REPORT
+                    </TableColumn>
+                </TableHeader>
+
+                <TableBody>
+                    {items.map((item, index) => (
+                        <TableRow key={index}>
+                            <TableCell>
+                                <Link href={`/results?url=${encodeURIComponent(item)}&websiteStatus=${encodeURIComponent(websiteStatus[index])}&isCrawlable=${encodeURIComponent(isCrawlable[item])}`}>                               
+                                    {item}
+                                </Link>
+                            </TableCell>
+                            <TableCell className='text-center hidden sm:table-cell'>
+                                <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
+                            </TableCell>
+                            <TableCell className='text-center hidden sm:table-cell'>
+                                <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                                   onClick={() => handleResultPage(item, websiteStatus[index], isCrawlable[item])}
+                                >
+                                    View
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </WEETable>
+
+            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                Summary
+            </h1>
+            <Button 
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                onClick={handleSummaryPage}
+            >
+                View overall summary report
+            </Button>
+
         </div>
     )
 }

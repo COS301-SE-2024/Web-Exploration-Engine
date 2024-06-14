@@ -5,6 +5,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from 
 import { Chip } from "@nextui-org/react";
 import { useSearchParams } from 'next/navigation';
 import { IndustryClassification } from '../../models/IndustryModel';
+import WEETable from '../../components/Util/Table';
 
 export default function Results() {
     return (
@@ -81,7 +82,7 @@ function ResultsComponent() {
                 <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     General overview
                 </h3>
-                <Table isStriped aria-label="Example static collection table">
+                <WEETable isStriped aria-label="Example static collection table">
                     <TableHeader>
                         <TableColumn>SCRAPING CATEGORY</TableColumn>
                         <TableColumn>INFORMATION</TableColumn>
@@ -106,7 +107,7 @@ function ResultsComponent() {
                             </TableCell>
                         </TableRow>
                     </TableBody>
-                </Table>
+                </WEETable>
             </div>
 
             {logo && (
