@@ -1,14 +1,10 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 
-// Services
-import { RobotsService } from './robots/robots.service';
-
 @Controller('scraper')
 export class ScraperController {
   constructor(
     private readonly scraperService: ScraperService,
-    private readonly robotsService: RobotsService,
   ) {}
 
   /*  
@@ -24,6 +20,17 @@ export class ScraperController {
 
   @Get('allowed-paths')
   async getAllowedPaths(@Query('url') url: string) {
-    return this.robotsService.getAllowedPaths(url);
+    return this.scraperService.getAllowedPaths(url);
   }
+
+  @Get('extract-domain')
+  async extractDomain(@Query('url') url: string) {
+    return this.scraperService.extractDomain(url);
+  }
+
+  @Get('scrape-metadata')
+  async scrapeMetadata(@Query('url') url: string) {
+    return this.scraperService.scrapeMetadata(url);
+  }
+
 }

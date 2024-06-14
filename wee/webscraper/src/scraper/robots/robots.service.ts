@@ -18,9 +18,11 @@ export class RobotsService {
     }
 
     try {
+      const baseUrl = this.extractDomain(url);
       const allowedPaths = await this.extractAllowedPaths(url);
       const isBaseUrlAllowed = await this.isCrawlingAllowed(url, allowedPaths);
       return {
+        baseUrl,
         allowedPaths: Array.from(allowedPaths),
         isBaseUrlAllowed: isBaseUrlAllowed,
       } as RobotsResponse;
