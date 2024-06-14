@@ -100,67 +100,81 @@ describe('extractAllowedPaths', () => {
     expect(result.allowedPaths).toEqual(expectedAllowedPaths);
   });
 
-it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
-    const url = 'https://www.takealot.com';
+  it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
+      const url = 'https://www.takealot.com';
 
-    const expectedAllowedPaths = ["/"];
-    const expectedDisallowedPaths = [
-        "/*gclid=",
-        "/ajax/*.php",
-        "/ajax/*.php*",
-        "/help/page/",
-        "/help/faq/*",
-        "/account/*",
-        "/*qsearch=",
-        "/*custom=",
-        "/*dcat=",
-        "/*sort=ReleaseDate",
-        "/*sort=Price",
-        "/*sort=Rating",
-        "/*filter=Price",
-        "/*filter=Rating",
-        "/*filter=Availability",
-        "/*filter=Shipping",
-        "/*filter=Binding",
-        "/*filter=Promotions",
-        "/*filter=Colour",
-        "/*filter=CourseCode",
-        "/*filter=Format",
-        "/*filter=Manufacturer",
-        "/*filter=Lens",
-        "/*filter=ASScreenSize",
-        "/*filter=ASTabletDisplaySizes",
-        "/*filter=Size",
-        "/*filter=BabyAgeSize",
-        "/*filter=AlphaClothingSize",
-        "/*filter=AgeSize",
-        "/*filter=ASNappySize",
-        "/*filter=AgeGroup",
-        "/*filter=Ages",
-        "/*filter=BraSize",
-        "/*filter=TVScreenSize",
-        "/*filter=ShoeSize",
-        "/*filter=FashionSize",
-        "/*filter=ASRamSize",
-        "/*filter=LegwearSize",
-        "/*filter=LinenSize",
-        "/*filter=PaperSize",
-        "/*filter=StationarySize",
-        "/*filter=ASStorageCapacity",
-        "/*filter=EbooksFormat",
-        "/*filter=ASColours",
-        "/*filter=ColourVariant",
-        "/*filter=BasicColours",
-        "/*filter=BooksFormat",
-        "/*filter=ASCondition",
-        "/*filter=ASDigitalAppliance",
-        "/*rows="
-    ];
-    
+      const expectedAllowedPaths = ["/"];
+      const expectedDisallowedPaths = [
+          "/*gclid=",
+          "/ajax/*.php",
+          "/ajax/*.php*",
+          "/help/page/",
+          "/help/faq/*",
+          "/account/*",
+          "/*qsearch=",
+          "/*custom=",
+          "/*dcat=",
+          "/*sort=ReleaseDate",
+          "/*sort=Price",
+          "/*sort=Rating",
+          "/*filter=Price",
+          "/*filter=Rating",
+          "/*filter=Availability",
+          "/*filter=Shipping",
+          "/*filter=Binding",
+          "/*filter=Promotions",
+          "/*filter=Colour",
+          "/*filter=CourseCode",
+          "/*filter=Format",
+          "/*filter=Manufacturer",
+          "/*filter=Lens",
+          "/*filter=ASScreenSize",
+          "/*filter=ASTabletDisplaySizes",
+          "/*filter=Size",
+          "/*filter=BabyAgeSize",
+          "/*filter=AlphaClothingSize",
+          "/*filter=AgeSize",
+          "/*filter=ASNappySize",
+          "/*filter=AgeGroup",
+          "/*filter=Ages",
+          "/*filter=BraSize",
+          "/*filter=TVScreenSize",
+          "/*filter=ShoeSize",
+          "/*filter=FashionSize",
+          "/*filter=ASRamSize",
+          "/*filter=LegwearSize",
+          "/*filter=LinenSize",
+          "/*filter=PaperSize",
+          "/*filter=StationarySize",
+          "/*filter=ASStorageCapacity",
+          "/*filter=EbooksFormat",
+          "/*filter=ASColours",
+          "/*filter=ColourVariant",
+          "/*filter=BasicColours",
+          "/*filter=BooksFormat",
+          "/*filter=ASCondition",
+          "/*filter=ASDigitalAppliance",
+          "/*rows="
+      ];
+      
 
+      const result = await service.extractAllowedPaths(url);
+      expect(result.allowedPaths).toEqual(expectedAllowedPaths);
+      expect(result.disallowedPaths).toEqual(expectedDisallowedPaths);
+    });
+
+  it('should return empty allowed paths for a URL with no robots.txt', async () => {
+    const url = 'https://www.pnp.com';
+
+    const expectedAllowedPaths = [];
     const result = await service.extractAllowedPaths(url);
     expect(result.allowedPaths).toEqual(expectedAllowedPaths);
-    expect(result.disallowedPaths).toEqual(expectedDisallowedPaths);
+  });
+
+  it('should handle network error during fetch', async () => {
+    const url = 'https://www.nonexistent-url.com'; // This URL will simulate a network error
+
+    await expect(service.extractAllowedPaths(url)).rejects.toThrow('An error occurred while interpreting robots.txt file');
   });
 });
 

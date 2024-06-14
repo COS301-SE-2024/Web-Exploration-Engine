@@ -7,7 +7,6 @@ import { IndustryClassificationService } from './industry-classification/industr
 
 // Models
 import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
-import { error } from 'console';
 
 @Injectable()
 export class ScraperService {
@@ -56,6 +55,7 @@ export class ScraperService {
 
     // url validation
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let data:any;
 
     data.url = url;
@@ -93,34 +93,43 @@ export class ScraperService {
   }
 
   async getAllowedPaths(url: string) {
-    return this.robotsService.getAllowedPaths(url);
+    return this.robotsService.extractAllowedPaths(url);
   }
 
-  async scrapeMetadata(url: string) {
-    const data = {
-      url: '',
-      robots: {} as RobotsResponse | ErrorResponse,
-      metadata: {} as Metadata | ErrorResponse,
-    };
+  async isCrawlingAllowed(url: string) {
+    const paths = await this.getAllowedPaths(url);
+    return this.robotsService.isCrawlingAllowed(url, new Set(paths.allowedPaths));
+  }
 
-    // Should we we validate the URL here?
-    data.url = url;
-    // Get allowed paths, baseUrl and isBaseUrlAllowed
-    let response:any = await this.robotsService.getAllowedPaths(data.url);
-    if ("status" in response) {
-      data.robots = response as ErrorResponse;
-    } else {  
-      data.robots = response as RobotsResponse;
-    }
+  async readRobotsFile(url: string) {
+    return this.robotsService.readRobotsFile(url);
+  }
 
-    response = await this.metadataService.scrapeMetadata(url, data.robots);
-    console.log(response);
-    if ("status" in response) {
-      data.metadata = response as ErrorResponse;
-    } else {
-      data.metadata = response as Metadata;
-    }
+  // async scrapeMetadata(url: string) {
+  //   const data = {
+  //     url: '',
+  //     robots: {} as RobotsResponse | ErrorResponse,
+  //     metadata: {} as Metadata | ErrorResponse,
+  //   };
+
+  //   // Should we we validate the URL here?
+  //   data.url = url;
+  //   // Get allowed paths, baseUrl and isBaseUrlAllowed
+  //   let response:any = await this.robotsService.getAllowedPaths(data.url);
+  //   if ("status" in response) {
+  //     data.robots = response as ErrorResponse;
+  //   } else {  
+  //     data.robots = response as RobotsResponse;
+  //   }
+
+  //   response = await this.metadataService.scrapeMetadata(url, data.robots);
+  //   console.log(response);
+  //   if ("status" in response) {
+  //     data.metadata = response as ErrorResponse;
+  //   } else {
+  //     data.metadata = response as Metadata;
+  //   }
     
-    return data;
-  }
+  //   return data;
+  // }
 }
