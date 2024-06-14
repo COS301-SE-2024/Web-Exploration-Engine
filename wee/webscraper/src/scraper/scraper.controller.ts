@@ -5,6 +5,7 @@ import {
   ScrapeOperation, ScrapeQuery, ScrapeResponse200, ScrapeResponse400, ScrapeResponse500,
   ReadRobotsOperation, ReadRobotsQuery, ReadRobotsResponse200, ReadRobotsResponse400, ReadRobotsResponse500,
   ScrapeMetadataOperation, ScrapeMetadataQuery, ScrapeMetadataResponse200, ScrapeMetadataResponse400, ScrapeMetadataResponse500,
+  ScrapeStatusOperation, ScrapeStatusQuery, ScrapeStatusResponse200,
 } from './scraper.api';
 
 @ApiTags('Scraping')
@@ -49,7 +50,11 @@ export class ScraperController {
     return this.scraperService.scrapeMetadata(url);
   }
 
-  
-
-  
+  @ScrapeStatusOperation
+  @ScrapeStatusQuery
+  @ScrapeStatusResponse200
+  @Get('scrape-status')
+  async scrapeStatus(@Query('url') url: string) {
+    return this.scraperService.scrapeStatus(url);
+  }
 }
