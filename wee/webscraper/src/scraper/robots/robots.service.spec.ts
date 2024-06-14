@@ -76,8 +76,7 @@ describe('extractAllowedPaths', () => {
   it('should correctly parse Amazon robots.txt and return allowed paths for user agent *', async () => {
     const url = 'https://www.amazon.com';
 
-    const expectedPaths = new Set<string>([
-      '/',
+    const expectedAllowedPaths = [
       '/wishlist/universal*',
       '/wishlist/vendor-button*',
       '/wishlist/get-button*',
@@ -95,30 +94,73 @@ describe('extractAllowedPaths', () => {
       '/gp/offer-listing/B000',
       '/gp/offer-listing/9000',
       '/gp/aag/main?*seller=ABVFEJU8LS620',
-    ]);
+    ];
 
     const result = await service.extractAllowedPaths(url);
-    expect(result).toEqual(expectedPaths);
+    expect(result.allowedPaths).toEqual(expectedAllowedPaths);
   });
 
 it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
     const url = 'https://www.takealot.com';
 
-    const expectedPaths = new Set<string>(['/']);
+    const expectedAllowedPaths = ["/"];
+    const expectedDisallowedPaths = [
+        "/*gclid=",
+        "/ajax/*.php",
+        "/ajax/*.php*",
+        "/help/page/",
+        "/help/faq/*",
+        "/account/*",
+        "/*qsearch=",
+        "/*custom=",
+        "/*dcat=",
+        "/*sort=ReleaseDate",
+        "/*sort=Price",
+        "/*sort=Rating",
+        "/*filter=Price",
+        "/*filter=Rating",
+        "/*filter=Availability",
+        "/*filter=Shipping",
+        "/*filter=Binding",
+        "/*filter=Promotions",
+        "/*filter=Colour",
+        "/*filter=CourseCode",
+        "/*filter=Format",
+        "/*filter=Manufacturer",
+        "/*filter=Lens",
+        "/*filter=ASScreenSize",
+        "/*filter=ASTabletDisplaySizes",
+        "/*filter=Size",
+        "/*filter=BabyAgeSize",
+        "/*filter=AlphaClothingSize",
+        "/*filter=AgeSize",
+        "/*filter=ASNappySize",
+        "/*filter=AgeGroup",
+        "/*filter=Ages",
+        "/*filter=BraSize",
+        "/*filter=TVScreenSize",
+        "/*filter=ShoeSize",
+        "/*filter=FashionSize",
+        "/*filter=ASRamSize",
+        "/*filter=LegwearSize",
+        "/*filter=LinenSize",
+        "/*filter=PaperSize",
+        "/*filter=StationarySize",
+        "/*filter=ASStorageCapacity",
+        "/*filter=EbooksFormat",
+        "/*filter=ASColours",
+        "/*filter=ColourVariant",
+        "/*filter=BasicColours",
+        "/*filter=BooksFormat",
+        "/*filter=ASCondition",
+        "/*filter=ASDigitalAppliance",
+        "/*rows="
+    ];
+    
 
     const result = await service.extractAllowedPaths(url);
-    expect(result).toEqual(expectedPaths);
-  });
-
-  it('should throw an error for a site that returns no paths', async () => {
-    const url = 'https://www.pnp.com';
-    const expectedErrorMessage = 'An error occurred while fetching allowed paths';
-
-    try {
-      await service.extractAllowedPaths(url);
-    } catch (error) {
-      expect(error.message).toBe(expectedErrorMessage);
-    }
+    expect(result.allowedPaths).toEqual(expectedAllowedPaths);
+    expect(result.disallowedPaths).toEqual(expectedDisallowedPaths);
   });
 });
 
@@ -149,5 +191,117 @@ describe('isCrawlingAllowed', () => {
 
     const result = await service.isCrawlingAllowed(url, paths);
     expect(result).toBe(expectedResponse);
+  });
+});
+
+describe('isRootPathAllowed', () => {
+  it ('should return true if the root path is allowed', () => {
+    const disallowedPaths = new Set<string>(['/']);
+    const expectedResponse = false;
+
+    const service = new RobotsService();
+    const result = service.isRootPathAllowed(disallowedPaths);
+    expect(result).toBe(expectedResponse);
+  });
+
+  it ('should return false if the root path is disallowed', () => {
+    const disallowedPaths = new Set<string>([]);
+    const expectedResponse = true;
+
+    const service = new RobotsService();
+    const result = service.isRootPathAllowed(disallowedPaths);
+    expect(result).toBe(expectedResponse);
+  });
+});
+
+describe('readRobotsFile', () => {
+  it ('should return an error response if the URL parameter is not provided', async () => {
+    const url = '';
+    const expectedResponse = {
+      errorStatus: 400,
+      errorCode: '400 Bad Request',
+      errorMessage: 'URL parameter is required'
+    };
+
+    const service = new RobotsService();
+    const result = await service.readRobotsFile(url);
+    expect(result).toEqual(expectedResponse);
+  });
+
+  it ('should return a valid response if the URL parameter is provided', async () => {
+    const url = 'https://www.takealot.com';
+    const expectedResponse = {
+      baseUrl: 'https://www.takealot.com',
+      allowedPaths: ["/"],
+      disallowedPaths: [
+          "/*gclid=",
+          "/ajax/*.php",
+          "/ajax/*.php*",
+          "/help/page/",
+          "/help/faq/*",
+          "/account/*",
+          "/*qsearch=",
+          "/*custom=",
+          "/*dcat=",
+          "/*sort=ReleaseDate",
+          "/*sort=Price",
+          "/*sort=Rating",
+          "/*filter=Price",
+          "/*filter=Rating",
+          "/*filter=Availability",
+          "/*filter=Shipping",
+          "/*filter=Binding",
+          "/*filter=Promotions",
+          "/*filter=Colour",
+          "/*filter=CourseCode",
+          "/*filter=Format",
+          "/*filter=Manufacturer",
+          "/*filter=Lens",
+          "/*filter=ASScreenSize",
+          "/*filter=ASTabletDisplaySizes",
+          "/*filter=Size",
+          "/*filter=BabyAgeSize",
+          "/*filter=AlphaClothingSize",
+          "/*filter=AgeSize",
+          "/*filter=ASNappySize",
+          "/*filter=AgeGroup",
+          "/*filter=Ages",
+          "/*filter=BraSize",
+          "/*filter=TVScreenSize",
+          "/*filter=ShoeSize",
+          "/*filter=FashionSize",
+          "/*filter=ASRamSize",
+          "/*filter=LegwearSize",
+          "/*filter=LinenSize",
+          "/*filter=PaperSize",
+          "/*filter=StationarySize",
+          "/*filter=ASStorageCapacity",
+          "/*filter=EbooksFormat",
+          "/*filter=ASColours",
+          "/*filter=ColourVariant",
+          "/*filter=BasicColours",
+          "/*filter=BooksFormat",
+          "/*filter=ASCondition",
+          "/*filter=ASDigitalAppliance",
+          "/*rows="
+      ],
+      isBaseUrlAllowed: true,
+    };
+
+    const service = new RobotsService();
+    const result = await service.readRobotsFile(url);
+    expect(result).toEqual(expectedResponse);
+  });
+
+  it ('should return an error response if an error occurs while extracting allowed paths', async () => {
+    const url = 'https://www.pnp.com';
+    const expectedErrorMessage = 'An error occurred while fetching allowed paths';
+
+    const service = new RobotsService();
+    try {
+      await service.readRobotsFile(url);
+    } catch (error) {
+      expect(error.message).toBe(expectedErrorMessage);
+    }
   });
 });

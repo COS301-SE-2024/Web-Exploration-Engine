@@ -7,67 +7,58 @@ import fetch from 'node-fetch';
 
 @Injectable()
 export class RobotsService {
-  async getAllowedPaths(url: string) {
-    // Check if the URL parameter is provided
-    if (!url) {
-      return {
-        status: 400,
-        code: 'BAD_REQUEST',
-        message: 'URL parameter is required',
-      } as ErrorResponse;
-    }
-
-    try {
-      const baseUrl = this.extractDomain(url);
-      const allowedPaths = await this.extractAllowedPaths(url);
-      const isBaseUrlAllowed = await this.isCrawlingAllowed(url, allowedPaths);
-      return {
-        baseUrl,
-        allowedPaths: Array.from(allowedPaths),
-        isBaseUrlAllowed: isBaseUrlAllowed,
-      } as RobotsResponse;
-    } catch (error) {
-      // return error response if error encountered
-      return {
-        status: 500,
-        code: 'INTERNAL_SERVER_ERROR',
-        message: error.message,
-      } as ErrorResponse;
-    }
-
-  }
-
-  async extractAllowedPaths(baseUrl: string): Promise<Set<string>> {
+  // Returns all the paths user agent can scrape in the form of an array
+  async extractAllowedPaths(baseUrl: string): 
+  Promise<{allowedPaths: string[], disallowedPaths: string[]}> {
+    // Extract base URL
     const domain = this.extractDomain(baseUrl);
+    // Construct the URL for the robots.txt file
     const robotstxtUrl = `${domain}/robots.txt`;
 
     try {
       const response = await fetch(robotstxtUrl);
-      // Check if the response is successful
-      if (!response.ok) {
-        throw new Error(`Failed to fetch robots.txt from ${robotstxtUrl}`);
+
+      // Check if website has a robots.txt file -- if not, return an empty set
+      if (response.status === 404) {
+        console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
+        return {
+          allowedPaths: [],
+          disallowedPaths: [],
+        };
       }
+
+      // Check if error occured
+      if (!response.ok) {
+        throw new Error(`An error occurred while fetching robots.txt from ${robotstxtUrl}`);
+      }
+
+      // Parse the robots.txt file
       const robotstxt = await response.text();
       if (!robotstxt) {
-        throw new Error(`robots.txt content is empty for ${robotstxtUrl}`);
+        console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
+        return {
+          allowedPaths: [],
+          disallowedPaths: [],
+        };
       }
+
       let isGlobalUserAgent = false;
-      let rootDisallowed = false;
 
       const lines = robotstxt.split('\n');
       const allowedPaths = new Set<string>();
+      const disallowedPaths = new Set<string>();
 
       lines.forEach((line) => {
         line = line.trim();
         if (line.startsWith('User-agent:')) {
           const userAgent = line.substring(11).trim();
           isGlobalUserAgent = userAgent === '*';
-        } else if (line.startsWith('Disallow:') && isGlobalUserAgent) {
+        } else if ((line.startsWith('Disallow:') || line.startsWith('disallow:')) && isGlobalUserAgent) {
           const path = line.substring(9).trim();
-          if (path === '/') {
-            rootDisallowed = true;
+          if (path.startsWith('/')) {
+            disallowedPaths.add(path);
           }
-        } else if (line.startsWith('Allow:') && isGlobalUserAgent) {
+        } else if ((line.startsWith('Allow:') || line.startsWith('allow:')) && isGlobalUserAgent) {
           const path = line.substring(6).trim();
           if (path.startsWith('/')) {
             allowedPaths.add(path);
@@ -75,14 +66,9 @@ export class RobotsService {
         }
       });
 
-      // If the root is not explicitly disallowed, add it to the allowed paths
-      if (!rootDisallowed) {
-        allowedPaths.add('/');
-      }
-
-      return allowedPaths;
+      return {allowedPaths: Array.from(allowedPaths), disallowedPaths: Array.from(disallowedPaths)};
     } catch (error) {
-      throw new Error('An error occurred while fetching allowed paths');
+      throw new Error('An error occurred while interpreting robots.txt file');
     }
   }
 
@@ -127,4 +113,39 @@ export class RobotsService {
       }
     }
   }
+
+  isRootPathAllowed(disallowedPaths: Set<string>): boolean {
+    return !disallowedPaths.has('/');
+  }
+
+  async readRobotsFile(url: string): Promise<RobotsResponse | ErrorResponse> {
+    // Check if the URL parameter is provided
+    if (!url) {
+      return {
+        errorStatus: 400,
+        errorCode: '400 Bad Request',
+        errorMessage: 'URL parameter is required'
+      } as ErrorResponse;
+    }
+
+    try {
+      const baseUrl = this.extractDomain(url);
+      const {allowedPaths, disallowedPaths} = await this.extractAllowedPaths(baseUrl);
+      const isBaseUrlAllowed = this.isRootPathAllowed(new Set(disallowedPaths));
+      return {
+        baseUrl,
+        allowedPaths,
+        disallowedPaths,
+        isBaseUrlAllowed,
+      } as RobotsResponse;
+    } catch (error) {
+      // return error response if error encountered
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: error.message,
+      } as ErrorResponse;
+    }
+  }
+
 }

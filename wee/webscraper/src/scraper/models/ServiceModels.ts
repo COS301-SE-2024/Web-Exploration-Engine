@@ -1,12 +1,18 @@
 export interface ErrorResponse {
-  status: number;
-  code: string;
-  message: string;
+  errorStatus: number;
+  errorCode: string;
+  errorMessage: string;
+  details?: {
+    timestamp: string;
+    path: string;
+  }
+
 }
 
 export interface RobotsResponse {
   baseUrl: string;
   allowedPaths: string[];
+  disallowedPaths: string[];
   isBaseUrlAllowed: boolean;
 }
 

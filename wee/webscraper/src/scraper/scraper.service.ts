@@ -7,7 +7,7 @@ import { IndustryClassificationService } from './industry-classification/industr
 
 // Models
 import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
-
+import { error } from 'console';
 
 @Injectable()
 export class ScraperService {
@@ -55,8 +55,21 @@ export class ScraperService {
     // return data;
 
     // url validation
+    
+    let data:any;
 
-    // scrape robots.txt file
+    data.url = url;
+
+    // scrape robots.txt file & url validation
+    const robotsResponse = await this.robotsService.readRobotsFile(data.url);
+    // blocking - check for error response
+    // some kind of retry mechanism here?
+    if ("errorStatus" in robotsResponse) {
+      data.robotsError = robotsResponse as ErrorResponse;
+      return data;
+    }
+
+    data.robots = robotsResponse as RobotsResponse;
 
     // scrape metadata
 
