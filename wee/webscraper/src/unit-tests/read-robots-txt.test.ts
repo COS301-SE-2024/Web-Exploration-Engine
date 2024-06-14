@@ -67,7 +67,26 @@ describe('extractAllowedPaths', () => {
     expect(result).toEqual(expectedPaths);
   });
 
-it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
+
+  it('should correctly parse ChatGPT robots.txt and return allowed paths for user agent *', async () => {
+    jest.setTimeout(18000);
+    const url = 'https://www.chatgpt.com';
+
+    const expectedPaths = new Set<string>([
+      '/$',
+      '/api/share/og/*',
+      '/auth/*',
+      '/g/*',
+      '/gpts$',
+      '/images/*'
+    ]);
+
+    const result = await extractAllowedPaths(url);
+    expect(result).toEqual(expectedPaths);
+  });
+
+  it('should correctly parse Takealot robots.txt and return allowed paths for user agent *', async () => {
+
     const url = 'https://www.takealot.com';
 
     const expectedPaths = new Set<string>(['/']);

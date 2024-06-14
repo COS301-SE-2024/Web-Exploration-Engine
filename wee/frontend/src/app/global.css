@@ -4,6 +4,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Utitlities */
+@layer utilities {
+
+  .help-popup {
+  position: fixed;
+  /*   float: right; */
+  bottom: 8px;
+  right: 8px;
+  z-index: 1000;
+}
+  .help-popup-button {
+  position: fixed;
+     float: right; 
+  bottom: 16px;
+  right: 16px;
+ 
+}
+
+}
+
+
 .font-poppins-regular {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
@@ -23,3 +44,4 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
 }
+

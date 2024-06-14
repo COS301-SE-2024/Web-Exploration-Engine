@@ -40,7 +40,7 @@ export class IndustryController {
   @ApiResponse({ status: 200, description: 'Scraping permission status' })
   @Get('check-allowed')
   async checkAllowed(@Query('url') url: string): Promise<{ allowed: boolean }> {
-    const allowed = await IndustryService.checkAllowed(url); 
+    const allowed = await IndustryService.checkAllowed(url);
     return { allowed };
   }
 
@@ -59,6 +59,59 @@ export class IndustryController {
       res.status(HttpStatus.OK).json({ industryPercentages });
     } catch (error) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating industry percentages' });
+    }
+  }
+
+  @Get('domain-match')
+  @ApiOperation({ summary: 'Classify industry based on the URL' })
+  @ApiQuery({ name: 'url', required: true, description: 'The URL to classify the industry for' })
+  @ApiResponse({ status: 200, description: 'Industry classified successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URL is required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot classify the industry' })
+  async domainMatch(@Query('url') url: string, @Res() res: Response) {
+    if (!url) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URL is required' });
+    }
+    try {
+      const industry = await this.scrapingService.domainMatch(url);
+      res.status(HttpStatus.OK).json({ url, industry });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error classifying the industry' });
+    }
+  }
+  @Get('compare')
+  @ApiOperation({ summary: 'Compare industry classifications from scrapeMetadata and domainMatch' })
+  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated URLs to compare industry classifications for' })
+  @ApiResponse({ status: 200, description: 'Comparison result' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URLs are required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot compare industry classifications' })
+  async compareIndustries(@Query('urls') urls: string, @Res() res: Response) {
+    if (!urls) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
+    }
+    try {
+      const comparison = await this.scrapingService.compareIndustries(urls);
+      res.status(HttpStatus.OK).json(comparison);
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error comparing industry classifications' });
+    }
+  }
+
+  @Get('domain-percentage-match')
+  @ApiOperation({ summary: 'Count the number of true domain matches from given URLs' })
+  @ApiQuery({ name: 'urls', required: true, description: 'Comma-separated URLs to compare industry classifications for' })
+  @ApiResponse({ status: 200, description: 'Count of true domain matches' })
+  @ApiResponse({ status: 400, description: 'Bad Request. URLs are required' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error. Cannot count true domain matches' })
+  async countTrueDomainMatches(@Query('urls') urls: string, @Res() res: Response) {
+    if (!urls) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: 'URLs are required' });
+    }
+    try {
+      const percentage = await this.scrapingService.countTrueDomainMatches(urls);
+      res.status(HttpStatus.OK).json({ percentage });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Error calculating true domain match percentage' });
     }
   }
 }
