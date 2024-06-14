@@ -3,66 +3,35 @@ import { Injectable } from '@nestjs/common';
 // Services
 import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
-import { IndustryClassificationService } from './industry-classification/industry-classification.service';
-
+import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 // Models
 import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
-import { title } from 'process';
 
 @Injectable()
 export class ScraperService {
   constructor(
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
-    private readonly industryClassificationService: IndustryClassificationService,
+    private readonly scrapeStatusService: ScrapeStatusService,
   ) {}
 
   async scrape(url: string) {
-    // const data:any = {
-    //   url: '',
-    //   robots: {} as RobotsResponse | ErrorResponse,
-    // };
-
-    // // Should we we validate the URL here?
-    // data.url = url;
-
-    // // Get allowed paths, baseUrl and isBaseUrlAllowed
-    // let response:any = await this.robotsService.getAllowedPaths(data.url);
-    // if ("status" in response) {
-    //   data.robots = response as ErrorResponse;
-    //   // If scraping is not allowed, break the pipeline
-    //   return data;
-    // } else {  
-    //   data.robots = response as RobotsResponse;
-    // }
-
-    // // Scrape metadata
-    // response = await this.metadataService.scrapeMetadata(url, data.robots);
-    // console.log(response);
-    // if ("status" in response) {
-    //   data.metadata = response as ErrorResponse;
-    // } else {
-    //   data.metadata = response as Metadata;
-    // }
-
-    // // Perform metadata-dependent actions
-    // if (!("status" in data.metadata)) {
-    //   const industry: string = await this.industryClassificationService.classifyIndustryFromMetadata(data.metadata, url);
-    //   data.industry = industry;
-    // }
-
-    
-    // return data;
-
-    // url validation
-    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let data:any;
+
+    // validate url
+
 
     data.url = url;
 
     // scrape robots.txt file & url validation
-    const robotsResponse = await this.robotsService.readRobotsFile(data.url);
+    // scrape web status - live, parked, under construction
+    const robotsPromise = this.robotsService.readRobotsFile(data.url);
+    const statusPromise = this.scrapeStatusService.scrapeStatus(data.url);
+
+    const [robotsResponse, status] = await Promise.all([robotsPromise, statusPromise]);
+    data.domainStatus = status;
+
     // blocking - check for error response
     // some kind of retry mechanism here?
     if ("errorStatus" in robotsResponse) {
@@ -100,7 +69,7 @@ export class ScraperService {
 
     // do we want to perform analysis in the scraper service? - probably not
 
-
+    return data;
   }
 
   async readRobotsFile(url: string) {
@@ -114,6 +83,10 @@ export class ScraperService {
     }
 
     return this.metadataService.scrapeMetadata(url, robotsResponse as RobotsResponse);
+  }
+
+  async scrapeStatus(url: string) {
+    return this.scrapeStatusService.scrapeStatus(url);
   }
 
   // async scrapeMetadata(url: string) {

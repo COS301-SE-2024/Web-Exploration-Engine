@@ -1,22 +1,10 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
-import { ApiTags, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import {
-  ScrapeOperation,
-  ScrapeQuery,
-  ScrapeResponse200,
-  ScrapeResponse400,
-  ScrapeResponse500,
-  ReadRobotsOperation,
-  ReadRobotsQuery,
-  ReadRobotsResponse200,
-  ReadRobotsResponse400,
-  ReadRobotsResponse500,
-  ScrapeMetadataOperation,
-  ScrapeMetadataQuery,
-  ScrapeMetadataResponse200,
-  ScrapeMetadataResponse400,
-  ScrapeMetadataResponse500,
+  ScrapeOperation, ScrapeQuery, ScrapeResponse200, ScrapeResponse400, ScrapeResponse500,
+  ReadRobotsOperation, ReadRobotsQuery, ReadRobotsResponse200, ReadRobotsResponse400, ReadRobotsResponse500,
+  ScrapeMetadataOperation, ScrapeMetadataQuery, ScrapeMetadataResponse200, ScrapeMetadataResponse400, ScrapeMetadataResponse500,
 } from './scraper.api';
 
 @ApiTags('Scraping')
@@ -61,4 +49,7 @@ export class ScraperController {
     return this.scraperService.scrapeMetadata(url);
   }
 
+  
+
+  
 }

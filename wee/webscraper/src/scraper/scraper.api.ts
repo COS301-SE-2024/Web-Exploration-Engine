@@ -98,3 +98,15 @@ export const ScrapeMetadataResponse500 = ApiResponse({
     },
   },
 });
+
+// Status endpoint
+export const ScrapeStatusOperation = ApiOperation({ summary: 'Scrape the status of a website' });
+export const ScrapeStatusQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
+export const ScrapeStatusResponse200 = ApiResponse({
+  status: 200,
+  description: 'Website status successfully scraped',
+  schema: {
+    type: 'string',
+    enum: ['live', 'parked'],
+  },
+});
