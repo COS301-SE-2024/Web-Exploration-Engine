@@ -60,6 +60,11 @@ export interface Summary {
       industry: string;
       percentage: string;
     }[];
+    weakClassification: {
+      url: string;
+      metadataClass: string;
+      score: number;
+    }[];
   },
   domainMatch: {
     percentageMatch: string;

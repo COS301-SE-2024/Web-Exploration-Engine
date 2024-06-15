@@ -193,5 +193,37 @@ describe('SummaryService', () => {
     ]));
   });
 
+  it('should correctly calculate domain match percentages with no mismatches', () => {
+    scraperResults[0].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[0].industryClassification.domainClass.label = 'Tech';
+    scraperResults[1].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[1].industryClassification.domainClass.label = 'Tech';
+    scraperResults[2].industryClassification.metadataClass.label = 'Retail';
+    scraperResults[2].industryClassification.domainClass.label = 'Retail';
+    scraperResults[3].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[3].industryClassification.domainClass.label = 'Tech';
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.domainMatch.percentageMatch).toBe('100.00');
+    expect(summary.domainMatch.mismatchedUrls).toEqual(expect.arrayContaining([]));
+  });
+
+  it('should correctly identify weak classifications' , () => {
+    scraperResults[0].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[0].industryClassification.metadataClass.score = 0.4;
+    scraperResults[1].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[1].industryClassification.metadataClass.score = 0.6;
+    scraperResults[2].industryClassification.metadataClass.label = 'Retail';
+    scraperResults[2].industryClassification.metadataClass.score = 0.4;
+    scraperResults[3].industryClassification.metadataClass.label = 'Tech';
+    scraperResults[3].industryClassification.metadataClass.score = 0.6;
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.industryClassification.weakClassification).toEqual(expect.arrayContaining([
+      { url: 'http://example1.com', metadataClass: 'Tech', score: 0.4 },
+      { url: 'http://example3.com', metadataClass: 'Retail', score: 0.4 }
+    ]));
+  });
+
 
 });
