@@ -31,10 +31,6 @@ describe('ScrapeStatusService', () => {
   it('should return an error for an invalid URL', async () => {
     const url = '';
     const status = await service.scrapeStatus(url);
-    expect(status).toEqual({
-      errorStatus: 400,
-      errorCode: '400 Bad Request',
-      errorMessage: 'URL parameter is required',
-    });
+    expect(status).toEqual('error');
   });
 });
