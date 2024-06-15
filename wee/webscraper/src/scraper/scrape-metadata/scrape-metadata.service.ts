@@ -7,6 +7,7 @@ export class ScrapeMetadataService {
   async scrapeMetadata(
     url: string, data: RobotsResponse
   ): Promise<Metadata | ErrorResponse> {
+    // Possible improvement: first scrape given URL, if no metadata found, scrape root URL
 
     const allowed = data.isBaseUrlAllowed;
 

@@ -13,7 +13,8 @@ export interface RobotsResponse {
   baseUrl: string;
   allowedPaths: string[];
   disallowedPaths: string[];
-  isBaseUrlAllowed: boolean;
+  isUrlScrapable: boolean; // for scraping metadata, images, logos
+  isBaseUrlAllowed: boolean; // for scraping metadata
 }
 
 export interface Metadata {

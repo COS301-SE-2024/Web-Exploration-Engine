@@ -110,3 +110,83 @@ export const ScrapeStatusResponse200 = ApiResponse({
     enum: ['live', 'parked'],
   },
 });
+
+// Logos endpoint
+export const ScrapeLogoOperation = ApiOperation({ summary: 'Scrape logos from given URL' });
+export const ScrapeLogoQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
+export const ScrapeLogoResponse200 = ApiResponse({
+  status: 200,
+  description: 'Logos successfully scraped',
+  schema: {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+  },
+});
+export const ScrapeLogoResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+
+// Images endpoint
+export const ScrapeImagesOperation = ApiOperation({ summary: 'Scrape images from given URL' });
+export const ScrapeImagesQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
+export const ScrapeImagesResponse200 = ApiResponse({
+  status: 200,
+  description: 'Images successfully scraped',
+  schema: {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+  },
+});
+export const ScrapeImagesResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+
+
+// Industry classification endpoint
+export const ClassifyIndustryOperation = ApiOperation({ summary: 'Classify industry of a website based on metadata and based on the domain name' });
+export const ClassifyIndustryQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to classify' });
+export const ClassifyIndustryResponse200 = ApiResponse({
+  status: 200,
+  description: 'Industry classification successful',
+  schema: {
+    type: 'object',
+    properties: {
+      metadataClass: {
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          score: { type: 'number' },
+        },
+      },
+      domainClass: {
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          score: { type: 'number' },
+        },
+      },
+    },
+  },
+});

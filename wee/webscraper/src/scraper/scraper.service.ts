@@ -5,8 +5,10 @@ import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
 import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 import { IndustryClassificationService } from './industry-classification/industry-classification.service';
+import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
+import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 // Models
-import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
+import { ErrorResponse, RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
 
 @Injectable()
 export class ScraperService {
@@ -14,7 +16,9 @@ export class ScraperService {
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
-    private readonly industryClassificationService: IndustryClassificationService
+    private readonly industryClassificationService: IndustryClassificationService,
+    private readonly scrapeLogoService: ScrapeLogoService,
+    private readonly scrapeImagesService: ScrapeImagesService,
   ) {}
 
   async scrape(url: string) {
@@ -22,11 +26,12 @@ export class ScraperService {
     const data = {
       url: '',
       domainStatus: '' ,
-      robots: {} as RobotsResponse | ErrorResponse,
-      robotsError: {} as ErrorResponse,
-      metadata: {} as Metadata | ErrorResponse,
-      metadataError: {} as ErrorResponse,
-      industryClassification: {} as any,
+      robots: null as RobotsResponse | ErrorResponse | null,
+      metadata: null as Metadata | ErrorResponse | null,
+      industryClassification: null as IndustryClassification | ErrorResponse | null,
+      logo: '',
+      images: [],
+      slogan: '',
     };
 
     // validate url
@@ -44,13 +49,14 @@ export class ScraperService {
     // blocking - check for error response
     // some kind of retry mechanism here?
     if ("errorStatus" in robotsResponse) {
-      data.robotsError = robotsResponse as ErrorResponse;
+      data.robots = robotsResponse as ErrorResponse;
       return data;
     }
 
     data.robots = robotsResponse as RobotsResponse;
 
     // scrape metadata & html - can we do this in parallel?
+    // metadata checks if url is allowed to be scraped
     const metadataResponse = await this.metadataService.scrapeMetadata(data.url, data.robots);
     if ("errorStatus" in metadataResponse) {
       data.metadata = {
@@ -65,14 +71,20 @@ export class ScraperService {
       data.metadata = metadataResponse as Metadata;
     }
 
-    // classify industry based on metadata
-    const industryClassification = await this.industryClassificationService.classifyIndustry(data.url, data.metadata);
-    data.industryClassification = industryClassification;
-
-
-    // classify industry based on domain name - for domain match
+    // classify industry based on metadata and domain name
+    const industryClassificationPromise = this.industryClassificationService.classifyIndustry(data.url, data.metadata);
+    
 
     // scrape logo
+    const logoPromise = await this.scrapeLogoService.scrapeLogo(data.url, data.metadata, data.robots);
+
+    // scrape images - doesn't use metadata -- need to check if scraping images is allowed
+    const imagesPromise = this.scrapeImagesService.scrapeImages(data.url, data.robots);
+
+    const [industryClassification, logo, images] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise]);    
+    data.industryClassification = industryClassification;
+    data.logo = logo;
+    data.images = images;
 
     // scrape slogan
 
@@ -99,7 +111,7 @@ export class ScraperService {
       return robotsResponse;
     }
 
-    return this.metadataService.scrapeMetadata(url, robotsResponse as RobotsResponse);
+    return this.metadataService.scrapeMetadata(robotsResponse.baseUrl, robotsResponse as RobotsResponse);
   }
 
   async scrapeStatus(url: string) {
@@ -112,5 +124,29 @@ export class ScraperService {
       return metadataResponse;
     }
     return this.industryClassificationService.classifyIndustry(url, metadataResponse);
+  }
+
+  async scrapeLogo(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+    const metadataResponse = await this.metadataService.scrapeMetadata(robotsResponse.baseUrl, robotsResponse as RobotsResponse);
+    if ("errorStatus" in metadataResponse) {
+      return metadataResponse;
+    }
+    return this.scrapeLogoService.scrapeLogo(url, metadataResponse, robotsResponse);
+  }
+
+  async scrapeImages(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+    const metadataResponse = await this.metadataService.scrapeMetadata(robotsResponse.baseUrl, robotsResponse as RobotsResponse);
+    if ("errorStatus" in metadataResponse) {
+      return metadataResponse;
+    }
+    return this.scrapeImagesService.scrapeImages(url, robotsResponse);
   }
 }

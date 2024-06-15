@@ -27,6 +27,13 @@ describe('extractDomain', () => {
 
     service = module.get<RobotsService>(RobotsService);
   });
+  
+  it('should return the same domain if it is the root domain', () => {
+    const validUrl = 'https://www.amazon.com';
+    const expectedDomain = 'https://www.amazon.com';
+    const actualDomain = service.extractDomain(validUrl);
+    expect(actualDomain).toBe(expectedDomain);
+  });
 
   it('should return the domain for a valid URL with www subdomain', () => {
     const validUrl = 'https://www.example.com/path/to/resource';
@@ -192,18 +199,21 @@ describe('isCrawlingAllowed', () => {
   it('should return true if crawling is allowed', async () => {
     const url = 'https://www.amazon.com';
     const expectedResponse = true;
-    const paths = new Set<string>(['/']);
+    const allowedPaths = new Set<string>([]);
+    const disallowedPaths = new Set<string>([]);
 
-    const result = await service.isCrawlingAllowed(url, paths);
+
+    const result = await service.isCrawlingAllowed(url, Array.from(allowedPaths),Array.from(disallowedPaths));
     expect(result).toBe(expectedResponse);
   });
 
   it('should return false if crawling is not allowed', async () => {
     const url = 'https://www.amazon.com';
     const expectedResponse = false;
-    const paths = new Set<string>([]);
+    const allowedPaths = new Set<string>([]);
+    const disallowedPaths = new Set<string>(['/']);
 
-    const result = await service.isCrawlingAllowed(url, paths);
+    const result = service.isCrawlingAllowed(url, Array.from(allowedPaths),Array.from(disallowedPaths));
     expect(result).toBe(expectedResponse);
   });
 });

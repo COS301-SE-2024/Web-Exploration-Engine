@@ -7,6 +7,9 @@ import {
   ReadRobotsOperation, ReadRobotsQuery, ReadRobotsResponse200, ReadRobotsResponse400, ReadRobotsResponse500,
   ScrapeMetadataOperation, ScrapeMetadataQuery, ScrapeMetadataResponse200, ScrapeMetadataResponse400, ScrapeMetadataResponse500,
   ScrapeStatusOperation, ScrapeStatusQuery, ScrapeStatusResponse200,
+  ClassifyIndustryOperation, ClassifyIndustryQuery, ClassifyIndustryResponse200,
+  ScrapeImagesOperation, ScrapeImagesQuery, ScrapeImagesResponse200, ScrapeImagesResponse400,
+  ScrapeLogoOperation, ScrapeLogoQuery, ScrapeLogoResponse200, ScrapeLogoResponse400,
 } from './scraper.api';
 import { StringDecoder } from 'string_decoder';
 
@@ -60,8 +63,31 @@ export class ScraperController {
     return this.scraperService.scrapeStatus(url);
   }
 
+  @ClassifyIndustryOperation
+  @ClassifyIndustryQuery
+  @ClassifyIndustryResponse200
   @Get('classify-industry')
   async classifyIndustry(@Query('url') url: string) {
     return this.scraperService.classifyIndustry(url);
   }
+
+  @ScrapeImagesOperation
+  @ScrapeImagesQuery
+  @ScrapeImagesResponse200
+  @ScrapeImagesResponse400
+  @Get('scrape-images')
+  async scrapeImages(@Query('url') url: string) {
+    return this.scraperService.scrapeImages(url);
+  }
+
+  @ScrapeLogoOperation
+  @ScrapeLogoQuery
+  @ScrapeLogoResponse200
+  @ScrapeLogoResponse400
+  @Get('scrape-logo')
+  async scrapeLogo(@Query('url') url: string) {
+    return this.scraperService.scrapeLogo(url);
+  }
+
+  
 }
