@@ -83,44 +83,39 @@ export class RobotsService {
 
   isCrawlingAllowed(url: string, disallowedPaths: string[], allowedPaths: string[]): boolean {
     try {
-      const urlObject = new URL(url);
-      const path = urlObject.pathname;
-  
-      // Function to convert paths with wildcards to regex
-      const pathToRegex = (path: string) => {
-        const escapedPath = path.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
-        return new RegExp(`^${escapedPath}$`);
-      };
-  
-      // Check against disallowed paths
-      for (const disallowedPath of disallowedPaths) {
-        const regex = pathToRegex(disallowedPath);
-        if (regex.test(path)) {
-          return false;
+        const urlObject = new URL(url);
+        const path = urlObject.pathname;
+
+        // Function to convert paths with wildcards to regex
+        const pathToRegex = (path: string) => {
+            const escapedPath = path.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+            return new RegExp(`^${escapedPath}$`);
+        };
+
+        // Check against disallowed paths
+        for (const disallowedPath of disallowedPaths) {
+            const regex = pathToRegex(disallowedPath);
+            if (regex.test(path)) {
+                return false;
+            }
         }
-        
-      }
-  
-      // Check against allowed paths
-      for (const disallowedPath of disallowedPaths) {
-        const regex = pathToRegex(disallowedPath);
-        if (regex.test(path)) {
-            return false;
+
+        // Check against allowed paths
+        for (const allowedPath of allowedPaths) {
+            const regex = pathToRegex(allowedPath);
+            if (regex.test(path)) {
+                return true;
+            }
         }
-        // Check for exact match of '/'
-        if (disallowedPath === '/' && path === '/') {
-            return false;
-        }
-      }
-    
-      // if not allowed or disallowed, default to allowed
-      return true;
+
+        // if not allowed or disallowed, default to allowed
+        return true;
     } catch (error) {
-      if (error.message.includes("Invalid URL")) {
-        throw new HttpException(`Invalid URL: ${url}`, HttpStatus.BAD_REQUEST);
-      } else {
-        throw new HttpException(`An error occurred while checking if crawling is allowed: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
+        if (error instanceof TypeError && error.message.includes("Invalid URL")) {
+            throw new Error(`Invalid URL: ${url}`);
+        } else {
+            throw new Error(`An error occurred while checking if crawling is allowed: ${error.message}`);
+        }
     }
   }
   

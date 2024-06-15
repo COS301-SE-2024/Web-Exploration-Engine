@@ -203,17 +203,17 @@ describe('isCrawlingAllowed', () => {
     const disallowedPaths = new Set<string>([]);
 
 
-    const result = await service.isCrawlingAllowed(url, Array.from(allowedPaths),Array.from(disallowedPaths));
+    const result = await service.isCrawlingAllowed(url, Array.from(disallowedPaths),Array.from(allowedPaths));
     expect(result).toBe(expectedResponse);
   });
 
   it('should return false if crawling is not allowed', async () => {
-    const url = 'https://www.amazon.com';
+    const url = 'https://www.test.com';
     const expectedResponse = false;
     const allowedPaths = new Set<string>([]);
     const disallowedPaths = new Set<string>(['/']);
 
-    const result = service.isCrawlingAllowed(url, Array.from(allowedPaths),Array.from(disallowedPaths));
+    const result = service.isCrawlingAllowed(url, Array.from(disallowedPaths),Array.from(allowedPaths));
     expect(result).toBe(expectedResponse);
   });
 });
@@ -309,6 +309,7 @@ describe('readRobotsFile', () => {
           "/*filter=ASDigitalAppliance",
           "/*rows="
       ],
+      isUrlScrapable: true,
       isBaseUrlAllowed: true,
     };
 
