@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
+import Scraping from "../models/ScrapingModel";
 
 interface ScrapingContextType {
-    results: any[];
-    setResults: (data: any[]) => void;
+    results: Scraping[];
+    setResults: (data: Scraping[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
     test: string;

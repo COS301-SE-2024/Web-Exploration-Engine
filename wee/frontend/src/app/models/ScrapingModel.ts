@@ -26,7 +26,7 @@ interface IndustryClassification {
     };
 }
 
-export interface Scraping {
+export default interface Scraping {
     url: string;
     domainStatus: string;
     robots: Robots;

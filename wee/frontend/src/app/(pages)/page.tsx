@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
@@ -7,18 +7,10 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 export default function Home() {
-    // const {results, setResults, urls, setUrls, test} = useScrapingContext();
+    const {setUrls, results, setResults} = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
-
-    // useEffect(() => {
-    //   setUrls(['test1', 'test2', 'test3']);
-    // }, [])
-
-    // useEffect(() => {
-    //   console.log('Urls on the home page', urls);
-    // },[urls])
    
     const isValidUrl = (urlString: string) => {
         try {
@@ -30,32 +22,34 @@ export default function Home() {
     };
 
     const handleScraping = () => {
-        if (!url) {
-            setError('URL cannot be empty');
+      if (!url) {
+          setError('URL cannot be empty');
 
-            const timer = setTimeout(() => {
-                setError('');
-            }, 3000);
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
 
-            return () => clearTimeout(timer);
-        }
+          return () => clearTimeout(timer);
+      }
 
-        const urls = url.split(',').map(u => u.trim());
-        for (const singleUrl of urls) {
+      const urlsToScrape = url.split(',').map(u => u.trim());
+      for (const singleUrl of urlsToScrape) {
 
-            if (!isValidUrl(singleUrl)) {
-                setError('Please enter valid URLs');
-    
-                const timer = setTimeout(() => {
-                    setError('');
-                }, 3000);
-    
-                return () => clearTimeout(timer);
-            }
-        }
-        setError('');
-        // Navigate to Results page with the entered URL as query parameter
-        router.push(`/scraperesults?urls=${encodeURIComponent(url)}`)
+          if (!isValidUrl(singleUrl)) {
+              setError('Please enter valid URLs');
+  
+              const timer = setTimeout(() => {
+                  setError('');
+              }, 3000);
+  
+              return () => clearTimeout(timer);
+          }
+      }
+      setError('');
+
+      // Navigate to Results page with the entered URL as query parameter
+      setUrls(urlsToScrape);
+      router.push(`/scraperesults`);
     };
 
     return (

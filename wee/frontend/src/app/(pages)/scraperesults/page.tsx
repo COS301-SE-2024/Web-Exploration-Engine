@@ -10,47 +10,51 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import WEETable from '../../components/Util/Table';
+import { useScrapingContext } from '../../context/ScrapingContext';
+import Scraping from '../../models/ScrapingModel';
 
-interface CrawlableStatus {
-    [url: string]: boolean;
-}
+// interface CrawlableStatus {
+//     [url: string]: boolean;
+// }
 
-interface Industry {
-    url: string;
-    industry : string;
-}
+// interface Industry {
+//     url: string;
+//     industry : string;
+// }
 
 function ResultsComponent() {
-    const searchParams = useSearchParams();
-    const urls = searchParams.get('urls');
-    const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
+    // const searchParams = useSearchParams();
+    // const urls = searchParams.get('urls');
+    const {urls, setUrls, results, setResults} = useScrapingContext();
+    // const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
     const [searchValue, setSearchValue] = React.useState("");
     const hasSearchFilter = Boolean(searchValue);
+    
+    const router = useRouter();
 
     const filteredItems = React.useMemo(() => {
-        let filteredUrls = [...decodedUrls];
+        let filteredUrls = [...results];
 
         if (hasSearchFilter) {
             filteredUrls = filteredUrls.filter((url) =>
-                url.toLowerCase().includes(searchValue.toLowerCase()),
+                url.url.toLowerCase().includes(searchValue.toLowerCase()),
             );
         }
     
         return filteredUrls;
-      }, [decodedUrls, searchValue]);
+      }, [results, searchValue]);
     
-    const router = useRouter();
 
     const handleResultPage = (url:string, status:boolean, crawlable:boolean) => {
         router.push(`/results?url=${encodeURIComponent(url)}&websiteStatus=${encodeURIComponent(status)}&isCrawlable=${encodeURIComponent(crawlable)}`);
     };
     
     // arrays that holds results returned from API
-    const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
-    const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
-    const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
+    // const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
+    // const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
+    // const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
     
     // Pagination
     const [page, setPage] = React.useState(1);
@@ -68,77 +72,39 @@ function ResultsComponent() {
         const end = start + resultsPerPage;
 
         return filteredItems.slice(start,end);
-    }, [page, filteredItems, resultsPerPage])
+    }, [page, filteredItems, resultsPerPage]);
 
     useEffect(() => {
-        if (urls) {
-            const decoded = decodeURIComponent(urls).split(',');
-            setDecodedUrls(decoded);
-            console.log(decoded); 
-
-            fetchIsCrawlingAllowed(urls);
-            fetchWebsiteStatus(urls);
-            // fetchIndustryClassifications(urls);
-        }
+        if (urls && urls.length > 0) {
+            urls.forEach((url) => {
+                console.log('Processing URL:', url);
+                getScrapingResults(url);
+            });
+            // setUrls([]);
+        }        
     }, [urls])
+    
+    useEffect(() => {      
+        console.log("Results changed!!!!")  
+        if (urls.length == results.length) {
+            setIsLoading(false);    
+            setUrls([]);
+        }
+    }, [results])
 
-    const fetchIsCrawlingAllowed = async (url: string) => {
+    const getScrapingResults = async (url: string) => {
         try {
-            const response = await fetch(`http://localhost:3000/api/isCrawlingAllowed?urls=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            console.log('Crawling allowed', data);
-            setIsCrawlable(data);
+            const response = await fetch(`http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`);
+            const data = await response.json() as Scraping;
+            console.log('Response', data);
+            setResults((prevResults: Scraping[]) => [...prevResults, data]);
         }
-        catch (error) {
-            console.error('Error fetching whether website is crawlable:', error);
-        }
-    };
-
-    const fetchWebsiteStatus = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/status?urls=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            console.log(data);
-            setWebsiteStatus(data);
-        }
-        catch (error) {
-            console.error('Error fetching website status:', error);
+        catch(error) {
+            console.error('Error when scraping website:', error);
         }
         finally {
-            setIsLoading(false);
+            // setIsLoading(false);
         }
-    };
-
-    const fetchIndustryClassifications = async (url: string) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/scrapeIndustry?urls=${encodeURIComponent(url)}`);
-            const data = await response.json();
-            console.log('industry classification', data);
-            data.forEach((item:any) => {
-                setIndustryClassification(prev => [
-                    ...prev, 
-                    { url: item.url, industry: item.metadata.industry }
-                ]);
-            })
-        }
-        catch (error) {
-            console.error('Error fetching industry classifications:', error);
-        }
-        finally {
-            setIsLoading(false);
-        }
-    }
-
-    if (isLoading) {
-        return (
-            <div className='min-h-screen flex justify-center items-center'>
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" role="status">
-                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                        Loading...
-                    </span>
-                </div>
-            </div>
-        );
     }
 
     const onSearchChange = (value: string) => {
@@ -152,6 +118,18 @@ function ResultsComponent() {
 
     const handleSummaryPage = () => {
         router.push(`/summaryreport`);
+    }
+
+    if (isLoading) {
+        return (
+            <div className='min-h-screen flex justify-center items-center'>
+                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" role="status">
+                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                        Loading...
+                    </span>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -245,16 +223,17 @@ function ResultsComponent() {
                     {items.map((item, index) => (
                         <TableRow key={index}>
                             <TableCell>
-                                <Link href={`/results?url=${encodeURIComponent(item)}&websiteStatus=${encodeURIComponent(websiteStatus[index])}&isCrawlable=${encodeURIComponent(isCrawlable[item])}`}>                               
+                                {/* <Link href={`/results?url=${encodeURIComponent(item)}&websiteStatus=${encodeURIComponent(websiteStatus[index])}&isCrawlable=${encodeURIComponent(isCrawlable[item])}`}>                               
                                     {item}
-                                </Link>
+                                </Link> */}
+                                {item.url}
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
-                                <Chip radius="sm" color={isCrawlable[item]? 'success' : 'warning'} variant="flat">{isCrawlable[item] ? 'Yes' : 'No'}</Chip>
+                                <Chip radius="sm" color={item.robots.isUrlScrapable? 'success' : 'warning'} variant="flat">{item.robots.isUrlScrapable ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                                   onClick={() => handleResultPage(item, websiteStatus[index], isCrawlable[item])}
+                                //    onClick={() => handleResultPage(item, websiteStatus[index], isCrawlable[item])}
                                 >
                                     View
                                 </Button>
