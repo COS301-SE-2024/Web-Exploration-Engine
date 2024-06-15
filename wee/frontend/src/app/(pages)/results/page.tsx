@@ -4,10 +4,14 @@ import { Card, CardBody, Image } from "@nextui-org/react";
 import { Button, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
 import { useSearchParams } from 'next/navigation';
-import { IndustryClassification } from '../../models/IndustryModel';
 import WEETable from '../../components/Util/Table';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
+
+interface Classifications {
+    label: string;
+    score: number;
+}
 
 export default function Results() {
     return (
@@ -20,22 +24,33 @@ export default function Results() {
 function ResultsComponent() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
+    const {urls, setUrls, results, setResults} = useScrapingContext();
 
     const router = useRouter();
     // const websiteStatusUrl = searchParams.get('websiteStatus');
     // const isCrawlableUrl = searchParams.get('isCrawlable');
     // const industryUrl = searchParams.get('industry');
     const [websiteStatus, setWebsiteStatus] = useState('');
-    const [isCrawlable, setIsCrawlable] = useState('No');
+    const [isCrawlable, setIsCrawlable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [industryClassification, setIndustryClassification] = useState('');
+    const [industryClassification, setIndustryClassification] = useState<Classifications>();
+    const [domainClassification, setDomainClassification] = useState<Classifications>();
     const [logo, setLogo] = useState('');
-    const [imageList, setImageList] = useState([]);
+    const [imageList, setImageList] = useState<string[]>([]);
 
     useEffect(() => {
         if (url) {
             console.log('URL on the individual report page', url);
-            // const urlResults = 
+            const urlResults = results.filter((res) => res.url === url);
+            console.log('URL RESULTS TO DISPLAY', urlResults);
+            if (urlResults && urlResults[0]) {
+                setIsCrawlable(urlResults[0].robots.isUrlScrapable)
+                setWebsiteStatus(urlResults[0].domainStatus);
+                setLogo(urlResults[0].logo);
+                setImageList(urlResults[0].images);
+                setIndustryClassification(urlResults[0].industryClassification.metadataClass);
+                setDomainClassification(urlResults[0].industryClassification.domainClass);
+            }
         }
     }, [url]);
 
@@ -83,7 +98,7 @@ function ResultsComponent() {
                 className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                 onClick={backToScrapeResults}
             >
-                View overall summary report
+                Back
             </Button>
 
             <div className="mb-8 text-center">
@@ -105,19 +120,29 @@ function ResultsComponent() {
                         <TableRow key="1">
                             <TableCell>Crawlable</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color={isCrawlable === 'true' ? 'success' : 'warning'} variant="flat">{isCrawlable === 'true' ? 'Yes' : 'No'}</Chip>
+                                <Chip radius="sm" color={isCrawlable === true ? 'success' : 'warning'} variant="flat">{isCrawlable === true ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                         </TableRow>
                         <TableRow key="2">
                             <TableCell>Status</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color={websiteStatus === 'true' ? 'success' : 'warning'} variant="flat">{websiteStatus === 'true' ? 'Live' : 'Parked'}</Chip>
+                                <Chip radius="sm" color={websiteStatus === 'live' ? 'success' : 'warning'} variant="flat">{websiteStatus === 'true' ? 'Live' : 'Parked'}</Chip>
                             </TableCell>
                         </TableRow>
                         <TableRow key="3">
                             <TableCell>Industry</TableCell>
                             <TableCell>
-                                <Chip radius="sm" color="secondary" variant="flat">{isCrawlable === "true" ? industryClassification : 'N/A'}</Chip>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                    {isCrawlable ? `${industryClassification?.label} - ${industryClassification?.score}` : 'N/A'}
+                                </Chip>                            
+                            </TableCell>
+                        </TableRow>
+                        <TableRow key="4">
+                            <TableCell>Domain</TableCell>
+                            <TableCell>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                    {isCrawlable ? `${domainClassification?.label} - ${domainClassification?.score}` : 'N/A'}
+                                </Chip>   
                             </TableCell>
                         </TableRow>
                     </TableBody>
