@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { ScrapeImagesService } from './scrape-images.service';
 import { RobotsResponse } from '../models/ServiceModels';
 
