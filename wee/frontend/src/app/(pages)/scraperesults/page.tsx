@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import Scraping from '../../models/ScrapingModel';
+import Link from 'next/link';
 
 function ResultsComponent() {
     const {urls, setUrls, results, setResults} = useScrapingContext();
@@ -34,8 +35,8 @@ function ResultsComponent() {
     }, [results, searchValue]);
     
 
-    const handleResultPage = (url:string, status:boolean, crawlable:boolean) => {
-        router.push(`/results?url=${encodeURIComponent(url)}&websiteStatus=${encodeURIComponent(status)}&isCrawlable=${encodeURIComponent(crawlable)}`);
+    const handleResultPage = (url:string) => {
+        router.push(`/results?url=${encodeURIComponent(url)}`);
     };
         
     // Pagination
@@ -66,15 +67,19 @@ function ResultsComponent() {
                     processedUrls.current.add(url);
                 }
             });
-            // setUrls([]);
-        }        
+        }  
+        else {
+            // allows to naviagte back to this page without rescraping the urls
+            setIsLoading(false);
+        }      
     }, [urls.length])
     
     useEffect(() => {      
         console.log("Results changed!!!!")  
         if (urls.length === results.length) {
-            setIsLoading(false);    
-            // setUrls([]);
+            setIsLoading(false);  
+            // allows to naviagte back to this page without rescraping the urls  
+            setUrls([]);
         }
     }, [results])
 
@@ -209,17 +214,16 @@ function ResultsComponent() {
                     {items.map((item, index) => (
                         <TableRow key={index}>
                             <TableCell>
-                                {/* <Link href={`/results?url=${encodeURIComponent(item)}&websiteStatus=${encodeURIComponent(websiteStatus[index])}&isCrawlable=${encodeURIComponent(isCrawlable[item])}`}>                               
-                                    {item}
-                                </Link> */}
-                                {item.url}
+                                <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
+                                    {item.url}
+                                </Link>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Chip radius="sm" color={item.robots.isUrlScrapable? 'success' : 'warning'} variant="flat">{item.robots.isUrlScrapable ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                                //    onClick={() => handleResultPage(item, websiteStatus[index], isCrawlable[item])}
+                                   onClick={() => handleResultPage(item.url)}
                                 >
                                     View
                                 </Button>

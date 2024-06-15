@@ -1,11 +1,13 @@
 'use client';
 import React, { useEffect, useState, Suspense } from 'react';
 import { Card, CardBody, Image } from "@nextui-org/react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Button, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
 import { useSearchParams } from 'next/navigation';
 import { IndustryClassification } from '../../models/IndustryModel';
 import WEETable from '../../components/Util/Table';
+import { useRouter } from 'next/navigation';
+import { useScrapingContext } from '../../context/ScrapingContext';
 
 export default function Results() {
     return (
@@ -18,9 +20,11 @@ export default function Results() {
 function ResultsComponent() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
-    const websiteStatusUrl = searchParams.get('websiteStatus');
-    const isCrawlableUrl = searchParams.get('isCrawlable');
-    const industryUrl = searchParams.get('industry');
+
+    const router = useRouter();
+    // const websiteStatusUrl = searchParams.get('websiteStatus');
+    // const isCrawlableUrl = searchParams.get('isCrawlable');
+    // const industryUrl = searchParams.get('industry');
     const [websiteStatus, setWebsiteStatus] = useState('');
     const [isCrawlable, setIsCrawlable] = useState('No');
     const [isLoading, setIsLoading] = useState(false);
@@ -29,12 +33,11 @@ function ResultsComponent() {
     const [imageList, setImageList] = useState([]);
 
     useEffect(() => {
-        if (websiteStatusUrl && isCrawlableUrl && industryUrl) {
-            setWebsiteStatus(websiteStatusUrl);
-            setIsCrawlable(isCrawlableUrl);
-            setIndustryClassification(industryUrl);
+        if (url) {
+            console.log('URL on the individual report page', url);
+            // const urlResults = 
         }
-    }, [websiteStatusUrl, isCrawlableUrl, industryUrl]);
+    }, [url]);
 
     // const fetchLogo = async (url: string) => {
     //     try {
@@ -58,6 +61,10 @@ function ResultsComponent() {
     //     }
     // }
 
+    const backToScrapeResults = () => {
+        router.push(`/scraperesults`);
+    }
+
     if (isLoading) {
         return (
             <div className='min-h-screen flex justify-center items-center'>
@@ -72,6 +79,13 @@ function ResultsComponent() {
     
     return (
         <div className='min-h-screen p-4'>
+            <Button 
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                onClick={backToScrapeResults}
+            >
+                View overall summary report
+            </Button>
+
             <div className="mb-8 text-center">
                 <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                     Results of {url}
