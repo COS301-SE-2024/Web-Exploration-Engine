@@ -29,7 +29,9 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     }
 
     // calculate industry classification percentages
-    if (result.industryClassification && result.industryClassification.metadataClass.label) {
+    if (result.industryClassification && 
+      result.industryClassification.metadataClass.label && 
+      result.industryClassification.metadataClass.label !== 'Unknown') {
       const industry = result.industryClassification.metadataClass.label;
       industryCounts[industry] = (industryCounts[industry] || 0) + 1;
     } else {
