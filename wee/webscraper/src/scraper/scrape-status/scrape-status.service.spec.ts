@@ -23,7 +23,7 @@ describe('ScrapeStatusService', () => {
   });
 
   it('should return parked for a parked website', async () => {
-    const url = 'https://www.example.com';
+    const url = 'https://www.example.co.za';
     const status = await service.scrapeStatus(url);
     expect(status).toBe('parked');
   });
