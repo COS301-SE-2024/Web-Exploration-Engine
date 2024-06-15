@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
 import { ScrapeStatusService } from './scrape-status/scrape-status.service';
+import { IndustryClassificationService } from './industry-classification/industry-classification.service';
 // Models
 import { ErrorResponse, RobotsResponse, Metadata } from './models/ServiceModels';
 
@@ -13,14 +14,22 @@ export class ScraperService {
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
+    private readonly industryClassificationService: IndustryClassificationService
   ) {}
 
   async scrape(url: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let data:any;
+    const data = {
+      url: '',
+      domainStatus: '' ,
+      robots: {} as RobotsResponse | ErrorResponse,
+      robotsError: {} as ErrorResponse,
+      metadata: {} as Metadata | ErrorResponse,
+      metadataError: {} as ErrorResponse,
+      industryClassification: {} as any,
+    };
 
     // validate url
-
 
     data.url = url;
 
@@ -44,7 +53,7 @@ export class ScraperService {
     // scrape metadata & html - can we do this in parallel?
     const metadataResponse = await this.metadataService.scrapeMetadata(data.url, data.robots);
     if ("errorStatus" in metadataResponse) {
-      data.metadataError = {
+      data.metadata = {
         title: null,
         description: null,
         keywords: null,
@@ -56,8 +65,10 @@ export class ScraperService {
       data.metadata = metadataResponse as Metadata;
     }
 
-
     // classify industry based on metadata
+    const industryClassification = await this.industryClassificationService.classifyIndustry(data.url, data.metadata);
+    data.industryClassification = industryClassification;
+
 
     // classify industry based on domain name - for domain match
 
@@ -71,6 +82,12 @@ export class ScraperService {
 
     return data;
   }
+
+  scrapeUrls(urls: string[]) { 
+    // scrape multiple urls in parallel
+    // return data
+  };
+
 
   async readRobotsFile(url: string) {
     return this.robotsService.readRobotsFile(url);
@@ -89,31 +106,11 @@ export class ScraperService {
     return this.scrapeStatusService.scrapeStatus(url);
   }
 
-  // async scrapeMetadata(url: string) {
-  //   const data = {
-  //     url: '',
-  //     robots: {} as RobotsResponse | ErrorResponse,
-  //     metadata: {} as Metadata | ErrorResponse,
-  //   };
-
-  //   // Should we we validate the URL here?
-  //   data.url = url;
-  //   // Get allowed paths, baseUrl and isBaseUrlAllowed
-  //   let response:any = await this.robotsService.getAllowedPaths(data.url);
-  //   if ("status" in response) {
-  //     data.robots = response as ErrorResponse;
-  //   } else {  
-  //     data.robots = response as RobotsResponse;
-  //   }
-
-  //   response = await this.metadataService.scrapeMetadata(url, data.robots);
-  //   console.log(response);
-  //   if ("status" in response) {
-  //     data.metadata = response as ErrorResponse;
-  //   } else {
-  //     data.metadata = response as Metadata;
-  //   }
-    
-  //   return data;
-  // }
+  async classifyIndustry(url: string) {
+    const metadataResponse = await this.scrapeMetadata(url);
+    if ("errorStatus" in metadataResponse) {
+      return metadataResponse;
+    }
+    return this.industryClassificationService.classifyIndustry(url, metadataResponse);
+  }
 }

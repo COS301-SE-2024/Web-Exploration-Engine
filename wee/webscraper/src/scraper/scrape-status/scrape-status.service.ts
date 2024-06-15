@@ -12,17 +12,13 @@ export class ScrapeStatusService {
    * Checks the status of a website at the given URL.
    * @param url The URL of the website to check.
   */
-  async scrapeStatus(url: string): Promise<string | ErrorResponse> {
+  async scrapeStatus(url: string): Promise<string > {
     // possible improvements:
       // - check if landing page is autogerated (e.g. by next.js) and return parked
       // - differentiate between parked and under construction/not working
 
     if (!url) {
-        return {
-          errorStatus: 400,
-          errorCode: '400 Bad Request',
-          errorMessage: 'URL parameter is required',
-        };
+        return 'error';
     }
     try {
         const response = await axios.head(url);

@@ -6,7 +6,7 @@ import puppeteer from 'puppeteer';
 export class ScrapeMetadataService {
   async scrapeMetadata(
     url: string, data: RobotsResponse
-  ): Promise< Metadata | ErrorResponse> {
+  ): Promise<Metadata | ErrorResponse> {
 
     const allowed = data.isBaseUrlAllowed;
 
@@ -18,27 +18,37 @@ export class ScrapeMetadataService {
       } as ErrorResponse;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let browser: any;
+    let browser;
 
     try {
-      // would Cheerio be a better option here? - is metadata always in the head?
       browser = await puppeteer.launch();
       const page = await browser.newPage();
 
       await page.goto(url, { waitUntil: 'domcontentloaded' });
-      const metadata = await page.evaluate(() => {
+
+      const getMetaTagContent = (name: string) => {
+        const element =
+          document.querySelector(`meta[name='${name}']`) ||
+          document.querySelector(`meta[property='og:${name}']`);
+        return element ? element.getAttribute('content') : null;
+      };
+
+      const getMetaTagContentString = getMetaTagContent.toString();
+
+      const metadata = await page.evaluate((getMetaTagContentStr) => {
+        const getMetaTagContent = new Function('return ' + getMetaTagContentStr)();
+
         return {
           title: document.title,
-          description: this.getMetaTagContent('description'),
-          keywords: this.getMetaTagContent('keywords'),
-          ogTitle: this.getMetaTagContent('title'),
-          ogDescription: this.getMetaTagContent('description'),
-          ogImage: this.getMetaTagContent('image'),
+          description: getMetaTagContent('description'),
+          keywords: getMetaTagContent('keywords'),
+          ogTitle: getMetaTagContent('title'),
+          ogDescription: getMetaTagContent('description'),
+          ogImage: getMetaTagContent('image'),
         } as Metadata;
-      });
+      }, getMetaTagContentString);
 
-      if(!metadata) {
+      if (!metadata) {
         return {
           title: null,
           description: null,
@@ -55,20 +65,20 @@ export class ScrapeMetadataService {
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Error scraping metadata',
+        errorMessage: `Error scraping metadata: ${error.message}`,
       } as ErrorResponse;
     } finally {
-      if(browser) {
+      if (browser) {
         await browser.close();
       }
     }
   }
 
-  getMetaTagContent (name: string) {
+  // Expose the function for testing
+  getMetaTagContent(name: string) {
     const element =
       document.querySelector(`meta[name='${name}']`) ||
       document.querySelector(`meta[property='og:${name}']`);
     return element ? element.getAttribute('content') : null;
-  };
-
+  }
 }

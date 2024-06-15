@@ -24,3 +24,14 @@ export interface Metadata {
   ogDescription: string | null;
   ogImage: string | null;
 }
+
+export interface IndustryClassification {
+  metadataClass: {
+    label: string;
+    score: number;
+  },
+  domainClass: {
+    label: string;
+    score: number;
+  }
+}

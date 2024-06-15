@@ -100,7 +100,7 @@ describe('scrapeMetadata', () => {
     expect(response).toEqual({
       errorStatus: 500,
       errorCode: '500 Internal Server Error',
-      errorMessage: 'Error scraping metadata',
+      errorMessage: 'Error scraping metadata: Page not found',
     });
   });
 
@@ -187,7 +187,7 @@ describe('scrapeMetadata', () => {
     expect(response).toEqual({
       errorStatus: 500,
       errorCode: '500 Internal Server Error',
-      errorMessage: 'Error scraping metadata',
+      errorMessage: 'Error scraping metadata: Failed to launch',
     });
   });
 });
