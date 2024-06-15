@@ -1,32 +1,19 @@
 'use client'
-import React, { useEffect, Suspense } from 'react';
+import React, { useEffect, Suspense, useRef } from 'react';
 import { FiSearch } from "react-icons/fi";
 import { SelectItem } from "@nextui-org/react";
-import { useSearchParams } from 'next/navigation';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
+import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
-import Link from 'next/link'
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import Scraping from '../../models/ScrapingModel';
 
-// interface CrawlableStatus {
-//     [url: string]: boolean;
-// }
-
-// interface Industry {
-//     url: string;
-//     industry : string;
-// }
-
 function ResultsComponent() {
-    // const searchParams = useSearchParams();
-    // const urls = searchParams.get('urls');
     const {urls, setUrls, results, setResults} = useScrapingContext();
-    // const [decodedUrls, setDecodedUrls] = React.useState<string[]>([]);
+    const processedUrls = useRef(new Set<string>());
     const [isLoading, setIsLoading] = React.useState(true);
 
     const [searchValue, setSearchValue] = React.useState("");
@@ -44,18 +31,13 @@ function ResultsComponent() {
         }
     
         return filteredUrls;
-      }, [results, searchValue]);
+    }, [results, searchValue]);
     
 
     const handleResultPage = (url:string, status:boolean, crawlable:boolean) => {
         router.push(`/results?url=${encodeURIComponent(url)}&websiteStatus=${encodeURIComponent(status)}&isCrawlable=${encodeURIComponent(crawlable)}`);
     };
-    
-    // arrays that holds results returned from API
-    // const [isCrawlable, setIsCrawlable] =  React.useState<CrawlableStatus>({});
-    // const [websiteStatus, setWebsiteStatus] = React.useState<boolean[]>([]);
-    // const [industryClassification, setIndustryClassification] = React.useState<Industry[]>([]);
-    
+        
     // Pagination
     const [page, setPage] = React.useState(1);
     const [resultsPerPage, setResultsPerPage] = React.useState(5);
@@ -75,20 +57,24 @@ function ResultsComponent() {
     }, [page, filteredItems, resultsPerPage]);
 
     useEffect(() => {
+        console.log('urls length: ', urls.length);
         if (urls && urls.length > 0) {
             urls.forEach((url) => {
-                console.log('Processing URL:', url);
-                getScrapingResults(url);
+                if (!processedUrls.current.has(url)) {
+                    console.log('Processing URL:', url);
+                    getScrapingResults(url);
+                    processedUrls.current.add(url);
+                }
             });
             // setUrls([]);
         }        
-    }, [urls])
+    }, [urls.length])
     
     useEffect(() => {      
         console.log("Results changed!!!!")  
-        if (urls.length == results.length) {
+        if (urls.length === results.length) {
             setIsLoading(false);    
-            setUrls([]);
+            // setUrls([]);
         }
     }, [results])
 
