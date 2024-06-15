@@ -28,7 +28,7 @@ export class ScraperService {
       domainStatus: '' ,
       robots: null as RobotsResponse | ErrorResponse | null,
       metadata: null as Metadata | ErrorResponse | null,
-      industryClassification: null as IndustryClassification | ErrorResponse | null,
+      industryClassification: null as IndustryClassification | null,
       logo: '',
       images: [],
       slogan: '',
@@ -76,7 +76,7 @@ export class ScraperService {
     
 
     // scrape logo
-    const logoPromise = await this.scrapeLogoService.scrapeLogo(data.url, data.metadata, data.robots);
+    const logoPromise = this.scrapeLogoService.scrapeLogo(data.url, data.metadata, data.robots);
 
     // scrape images - doesn't use metadata -- need to check if scraping images is allowed
     const imagesPromise = this.scrapeImagesService.scrapeImages(data.url, data.robots);

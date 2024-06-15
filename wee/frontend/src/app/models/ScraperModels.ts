@@ -3,7 +3,7 @@ export interface ScraperResult {
   domainStatus: string;
   robots: RobotsResponse | ErrorResponse;
   metadata: Metadata | ErrorResponse;
-  industryClassification: IndustryClassification | ErrorResponse;
+  industryClassification: IndustryClassification;
   logo: string;
   images: string[];
   slogan: string;
@@ -46,4 +46,28 @@ export interface IndustryClassification {
     label: string;
     score: number;
   }
+}
+
+export interface Summary {
+  domainStatus: {
+    parked: number;
+    live: number;
+    error: number;
+  },
+  industryClassification: {
+    unclassifiedUrls: string[];
+    industryPercentages: {
+      industry: string;
+      percentage: string;
+    }[];
+  },
+  domainMatch: {
+    percentageMatch: string;
+    mismatchedUrls: {
+      url: string;
+      metadataClass: string;
+      domainClass: string;
+    }[];
+  }
+
 }
