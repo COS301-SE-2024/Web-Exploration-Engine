@@ -29,6 +29,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: false,
+      isUrlScrapable: false,
     };
 
     const result = await service.scrapeMetadata('http://example.com', mockData);
@@ -45,6 +46,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: true,
+      isUrlScrapable: true,
     };
 
     const browser = {
@@ -83,6 +85,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: true,
+      isUrlScrapable: false,
     };
 
     const browser = {
@@ -110,6 +113,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: true,
+      isUrlScrapable: false,
     };
 
     const browser = {
@@ -148,6 +152,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: true,
+      isUrlScrapable: false,
     };
 
     const browser = {
@@ -179,6 +184,7 @@ describe('scrapeMetadata', () => {
       allowedPaths: [],
       disallowedPaths: [],
       isBaseUrlAllowed: true,
+      isUrlScrapable: false,
     };
 
     mockedPuppeteer.launch.mockRejectedValue(new Error('Failed to launch'));
