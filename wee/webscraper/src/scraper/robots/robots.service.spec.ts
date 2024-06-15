@@ -216,6 +216,14 @@ describe('isCrawlingAllowed', () => {
     const result = service.isCrawlingAllowed(url, Array.from(disallowedPaths),Array.from(allowedPaths));
     expect(result).toBe(expectedResponse);
   });
+
+  it('should throw an error if the URL is invalid', async () => {
+    const url = 'invalid-url';
+    const expectedError = 'Invalid URL: invalid-url';
+
+    expect(() => service.isCrawlingAllowed(url, [], [])).toThrow(expectedError);
+  });
+
 });
 
 describe('isRootPathAllowed', () => {

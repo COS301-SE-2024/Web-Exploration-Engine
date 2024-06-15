@@ -111,7 +111,7 @@ export class RobotsService {
         // if not allowed or disallowed, default to allowed
         return true;
     } catch (error) {
-        if (error instanceof TypeError && error.message.includes("Invalid URL")) {
+        if (error.message.includes("Invalid URL")) {
             throw new Error(`Invalid URL: ${url}`);
         } else {
             throw new Error(`An error occurred while checking if crawling is allowed: ${error.message}`);
