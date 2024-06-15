@@ -24,15 +24,13 @@ export default function Results() {
 function ResultsComponent() {
     const searchParams = useSearchParams();
     const url = searchParams.get('url');
-    const {urls, setUrls, results, setResults} = useScrapingContext();
+
+    const { results } = useScrapingContext();
 
     const router = useRouter();
-    // const websiteStatusUrl = searchParams.get('websiteStatus');
-    // const isCrawlableUrl = searchParams.get('isCrawlable');
-    // const industryUrl = searchParams.get('industry');
+
     const [websiteStatus, setWebsiteStatus] = useState('');
     const [isCrawlable, setIsCrawlable] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [industryClassification, setIndustryClassification] = useState<Classifications>();
     const [domainClassification, setDomainClassification] = useState<Classifications>();
     const [logo, setLogo] = useState('');
@@ -40,9 +38,8 @@ function ResultsComponent() {
 
     useEffect(() => {
         if (url) {
-            console.log('URL on the individual report page', url);
             const urlResults = results.filter((res) => res.url === url);
-            console.log('URL RESULTS TO DISPLAY', urlResults);
+            
             if (urlResults && urlResults[0]) {
                 setIsCrawlable(urlResults[0].robots.isUrlScrapable)
                 setWebsiteStatus(urlResults[0].domainStatus);
@@ -54,42 +51,8 @@ function ResultsComponent() {
         }
     }, [url]);
 
-    // const fetchLogo = async (url: string) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:3000/api/scrapeLogos?url=${encodeURIComponent(url)}`);
-    //         setLogo(await response.text());
-    //     } catch (error) {
-    //         console.error('Error fetching logo:', error);
-    //     } 
-    // }
-
-    // const fetchImages = async (url: string) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:3000/api/scrapeImages?url=${encodeURIComponent(url)}`);
-    //         const data = await response.json();
-    //         console.log(data);
-    //         setImageList(data);
-    //     } catch (error) {
-    //         console.error('Error fetching images:', error);
-    //     } finally { 
-    //         setIsLoading(false);
-    //     }
-    // }
-
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);
-    }
-
-    if (isLoading) {
-        return (
-            <div className='min-h-screen flex justify-center items-center'>
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" role="status">
-                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                        Loading...
-                    </span>
-                </div>
-            </div>
-        );
     }
     
     return (
