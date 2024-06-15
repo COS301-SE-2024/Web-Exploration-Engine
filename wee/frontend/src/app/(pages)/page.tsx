@@ -74,6 +74,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col sm:flex-row w-full justify-center items-center">
           <WEETextarea
+            data-testid="scraping-textarea-home"
             minRows={1}
             label="URLs to scrape"
             placeholder="Enter the URLs you want to scrape comma seperated"
