@@ -68,7 +68,6 @@ function ResultsComponent() {
                     processedUrls.current.add(url);
                 }
             });
-
         }  
         else {
             // allows to naviagte back to this page without rescraping the urls

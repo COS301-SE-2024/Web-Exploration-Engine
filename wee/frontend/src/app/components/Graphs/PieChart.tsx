@@ -47,6 +47,13 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
         }));
     }, [theme]);
 
+    useEffect(() => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            labels: dataLabel
+        }));
+    }, [dataLabel]);
+
     return (
         <div className="app">
             <div className="row">
