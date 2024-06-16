@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useScrapingContext } from 'frontend/src/app/context/ScrapingContext';
 
 jest.mock('next/navigation', () => ({
-    // useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
 
@@ -29,8 +28,14 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
 }));
 
 describe('Scrape Results Component', () => {
+    const mockPush = jest.fn();
+    const mockResponse = {
+        json: jest.fn().mockResolvedValue(true),
+    };
+
     beforeEach(() => {
-        jest.clearAllMocks(); // Clear all mock function calls before each test
+        jest.clearAllMocks();
+        (useRouter as jest.Mock).mockReturnValue({ push: mockPush }); 
     });
 
     it('should display 2 results', async () => {
@@ -44,15 +49,12 @@ describe('Scrape Results Component', () => {
     it('should filter items based on searchValue', () => {
         render(<ScrapeResults />);
 
-        // Initially, no search filter should return all items
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
 
-        // Simulate setting a search filter
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: 'example2' } });
 
-        // After setting the search filter, only the matching item should be visible
         expect(screen.queryByText('https://www.example.com')).toBeNull();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
     });
@@ -60,17 +62,25 @@ describe('Scrape Results Component', () => {
     it('should not filter items when searchValue is empty', () => {
         render(<ScrapeResults />);
 
-        // Initially, no search filter should return all items
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
 
-        // Simulate clearing the search filter (empty searchValue)
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: '' } });
 
-        // After clearing the search filter, all items should be visible again
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
     });
 
+    it('should navigate to different pages on pagination change', () => {
+        render(<ScrapeResults />);
+    
+        const mockFilteredItems = Array.from({ length: 15 }, (_, index) => ({
+          url: `https://www.example${index + 1}.com`,
+          robots: { isUrlScrapable: index % 2 === 0 },
+        }));
+    
+        jest.spyOn(React, 'useMemo').mockImplementation(() => mockFilteredItems);
+
+    });
 });
