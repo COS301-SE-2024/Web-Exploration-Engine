@@ -12,7 +12,8 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const industryCounts: Record<string, number> = {};
   let noClassificationCount = 0;
   const unclassified: string[] = [];
-  let industryPercentages: { industry: string; percentage: string }[] = [];
+  const industries: string[] = [];
+  const industryPercentages: number[] = [];
   const weakClassification: { url: string; metadataClass: string; score: number }[] = [];
   
   // domain match classification
@@ -66,35 +67,32 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     }
   }
 
-  industryPercentages = Object.entries(industryCounts).map(
-    ([industry, count]) => ({
-      industry,
-      percentage: (((count as number) / numResults) * 100).toFixed(2),
-    })
-  );
-
-  if (noClassificationCount > 0) {
-    const noClassificationPercentage = (
-      (noClassificationCount / numResults) *
-      100
-    ).toFixed(2);
-    industryPercentages.push({
-      industry: 'Unknown',
-      percentage: noClassificationPercentage,
-    });
+  for (const industry in industryCounts) {
+    const percentage = parseFloat(((industryCounts[industry] / numResults) * 100).toFixed(2));
+    industries.push(industry);
+    industryPercentages.push(percentage);
   }
 
-  const percentageMatch = ((numMatched / numResults) * 100).toFixed(2);
+  if (noClassificationCount > 0) {
+    const noClassificationPercentage = parseFloat((
+      (noClassificationCount / numResults) *
+      100
+    ).toFixed(2));
+    industries.push('Unknown');
+    industryPercentages.push(noClassificationPercentage);
+  }
+
+  const percentageMatch = parseFloat(((numMatched / numResults) * 100).toFixed(2));
 
   return {
-    domainStatus: {
-      parked,
-      live,
-      error,
-    },
+    domainStatus: [parked, live, error],
     industryClassification: {
       unclassifiedUrls: unclassified,
-      industryPercentages,
+      industryPercentages: {
+        industries,
+        percentages: industryPercentages,
+      },
+
       weakClassification,
     },
     domainMatch: {

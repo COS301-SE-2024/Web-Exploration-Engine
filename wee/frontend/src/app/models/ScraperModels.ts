@@ -49,17 +49,13 @@ export interface IndustryClassification {
 }
 
 export interface Summary {
-  domainStatus: {
-    parked: number;
-    live: number;
-    error: number;
-  },
+  domainStatus: number[];
   industryClassification: {
     unclassifiedUrls: string[];
     industryPercentages: {
-      industry: string;
-      percentage: string;
-    }[];
+      industries: string[];
+      percentages: number[];
+    };
     weakClassification: {
       url: string;
       metadataClass: string;
@@ -67,7 +63,7 @@ export interface Summary {
     }[];
   },
   domainMatch: {
-    percentageMatch: string;
+    percentageMatch: number;
     mismatchedUrls: {
       url: string;
       metadataClass: string;
