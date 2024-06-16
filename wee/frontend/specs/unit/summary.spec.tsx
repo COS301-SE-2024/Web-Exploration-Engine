@@ -116,9 +116,9 @@ describe('SummaryService', () => {
     scraperResults[3].domainStatus = 'live';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.domainStatus.live).toBe(4);
-    expect(summary.domainStatus.parked).toBe(0);
-    expect(summary.domainStatus.error).toBe(0);
+    expect(summary.domainStatus[0]).toBe(4);
+    expect(summary.domainStatus[1]).toBe(0);
+    expect(summary.domainStatus[2]).toBe(0);
   });
 
   it('should correctly summarize all parked URLs', () => {
@@ -128,9 +128,9 @@ describe('SummaryService', () => {
     scraperResults[3].domainStatus = 'parked';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.domainStatus.live).toBe(0);
-    expect(summary.domainStatus.parked).toBe(4);
-    expect(summary.domainStatus.error).toBe(0);
+    expect(summary.domainStatus[0]).toBe(0);
+    expect(summary.domainStatus[1]).toBe(4);
+    expect(summary.domainStatus[2]).toBe(0);
   });
 
   it('should correctly summarize mixed URL statuses', () => {
@@ -140,9 +140,9 @@ describe('SummaryService', () => {
     scraperResults[3].domainStatus = 'error';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.domainStatus.live).toBe(2);
-    expect(summary.domainStatus.parked).toBe(1);
-    expect(summary.domainStatus.error).toBe(1);
+    expect(summary.domainStatus[0]).toBe(2);
+    expect(summary.domainStatus[1]).toBe(1);
+    expect(summary.domainStatus[2]).toBe(1);
   });
 
   it('should correctly calculate industry classification percentages', () => {
@@ -152,10 +152,12 @@ describe('SummaryService', () => {
     scraperResults[3].industryClassification.metadataClass.label = 'Tech';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.industryClassification.industryPercentages).toEqual(expect.arrayContaining([
-      { industry: 'Tech', percentage: '75.00' },
-      { industry: 'Retail', percentage: '25.00' }
-    ]));
+    expect(summary.industryClassification.industryPercentages).toEqual(
+      {
+        industries: ['Tech', 'Retail'],
+        percentages: [75, 25]
+      }
+    );
   });
 
   it('should correctly calculate industry classification percentages with unknowns', () => {
@@ -165,10 +167,12 @@ describe('SummaryService', () => {
     scraperResults[3].industryClassification.metadataClass.label = 'Tech';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.industryClassification.industryPercentages).toEqual(expect.arrayContaining([
-      { industry: 'Tech', percentage: '75.00' },
-      { industry: 'Unknown', percentage: '25.00' }
-    ]));
+    expect(summary.industryClassification.industryPercentages).toEqual(
+      {
+        industries: ['Tech', 'Unknown'],
+        percentages: [75, 25]
+      }
+    );
 
     expect(summary.industryClassification.unclassifiedUrls).toEqual(expect.arrayContaining([
       'http://example3.com'
@@ -186,7 +190,7 @@ describe('SummaryService', () => {
     scraperResults[3].industryClassification.domainClass.label = 'Tech';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.domainMatch.percentageMatch).toBe('50.00');
+    expect(summary.domainMatch.percentageMatch).toBe(50);
     expect(summary.domainMatch.mismatchedUrls).toEqual(expect.arrayContaining([
       { url: 'http://example2.com', metadataClass: 'Tech', domainClass: 'Retail' },
       { url: 'http://example3.com', metadataClass: 'Retail', domainClass: 'Unknown' }
@@ -204,7 +208,7 @@ describe('SummaryService', () => {
     scraperResults[3].industryClassification.domainClass.label = 'Tech';
 
     const summary = generateSummary(scraperResults);
-    expect(summary.domainMatch.percentageMatch).toBe('100.00');
+    expect(summary.domainMatch.percentageMatch).toBe(100);
     expect(summary.domainMatch.mismatchedUrls).toEqual(expect.arrayContaining([]));
   });
 

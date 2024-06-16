@@ -85,7 +85,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const percentageMatch = parseFloat(((numMatched / numResults) * 100).toFixed(2));
 
   return {
-    domainStatus: [parked, live, error],
+    domainStatus: [live, parked, error],
     industryClassification: {
       unclassifiedUrls: unclassified,
       industryPercentages: {
