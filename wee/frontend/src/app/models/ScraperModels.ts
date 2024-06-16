@@ -50,6 +50,7 @@ export interface IndustryClassification {
 
 export interface Summary {
   domainStatus: number[];
+  domainErrorStatus: number;
   industryClassification: {
     unclassifiedUrls: string[];
     industryPercentages: {
