@@ -3,7 +3,7 @@ import Scraping from "../models/ScrapingModel";
 
 interface ScrapingContextType {
     results: Scraping[];
-    setResults: (data: Scraping[]) => void;
+    setResults: (update: (prevResults: Scraping[]) => Scraping[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
 }
