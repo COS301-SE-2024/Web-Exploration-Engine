@@ -96,15 +96,39 @@ function ResultsComponent() {
                             <TableCell>Industry</TableCell>
                             <TableCell>
                                 <Chip radius="sm" color="secondary" variant="flat">
-                                    {isCrawlable ? `${industryClassification?.label} - ${industryClassification?.score}` : 'N/A'}
-                                </Chip>                            
+                                    {isCrawlable ? `${industryClassification?.label}` : 'N/A'}
+                                </Chip>         
+                                <Chip 
+                                    radius="sm" 
+                                    color={ 
+                                        industryClassification?.score && (industryClassification?.score * 100) > 80 ? 'success' :
+                                        industryClassification?.score && (industryClassification?.score * 100) >= 50 ? 'warning' : 
+                                        'danger'
+                                    } 
+                                    variant="flat" 
+                                    className='ml-[2px] mt-2 sm:ml-2 sm:mt-0'
+                                >
+                                    {isCrawlable ? `${(industryClassification?.score ? (industryClassification?.score* 100).toFixed(2) : 0)}%` : '0%'}
+                                </Chip>                         
                             </TableCell>
                         </TableRow>
                         <TableRow key="4">
-                            <TableCell>Domain</TableCell>
+                            <TableCell>Domain match</TableCell>
                             <TableCell>
                                 <Chip radius="sm" color="secondary" variant="flat">
-                                    {isCrawlable ? `${domainClassification?.label} - ${domainClassification?.score}` : 'N/A'}
+                                    {isCrawlable ? `${domainClassification?.label}` : 'N/A'}
+                                </Chip>         
+                                <Chip 
+                                    radius="sm" 
+                                    color={ 
+                                        domainClassification?.score && (domainClassification?.score * 100) > 80 ? 'success' :
+                                        domainClassification?.score && (domainClassification?.score * 100) >= 50 ? 'warning' : 
+                                        'danger'
+                                    } 
+                                    variant="flat" 
+                                    className='ml-[2px] mt-2 sm:ml-2 sm:mt-0'
+                                >
+                                    {isCrawlable ? `${(domainClassification?.score ? (domainClassification?.score* 100).toFixed(2) : 0)}%` : '0%'}
                                 </Chip>   
                             </TableCell>
                         </TableRow>
