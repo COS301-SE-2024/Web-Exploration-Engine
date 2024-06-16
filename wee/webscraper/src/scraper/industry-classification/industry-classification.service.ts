@@ -31,6 +31,12 @@ export class IndustryClassificationService {
   }
 
   async metadataClassify(metadata: Metadata): Promise<{label: string, score: number}> {
+    if (!metadata.title && !metadata.description && !metadata.keywords) {
+      return {
+        label: 'Unknown',
+        score: 0,
+      };
+    }
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
 
     try {
@@ -59,6 +65,12 @@ export class IndustryClassificationService {
   }
 
   async domainClassify(url: string): Promise<{label: string, score: number}> {
+    if (!url) {
+      return {
+        label: 'Unknown',
+        score: 0,
+      };
+    }
     const inputText = `${url}`;
 
     try {
