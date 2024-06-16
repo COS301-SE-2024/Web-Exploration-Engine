@@ -4,8 +4,10 @@ import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
 import WEETextarea from "../components/Util/Textarea";
+import { useScrapingContext } from "../context/ScrapingContext";
 
 export default function Home() {
+    const {setUrls} = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
@@ -20,32 +22,34 @@ export default function Home() {
     };
 
     const handleScraping = () => {
-        if (!url) {
-            setError('URL cannot be empty');
+      if (!url) {
+          setError('URL cannot be empty');
 
-            const timer = setTimeout(() => {
-                setError('');
-            }, 3000);
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
 
-            return () => clearTimeout(timer);
-        }
+          return () => clearTimeout(timer);
+      }
 
-        const urls = url.split(',').map(u => u.trim());
-        for (const singleUrl of urls) {
+      const urlsToScrape = url.split(',').map(u => u.trim());
+      for (const singleUrl of urlsToScrape) {
 
-            if (!isValidUrl(singleUrl)) {
-                setError('Please enter valid URLs');
-    
-                const timer = setTimeout(() => {
-                    setError('');
-                }, 3000);
-    
-                return () => clearTimeout(timer);
-            }
-        }
-        setError('');
-        // Navigate to Results page with the entered URL as query parameter
-        router.push(`/scraperesults?urls=${encodeURIComponent(url)}`)
+          if (!isValidUrl(singleUrl)) {
+              setError('Please enter valid URLs');
+  
+              const timer = setTimeout(() => {
+                  setError('');
+              }, 3000);
+  
+              return () => clearTimeout(timer);
+          }
+      }
+      setError('');
+
+      // Navigate to Results page with the entered URL as query parameter
+      setUrls(urlsToScrape);
+      router.push(`/scraperesults`);
     };
 
     return (
@@ -70,6 +74,7 @@ export default function Home() {
         </div>
         <div className="flex flex-col sm:flex-row w-full justify-center items-center">
           <WEETextarea
+            data-testid="scraping-textarea-home"
             minRows={1}
             label="URLs to scrape"
             placeholder="Enter the URLs you want to scrape comma seperated"
