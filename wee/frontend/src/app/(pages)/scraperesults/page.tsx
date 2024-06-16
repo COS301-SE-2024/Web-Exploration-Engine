@@ -93,9 +93,6 @@ function ResultsComponent() {
         catch(error) {
             console.error('Error when scraping website:', error);
         }
-        finally {
-            // setIsLoading(false);
-        }
     }
 
     const onSearchChange = (value: string) => {

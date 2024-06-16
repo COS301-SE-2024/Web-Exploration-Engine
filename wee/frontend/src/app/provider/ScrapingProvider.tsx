@@ -8,7 +8,7 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
     const test = 'Test the context';
 
     return (
-        <ScrapingContext.Provider value={{results, setResults, urls, setUrls, test}}>
+        <ScrapingContext.Provider value={{results, setResults, urls, setUrls}}>
             {children}
         </ScrapingContext.Provider>
     )

@@ -6,7 +6,6 @@ interface ScrapingContextType {
     setResults: (data: Scraping[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
-    test: string;
 }
 
 const ScrapingContext = createContext<ScrapingContextType | undefined>(undefined);

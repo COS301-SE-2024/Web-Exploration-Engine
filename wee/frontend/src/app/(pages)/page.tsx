@@ -7,7 +7,7 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 export default function Home() {
-    const {setUrls, results, setResults} = useScrapingContext();
+    const {setUrls} = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
