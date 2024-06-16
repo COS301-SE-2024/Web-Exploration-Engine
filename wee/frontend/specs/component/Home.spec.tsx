@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import Home from '../../src/app/(pages)/page';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from 'frontend/src/app/context/ScrapingContext';
+import {useScrapingContext} from '../../src/app/context/ScrapingContext'
 
 // Mock the useRouter hook
 jest.mock('next/navigation', () => ({

@@ -2,9 +2,8 @@ import React from 'react';
 import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
 import Results from '../../src/app/(pages)/results/page'; // Adjust the import according to your file structure
 import { useSearchParams } from 'next/navigation';
-import { ScrapingProvider } from 'frontend/src/app/provider/ScrapingProvider';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from 'frontend/src/app/context/ScrapingContext';
+import {useScrapingContext} from '../../src/app/context/ScrapingContext'
 
 // Mock the useSearchParams hook
 jest.mock('next/navigation', () => ({

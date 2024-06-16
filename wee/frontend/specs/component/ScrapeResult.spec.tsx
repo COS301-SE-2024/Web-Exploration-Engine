@@ -1,9 +1,8 @@
 import React from 'react';
-import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
-import ScrapeResults from 'frontend/src/app/(pages)/scraperesults/page';
+import { render, screen, act, fireEvent } from '@testing-library/react';
+import ScrapeResults from '../../src/app/(pages)/scraperesults/page'; // Adjust the import according to your file structure
 
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from 'frontend/src/app/context/ScrapingContext';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
