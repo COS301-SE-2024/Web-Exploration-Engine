@@ -1,3 +1,8 @@
+# Using Cypress 
+Here's a tutorial on using cypress with the W.E.E. 🫡
+
+[W.E.E. - Using Cypress to Write Integration Tests](https://drive.google.com/file/d/1qEjKfiz9Vdjv4Lyk_UMWahPVGtlshsnH/view?usp=sharing)
+
 
 # Run Frontend Integration Tests
 This command works from any directory :
@@ -15,6 +20,7 @@ This command works from any directory :
     - then after that baseUrl has been set you can change the routing commands to work from the base url, eg :
       -  ```cy.visit("/")``` is the same as  ```cy.visit("https://localhost:8888/")```
       -  ```cy.visit("/help")``` is the same as  ```cy.visit("https://localhost:8888/help")```
+
 
 
 # Guidelines for Writing Cypress Tests
@@ -120,7 +126,7 @@ it('should log in with fixture data', function() {
 ## 7. Organizing Tests:
 Grouping by feature, by page
 - Group general tests in one file eg ```routing.cy.ts```
-- Each page in the application can should one file eg ```login-signup.cy.ts``` 
+- Each page in the application can should one file eg ```login-signup.cy.ts```
 
 ## 8. Running Tests:
 Command Line: Run tests from the command line for continuous integration.
