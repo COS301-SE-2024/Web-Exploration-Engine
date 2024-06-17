@@ -2,7 +2,8 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
+import axiosRetry from 'axios-retry';
 
 interface Metadata {
   title: string | null;
@@ -18,6 +19,17 @@ type LabelScore = {
   score: number;
 };
 
+// Configure axios-retry
+axiosRetry(axios, {
+  retries: 3, // Number of retries
+  retryCondition: (error) => {
+    // Retry on network error or if the status code is 408 (Request Timeout)
+    return (
+      axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+      error.code === 'ECONNABORTED'
+    );
+  },
+});
 @Injectable()
 export class IndustryService {
   static scrapeMetadata(mockUrl: string) {
@@ -64,7 +76,7 @@ export class IndustryService {
         };
       });
 
-      const resp = await this.tryClassifyIndustry(metadata);
+      const resp = await this.classifyIndustry(metadata);
 
       await browser.close();
 
@@ -78,40 +90,20 @@ export class IndustryService {
     }
   }
 
-  private async tryClassifyIndustry(metadata: Metadata): Promise<LabelScore> {
-    const data = {
-      label: ' ',
-      score: 0,
-    };
-    let attempt = 0;
-    while (attempt < 2) {
-      try {
-        const results = await this.classifyIndustry(metadata);
-        return results;
-      } catch (error) {
-        attempt++;
-        if (attempt === 2) {
-          return data;
-        }
-      }
-    }
-    return data;
-  }
-
   private async classifyIndustry(metadata: Metadata): Promise<LabelScore> {
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
 
-    try {
-      const response = await axios.post(
-        this.HUGGING_FACE_API_URL,
-        { inputs: inputText },
-        {
-          headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-          },
-        }
-      );
+    const axiosConfig: AxiosRequestConfig = {
+      url: this.HUGGING_FACE_API_URL,
+      method: 'post',
+      data: { inputs: inputText },
+      headers: {
+        Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+      },
+    };
 
+    try {
+      const response = await axios(axiosConfig);
       if (response.data && response.data[0][0]) {
         const res = {
           label: response.data[0][0].label,
@@ -122,6 +114,25 @@ export class IndustryService {
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Axios error handling
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.error(
+            'Request failed with status code:',
+            error.response.status
+          );
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received:', error.message);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Request setup error:', error.message);
+        }
+      } else {
+        // Non-Axios error handling
+        console.error('Non-Axios error occurred:', error.message);
+      }
       throw new Error('Error classifying industry');
     }
   }
@@ -152,9 +163,7 @@ export class IndustryService {
     return false;
   }
 
-  async calculateIndustryPercentages(
-    urls: string
-  ): Promise<{
+  async calculateIndustryPercentages(urls: string): Promise<{
     industryPercentages: { industry: string; percentage: string }[];
   }> {
     const urlArray = urls.split(',').map((url) => url.trim());
@@ -229,9 +238,7 @@ export class IndustryService {
       throw new Error('Error classifying industry based on URL');
     }
   }
-  async compareIndustries(
-    urls: string
-  ): Promise<{
+  async compareIndustries(urls: string): Promise<{
     comparisons: {
       url: string;
       scrapeIndustry: string;
@@ -243,7 +250,8 @@ export class IndustryService {
     const comparisons = [];
 
     for (const url of urlArray) {
-      const { industry: scrapeIndustry, score: scrapeScore } = await this.scrapeMetadata(url);
+      const { industry: scrapeIndustry, score: scrapeScore } =
+        await this.scrapeMetadata(url);
       const domainMatchIndustry = await this.domainMatch(url);
       const match = scrapeIndustry === domainMatchIndustry.label;
 
@@ -251,7 +259,7 @@ export class IndustryService {
         url,
         scrapeMetadata: {
           scrapeIndustry,
-          scrapeScore
+          scrapeScore,
         },
         domainMatchIndustry,
         match,
@@ -281,7 +289,10 @@ export class IndustryService {
     }
 
     // Calculate the percentage of true domain matches
-    const percentage = totalUrlsChecked === 0 ? 0 : (trueDomainMatchCount / totalUrlsChecked) * 100;
+    const percentage =
+      totalUrlsChecked === 0
+        ? 0
+        : (trueDomainMatchCount / totalUrlsChecked) * 100;
     return percentage;
   }
 }
