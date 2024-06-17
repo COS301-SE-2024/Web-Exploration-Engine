@@ -1,0 +1,164 @@
+
+## Run Frontend Integration Tests
+- works from any directory 
+
+
+ ```typescript 
+ nx e2e frontend --configuration=production 
+ 
+ ```
+
+## General Notes Regarding Cypress Tests
+- when using
+## Guidelines for Writing Cypress Tests
+
+
+
+
+Guidelines for Writing Cypress Tests
+1. Setup and Teardown:
+
+Before/After Hooks: Use before, beforeEach, after, and afterEach hooks to set up preconditions and clean up after tests.
+
+```javascript
+before(() => {
+  // runs once before all tests
+});
+
+beforeEach(() => {
+  // runs before each test
+});
+
+after(() => {
+  // runs once after all tests
+});
+
+afterEach(() => {
+  // runs after each test
+});
+```
+
+1. Writing Tests:
+Describe Blocks: Group related tests together using describe.
+
+```javascript
+describe('Login Page', () => {
+  it('should display the login form', () => {
+    // test code
+  });
+});
+```
+
+Using It Blocks: Each it block represents a single test case.
+
+```javascript
+
+it('should allow a user to log in', () => {
+  // test code
+});
+```
+
+1. Assertions:
+Use assertions to verify that the application behaves as expected.
+```javascript
+cy.get('input[name="username"]').should('be.visible');
+cy.get('form').submit();
+cy.url().should('include', '/dashboard');
+```
+
+
+1. Commands and Custom Commands:
+Built-in Commands: Use Cypress's built-in commands to interact with the DOM.
+
+```javascript
+
+cy.visit('/login');
+cy.get('input[name="username"]').type('user1');
+cy.get('input[name="password"]').type('password1');
+cy.get('button[type="submit"]').click();
+```
+
+Custom Commands: Create reusable commands for common actions.
+
+```javascript
+Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login');
+  cy.get('input[name="username"]').type(username);
+  cy.get('input[name="password"]').type(password);
+  cy.get('button[type="submit"]').click();
+});
+```
+
+5. Handling Asynchronous Behavior:
+Cypress automatically waits for elements to appear and for assertions to pass, but you can also use cy.wait() for specific time delays or network requests.
+```javascript
+cy.intercept('POST', '/api/login').as('loginRequest');
+cy.get('button[type="submit"]').click();
+cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
+```
+
+
+6. Fixtures:
+Use fixtures to load test data.
+```javascript
+beforeEach(() => {
+  cy.fixture('user').then((user) => {
+    this.user = user;
+  });
+});
+
+it('should log in with fixture data', function() {
+  cy.get('input[name="username"]').type(this.user.username);
+  cy.get('input[name="password"]').type(this.user.password);
+  cy.get('button[type="submit"]').click();
+});
+```
+
+7. Organizing Tests:
+Grouping by feature, by page
+- Group by 
+
+8. Running Tests:
+Command Line: Run tests from the command line for continuous integration.
+
+```bash
+npx cypress run
+```
+
+Test Runner: Use the Cypress Test Runner for an interactive testing experience.
+
+```bash
+npx cypress open
+```
+
+1. Debugging Tests:
+Use cy.pause() to pause the test at a specific point.
+
+```javascript
+cy.get('input[name="username"]').type('user1').pause();
+```
+
+Use cy.debug() to print debug information to the console.
+
+```javascript
+
+cy.get('input[name="username"]').type('user1').debug();
+```
+
+10. Continuous Integration:
+Integrate Cypress tests into your CI pipeline to automatically run tests on every commit.
+yaml
+# Example for GitHub Actions
+```yaml
+name: CI
+on: [push]
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Run Cypress tests
+        run: npx cypress run
+```
