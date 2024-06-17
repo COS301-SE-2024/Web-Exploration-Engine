@@ -143,7 +143,6 @@ cy.get('input[name="username"]').type('user1').pause();
 Use cy.debug() to print debug information to the console.
 
 ```javascript
-
 cy.get('input[name="username"]').type('user1').debug();
 ```
 
