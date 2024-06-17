@@ -12,7 +12,9 @@ This command works from any directory :
 
 1. its best to set that as a baseUrl in the ```cypress.config.ts```
     - that file can be found in this folder ( )
-    - then after that baseUrl has been set you can change the routing commands to work from the base url, eg ```cy.visit("/")``` or ```cy.visit("/help")```
+    - then after that baseUrl has been set you can change the routing commands to work from the base url, eg :
+      -  ```cy.visit("/")``` goes to **https://localhost:8888/**
+      -  ```cy.visit("/help")``` would got to **https://localhost:8888/help**
 
 
 # Guidelines for Writing Cypress Tests
