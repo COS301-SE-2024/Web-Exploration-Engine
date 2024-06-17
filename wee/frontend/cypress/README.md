@@ -1,22 +1,23 @@
 
-## Run Frontend Integration Tests
-- works from any directory 
+# Run Frontend Integration Tests
+This command works from any directory :
 
-
- ```typescript 
+ ```bash 
  nx e2e frontend --configuration=production 
- 
  ```
 
-## General Notes Regarding Cypress Tests
-- when using
-## Guidelines for Writing Cypress Tests
+# General Notes Regarding Cypress Tests
+
+### When writing a test that involves visiting a url such as https://localhost:8888/ :
+
+1. its best to set that as a baseUrl in the ```cypress.config.ts```
+    - that file can be found in this folder ( )
+    - then after that baseUrl has been set you can change the routing commands to work from the base url, eg ```cy.visit("/")``` or ```cy.visit("/help")```
 
 
+# Guidelines for Writing Cypress Tests
 
-
-Guidelines for Writing Cypress Tests
-1. Setup and Teardown:
+## 1. Setup and Teardown:
 
 Before/After Hooks: Use before, beforeEach, after, and afterEach hooks to set up preconditions and clean up after tests.
 
@@ -38,7 +39,7 @@ afterEach(() => {
 });
 ```
 
-1. Writing Tests:
+## 2. Writing Tests:
 Describe Blocks: Group related tests together using describe.
 
 ```javascript
@@ -58,7 +59,7 @@ it('should allow a user to log in', () => {
 });
 ```
 
-1. Assertions:
+## 3. Assertions:
 Use assertions to verify that the application behaves as expected.
 ```javascript
 cy.get('input[name="username"]').should('be.visible');
@@ -67,7 +68,7 @@ cy.url().should('include', '/dashboard');
 ```
 
 
-1. Commands and Custom Commands:
+## 4. Commands and Custom Commands:
 Built-in Commands: Use Cypress's built-in commands to interact with the DOM.
 
 ```javascript
@@ -89,7 +90,7 @@ Cypress.Commands.add('login', (username, password) => {
 });
 ```
 
-5. Handling Asynchronous Behavior:
+## 5. Handling Asynchronous Behavior:
 Cypress automatically waits for elements to appear and for assertions to pass, but you can also use cy.wait() for specific time delays or network requests.
 ```javascript
 cy.intercept('POST', '/api/login').as('loginRequest');
@@ -98,7 +99,7 @@ cy.wait('@loginRequest').its('response.statusCode').should('eq', 200);
 ```
 
 
-6. Fixtures:
+## 6. Fixtures:
 Use fixtures to load test data.
 ```javascript
 beforeEach(() => {
@@ -114,11 +115,12 @@ it('should log in with fixture data', function() {
 });
 ```
 
-7. Organizing Tests:
+## 7. Organizing Tests:
 Grouping by feature, by page
-- Group by 
+- Group general tests in one file eg ```routing.cy.ts```
+- Each page in the application can should one file eg ```login-signup.cy.ts``` 
 
-8. Running Tests:
+## 8. Running Tests:
 Command Line: Run tests from the command line for continuous integration.
 
 ```bash
@@ -131,7 +133,7 @@ Test Runner: Use the Cypress Test Runner for an interactive testing experience.
 npx cypress open
 ```
 
-1. Debugging Tests:
+## 9. Debugging Tests:
 Use cy.pause() to pause the test at a specific point.
 
 ```javascript
@@ -145,10 +147,11 @@ Use cy.debug() to print debug information to the console.
 cy.get('input[name="username"]').type('user1').debug();
 ```
 
-10. Continuous Integration:
+## 10. Continuous Integration:
 Integrate Cypress tests into your CI pipeline to automatically run tests on every commit.
 yaml
 # Example for GitHub Actions
+
 ```yaml
 name: CI
 on: [push]
