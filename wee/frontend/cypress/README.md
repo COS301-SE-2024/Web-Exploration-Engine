@@ -154,6 +154,11 @@ Use cy.debug() to print debug information to the console.
 cy.get('input[name="username"]').type('user1').debug();
 ```
 
+
+<!--
+
+Leaving this out as I'm still debugging actions locally 😁
+
 ## 10. Continuous Integration:
 Integrate Cypress tests into your CI pipeline to automatically run tests on every commit.
 yaml
@@ -172,3 +177,4 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run
 ```
+-->
