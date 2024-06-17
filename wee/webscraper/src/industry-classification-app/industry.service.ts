@@ -76,12 +76,16 @@ export class IndustryService {
         };
       });
 
+
+      console.log('Metadata scraped:', metadata);
       const resp = await this.classifyIndustry(metadata);
 
       await browser.close();
 
       const industry = resp.label;
       const score = resp.score;
+
+      console.log(`Industry: ${industry}, Score: ${score}`);
       return { metadata, industry, score };
     } catch (error) {
       throw new Error('Error scraping metadata');
@@ -104,16 +108,21 @@ export class IndustryService {
 
     try {
       const response = await axios(axiosConfig);
+
+      console.log('Response from Hugging Face:', response.data);
+
       if (response.data && response.data[0][0]) {
         const res = {
           label: response.data[0][0].label,
           score: response.data[0][0].score,
         };
+          console.log('Classification result:', res);
         return res;
       } else {
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+
       if (axios.isAxiosError(error)) {
         // Axios error handling
         if (error.response) {
