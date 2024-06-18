@@ -113,6 +113,16 @@ function ResultsComponent() {
   const handlePageChange = (page: React.SetStateAction<number>) => {
     setCurrentPage(page);
   };
+
+  const handleItemsPerPageChange = (event: { target: { value: any } }) => {
+    setItemsPerPage(Number(event.target.value));
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
+  /* 
+  const indexOfLastImage = currentPage * itemsPerPage;
+  const indexOfFirstImage = indexOfLastImage - itemsPerPage;
+  const currentImages = images.slice(indexOfFirstImage, indexOfLastImage);
+ */
   const indexOfLastImage = currentPage * itemsPerPage;
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
   const currentImages = sampleImageList.slice(
