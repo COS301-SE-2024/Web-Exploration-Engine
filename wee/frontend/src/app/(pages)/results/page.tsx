@@ -108,7 +108,6 @@ function ResultsComponent() {
   //Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(12);
-  //const itemsPerPage = 12;
 
   const handlePageChange = (page: React.SetStateAction<number>) => {
     setCurrentPage(page);
@@ -120,11 +119,7 @@ function ResultsComponent() {
     setItemsPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to first page when items per page changes
   };
-  /* 
-  const indexOfLastImage = currentPage * itemsPerPage;
-  const indexOfFirstImage = indexOfLastImage - itemsPerPage;
-  const currentImages = images.slice(indexOfFirstImage, indexOfLastImage);
- */
+
   const indexOfLastImage = currentPage * itemsPerPage;
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
   const currentImages = sampleImageList.slice(
@@ -276,7 +271,7 @@ function ResultsComponent() {
 
       {imageList && (
         <div className="py-3">
-          <span className="flex justify-between">
+          <span className="flex justify-between ">
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
               Images
             </h3>
@@ -300,10 +295,11 @@ function ResultsComponent() {
           </span>
 
           <div
-            className=" grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 " /* style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }} */
+            id="unique-results-image-container"
+            className=" grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 "
           >
             {currentImages.map((item, index) => (
-              <Card shadow="sm" key={index}>
+              <Card shadow="sm" key={index} id="unique-results-image">
                 <CardBody className="overflow-visible p-0">
                   <Image
                     shadow="sm"
@@ -317,9 +313,9 @@ function ResultsComponent() {
               </Card>
             ))}
           </div>
-          <div className="mx-auto ">
+          <div className="place-content-center justify-center text-center mx-auto">
             <WEEPagination
-              className="mx-auto p-5 "
+              className="mx-auto p-5 place-content-center justify-center w-full"
               total={Math.ceil(sampleImageList.length / itemsPerPage)}
               initialPage={1}
               page={currentPage}
