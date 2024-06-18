@@ -282,8 +282,6 @@ function ResultsComponent() {
         onChange={handlePageChange}
       />
 
-  
-
       {imageList.length === 0 && (
         <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
           No images available.
