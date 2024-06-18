@@ -76,8 +76,9 @@ function ResultsComponent() {
   const [domainClassification, setDomainClassification] =
     useState<Classifications>();
   const [logo, setLogo] = useState('');
-  const [imageList, setImageList] = useState<string[]>([]);
-
+  const [imageList, setImageList] = useState<string[]>(sampleImageList);
+/*   const [imageList, setImageList] = useState<string[]>([]);
+ */
   useEffect(() => {
     if (url) {
       const urlResults = results.filter((res) => res.url === url);
