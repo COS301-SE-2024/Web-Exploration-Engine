@@ -3,6 +3,14 @@ Here's a tutorial on using cypress with the W.E.E. 🫡
 
 [W.E.E. - Using Cypress to Write Integration Tests](https://drive.google.com/file/d/1qEjKfiz9Vdjv4Lyk_UMWahPVGtlshsnH/view?usp=sharing)
 
+Additionally, here are the best practices we should keep in mind :
+
+https://docs.cypress.io/guides/references/best-practices
+
+# Debug Cypress Tests
+1. Navigate to the frontend directory
+2. Run the command
+3. Choose a browser to open the tests in (not Electron)
 
 # Run Frontend Integration Tests
 This command works from any directory :
@@ -15,7 +23,7 @@ This command works from any directory :
 
 ### When writing a test that involves visiting a url such as https://localhost:8888/ :
 
-1. its best to set that as a baseUrl in the ```cypress.config.ts```
+1. It's best to set that as a baseUrl in the ```cypress.config.ts```
     - that file can be found in this folder ( )
     - then after that baseUrl has been set you can change the routing commands to work from the base url, eg :
       -  ```cy.visit("/")``` is the same as  ```cy.visit("https://localhost:8888/")```
