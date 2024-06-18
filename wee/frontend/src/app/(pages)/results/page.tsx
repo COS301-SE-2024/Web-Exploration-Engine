@@ -285,7 +285,7 @@ function ResultsComponent() {
               Images Per Page :
               <select
                 value={itemsPerPage}
-                className="bg-transparent dark:bg-dark-primaryBackgroundColor outline-none font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100"
+                className="bg-transparent dark:bg-dark-primaryBackgroundColor outline-none font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100"
                 onChange={handleItemsPerPageChange}
                 aria-label="Number of results per page"
               >
