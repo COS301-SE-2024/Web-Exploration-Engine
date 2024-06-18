@@ -104,6 +104,18 @@ function ResultsComponent() {
   const backToScrapeResults = () => {
     router.push(`/scraperesults`);
   };
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  const handlePageChange = (page: React.SetStateAction<number>) => {
+    setCurrentPage(page);
+  };
+  const indexOfLastImage = currentPage * itemsPerPage;
+  const indexOfFirstImage = indexOfLastImage - itemsPerPage;
+  const currentImages = sampleImageList.slice(
+    indexOfFirstImage,
+    indexOfLastImage
+  );
 
   return (
     <div className="min-h-screen p-4">
