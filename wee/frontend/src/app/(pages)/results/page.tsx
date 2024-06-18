@@ -282,29 +282,7 @@ function ResultsComponent() {
         onChange={handlePageChange}
       />
 
-      {imageList.length > 0 && (
-        <div className="py-3">
-          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-            Images
-          </h3>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
-            {imageList.map((item, index) => (
-              <Card shadow="sm" key={index}>
-                <CardBody className="overflow-visible p-0">
-                  <Image
-                    shadow="sm"
-                    radius="lg"
-                    width="100%"
-                    alt={'Image'}
-                    className="w-full object-cover h-[140px]"
-                    src={item}
-                  />
-                </CardBody>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
+  
 
       {imageList.length === 0 && (
         <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
