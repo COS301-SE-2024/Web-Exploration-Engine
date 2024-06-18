@@ -299,7 +299,9 @@ function ResultsComponent() {
             </label>
           </span>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+          <div
+            className=" grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 " /* style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }} */
+          >
             {currentImages.map((item, index) => (
               <Card shadow="sm" key={index}>
                 <CardBody className="overflow-visible p-0">
@@ -315,12 +317,15 @@ function ResultsComponent() {
               </Card>
             ))}
           </div>
-          <WEEPagination
-            total={Math.ceil(sampleImageList.length / itemsPerPage)}
-            initialPage={1}
-            page={currentPage}
-            onChange={handlePageChange}
-          />
+          <div className="mx-auto ">
+            <WEEPagination
+              className="mx-auto p-5 "
+              total={Math.ceil(sampleImageList.length / itemsPerPage)}
+              initialPage={1}
+              page={currentPage}
+              onChange={handlePageChange}
+            />
+          </div>
         </div>
       )}
 
