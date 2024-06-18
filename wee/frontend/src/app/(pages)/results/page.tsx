@@ -12,6 +12,9 @@ import {
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
+import WEEInput from '../../components/Util/Input';
+import WEESelect from '../../components/Util/Select';
+import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 
