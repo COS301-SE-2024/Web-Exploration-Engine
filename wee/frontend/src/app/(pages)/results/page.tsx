@@ -104,8 +104,11 @@ function ResultsComponent() {
   const backToScrapeResults = () => {
     router.push(`/scraperesults`);
   };
+
+  //Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  //const itemsPerPage = 12;
 
   const handlePageChange = (page: React.SetStateAction<number>) => {
     setCurrentPage(page);
@@ -260,7 +263,29 @@ function ResultsComponent() {
       {/* Paginatin of Images */}
 
       {imageList && (
-        <div>
+        <div className="py-3">
+          <span className="flex justify-between">
+            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+              Images
+            </h3>
+
+            <label className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+              Images Per Page :
+              <select
+                value={itemsPerPage}
+                className="bg-transparent dark:bg-dark-primaryBackgroundColor outline-none font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100"
+                onChange={handleItemsPerPageChange}
+                aria-label="Number of results per page"
+              >
+                <option value="8">8</option>
+                <option value="12">12</option>
+                <option value="24">24</option>
+                <option value="36">36</option>
+                <option value="48">48</option>
+              </select>
+            </label>
+          </span>
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
             {currentImages.map((item, index) => (
               <Card shadow="sm" key={index}>

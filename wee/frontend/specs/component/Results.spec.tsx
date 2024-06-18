@@ -105,3 +105,4 @@ describe('Results Component', () => {
         expect(mockPush).toHaveBeenCalledWith('/scraperesults');
     });
 });
+ 
