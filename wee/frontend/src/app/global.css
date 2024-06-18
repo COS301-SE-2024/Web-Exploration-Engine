@@ -6,24 +6,28 @@
 
 /* Custom Utitlities */
 @layer utilities {
-
   .help-popup {
-  position: fixed;
-  /*   float: right; */
-  bottom: 8px;
-  right: 8px;
-  z-index: 1000;
-}
+    position: fixed;
+
+    bottom: 8px;
+    right: 8px;
+    z-index: 1000!important;
+  }
   .help-popup-button {
-  position: fixed;
-     float: right; 
-  bottom: 16px;
-  right: 16px;
- 
+    position: fixed;
+    float: right;
+    bottom: 16px;
+    right: 16px;
+  }
 }
+
+#unique-results-image-container{
 
 }
 
+#unique-results-image{
+
+}
 
 .font-poppins-regular {
   font-family: 'Poppins', sans-serif;
@@ -44,4 +48,3 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
 }
-
