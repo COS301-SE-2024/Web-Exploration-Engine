@@ -114,7 +114,9 @@ function ResultsComponent() {
     setCurrentPage(page);
   };
 
-  const handleItemsPerPageChange = (event: { target: { value: any } }) => {
+  const handleItemsPerPageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setItemsPerPage(Number(event.target.value));
     setCurrentPage(1); // Reset to first page when items per page changes
   };
@@ -287,6 +289,7 @@ function ResultsComponent() {
                 onChange={handleItemsPerPageChange}
                 aria-label="Number of results per page"
               >
+                <option value="4">4</option>
                 <option value="8">8</option>
                 <option value="12">12</option>
                 <option value="24">24</option>
