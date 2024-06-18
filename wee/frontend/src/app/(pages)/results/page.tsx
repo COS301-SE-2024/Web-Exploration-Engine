@@ -319,6 +319,7 @@ function ResultsComponent() {
               total={Math.ceil(sampleImageList.length / itemsPerPage)}
               initialPage={1}
               page={currentPage}
+              
               onChange={handlePageChange}
             />
           </div>
