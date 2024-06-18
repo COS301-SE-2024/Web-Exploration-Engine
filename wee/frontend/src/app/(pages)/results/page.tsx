@@ -259,28 +259,32 @@ function ResultsComponent() {
 
       {/* Paginatin of Images */}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
-        {currentImages.map((item, index) => (
-          <Card shadow="sm" key={index}>
-            <CardBody className="overflow-visible p-0">
-              <Image
-                shadow="sm"
-                radius="lg"
-                width="100%"
-                alt={'Image'}
-                className="w-full object-cover h-[140px]"
-                src={item}
-              />
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-      <WEEPagination
-        total={Math.ceil(sampleImageList.length / itemsPerPage)}
-        initialPage={1}
-        page={currentPage}
-        onChange={handlePageChange}
-      />
+      {imageList && (
+        <div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+            {currentImages.map((item, index) => (
+              <Card shadow="sm" key={index}>
+                <CardBody className="overflow-visible p-0">
+                  <Image
+                    shadow="sm"
+                    radius="lg"
+                    width="100%"
+                    alt={'Image'}
+                    className="w-full object-cover h-[140px]"
+                    src={item}
+                  />
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+          <WEEPagination
+            total={Math.ceil(sampleImageList.length / itemsPerPage)}
+            initialPage={1}
+            page={currentPage}
+            onChange={handlePageChange}
+          />
+        </div>
+      )}
 
       {imageList.length === 0 && (
         <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
