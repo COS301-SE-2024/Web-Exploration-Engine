@@ -12,8 +12,6 @@ import {
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
-import WEEInput from '../../components/Util/Input';
-import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
@@ -232,7 +230,7 @@ function ResultsComponent() {
 
       {/* Paginatin of Images */}
 
-      {imageList && (
+      {imageList && imageList.length > 0 && (
         <div className="py-3">
           <span className="flex justify-between ">
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
