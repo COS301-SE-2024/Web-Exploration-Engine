@@ -58,7 +58,7 @@ export default function SummaryReport() {
                     Scraping Dashboard/Summary
                 </h1>
             </div>
-            <div className='gap-4 grid md:grid-cols-2'>
+            <div className='gap-1 grid md:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
                         Industry classification
