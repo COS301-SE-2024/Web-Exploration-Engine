@@ -237,13 +237,13 @@ function ResultsComponent() {
               Images
             </h3>
 
-            <label className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+            <label className="flex items-center text-default-400 text-small">
               Images Per Page :
               <select
                 value={itemsPerPage}
-                className="bg-transparent dark:bg-dark-primaryBackgroundColor outline-none font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100"
+                className="bg-transparent outline-none text-default-400 text-small"
                 onChange={handleItemsPerPageChange}
-                aria-label="Number of results per page"
+                aria-label="Number of results per page" 
               >
                 <option value="4">4</option>
                 <option value="8">8</option>

@@ -2,9 +2,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { Textarea } from '@nextui-org/input';
 import { Button } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
 
