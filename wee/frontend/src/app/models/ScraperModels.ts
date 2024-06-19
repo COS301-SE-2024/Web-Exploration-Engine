@@ -73,4 +73,5 @@ export interface Summary {
   }
   totalUrls: number;
   parkedUrls: string[];
+  scrapableUrls: number;
 }

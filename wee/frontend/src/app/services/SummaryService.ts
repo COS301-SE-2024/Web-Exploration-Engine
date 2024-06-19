@@ -1,4 +1,4 @@
-import { ScraperResult, Summary } from '../models/ScraperModels';
+import { ScraperResult, Summary,ErrorResponse } from '../models/ScraperModels';
 
 export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const numResults = scraperResults.length;
@@ -19,6 +19,8 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   // domain match classification
   let numMatched = 0;
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
+  // Count of URLs that can be scraped
+  let numScrapableUrls = 0;
 
   for (const result of scraperResults) {
     // count number of parked vs live sites
@@ -31,6 +33,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       error++;
     }
 
+    // Check if the URL can be scraped
+    if (result.robots && 'errorStatus' in result.robots && result.robots.errorStatus) {
+      error++;
+    } else {
+      numScrapableUrls++;
+    }
+    
     // calculate industry classification percentages
     if (result.industryClassification && 
       result.industryClassification.metadataClass.label && 
@@ -103,5 +112,6 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     },
     totalUrls: numResults,
     parkedUrls,
+    scrapableUrls: numScrapableUrls,
   }
 }

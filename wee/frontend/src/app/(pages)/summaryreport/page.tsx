@@ -41,6 +41,7 @@ export default function SummaryReport() {
     const [mismatchedUrls, setMismatchedUrls] = useState<mismatchedUrls[]>();
     const [totalUrls, setTotalUrls] = useState<number>(0);
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
+    const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     useEffect(() => {
         
         if (summaryReport) {
@@ -55,6 +56,8 @@ export default function SummaryReport() {
             setMismatchedUrls(summaryReport.domainMatch.mismatchedUrls);
             setTotalUrls(summaryReport.totalUrls); 
             setParkedUrls(summaryReport.parkedUrls); 
+            setTotalUrls(summaryReport.scrapableUrls); 
+
         }
         console.log(industryPercentages)
         console.log(industries)
@@ -105,7 +108,7 @@ export default function SummaryReport() {
                         <FiCheck />
                     </div>
                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        6 Urls
+                    {summaryReport.scrapableUrls} Urls
                     </div>
                     <div className='font-poppins-semibold text-lg'>
                         Crawlable
