@@ -296,7 +296,7 @@ function ResultsComponent() {
 
           <div
             id="unique-results-image-container"
-            className=" grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 "
+            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 py-6"
           >
             {currentImages.map((item, index) => (
               <Card shadow="sm" key={index} id="unique-results-image">
@@ -313,13 +313,12 @@ function ResultsComponent() {
               </Card>
             ))}
           </div>
-          <div className="place-content-center justify-center text-center mx-auto">
+          <div className="flex justify-content-center justify-items-center">
             <WEEPagination
-              className="mx-auto p-5 place-content-center justify-center w-full"
+              className="flex mx-auto p-5 place-content-center justify-center w-full"
               total={Math.ceil(sampleImageList.length / itemsPerPage)}
               initialPage={1}
               page={currentPage}
-              
               onChange={handlePageChange}
             />
           </div>
