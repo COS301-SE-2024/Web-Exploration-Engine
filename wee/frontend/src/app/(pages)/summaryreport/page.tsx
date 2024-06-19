@@ -76,6 +76,21 @@ export default function SummaryReport() {
                 </h1>
             </div>
 
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+                General stats
+            </h3>
+            <div className='gap-4 grid sm:grid-cols-3'>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                        Scraped
+                </div>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                        Crawlable
+                </div>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                        Avg scrape time
+                </div>
+            </div>
+
             {/* <div className='gap-4 grid md:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
@@ -93,7 +108,7 @@ export default function SummaryReport() {
                     <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
                 </div>
             </div>  */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
             <div className='gap-4 grid md:grid-cols-2'>
@@ -118,7 +133,7 @@ export default function SummaryReport() {
                             </TableColumn>
                         </TableHeader>
 
-                        <TableBody emptyContent={"There was no mismatch"}>
+                        <TableBody emptyContent={"There was no weak classifications"}>
                             {   (weakClassification || []).map((item, index) => (
                                     <TableRow key={index}>
                                         <TableCell>
@@ -186,6 +201,50 @@ export default function SummaryReport() {
                     </WEETable>
                 </div>
             </div> {/* Grid */}
+
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                Website status
+            </h3>
+            <div className='gap-4 grid md:grid-cols-3'>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
+                    <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
+                </div>
+
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Parked sites
+                    </h3>
+                    <WEETable 
+                        isHeaderSticky
+                        className='max-h-[15rem]'
+                    >
+                        <TableHeader>
+                            <TableColumn key="name" className='rounded-lg sm:rounded-none'>
+                                URL
+                            </TableColumn>
+                        </TableHeader>
+
+                        <TableBody emptyContent={"There was no parked websites"}>
+                            {/* {   (weakClassification || []).map((item, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                            <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
+                                                {item.url}
+                                            </Link>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            } */}
+                            <TableRow>
+                                <TableCell>
+                                    https://randomwebsite.com
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </WEETable>
+                </div>
+            </div> {/* Grid */}
+
         </div>
     );
 }
