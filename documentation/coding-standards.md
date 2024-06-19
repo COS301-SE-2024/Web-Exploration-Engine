@@ -200,7 +200,7 @@ All branches will follow the conventions listed below:
 
 
 #### Linting
-- We will be using Eslint to mastertain code quality and consistency, ensuring uniform code across the project.
+- We will be using Eslint to maintain code quality and consistency, ensuring uniform code across the project.
 - The custom rules for our project will correspond to those that were stated in the coding standards.
 - Eslint is well-suited for the task of analysing our React project, with it being a dedicated javascript/typescript linter.
 
