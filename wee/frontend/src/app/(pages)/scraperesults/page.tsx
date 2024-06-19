@@ -11,9 +11,10 @@ import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import Scraping from '../../models/ScrapingModel';
 import Link from 'next/link';
+import { generateSummary } from '../../services/SummaryService';
 
 function ResultsComponent() {
-    const {urls, setUrls, results, setResults} = useScrapingContext();
+    const {urls, setUrls, results, setResults, setSummaryReport } = useScrapingContext();
     const processedUrls = useRef(new Set<string>());
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -70,6 +71,13 @@ function ResultsComponent() {
         }  
         else {
             // allows to naviagte back to this page without rescraping the urls
+            if (processedUrls.current.size > 1) {
+                // Generate summary report
+                console.log('Results:', results)
+                const summary = generateSummary(results);
+                console.log('Summary:', summary);
+                setSummaryReport(summary);
+            }
             setIsLoading(false);
         }      
     }, [urls.length])
