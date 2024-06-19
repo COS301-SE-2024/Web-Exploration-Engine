@@ -5,6 +5,8 @@ import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Textarea } from '@nextui-org/input';
 import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
+import WEEInput from '../../components/Util/Input';
+import WEETextarea from '../../components/Util/Textarea';
 
 const faqs = [
   {
@@ -184,26 +186,23 @@ export default function Help() {
           )}
 
           <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">
-            <Input
+            <WEEInput
               className="my-2"
-              variant="bordered"
               value={name}
               onChange={(e) => setName(e.target.value)}
               type="text"
               label="Name"
             />
-            <Input
+            <WEEInput
               className="my-2"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              variant="bordered"
               label="Email"
             />
           </div>
           <div className="w-full grid grid-cols-12 gap-1 ">
-            <Textarea
-              variant="bordered"
+            <WEETextarea
               label="Message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
