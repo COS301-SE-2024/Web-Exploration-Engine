@@ -107,7 +107,7 @@ function ResultsComponent() {
 
   //Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [itemsPerPage, setItemsPerPage] = useState(16);
 
   const handlePageChange = (page: React.SetStateAction<number>) => {
     setCurrentPage(page);
@@ -286,7 +286,7 @@ function ResultsComponent() {
               >
                 <option value="4">4</option>
                 <option value="8">8</option>
-                <option value="12">12</option>
+                <option value="16">16</option>
                 <option value="24">24</option>
                 <option value="36">36</option>
                 <option value="48">48</option>
