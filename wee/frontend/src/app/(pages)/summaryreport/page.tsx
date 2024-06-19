@@ -170,7 +170,7 @@ export default function SummaryReport() {
 
             {/* Domain watch */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Domain watch
+                Domain match
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
