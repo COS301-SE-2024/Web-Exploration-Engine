@@ -7,7 +7,7 @@ import { RadialBar } from '../../components/Graphs';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
-
+import { FiClock, FiCheck, FiSearch } from "react-icons/fi";
 
 interface industryPercentages {
     industries: string[];
@@ -76,38 +76,53 @@ export default function SummaryReport() {
                 </h1>
             </div>
 
+            {/* General stats */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                 General stats
             </h3>
             <div className='gap-4 grid sm:grid-cols-3'>
+
+                {/* Scraped stats */}
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='text-5xl flex justify-center'>
+                        <FiSearch />
+                    </div>
+                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        8 Urls
+                    </div>
+                    <div className='font-poppins-semibold text-lg'>
                         Scraped
+                    </div>
                 </div>
+
+                {/* Crawlable stats */}
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='text-5xl flex justify-center'>
+                        <FiCheck />
+                    </div>
+                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        6 Urls
+                    </div>
+                    <div className='font-poppins-semibold text-lg'>
                         Crawlable
+                    </div>
                 </div>
+
+                {/* Avg scrape stats */}
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='text-5xl flex justify-center'>
+                        <FiClock />
+                    </div>
+                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        4.8 sec
+                    </div>
+                    <div className='font-poppins-semibold text-lg'>
                         Avg scrape time
+                    </div>
                 </div>
             </div>
 
-            {/* <div className='gap-4 grid md:grid-cols-2'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
-                        Industry classification
-                    </h3>
-                    <PieChart dataLabel={industries} dataSeries={industryPercentages}/>
-                </div>
-            </div> 
-
-            <div className='gap-4 grid md:grid-cols-2'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
-                        Live/Parked Status
-                    </h3>
-                    <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
-                </div>
-            </div>  */}
+            {/* Industry classification */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
@@ -123,6 +138,7 @@ export default function SummaryReport() {
                     <WEETable 
                         isHeaderSticky
                         className='max-h-[15rem]'
+                        aria-label="Industry classification table"
                     >
                         <TableHeader>
                             <TableColumn key="name" className='rounded-lg sm:rounded-none'>
@@ -142,7 +158,7 @@ export default function SummaryReport() {
                                             </Link>
                                         </TableCell>
                                         <TableCell className='hidden sm:table-cell'>
-                                            {item.score}
+                                            {(item.score * 100).toFixed(2)}%
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -152,6 +168,7 @@ export default function SummaryReport() {
                 </div>
             </div> {/* Grid */}
 
+            {/* Domain watch */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain watch
             </h3>
@@ -167,6 +184,7 @@ export default function SummaryReport() {
                     <WEETable 
                         isHeaderSticky
                         className='max-h-[15rem]'
+                        aria-label="Domain mismatch information table"
                     >
                         <TableHeader>
                             <TableColumn key="name" className='rounded-lg sm:rounded-none'>
@@ -202,6 +220,7 @@ export default function SummaryReport() {
                 </div>
             </div> {/* Grid */}
 
+            {/* Website status */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Website status
             </h3>
@@ -217,6 +236,7 @@ export default function SummaryReport() {
                     <WEETable 
                         isHeaderSticky
                         className='max-h-[15rem]'
+                        aria-label="Parked sites table"
                     >
                         <TableHeader>
                             <TableColumn key="name" className='rounded-lg sm:rounded-none'>
