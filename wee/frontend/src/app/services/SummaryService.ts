@@ -7,7 +7,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   let parked = 0;
   let live = 0;
   let error = 0;
-
+  const parkedUrls: string[] = [];
   // industry classification counts
   const industryCounts: Record<string, number> = {};
   let noClassificationCount = 0;
@@ -24,6 +24,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     // count number of parked vs live sites
     if (result.domainStatus === 'parked') {
       parked++;
+      parkedUrls.push(result.url);
     } else if (result.domainStatus === 'live') {
       live++;
     } else {
@@ -100,5 +101,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       percentageMatch,
       mismatchedUrls,
     },
+    totalUrls: numResults,
+    parkedUrls,
   }
 }

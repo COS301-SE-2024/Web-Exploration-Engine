@@ -71,5 +71,6 @@ export interface Summary {
       domainClass: string;
     }[];
   }
-
+  totalUrls: number;
+  parkedUrls: string[];
 }
