@@ -21,6 +21,11 @@ interface Classifications {
   score: number;
 }
 
+interface SummaryInfo {
+  title: string;
+  description: string;
+}
+
 export default function Results() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -45,22 +50,33 @@ function ResultsComponent() {
     useState<Classifications>();
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
+  const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
+  
 
   useEffect(() => {
     if (url) {
       const urlResults = results.filter((res) => res.url === url);
 
       if (urlResults && urlResults[0]) {
-        setIsCrawlable(urlResults[0].robots.isUrlScrapable);
         setWebsiteStatus(urlResults[0].domainStatus);
-        setLogo(urlResults[0].logo);
-        setImageList(urlResults[0].images);
-        setIndustryClassification(
-          urlResults[0].industryClassification.metadataClass
-        );
-        setDomainClassification(
-          urlResults[0].industryClassification.domainClass
-        );
+        if ('errorStatus' in urlResults[0].robots) {
+          setIsCrawlable(false);
+        } else {
+          setIsCrawlable(urlResults[0].robots.isUrlScrapable);
+          setWebsiteStatus(urlResults[0].domainStatus);
+          setSummaryInfo({ 
+            title: urlResults[0].metadata.title || urlResults[0].metadata.ogTitle,
+            description: urlResults[0].metadata.description || urlResults[0].metadata.ogDescription
+          });
+          setLogo(urlResults[0].logo);
+          setImageList(urlResults[0].images);
+          setIndustryClassification(
+            urlResults[0].industryClassification.metadataClass
+          );
+          setDomainClassification(
+            urlResults[0].industryClassification.domainClass
+          );
+        }
       }
     }
   }, [url]);
@@ -101,6 +117,50 @@ function ResultsComponent() {
         <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Results of {url}
         </h1>
+      </div>
+
+      <div className="py-3">
+        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+          Summary
+        </h3>
+          <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
+            <CardBody>
+              {summaryInfo ? (
+                <div className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                  <p>
+                    {summaryInfo?.title}
+                  </p>
+                  <br/>
+                  {logo && (
+                    <div className="flex justify-center">
+                     <div className="flex justify-center">
+                      <Image
+                        alt="Logo"
+                        src={logo}
+                        className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+                      />
+                    </div>
+                      
+                    </div>
+                  )}
+                  {!logo && (
+                    <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                      No logo available.
+                    </p>
+                  )}
+                  <br/>
+                  <p>
+                    {summaryInfo?.description}
+                  </p>
+                </div>
+                
+              ) : (
+                <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                   No summary information available.
+                </p>
+              )}
+            </CardBody>
+          </Card>
       </div>
 
       <div className="py-3">
@@ -158,12 +218,12 @@ function ResultsComponent() {
                   className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
                 >
                   {isCrawlable
-                    ? `${
+                    ? `Confidence Score: ${
                         industryClassification?.score
                           ? (industryClassification?.score * 100).toFixed(2)
                           : 0
                       }%`
-                    : '0%'}
+                    : 'Confidence Score: 0%'}
                 </Chip>
               </TableCell>
             </TableRow>
@@ -188,45 +248,18 @@ function ResultsComponent() {
                   className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
                 >
                   {isCrawlable
-                    ? `${
+                    ? `Confidence Score: ${
                         domainClassification?.score
                           ? (domainClassification?.score * 100).toFixed(2)
                           : 0
                       }%`
-                    : '0%'}
+                    : 'Confidence Score: 0%'}
                 </Chip>
               </TableCell>
             </TableRow>
           </TableBody>
         </WEETable>
       </div>
-
-      {logo && (
-        <div className="py-3">
-          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-            Logo
-          </h3>
-          <div className="gap-2 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5">
-            <Card shadow="sm">
-              <CardBody className="overflow-visible p-0">
-                <Image
-                  shadow="sm"
-                  radius="lg"
-                  width="100%"
-                  alt={'Logo'}
-                  className="w-full object-cover h-[140px]"
-                  src={logo}
-                />
-              </CardBody>
-            </Card>
-          </div>
-        </div>
-      )}
-      {!logo && (
-        <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-          No logo available.
-        </p>
-      )}
 
       {/* Paginatin of Images */}
 

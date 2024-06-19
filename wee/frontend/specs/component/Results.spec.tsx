@@ -23,6 +23,14 @@ describe('Results Component', () => {
         {
             url: mockUrl,
             robots: { isUrlScrapable: true },
+            metadata: {
+                title: 'Example Title',
+                description: 'Example Description',
+                keywords: 'example, keywords',
+                ogTitle: 'Example OG Title',
+                ogDescription: 'Example OG Description',
+                ogImage: 'https://www.example.com/ogimage.png',
+            },
             domainStatus: 'live',
             logo: 'https://www.example.com/logo.png',
             images: ['https://www.example.com/image1.png', 'https://www.example.com/image2.png'],
@@ -103,6 +111,25 @@ describe('Results Component', () => {
         fireEvent.click(backButton);
 
         expect(mockPush).toHaveBeenCalledWith('/scraperesults');
+    });
+
+    it('should set crawlable status to No when an error response is returned', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    robots: { errorStatus: 404, errorCode: 'Not Found', errorMessage: 'Page not found'},
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.queryByText('No')).toBeDefined();
+        });
     });
 });
  
