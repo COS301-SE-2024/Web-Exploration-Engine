@@ -180,7 +180,7 @@ function ResultsComponent() {
                     
                         {isLoading ? (
                             <div className="flex w-full justify-center">
-                                <Spinner color="white" />
+                                <Spinner color='default'/>
                             </div>
                         ) : null}
 
@@ -245,8 +245,9 @@ function ResultsComponent() {
                 Summary
             </h1>
             <Button 
-                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
                 onClick={handleSummaryPage}
+                disabled={isLoading}
             >
                 View overall summary report
             </Button>
