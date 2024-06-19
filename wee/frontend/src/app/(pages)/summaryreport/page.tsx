@@ -93,14 +93,54 @@ export default function SummaryReport() {
                     <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
                 </div>
             </div>  */}
-
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+                Industry classification
+            </h3>
+            <div className='gap-4 grid md:grid-cols-2'>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                    <PieChart dataLabel={industries} dataSeries={industryPercentages}/>
+                </div>
+
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Weak classifications
+                    </h3>
+                    <WEETable 
+                        isHeaderSticky
+                        className='max-h-[15rem]'
+                    >
+                        <TableHeader>
+                            <TableColumn key="name" className='rounded-lg sm:rounded-none'>
+                                URL
+                            </TableColumn>
+                            <TableColumn key="role" className='hidden sm:table-cell'>
+                                SCORE
+                            </TableColumn>
+                        </TableHeader>
+
+                        <TableBody emptyContent={"There was no mismatch"}>
+                            {   (weakClassification || []).map((item, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                            <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
+                                                {item.url}
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell className='hidden sm:table-cell'>
+                                            {item.score}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </WEETable>
+                </div>
+            </div> {/* Grid */}
+
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain watch
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
-
-
-
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
                 </div>
@@ -143,7 +183,6 @@ export default function SummaryReport() {
                                 ))
                             }
                         </TableBody>
-
                     </WEETable>
                 </div>
             </div> {/* Grid */}
