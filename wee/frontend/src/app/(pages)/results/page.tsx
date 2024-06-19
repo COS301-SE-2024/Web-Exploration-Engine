@@ -122,10 +122,7 @@ function ResultsComponent() {
 
   const indexOfLastImage = currentPage * itemsPerPage;
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
-  const currentImages = sampleImageList.slice(
-    indexOfFirstImage,
-    indexOfLastImage
-  );
+  const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
 
   return (
     <div className="min-h-screen p-4">
@@ -316,7 +313,7 @@ function ResultsComponent() {
           <div className="flex justify-content-center justify-items-center">
             <WEEPagination
               className="flex mx-auto p-5 place-content-center justify-center w-full"
-              total={Math.ceil(sampleImageList.length / itemsPerPage)}
+              total={Math.ceil(imageList.length / itemsPerPage)}
               initialPage={1}
               page={currentPage}
               onChange={handlePageChange}
