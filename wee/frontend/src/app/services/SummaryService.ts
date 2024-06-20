@@ -21,7 +21,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
   // Count of URLs that can be scraped
   let numScrapableUrls = 0;
-
+  let totalTime = 0;
   for (const result of scraperResults) {
     // count number of parked vs live sites
     if (result.domainStatus === 'parked') {
@@ -75,6 +75,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       }
 
     }
+    totalTime += result.time;
   }
 
   for (const industry in industryCounts) {
@@ -93,7 +94,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   }
 
   const percentageMatch = parseFloat(((numMatched / numResults) * 100).toFixed(2));
-
+  const avgTime = parseFloat((totalTime / numResults).toFixed(2));
   return {
     domainStatus: [live, parked],
     domainErrorStatus: error,
@@ -113,5 +114,6 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     totalUrls: numResults,
     parkedUrls,
     scrapableUrls: numScrapableUrls,
+    avgTime:avgTime,
   }
 }

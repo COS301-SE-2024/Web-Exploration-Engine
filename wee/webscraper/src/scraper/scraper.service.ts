@@ -22,6 +22,8 @@ export class ScraperService {
   ) {}
 
   async scrape(url: string) {
+    const start = performance.now();
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = {
       url: '',
@@ -32,6 +34,7 @@ export class ScraperService {
       logo: '',
       images: [],
       slogan: '',
+      time: 0,
     };
 
     // validate url
@@ -92,6 +95,11 @@ export class ScraperService {
 
     // do we want to perform analysis in the scraper service? - probably not
 
+    const end = performance.now();
+    const time = end-start;
+    console.log(`Time taken to scrape ${url}: ${(end - start) / 1000} seconds`);
+    data.time=time;
+
     return data;
   }
 
@@ -99,7 +107,6 @@ export class ScraperService {
     // scrape multiple urls in parallel
     // return data
   };
-
 
   async readRobotsFile(url: string) {
     return this.robotsService.readRobotsFile(url);
