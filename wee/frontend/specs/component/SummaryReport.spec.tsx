@@ -24,7 +24,6 @@ global.ResizeObserver = ResizeObserver;
 // Mocking apexcharts default export
 // Mocking apexcharts default export
 jest.mock('apexcharts', () => {
-  const actualApexCharts = jest.requireActual('apexcharts');
   return {
     __esModule: true, // This property makes it work with the default import
     default: jest.fn(() => ({
