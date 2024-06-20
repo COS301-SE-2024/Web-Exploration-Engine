@@ -1,7 +1,7 @@
 describe('login', () => {
   it('faqs should exist', () => {
     cy.visit('/login');
-    cy.contains(/The Web Exploration Engine/i).should('exist');
+    cy.contains(/Ready to Dive Back In/i).should('exist');
   });
 });
 
