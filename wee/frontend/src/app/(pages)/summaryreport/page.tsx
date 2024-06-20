@@ -175,9 +175,9 @@ export default function SummaryReport() {
                 </div>
             </div> {/* Grid */}
 
-            {/* Domain watch */}
+            {/* Domain match */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Domain watch
+                Domain match
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
@@ -252,22 +252,18 @@ export default function SummaryReport() {
                         </TableHeader>
 
                         <TableBody emptyContent={"There were no parked websites"}>
-                        {(parkedUrls.length > 0) ? parkedUrls.map((url, index) => (
-                            <TableRow key={index}>
-                                <TableCell>
-                                    <Link href={`/results?url=${encodeURIComponent(url)}`}>                               
-                                        {url}
-                                    </Link>
+                            {   (parkedUrls || []).map((url, index) => (
+                             <TableRow key={index}>
+                                 <TableCell>
+                                        <Link href={`/results?url=${encodeURIComponent(url)}`}>                               
+                                            {url}
+                                        </Link>
                                 </TableCell>
                             </TableRow>
-                        )) : (
-                            <TableRow>
-                                <TableCell>
-                                    There were no parked websites
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
+                             ))
+                            }
+</TableBody>
+
                     </WEETable>
                 </div>
             </div> {/* Grid */}
