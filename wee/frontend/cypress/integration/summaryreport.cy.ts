@@ -1,6 +1,6 @@
-describe('signup', () => {
+describe('summaryreport', () => {
   it('should be on right page', () => {
-    cy.visit('/signup');
-    cy.contains(/Become a Member/i).should('exist');
+    cy.visit('/summaryreport');
+    cy.contains(/Scraping Dashboard/i).should('exist');
   });
 });
