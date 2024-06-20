@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SummaryReport from '../../src/app/(pages)/summaryreport/page';
 import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
 import { useScrapingContext } from '../../src/app/context/ScrapingContext';
-import { after, before } from 'node:test';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
@@ -22,7 +21,6 @@ class ResizeObserver {
 global.ResizeObserver = ResizeObserver;
 
 // Mocking apexcharts default export
-// Mocking apexcharts default export
 jest.mock('apexcharts', () => {
   return {
     __esModule: true, // This property makes it work with the default import
@@ -34,7 +32,6 @@ jest.mock('apexcharts', () => {
     })),
   };
 });
-
 
 describe('SummaryReport Page', () => {
   const mockPush = jest.fn();
