@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
-import Results from '../../src/app/(pages)/results/page'; // Adjust the import according to your file structure
+import Results from '../../src/app/(pages)/results/page'; 
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext'

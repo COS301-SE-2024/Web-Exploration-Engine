@@ -47,23 +47,21 @@ export default function SummaryReport() {
         
         if (summaryReport) {
             //console.log("Summary Report:", summaryReport);
-            setDomainStatus(summaryReport.domainStatus);
-            setDomainErrorStatus(summaryReport.domainErrorStatus);
-            setUnclassifiedUrls(summaryReport.industryClassification.unclassifiedUrls);
-            setIndustries(summaryReport.industryClassification.industryPercentages.industries);
-            setIndustryPercentages(summaryReport.industryClassification.industryPercentages.percentages);
-            setWeakClassification(summaryReport.industryClassification.weakClassification);
-            setPercentageMatch(summaryReport.domainMatch.percentageMatch);
-            setMismatchedUrls(summaryReport.domainMatch.mismatchedUrls);
-            setTotalUrls(summaryReport.totalUrls); 
-            setParkedUrls(summaryReport.parkedUrls); 
-            setscrapableUrls(summaryReport.scrapableUrls); 
-            setAvgTime(summaryReport.avgTime);
+            setDomainStatus(summaryReport.domainStatus ?? []);
+            setDomainErrorStatus(summaryReport.domainErrorStatus ?? 0);
+            setUnclassifiedUrls(summaryReport.industryClassification?.unclassifiedUrls ?? []);
+            setIndustries(summaryReport.industryClassification?.industryPercentages?.industries ?? []);
+            setIndustryPercentages(summaryReport.industryClassification?.industryPercentages?.percentages ?? []);
+            setWeakClassification(summaryReport.industryClassification?.weakClassification ?? []);
+            setPercentageMatch(summaryReport.domainMatch?.percentageMatch ?? 0);
+            setMismatchedUrls(summaryReport.domainMatch?.mismatchedUrls ?? []);
+            setTotalUrls(summaryReport.totalUrls ?? 0); 
+            setParkedUrls(summaryReport.parkedUrls ?? []); 
+            setscrapableUrls(summaryReport.scrapableUrls ?? 0); 
+            setAvgTime(summaryReport.avgTime ?? 0);
         }
-        console.log(industryPercentages)
-        console.log(industries)
 
-    }, [summaryReport, industryPercentages, industries]);
+    }, [summaryReport]);
 
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);
