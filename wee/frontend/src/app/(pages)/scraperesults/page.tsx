@@ -41,11 +41,11 @@ function ResultsComponent() {
         // Apply crawlable filter
         if (selectedCrawlableFilter === "Yes") {
             filteredUrls = filteredUrls.filter((url) =>
-                !url.robots || !('errorStatus' in url.robots) || !url.robots.errorStatus
+                url.robots && url.robots.isUrlScrapable
             );
         } else if (selectedCrawlableFilter === "No") {
             filteredUrls = filteredUrls.filter((url) =>
-                url.robots && 'errorStatus' in url.robots && url.robots.errorStatus
+                url.robots && !url.robots.isUrlScrapable
             );
         }
 
