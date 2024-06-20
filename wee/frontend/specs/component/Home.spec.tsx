@@ -52,6 +52,8 @@ describe('Home Component', () => {
 
         (useScrapingContext as jest.Mock).mockReturnValue({
             setUrls: mockSetUrls,
+            setProcessedUrls: jest.fn(),
+            setProcessingUrls: jest.fn(),
         });
 
         (useRouter as jest.Mock).mockReturnValue({ push: mockRouterPush });

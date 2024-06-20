@@ -21,8 +21,13 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
                 url: 'https://www.example2.com',
                 robots: { isUrlScrapable: true },
             },
-        ], 
+        ],
+        processedUrls: ['https://www.example.com', 'https://www.example2.com'],
+        setProcessedUrls: jest.fn(),
+        processingUrls: [],
+        setProcessingUrls: jest.fn(), 
         setResults: jest.fn(),
+        setSummaryReport: jest.fn(),
     }),
 }));
 
