@@ -1,11 +1,14 @@
 import { createContext, useContext } from "react";
 import Scraping from "../models/ScrapingModel";
+import { Summary } from "../models/ScraperModels";
 
 interface ScrapingContextType {
     results: Scraping[];
     setResults: (update: (prevResults: Scraping[]) => Scraping[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
+    summaryReport: Summary;
+    setSummaryReport: (data: Summary) => void;
 }
 
 const ScrapingContext = createContext<ScrapingContextType | undefined>(undefined);

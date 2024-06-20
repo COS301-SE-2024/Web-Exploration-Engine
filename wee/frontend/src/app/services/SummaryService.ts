@@ -1,4 +1,4 @@
-import { ScraperResult, Summary } from '../models/ScraperModels';
+import { ScraperResult, Summary,ErrorResponse } from '../models/ScraperModels';
 
 export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const numResults = scraperResults.length;
@@ -7,7 +7,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   let parked = 0;
   let live = 0;
   let error = 0;
-
+  const parkedUrls: string[] = [];
   // industry classification counts
   const industryCounts: Record<string, number> = {};
   let noClassificationCount = 0;
@@ -19,17 +19,27 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   // domain match classification
   let numMatched = 0;
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
-
+  // Count of URLs that can be scraped
+  let numScrapableUrls = 0;
+  let totalTime = 0;
   for (const result of scraperResults) {
     // count number of parked vs live sites
     if (result.domainStatus === 'parked') {
       parked++;
+      parkedUrls.push(result.url);
     } else if (result.domainStatus === 'live') {
       live++;
     } else {
       error++;
     }
 
+    // Check if the URL can be scraped
+    if (result.robots && 'errorStatus' in result.robots && result.robots.errorStatus) {
+      error++;
+    } else {
+      numScrapableUrls++;
+    }
+    
     // calculate industry classification percentages
     if (result.industryClassification && 
       result.industryClassification.metadataClass.label && 
@@ -65,6 +75,8 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       }
 
     }
+    console.log(`URL: ${result.url}, Time: ${result.time}`);
+    totalTime += result.time;
   }
 
   for (const industry in industryCounts) {
@@ -83,9 +95,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   }
 
   const percentageMatch = parseFloat(((numMatched / numResults) * 100).toFixed(2));
+  const avgTime = parseFloat((totalTime / numResults).toFixed(2));
 
+  console.log(`Total Time: ${totalTime}, Number of Results: ${numResults}, Average Time: ${avgTime}`);
+  
   return {
-    domainStatus: [live, parked, error],
+    domainStatus: [live, parked],
+    domainErrorStatus: error,
     industryClassification: {
       unclassifiedUrls: unclassified,
       industryPercentages: {
@@ -99,5 +115,9 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       percentageMatch,
       mismatchedUrls,
     },
+    totalUrls: numResults,
+    parkedUrls,
+    scrapableUrls: numScrapableUrls,
+    avgTime:avgTime,
   }
 }

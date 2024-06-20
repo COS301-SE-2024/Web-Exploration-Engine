@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
 import IChart from "../../models/ChartModel";
+import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -25,6 +26,7 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
               }
             }
         },
+        colors: theme === 'light' ? ChartColours : DarkChartColours,
         labels: dataLabel,
         theme: {
             mode: theme === 'dark' ? 'dark' : 'light'
@@ -41,11 +43,19 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
     useEffect(() => {
         setOptions(prevOptions => ({
             ...prevOptions,
+            colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
             }
         }));
     }, [theme]);
+
+    useEffect(() => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            labels: dataLabel
+        }));
+    }, [dataLabel]);
 
     return (
         <div className="app">

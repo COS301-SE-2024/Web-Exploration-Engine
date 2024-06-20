@@ -7,6 +7,7 @@ export interface ScraperResult {
   logo: string;
   images: string[];
   slogan: string;
+  time:number;
 }
 
 export interface ErrorResponse {
@@ -50,6 +51,7 @@ export interface IndustryClassification {
 
 export interface Summary {
   domainStatus: number[];
+  domainErrorStatus: number;
   industryClassification: {
     unclassifiedUrls: string[];
     industryPercentages: {
@@ -70,5 +72,8 @@ export interface Summary {
       domainClass: string;
     }[];
   }
-
+  totalUrls: number;
+  parkedUrls: string[];
+  scrapableUrls: number;
+  avgTime:number;
 }

@@ -35,4 +35,5 @@ export default interface Scraping {
     logo: string;
     images: string[];
     slogan: string;
+    time:number;
 }

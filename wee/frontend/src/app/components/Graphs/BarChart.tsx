@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
 import IChart from "../../models/ChartModel";
+import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -29,6 +30,7 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
                 }
             }
         },
+        colors: theme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             bar: {
                 horizontal: true // determines whether it is a horizontal(true) or vertical(false) chart
@@ -46,6 +48,7 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
     useEffect(() => {
         setOptions(prevOptions => ({
             ...prevOptions,
+            colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
             }

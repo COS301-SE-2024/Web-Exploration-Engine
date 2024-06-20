@@ -5,15 +5,16 @@ import { SelectItem } from "@nextui-org/react";
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEEPagination from '../../components/Util/Pagination';
-import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button } from "@nextui-org/react";
+import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Spinner } from "@nextui-org/react";
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import Scraping from '../../models/ScrapingModel';
 import Link from 'next/link';
+import { generateSummary } from '../../services/SummaryService';
 
 function ResultsComponent() {
-    const {urls, setUrls, results, setResults} = useScrapingContext();
+    const {urls, setUrls, results, setResults, setSummaryReport } = useScrapingContext();
     const processedUrls = useRef(new Set<string>());
     const [isLoading, setIsLoading] = React.useState(true);
 
@@ -59,7 +60,7 @@ function ResultsComponent() {
 
     useEffect(() => {
         console.log('urls length: ', urls.length);
-        if (urls && urls.length > 0) {
+        if (urls && urls.length > 0 && urls.length !== results.length) {
             urls.forEach((url) => {
                 if (!processedUrls.current.has(url)) {
                     console.log('Processing URL:', url);
@@ -70,6 +71,13 @@ function ResultsComponent() {
         }  
         else {
             // allows to naviagte back to this page without rescraping the urls
+            if (processedUrls.current.size > 1) {
+                // Generate summary report
+                console.log('Results:', results)
+                const summary = generateSummary(results);
+                console.log('Summary:', summary);
+                setSummaryReport(summary);
+            }
             setIsLoading(false);
         }      
     }, [urls.length])
@@ -108,17 +116,6 @@ function ResultsComponent() {
         router.push(`/summaryreport`);
     }
 
-    if (isLoading) {
-        return (
-            <div className='min-h-screen flex justify-center items-center'>
-                <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" role="status">
-                    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                        Loading...
-                    </span>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className='p-4'>            
@@ -179,17 +176,29 @@ function ResultsComponent() {
             <WEETable 
                 aria-label="Scrape result table"
                 bottomContent={
-                    <div className="flex w-full justify-center">
-                        <WEEPagination 
-                            loop 
-                            showControls 
-                            color="stone" 
-                            page={page}
-                            total={pages}
-                            onChange={(page) => setPage(page)}
-                            aria-label="Pagination"
-                        />
-                    </div>
+                    <>
+                    
+                        {isLoading ? (
+                            <div className="flex w-full justify-center">
+                                <Spinner color='default'/>
+                            </div>
+                        ) : null}
+
+                        {results.length > 0 && 
+                            <div className="flex w-full justify-center">
+                                <WEEPagination 
+                                    loop 
+                                    showControls 
+                                    color="stone" 
+                                    page={page}
+                                    total={pages}
+                                    onChange={(page) => setPage(page)}
+                                    aria-label="Pagination"
+                                />
+                            </div>
+                        }
+                    </>
+                  
                 }
                 classNames={{
                     wrapper: "min-h-[222px]",
@@ -207,7 +216,9 @@ function ResultsComponent() {
                     </TableColumn>
                 </TableHeader>
 
-                <TableBody>
+                <TableBody
+                    emptyContent={"There is no results to be displayed"}
+                >
                     {items.map((item, index) => (
                         <TableRow key={index}>
                             <TableCell>
@@ -234,8 +245,9 @@ function ResultsComponent() {
                 Summary
             </h1>
             <Button 
-                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
                 onClick={handleSummaryPage}
+                disabled={isLoading}
             >
                 View overall summary report
             </Button>

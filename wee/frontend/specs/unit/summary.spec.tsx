@@ -118,7 +118,7 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
     expect(summary.domainStatus[0]).toBe(4);
     expect(summary.domainStatus[1]).toBe(0);
-    expect(summary.domainStatus[2]).toBe(0);
+    expect(summary.domainErrorStatus).toBe(0);
   });
 
   it('should correctly summarize all parked URLs', () => {
@@ -130,7 +130,7 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
     expect(summary.domainStatus[0]).toBe(0);
     expect(summary.domainStatus[1]).toBe(4);
-    expect(summary.domainStatus[2]).toBe(0);
+    expect(summary.domainErrorStatus).toBe(0);
   });
 
   it('should correctly summarize mixed URL statuses', () => {
@@ -142,7 +142,7 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
     expect(summary.domainStatus[0]).toBe(2);
     expect(summary.domainStatus[1]).toBe(1);
-    expect(summary.domainStatus[2]).toBe(1);
+    expect(summary.domainErrorStatus).toBe(1);
   });
 
   it('should correctly calculate industry classification percentages', () => {
