@@ -1,6 +1,7 @@
-describe('signup', () => {
+describe('results', () => {
   it('should be on right page', () => {
-    cy.visit('/signup');
-    cy.contains(/Become a Member/i).should('exist');
+    cy.visit('/results?url=');
+    cy.contains(/General overview/i).should('exist');
+    cy.contains(/No images available/i).should('exist');
   });
 });
