@@ -39,10 +39,13 @@ export default function SummaryReport() {
     const [weakClassification, setWeakClassification] = useState<weakClassification[]>();
     const [percentageMatch, setPercentageMatch] = useState<number>(0);
     const [mismatchedUrls, setMismatchedUrls] = useState<mismatchedUrls[]>();
-    
+    const [totalUrls, setTotalUrls] = useState<number>(0);
+    const [parkedUrls, setParkedUrls] = useState<string[]>([]);
+    const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     useEffect(() => {
         
         if (summaryReport) {
+            //console.log("Summary Report:", summaryReport);
             setDomainStatus(summaryReport.domainStatus);
             setDomainErrorStatus(summaryReport.domainErrorStatus);
             setUnclassifiedUrls(summaryReport.industryClassification.unclassifiedUrls);
@@ -51,6 +54,10 @@ export default function SummaryReport() {
             setWeakClassification(summaryReport.industryClassification.weakClassification);
             setPercentageMatch(summaryReport.domainMatch.percentageMatch);
             setMismatchedUrls(summaryReport.domainMatch.mismatchedUrls);
+            setTotalUrls(summaryReport.totalUrls); 
+            setParkedUrls(summaryReport.parkedUrls); 
+            setTotalUrls(summaryReport.scrapableUrls); 
+
         }
         console.log(industryPercentages)
         console.log(industries)
@@ -88,7 +95,7 @@ export default function SummaryReport() {
                         <FiSearch />
                     </div>
                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        8 Urls
+                        {summaryReport.totalUrls} Urls
                     </div>
                     <div className='font-poppins-semibold text-lg'>
                         Scraped
@@ -101,7 +108,7 @@ export default function SummaryReport() {
                         <FiCheck />
                     </div>
                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        6 Urls
+                    {summaryReport.scrapableUrls} Urls
                     </div>
                     <div className='font-poppins-semibold text-lg'>
                         Crawlable
@@ -170,7 +177,7 @@ export default function SummaryReport() {
 
             {/* Domain watch */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Domain match
+                Domain watch
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
@@ -244,23 +251,23 @@ export default function SummaryReport() {
                             </TableColumn>
                         </TableHeader>
 
-                        <TableBody emptyContent={"There was no parked websites"}>
-                            {/* {   (weakClassification || []).map((item, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                            <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
-                                                {item.url}
-                                            </Link>
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            } */}
-                            <TableRow>
+                        <TableBody emptyContent={"There were no parked websites"}>
+                        {(parkedUrls.length > 0) ? parkedUrls.map((url, index) => (
+                            <TableRow key={index}>
                                 <TableCell>
-                                    https://randomwebsite.com
+                                    <Link href={`/results?url=${encodeURIComponent(url)}`}>                               
+                                        {url}
+                                    </Link>
                                 </TableCell>
                             </TableRow>
-                        </TableBody>
+                        )) : (
+                            <TableRow>
+                                <TableCell>
+                                    There were no parked websites
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
                     </WEETable>
                 </div>
             </div> {/* Grid */}
