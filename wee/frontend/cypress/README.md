@@ -19,7 +19,7 @@ https://docs.cypress.io/guides/references/best-practices
 This command works from any directory :
 
 ```bash
-nx e2e frontend --configuration=production
+npx nx e2e frontend --configuration=production
 ```
 
 # General Notes Regarding Cypress Tests
