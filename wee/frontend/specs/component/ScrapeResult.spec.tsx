@@ -86,12 +86,4 @@ describe('Scrape Results Component', () => {
     
         jest.spyOn(React, 'useMemo').mockImplementation(() => mockFilteredItems);
     });
-
-    it('should not make API calls if the URL is already processed', async () => {
-        
-        await act(async () => {
-            render(<ScrapeResults />);
-        });
-        
-    });
 });
