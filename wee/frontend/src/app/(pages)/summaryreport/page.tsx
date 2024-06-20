@@ -42,6 +42,7 @@ export default function SummaryReport() {
     const [totalUrls, setTotalUrls] = useState<number>(0);
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
+    const [avgTime, setAvgTime] = useState<number>(0);
     useEffect(() => {
         
         if (summaryReport) {
@@ -56,8 +57,8 @@ export default function SummaryReport() {
             setMismatchedUrls(summaryReport.domainMatch.mismatchedUrls);
             setTotalUrls(summaryReport.totalUrls); 
             setParkedUrls(summaryReport.parkedUrls); 
-            setTotalUrls(summaryReport.scrapableUrls); 
-
+            setscrapableUrls(summaryReport.scrapableUrls); 
+            setAvgTime(summaryReport.avgTime);
         }
         console.log(industryPercentages)
         console.log(industries)
@@ -121,7 +122,7 @@ export default function SummaryReport() {
                         <FiClock />
                     </div>
                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        4.8 sec
+                    {summaryReport.avgTime} sec
                     </div>
                     <div className='font-poppins-semibold text-lg'>
                         Avg scrape time
