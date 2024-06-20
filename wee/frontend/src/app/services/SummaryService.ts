@@ -75,6 +75,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       }
 
     }
+    console.log(`URL: ${result.url}, Time: ${result.time}`);
     totalTime += result.time;
   }
 
@@ -95,6 +96,9 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
 
   const percentageMatch = parseFloat(((numMatched / numResults) * 100).toFixed(2));
   const avgTime = parseFloat((totalTime / numResults).toFixed(2));
+
+  console.log(`Total Time: ${totalTime}, Number of Results: ${numResults}, Average Time: ${avgTime}`);
+  
   return {
     domainStatus: [live, parked],
     domainErrorStatus: error,

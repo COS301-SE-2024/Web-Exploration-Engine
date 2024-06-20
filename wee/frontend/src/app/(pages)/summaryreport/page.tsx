@@ -42,7 +42,7 @@ export default function SummaryReport() {
     const [totalUrls, setTotalUrls] = useState<number>(0);
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
-    const [avgTime, setavgTime] = useState<number>(0);
+    const [avgTime, setAvgTime] = useState<number>(0);
     useEffect(() => {
         
         if (summaryReport) {
@@ -57,8 +57,8 @@ export default function SummaryReport() {
             setMismatchedUrls(summaryReport.domainMatch.mismatchedUrls);
             setTotalUrls(summaryReport.totalUrls); 
             setParkedUrls(summaryReport.parkedUrls); 
-            setTotalUrls(summaryReport.scrapableUrls); 
-            setTotalUrls(summaryReport.avgTime);
+            setscrapableUrls(summaryReport.scrapableUrls); 
+            setAvgTime(summaryReport.avgTime);
         }
         console.log(industryPercentages)
         console.log(industries)

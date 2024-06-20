@@ -96,9 +96,8 @@ export class ScraperService {
     // do we want to perform analysis in the scraper service? - probably not
 
     const end = performance.now();
-    const time = end-start;
-    console.log(`Time taken to scrape ${url}: ${(end - start) / 1000} seconds`);
-    data.time=time;
+    const time = (end-start)/1000;
+    data.time=parseFloat(time.toFixed(2));
 
     return data;
   }
