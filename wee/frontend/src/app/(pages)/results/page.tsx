@@ -125,7 +125,7 @@ function ResultsComponent() {
         </h3>
           <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
             <CardBody>
-              {summaryInfo ? (
+              {(summaryInfo && (summaryInfo?.title || summaryInfo?.description)) ? (
                 <div className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
                   <p>
                     {summaryInfo?.title}
@@ -193,7 +193,7 @@ function ResultsComponent() {
                   color={websiteStatus === 'live' ? 'success' : 'warning'}
                   variant="flat"
                 >
-                  {websiteStatus === 'true' ? 'Live' : 'Parked'}
+                  {websiteStatus === 'live' ? 'Live' : 'Parked'}
                 </Chip>
               </TableCell>
             </TableRow>
