@@ -7,7 +7,7 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 export default function Home() {
-    const {setUrls} = useScrapingContext();
+    const { setUrls, setProcessedUrls, setProcessingUrls } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
@@ -47,8 +47,14 @@ export default function Home() {
       }
       setError('');
 
-      // Navigate to Results page with the entered URL as query parameter
+      // set the urls to scrape in the context
       setUrls(urlsToScrape);
+      
+      // Clear the processing and processed urls
+      setProcessedUrls([]);
+      setProcessingUrls([]);
+
+      // Navigate to Results page with the entered URL as query parameter
       router.push(`/scraperesults`);
     };
 
