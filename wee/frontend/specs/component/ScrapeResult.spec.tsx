@@ -8,9 +8,18 @@ jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
 }));
 
+// Mock fetch globally
+global.fetch = jest.fn().mockResolvedValue({
+    json: () => Promise.resolve({}), // Mock the json() method to return a Promise
+    headers: { 'Content-Type': 'application/json' }, // Example headers
+    ok: true, // Example ok status
+    status: 200, // Example status code
+});
+  
+
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: () => ({
-        urls: ['https://www.example.com', 'https://www.example2.com'],
+        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com'],
         setUrls: jest.fn(),
         results: [        
             {
@@ -76,14 +85,12 @@ describe('Scrape Results Component', () => {
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
     });
 
-    it('should navigate to different pages on pagination change', () => {
+    it('should not process the URL if it is already processed', () => {
         render(<ScrapeResults />);
-    
-        const mockFilteredItems = Array.from({ length: 15 }, (_, index) => ({
-          url: `https://www.example${index + 1}.com`,
-          robots: { isUrlScrapable: index % 2 === 0 },
-        }));
-    
-        jest.spyOn(React, 'useMemo').mockImplementation(() => mockFilteredItems);
+
+        expect(fetch).toHaveBeenCalledTimes(1); // Assuming 2 URLs were processed
+        expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/scraper?url=https%3A%2F%2Fwww.example3.com');
     });
+
+    
 });
