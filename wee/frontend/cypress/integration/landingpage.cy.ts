@@ -1,5 +1,5 @@
 describe('help page', () => {
-  it('faqs should exist', () => {
+  it('should be on right page', () => {
     cy.visit('/');
     cy.contains(/The Web Exploration Engine/i).should('exist');
   });

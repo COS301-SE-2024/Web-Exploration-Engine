@@ -1,5 +1,5 @@
 describe('login', () => {
-  it('faqs should exist', () => {
+  it('should be on right page', () => {
     cy.visit('/login');
     cy.contains(/Ready to Dive Back In/i).should('exist');
   });
