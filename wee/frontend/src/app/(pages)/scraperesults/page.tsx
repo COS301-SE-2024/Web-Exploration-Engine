@@ -21,7 +21,7 @@ function ResultsComponent() {
     const [searchValue, setSearchValue] = React.useState("");
     const hasSearchFilter = Boolean(searchValue);
     const [selectedStatusFilter, setSelectedStatusFilter] = React.useState("");
-
+    const [selectedCrawlableFilter, setSelectedCrawlableFilter] = React.useState("");
     const router = useRouter();
 
     const filteredItems = React.useMemo(() => {
@@ -38,6 +38,17 @@ function ResultsComponent() {
             );
         }
 
+        // Apply crawlable filter
+        if (selectedCrawlableFilter === "Yes") {
+            filteredUrls = filteredUrls.filter((url) =>
+                !url.robots || !('errorStatus' in url.robots) || !url.robots.errorStatus
+            );
+        } else if (selectedCrawlableFilter === "No") {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.robots && 'errorStatus' in url.robots && url.robots.errorStatus
+            );
+        }
+
         // Apply search filter
         if (hasSearchFilter) {
             filteredUrls = filteredUrls.filter((url) =>
@@ -46,7 +57,7 @@ function ResultsComponent() {
         }
     
         return filteredUrls;
-    }, [results, searchValue, selectedStatusFilter]);
+    }, [results, searchValue, selectedStatusFilter,selectedCrawlableFilter]);
     
 
     const handleResultPage = (url:string) => {
@@ -130,6 +141,11 @@ function ResultsComponent() {
         setSelectedStatusFilter(status);
     };
 
+    const handleCrawlableFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const crawlable = event.target.value;
+        setSelectedCrawlableFilter(crawlable);
+    };
+
     const handleSummaryPage = () => {
         router.push(`/summaryreport`);
     }
@@ -164,6 +180,7 @@ function ResultsComponent() {
                 <WEESelect
                     label="Crawlable"
                     className="w-full pb-3 md:w-1/3"
+                    onChange={handleCrawlableFilterChange}
                 >
                     <SelectItem key={"Yes"}>Yes</SelectItem>
                     <SelectItem key={"No"}>No</SelectItem>
