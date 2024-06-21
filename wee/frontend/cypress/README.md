@@ -153,6 +153,7 @@ npx cypress run
 
 Test Runner: Use the Cypress Test Runner for an interactive testing experience.
 
+**Ensure that you are in the `/frontend` folder **
 ```bash
 npx cypress open
 ```
