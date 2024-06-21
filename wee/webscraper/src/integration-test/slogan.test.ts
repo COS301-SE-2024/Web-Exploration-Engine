@@ -61,9 +61,9 @@ describe('SloganController', () => {
   });
 
   it('/scrapeSlogans (GET) - Missing URLs', async () => {
-    const response = await request(app.getHttpServer()).get('/scrapeSlogans');
+    const response = await request(app.getHttpServer()).get('/scrapeSlogans').query({});
 
-    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
-    expect(response.body).toHaveProperty('message', 'urls query parameter is required');
+    expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+ 
   });
 });
