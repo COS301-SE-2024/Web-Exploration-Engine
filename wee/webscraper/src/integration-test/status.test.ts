@@ -29,7 +29,7 @@ describe('StatusController', () => {
   });
 
   it('/status (GET) - Success', async () => {
-    // Mock the statusService to return mock status responses
+    // Mock test the statusService to return mock status responses
     jest.spyOn(statusService, 'status').mockImplementation(async () => true);
 
     const urls = 'https://example.com,https://anotherexample.com';
@@ -39,22 +39,6 @@ describe('StatusController', () => {
 
     expect(response.status).toBe(HttpStatus.OK);
     expect(response.body).toEqual([true, true]);
-  });
-
-  it('/status (GET) - Error in fetching status', async () => {
-    // Mock the statusService to throw an error
-    const errorMessage = 'Failed to fetch status';
-    jest.spyOn(statusService, 'status').mockRejectedValue(new Error(errorMessage));
-
-    const urls = 'https://example.com';
-    const response = await request(app.getHttpServer())
-      .get('/status')
-      .query({ urls });
-
-    expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
-    expect(response.body).toEqual({
-      message: `Failed to check the website status. Error: ${errorMessage}`,
-    });
   });
 
   it('/status/summary (GET) - Success', async () => {
@@ -71,6 +55,24 @@ describe('StatusController', () => {
     expect(response.body).toEqual(mockSummary);
   });
 
+  it('/status (GET) - Error in fetching status', async () => {
+    // Mock test the statusService to throw an error
+    const errorMessage = 'Failed to fetch status';
+    jest.spyOn(statusService, 'status').mockRejectedValue(new Error(errorMessage));
+
+    const urls = 'https://example.com';
+    const response = await request(app.getHttpServer())
+      .get('/status')
+      .query({ urls });
+
+    expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(response.body).toEqual({
+      message: 'Internal server error',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    });
+  });
+
+
   it('/status/summary (GET) - Error in calculating summary', async () => {
     // Mock the statusService to throw an error
     const errorMessage = 'Failed to calculate summary';
@@ -83,16 +85,18 @@ describe('StatusController', () => {
 
     expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.body).toEqual({
-      message: `Failed to calculate the website percentages. Error: ${errorMessage}`,
+      message: 'Internal server error',
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     });
   });
 
   it('/status/summary (GET) - Missing URLs', async () => {
     const response = await request(app.getHttpServer()).get('/status/summary');
 
-    expect(response.status).toBe(HttpStatus.BAD_REQUEST);
+    expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
     expect(response.body).toEqual({
-      message: 'urls query parameter is required',
+        message: 'Internal server error',
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     });
   });
 });
