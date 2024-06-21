@@ -29,7 +29,7 @@ describe('SloganController', () => {
   });
 
   it('/scrapeSlogans (GET) - Success', async () => {
-    // Mock the sloganService to return mock slogans
+    
     jest.spyOn(sloganService, 'scrapeSlogans').mockResolvedValue(['Slogan 1', 'Slogan 2']);
 
     const urls = 'https://example.com,https://anotherexample.com';
@@ -45,7 +45,7 @@ describe('SloganController', () => {
   });
 
   it('/scrapeSlogans (GET) - Error in scraping', async () => {
-    // Mock the sloganService to throw an error
+
     const errorMessage = 'Failed to fetch slogans';
     jest.spyOn(sloganService, 'scrapeSlogans').mockRejectedValue(new Error(errorMessage));
 

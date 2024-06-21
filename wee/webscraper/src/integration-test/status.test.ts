@@ -29,7 +29,7 @@ describe('StatusController', () => {
   });
 
   it('/status (GET) - Success', async () => {
-    // Mock test the statusService to return mock status responses
+
     jest.spyOn(statusService, 'status').mockImplementation(async () => true);
 
     const urls = 'https://example.com,https://anotherexample.com';
@@ -42,7 +42,7 @@ describe('StatusController', () => {
   });
 
   it('/status/summary (GET) - Success', async () => {
-    // Mock the statusService to return mock summary
+
     const mockSummary = { live: 70, parked: 30 };
     jest.spyOn(statusService, 'calculateSummary').mockResolvedValue(mockSummary);
 
@@ -56,7 +56,7 @@ describe('StatusController', () => {
   });
 
   it('/status (GET) - Error in fetching status', async () => {
-    // Mock test the statusService to throw an error
+
     const errorMessage = 'Failed to fetch status';
     jest.spyOn(statusService, 'status').mockRejectedValue(new Error(errorMessage));
 
@@ -74,7 +74,7 @@ describe('StatusController', () => {
 
 
   it('/status/summary (GET) - Error in calculating summary', async () => {
-    // Mock the statusService to throw an error
+
     const errorMessage = 'Failed to calculate summary';
     jest.spyOn(statusService, 'calculateSummary').mockRejectedValue(new Error(errorMessage));
 
