@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
-import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Link } from "@nextui-org/react";
+import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import { RadialBar } from '../../components/Graphs';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { FiClock, FiCheck, FiSearch } from "react-icons/fi";
+import Link from 'next/link';
 
 interface industryPercentages {
     industries: string[];
@@ -261,7 +262,7 @@ export default function SummaryReport() {
                             </TableRow>
                              ))
                             }
-</TableBody>
+                        </TableBody>
 
                     </WEETable>
                 </div>
