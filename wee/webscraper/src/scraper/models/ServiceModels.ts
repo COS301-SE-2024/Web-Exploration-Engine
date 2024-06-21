@@ -6,7 +6,6 @@ export interface ErrorResponse {
     timestamp: string;
     path: string;
   }
-
 }
 
 export interface RobotsResponse {
