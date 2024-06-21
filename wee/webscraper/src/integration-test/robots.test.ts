@@ -34,7 +34,9 @@ describe('RobotsController', () => {
     it('should return allowed paths from robots.txt', async () => {
       const url = 'http://example.com';
       const expectedResult = ['/path1', '/path2'];
-      jest.spyOn(robotsService, 'getAllowedPaths').mockResolvedValueOnce(new Set(expectedResult));
+      jest
+        .spyOn(robotsService, 'getAllowedPaths')
+        .mockResolvedValueOnce(new Set(expectedResult));
 
       const response = await request(app.getHttpServer())
         .get('/robots/allowed-paths')
@@ -44,10 +46,11 @@ describe('RobotsController', () => {
       expect(response.body).toEqual({ allowedPaths: expectedResult });
     });
 
-     //handle empty url case
+    //handle empty url case
     it('should handle missing URL parameter', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/robots/allowed-paths');
+      const response = await request(app.getHttpServer()).get(
+        '/robots/allowed-paths'
+      );
 
       expect(response.status).toBe(HttpStatus.OK);
     });
@@ -56,17 +59,35 @@ describe('RobotsController', () => {
       const url = 'http://example.com';
       const errorMessage = 'Failed to retrieve allowed paths';
 
-      jest.spyOn(robotsService, 'getAllowedPaths').mockImplementationOnce(async () => {
-        throw new Error(errorMessage);
-      });
+      jest
+        .spyOn(robotsService, 'getAllowedPaths')
+        .mockImplementationOnce(async () => {
+          throw new Error(errorMessage);
+        });
 
       const response = await request(app.getHttpServer())
         .get('/robots/allowed-paths')
         .query({ url });
 
       expect(response.status).toBe(HttpStatus.OK);
-
     });
+    it('should handle concurrent requests', async () => {
+      const url1 = 'http://example1.com';
+      const url2 = 'http://example2.com';
 
+      const [response1, response2] = await Promise.all([
+        request(app.getHttpServer())
+          .get('/robots/allowed-paths')
+          .query({ url: url1 }),
+        request(app.getHttpServer())
+          .get('/robots/allowed-paths')
+          .query({ url: url2 }),
+      ]);
+
+      expect(response1.status).toBe(HttpStatus.OK);
+      expect(response2.status).toBe(HttpStatus.OK);
+    });
   });
+
+
 });
