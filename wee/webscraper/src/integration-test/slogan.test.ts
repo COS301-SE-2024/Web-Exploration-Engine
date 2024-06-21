@@ -64,6 +64,16 @@ describe('SloganController', () => {
     const response = await request(app.getHttpServer()).get('/scrapeSlogans').query({});
 
     expect(response.status).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
- 
+
   });
+  it('/scrapeSlogans (GET) - Maximum URLs', async () => {
+    const urls = Array.from({ length: 50 }, (_, i) => `https://example${i}.com`).join(',');
+    const response = await request(app.getHttpServer())
+        .get('/scrapeSlogans')
+        .query({ urls });
+
+    expect(response.status).toBe(HttpStatus.OK);
+
+});
+
 });
