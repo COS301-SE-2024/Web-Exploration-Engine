@@ -14,8 +14,7 @@ import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 
 function ResultsComponent() {
-    const {urls, setUrls, results, setResults, setSummaryReport } = useScrapingContext();
-    const processedUrls = useRef(new Set<string>());
+    const {urls, setUrls, results, setResults, setSummaryReport, processedUrls, setProcessedUrls, processingUrls, setProcessingUrls } = useScrapingContext();
     const [isLoading, setIsLoading] = React.useState(true);
 
     const [searchValue, setSearchValue] = React.useState("");
@@ -86,16 +85,19 @@ function ResultsComponent() {
         console.log('urls length: ', urls.length);
         if (urls && urls.length > 0 && urls.length !== results.length) {
             urls.forEach((url) => {
-                if (!processedUrls.current.has(url)) {
-                    console.log('Processing URL:', url);
+                if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
+                    // add to array of urls still being processed
+                    processingUrls.push(url);
+                    console.log('API call for:', url)
                     getScrapingResults(url);
-                    processedUrls.current.add(url);
+                    processingUrls.splice(processingUrls.indexOf(url), 1);
+                    processedUrls.push(url);
                 }
             });
         }  
         else {
-            // allows to navigate back to this page without rescraping the urls
-            if (processedUrls.current.size > 1) {
+          // allows to naviagte back to this page without rescraping the urls
+            if (processedUrls.length > 1) {
                 // Generate summary report
                 console.log('Results:', results)
                 const summary = generateSummary(results);
@@ -107,7 +109,6 @@ function ResultsComponent() {
     }, [urls.length])
     
     useEffect(() => {      
-        console.log("Results changed!!!!")  
         if (urls.length === results.length) {
             setIsLoading(false);  
             // allows to navigate back to this page without rescraping the urls  
