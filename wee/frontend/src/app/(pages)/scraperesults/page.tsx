@@ -19,12 +19,36 @@ function ResultsComponent() {
 
     const [searchValue, setSearchValue] = React.useState("");
     const hasSearchFilter = Boolean(searchValue);
-    
+    const [selectedStatusFilter, setSelectedStatusFilter] = React.useState("");
+    const [selectedCrawlableFilter, setSelectedCrawlableFilter] = React.useState("");
     const router = useRouter();
 
     const filteredItems = React.useMemo(() => {
         let filteredUrls = [...results];
 
+        // Apply status filter
+        if (selectedStatusFilter === "Parked") {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.domainStatus === "parked"
+            );
+        } else if (selectedStatusFilter === "Live") {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.domainStatus === "live"
+            );
+        }
+
+        // Apply crawlable filter
+        if (selectedCrawlableFilter === "Yes") {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.robots && url.robots.isUrlScrapable
+            );
+        } else if (selectedCrawlableFilter === "No") {
+            filteredUrls = filteredUrls.filter((url) =>
+                url.robots && !url.robots.isUrlScrapable
+            );
+        }
+
+        // Apply search filter
         if (hasSearchFilter) {
             filteredUrls = filteredUrls.filter((url) =>
                 url.url.toLowerCase().includes(searchValue.toLowerCase()),
@@ -32,7 +56,7 @@ function ResultsComponent() {
         }
     
         return filteredUrls;
-    }, [results, searchValue]);
+    }, [results, searchValue, selectedStatusFilter,selectedCrawlableFilter]);
     
 
     const handleResultPage = (url:string) => {
@@ -72,7 +96,7 @@ function ResultsComponent() {
             });
         }  
         else {
-            // allows to naviagte back to this page without rescraping the urls
+          // allows to naviagte back to this page without rescraping the urls
             if (processedUrls.length > 1) {
                 // Generate summary report
                 console.log('Results:', results)
@@ -87,7 +111,7 @@ function ResultsComponent() {
     useEffect(() => {      
         if (urls.length === results.length) {
             setIsLoading(false);  
-            // allows to naviagte back to this page without rescraping the urls  
+            // allows to navigate back to this page without rescraping the urls  
             setUrls([]);
         }
     }, [results])
@@ -111,6 +135,16 @@ function ResultsComponent() {
         } else {
           setSearchValue("");
         }
+    };
+
+    const handleStatusFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const status = event.target.value;
+        setSelectedStatusFilter(status);
+    };
+
+    const handleCrawlableFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const crawlable = event.target.value;
+        setSelectedCrawlableFilter(crawlable);
     };
 
     const handleSummaryPage = () => {
@@ -138,6 +172,7 @@ function ResultsComponent() {
                 <WEESelect
                     label="Live/Parked"
                     className="w-full pb-3 md:w-1/3"
+                    onChange={handleStatusFilterChange}
                 >
                     <SelectItem key={"Parked"}>Parked</SelectItem>
                     <SelectItem key={"Live"}>Live</SelectItem>
@@ -146,6 +181,7 @@ function ResultsComponent() {
                 <WEESelect
                     label="Crawlable"
                     className="w-full pb-3 md:w-1/3"
+                    onChange={handleCrawlableFilterChange}
                 >
                     <SelectItem key={"Yes"}>Yes</SelectItem>
                     <SelectItem key={"No"}>No</SelectItem>
@@ -178,7 +214,7 @@ function ResultsComponent() {
                 aria-label="Scrape result table"
                 bottomContent={
                     <>
-                    
+
                         {isLoading ? (
                             <div className="flex w-full justify-center">
                                 <Spinner color='default'/>
@@ -199,12 +235,12 @@ function ResultsComponent() {
                             </div>
                         }
                     </>
-                  
+
                 }
                 classNames={{
                     wrapper: "min-h-[222px]",
                 }}
-                >
+            >
                 <TableHeader>
                     <TableColumn key="name" className='rounded-lg sm:rounded-none'>
                         URL
@@ -218,7 +254,7 @@ function ResultsComponent() {
                 </TableHeader>
 
                 <TableBody
-                    emptyContent={"There is no results to be displayed"}
+                    emptyContent={"There are no results to be displayed"}
                 >
                     {items.map((item, index) => (
                         <TableRow key={index}>
@@ -228,7 +264,7 @@ function ResultsComponent() {
                                 </Link>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
-                                <Chip radius="sm" color={item.robots.isUrlScrapable? 'success' : 'warning'} variant="flat">{item.robots.isUrlScrapable ? 'Yes' : 'No'}</Chip>
+                                <Chip radius="sm" color={item.domainStatus === "live" ? 'success' : 'warning'} variant="flat">{item.domainStatus === "live" ? 'Yes' : 'No'}</Chip>
                             </TableCell>
                             <TableCell className='text-center hidden sm:table-cell'>
                                 <Button className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
