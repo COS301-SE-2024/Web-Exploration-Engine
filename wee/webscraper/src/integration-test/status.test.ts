@@ -99,4 +99,29 @@ describe('StatusController', () => {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
     });
   });
+
+
+
+
+
+it('/status (GET) - Single URL', async () => {
+  const urls = 'https://example.com';
+  const response = await request(app.getHttpServer())
+      .get('/status')
+      .query({ urls });
+
+  expect(response.status).toBe(HttpStatus.OK);
+});
+
+it('/status (GET) - Maximum URLs', async () => {
+  const urls = Array.from({ length: 50 }, (_, i) => `https://example${i}.com`).join(',');
+  const response = await request(app.getHttpServer())
+      .get('/status')
+      .query({ urls });
+
+  expect(response.status).toBe(HttpStatus.OK);
+
+});
+
+
 });
