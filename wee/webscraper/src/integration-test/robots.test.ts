@@ -46,7 +46,7 @@ describe('RobotsController', () => {
       expect(response.body).toEqual({ allowedPaths: expectedResult });
     });
 
-    //handle empty url case
+ 
     it('should handle missing URL parameter', async () => {
       const response = await request(app.getHttpServer()).get(
         '/robots/allowed-paths'
