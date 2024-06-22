@@ -251,4 +251,111 @@ describe('ImagesService for images', () => {
     });
   });
 
+  describe('scrapeLogos', () => {
+    it('should throw Forbidden exception if crawling is not allowed', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(false);
+
+      await expect(service.scrapeLogos('http://example.com')).rejects.toThrow(
+        new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN),
+      );
+    });
+
+    it('should return the og:image URL if present', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          evaluate: jest.fn().mockResolvedValue({
+            ogImage: 'http://example.com/logo.png',
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      };
+      mockedPuppeteer.launch.mockResolvedValue(mockBrowser as any);
+
+      const result = await service.scrapeLogos('http://example.com');
+      expect(result).toEqual('http://example.com/logo.png');
+      expect(mockBrowser.newPage).toHaveBeenCalledTimes(1);
+      expect(mockBrowser.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return the first logo URL if no og:image is found', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          evaluate: jest.fn()
+            .mockResolvedValueOnce({
+              ogImage: null,
+            })
+            .mockResolvedValueOnce(['http://example.com/logo1.png']),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      };
+      mockedPuppeteer.launch.mockResolvedValue(mockBrowser as any);
+
+      const result = await service.scrapeLogos('http://example.com');
+      expect(result).toEqual('http://example.com/logo1.png');
+      expect(mockBrowser.newPage).toHaveBeenCalledTimes(1);
+      expect(mockBrowser.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return null if no logo is found', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          evaluate: jest.fn()
+            .mockResolvedValueOnce({
+              ogImage: null,
+            })
+            .mockResolvedValueOnce([]),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      };
+      mockedPuppeteer.launch.mockResolvedValue(mockBrowser as any);
+
+      const result = await service.scrapeLogos('http://example.com');
+      expect(result).toBeNull();
+      expect(mockBrowser.newPage).toHaveBeenCalledTimes(1);
+      expect(mockBrowser.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw Internal Server Error if scraping logos fails', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(true);
+
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn().mockImplementation(() => {
+            throw new Error('Page not found');
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      };
+      mockedPuppeteer.launch.mockResolvedValue(mockBrowser as any);
+
+      await expect(service.scrapeLogos('http://example.com')).rejects.toThrow(
+        new HttpException('Failed to scrape logos: Page not found', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
+  });
+
+  describe('scrapeMetadata', () => {
+    it('should throw Forbidden exception if crawling is not allowed', async () => {
+      mockedIsCrawlingAllowed.mockResolvedValueOnce(false);
+
+      await expect(service.scrapeMetadata('http://example.com')).rejects.toThrow(
+        new HttpException('Crawling not allowed or robots.txt not accessible.', HttpStatus.FORBIDDEN),
+      );
+    });
+  });
+
+
 });
