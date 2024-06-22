@@ -174,14 +174,12 @@ function ResultsComponent() {
           <InfoPopOver 
             heading="Domain Tags" 
             content="This section provides important tags to classify the website based on the extracted information. </br></br>
-            <ul>
-              <i>Crawling status</i>: This field indicates if the url was allowed to be scraped </br></br>
-              <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
-              <i>*Industry</i>: This field provides the industry classification of the website. </br></br>
-              <i>*Domain match</i>: This field provides the domain classification of the website. </br></br>
-              <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br></br>
-              <i>Note</i>: The fields marked with an asterisk (*) are generated using machine learning models.
-            </ul>" 
+              <i>Crawling status</i>: This field indicates if the url was allowed to be scraped </br>
+              <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br>
+              <i>*Industry</i>: This field provides the industry classification of the website. </br>
+              <i>*Domain match</i>: This field provides the domain classification of the website. </br>
+              <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br>
+              <i>Note</i>: The fields marked with an asterisk (*) are generated using machine learning models." 
 
             placement="right-end" 
           />

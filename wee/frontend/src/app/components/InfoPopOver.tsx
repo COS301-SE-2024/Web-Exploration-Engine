@@ -37,7 +37,7 @@ export const InfoPopOver = ({ heading, content, placement }: { heading: string, 
           >i</Button>
         </PopoverTrigger>
         <PopoverContent >
-          <div className="px-1 py-2 ">
+          <div className="px-1 py-2 min-w-[500px] max-w-[900px]">
             <div className="text-md font-poppins-semibold">{heading}</div>
             <div className="text-sm font-poppins" dangerouslySetInnerHTML={{ __html: content }} />
           </div>
