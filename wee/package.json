@@ -2,7 +2,9 @@
   "name": "@wee/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "PORT=3001 react-scripts -r @cypress/instrument-cra start"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
@@ -44,6 +46,7 @@
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
+    "@cypress/instrument-cra": "^1.4.0",
     "@nestjs/schematics": "^10.0.1",
     "@nestjs/testing": "^10.0.2",
     "@nx/cypress": "19.1.0",
@@ -80,6 +83,7 @@
     "eslint-plugin-jsx-a11y": "6.7.1",
     "eslint-plugin-react": "7.32.2",
     "eslint-plugin-react-hooks": "4.6.0",
+    "istanbul-lib-coverage": "^3.2.2",
     "jest": "^29.4.1",
     "jest-environment-jsdom": "^29.4.1",
     "jest-environment-node": "^29.4.1",
