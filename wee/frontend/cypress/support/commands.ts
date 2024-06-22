@@ -15,6 +15,7 @@ declare namespace Cypress {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Chainable<Subject> {
     login(email: string, password: string): void;
+    mockUnsplash(): void;
   }
 }
 
@@ -22,9 +23,35 @@ declare namespace Cypress {
 Cypress.Commands.add('login', (email, password) => {
   console.log('Custom command example: Login', email, password);
 });
+
+/* Cypress.Commands.add('gohome',()=>{
+    cy.fixture('/api/scraper/unsplash')
+      .as('mock_scraper_unsplash')
+      .then((mock_scraper_unsplash) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3000/api/scraper?url=https%3A%2F%2Funsplash.com',
+          mock_scraper_unsplash
+        ).as('mock_scraper_unsplash');
+      });
+});
+ */
 //
 // -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
+
+
+Cypress.Commands.add('mockUnsplash', () => {
+  cy.fixture('/api/scraper/unsplash')
+    .as('mock_scraper_unsplash')
+    .then((mock_scraper_unsplash) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3000/api/scraper?url=https%3A%2F%2Funsplash.com',
+        mock_scraper_unsplash
+      ).as('mock_scraper_unsplash');
+    });
+});
+
 //
 //
 // -- This is a dual command --
