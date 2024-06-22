@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   extractAllowedPaths,
   extractDomain,
@@ -11,7 +12,7 @@ jest.mock('node-fetch');
 describe('Robot functions', () => {
   describe('extractAllowedPaths', () => {
     it('should extract allowed paths correctly from robots.txt', async () => {
-      // Mock response from fetch
+      
       const mockResponse = {
         ok: true,
         text: jest.fn().mockResolvedValue(`
@@ -27,6 +28,40 @@ describe('Robot functions', () => {
 
       const allowedPaths = await extractAllowedPaths('https://example.com');
       expect(allowedPaths.size).toBe(2);
+      expect(allowedPaths.has('/')).toBe(true);
+      expect(allowedPaths.has('/public')).toBe(true);
+    });
+    it('should throw error if robots.txt content is empty', async () => {
+      const mockResponse = {
+        ok: true,
+        text: jest.fn().mockResolvedValue(''),
+      };
+
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+        mockResponse as any
+      );
+
+      await expect(
+        extractAllowedPaths('https://example.com')
+      ).rejects.toThrowError('robots.txt content is empty');
+    });
+
+    it('should add root path if not explicitly disallowed', async () => {
+      const mockResponse = {
+        ok: true,
+        text: jest.fn().mockResolvedValue(`
+          User-agent: *
+          Disallow: /admin
+          Allow: /public
+        `),
+      };
+
+      (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValue(
+        mockResponse as any
+      );
+
+      const allowedPaths = await extractAllowedPaths('https://example.com');
+      expect(allowedPaths.size).toBe(2); // Including '/'
       expect(allowedPaths.has('/')).toBe(true);
       expect(allowedPaths.has('/public')).toBe(true);
     });
@@ -59,7 +94,7 @@ describe('Robot functions', () => {
   });
 
   describe('isCrawlingAllowed', () => {
-    
+
     it('should not allow crawling for paths not specified in robots.txt', async () => {
       jest.spyOn(global, 'fetch').mockImplementationOnce(() => {
         throw new Error('Failed to fetch');
