@@ -31,6 +31,47 @@ describe('ImagesController (integration)', () => {
     expect(response.body).toEqual({ 'https://www.takealot.com': true });
   });
 
+  it('/isCrawlingAllowed (GET) - Multiple URLs', async () => {
+    jest.setTimeout(20000);
+    const response = await request(app.getHttpServer())
+      .get('/isCrawlingAllowed')
+      .query({ urls: 'https://www.takealot.com,https://www.example.com' });
+
+    expect(response.status).toBe(HttpStatus.OK);
+
+  });
+
+  it('/scrapeImages (GET) ', async () => {
+    jest.setTimeout(20000);
+
+    const response = await request(app.getHttpServer())
+      .get('/scrapeImages')
+      .query({ urls: 'invalid-url' });
+
+    expect(response.status).toBe(HttpStatus.OK);
+  });
+
+  it('/scrapeLogos (GET) - Failed to Fetch Robots.txt', async () => {
+    jest.setTimeout(60000);
+
+    const response = await request(app.getHttpServer())
+      .get('/scrapeLogos')
+      .query({ urls: 'https://www.example.com' });
+
+    expect(response.status).toBe(HttpStatus.OK);
+
+  });
+
+  it('/scrape-metadata (GET) - Internal Server Error', async () => {
+    jest.setTimeout(60000);
+
+    const response = await request(app.getHttpServer())
+      .get('/scrape-metadata')
+      .query({ urls: 'https://www.example.co.za' });
+
+    expect(response.status).toBe(HttpStatus.OK);
+  });
+
   it('/scrapeImages (GET) - Internal Server Error', async () => {
     jest.setTimeout(20000);
 
@@ -55,7 +96,7 @@ describe('ImagesController (integration)', () => {
   });
 
   it('/scrape-metadata (GET) Internal server Error', async () => {
-    jest.setTimeout(60000); 
+    jest.setTimeout(60000);
 
     const response = await request(app.getHttpServer())
       .get('/scrape-metadata')
