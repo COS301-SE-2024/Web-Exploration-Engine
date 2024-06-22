@@ -141,7 +141,7 @@ export default function SummaryReport() {
                         <InfoPopOver 
                             heading="Industry classification" 
                             content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
-                            placement="right-end" 
+                            placement="top" 
                         />
                     </h3>
                     <PieChart dataLabel={industries} dataSeries={industryPercentages}/>
@@ -153,7 +153,7 @@ export default function SummaryReport() {
                         <InfoPopOver 
                             heading="Industry classification" 
                             content="Weak classifications are those that have a low confidence score (below 50%). WEE cannot guarantee the accuracy of the classifications." 
-                            placement="right-end" 
+                            placement="top" 
                         />
                     </h3>
                     <WEETable 
