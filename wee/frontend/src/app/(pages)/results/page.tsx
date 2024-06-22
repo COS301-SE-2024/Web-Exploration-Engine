@@ -15,7 +15,7 @@ import WEETable from '../../components/Util/Table';
 import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
-
+import { InfoPopOver } from '../../components/InfoPopOver';
 interface Classifications {
   label: string;
   score: number;
@@ -121,51 +121,70 @@ function ResultsComponent() {
 
       <div className="py-3">
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-          Summary
+          Summary 
+          <InfoPopOver 
+            heading="Website Summary" 
+            content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+            placement="right-end" 
+          />
         </h3>
-          <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
-            <CardBody>
-              {(summaryInfo && (summaryInfo?.title || summaryInfo?.description)) ? (
-                <div className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                  <p>
-                    {summaryInfo?.title}
-                  </p>
-                  <br/>
-                  {logo && (
-                    <div className="flex justify-center">
-                     <div className="flex justify-center">
-                      <Image
-                        alt="Logo"
-                        src={logo}
-                        className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-                      />
-                    </div>
-                      
-                    </div>
-                  )}
-                  {!logo && (
-                    <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-                      No logo available.
-                    </p>
-                  )}
-                  <br/>
-                  <p>
-                    {summaryInfo?.description}
-                  </p>
-                </div>
-                
-              ) : (
-                <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-                   No summary information available.
+        <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
+          <CardBody>
+            {(summaryInfo && (summaryInfo?.title || summaryInfo?.description)) ? (
+              <div className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                <p>
+                  {summaryInfo?.title}
                 </p>
-              )}
-            </CardBody>
-          </Card>
+                <br/>
+                {logo && (
+                  <div className="flex justify-center">
+                    <div className="flex justify-center">
+                    <Image
+                      alt="Logo"
+                      src={logo}
+                      className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+                    />
+                  </div>
+                    
+                  </div>
+                )}
+                {!logo && (
+                  <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                    No logo available.
+                  </p>
+                )}
+                <br/>
+                <p>
+                  {summaryInfo?.description}
+                </p>
+              </div>
+              
+            ) : (
+              <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                  No summary information available.
+              </p>
+            )}
+          </CardBody>
+        </Card>
       </div>
 
       <div className="py-3">
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-          General overview
+          Domain Tags
+          <InfoPopOver 
+            heading="Domain Tags" 
+            content="This section provides important tags to classify the website based on the extracted information. </br></br>
+            <ul>
+              <i>Crawling status</i>: This field indicates if the url was allowed to be scraped </br></br>
+              <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
+              <i>*Industry</i>: This field provides the industry classification of the website. </br></br>
+              <i>*Domain match</i>: This field provides the domain classification of the website. </br></br>
+              <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br></br>
+              <i>Note</i>: The fields marked with an asterisk (*) are generated using machine learning models.
+            </ul>" 
+
+            placement="right-end" 
+          />
         </h3>
         <WEETable isStriped aria-label="Example static collection table">
           <TableHeader>
