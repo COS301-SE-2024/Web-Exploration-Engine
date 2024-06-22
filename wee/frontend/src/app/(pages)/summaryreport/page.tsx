@@ -2,12 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
-import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Chip, Button, Link } from "@nextui-org/react";
+import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import { RadialBar } from '../../components/Graphs';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { FiClock, FiCheck, FiSearch } from "react-icons/fi";
+import { InfoPopOver } from '../../components/InfoPopOver';
+import Link from 'next/link';
 
 interface industryPercentages {
     industries: string[];
@@ -134,12 +136,25 @@ export default function SummaryReport() {
             </h3>
             <div className='gap-4 grid md:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Classification Distribution
+                        <InfoPopOver 
+                            heading="Industry classification" 
+                            content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
+                            placement="top" 
+                        />
+                    </h3>
                     <PieChart dataLabel={industries} dataSeries={industryPercentages}/>
                 </div>
 
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Weak classifications
+                        <InfoPopOver 
+                            heading="Industry classification" 
+                            content="Weak classifications are those that have a low confidence score (below 50%). WEE cannot guarantee the accuracy of the classifications." 
+                            placement="top" 
+                        />
                     </h3>
                     <WEETable 
                         isHeaderSticky
@@ -177,6 +192,11 @@ export default function SummaryReport() {
             {/* Domain match */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain match
+                <InfoPopOver 
+                    heading="Domain Match" 
+                    content="Domain match refers to the percentage of URLs that have the same domain classification as the metadata classification. WEE cannot guarantee the accuracy of the classifications." 
+                    placement="right-end" 
+                />
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
@@ -261,7 +281,7 @@ export default function SummaryReport() {
                             </TableRow>
                              ))
                             }
-</TableBody>
+                        </TableBody>
 
                     </WEETable>
                 </div>
