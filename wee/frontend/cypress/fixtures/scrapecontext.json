@@ -91,6 +91,7 @@ export interface Summary {
 }
 
 //1st Example - 2 urls, add report
+{
 [
     {
         "url": "https://tailwindcss.com/docs/installation",
@@ -267,7 +268,7 @@ export interface Summary {
         "time": 12.5
     }
 ]
-
+,
 {
     "domainStatus": [
         2,
@@ -304,8 +305,10 @@ export interface Summary {
     "avgTime": 10.67
 }
 
+}//end of json object 1
 
 
 
+// Second Example - 3 urls, 1 url not allowed
 
-// Second Example - 3 urls, 
+
