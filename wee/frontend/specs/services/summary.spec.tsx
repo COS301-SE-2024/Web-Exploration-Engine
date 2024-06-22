@@ -27,7 +27,8 @@ describe('SummaryService', () => {
       },
       logo: '',
       images: [],
-      slogan: ''
+      slogan: '',
+      time: 0
     },
     { 
       url: 'http://example2.com', 
@@ -53,7 +54,8 @@ describe('SummaryService', () => {
       },
       logo: '',
       images: [],
-      slogan: ''
+      slogan: '',
+      time: 0
     },
     { 
       url: 'http://example3.com', 
@@ -79,7 +81,8 @@ describe('SummaryService', () => {
       },
       logo: '',
       images: [],
-      slogan: ''
+      slogan: '',
+      time: 0
     },
     { 
       url: 'http://example4.com', 
@@ -105,7 +108,8 @@ describe('SummaryService', () => {
       },
       logo: '',
       images: [],
-      slogan: ''
+      slogan: '',
+      time: 0,
     },
   ];
 
