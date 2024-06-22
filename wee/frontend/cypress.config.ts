@@ -3,6 +3,12 @@ import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  env: {
+    codeCoverage: {
+      url: 'http://localhost:1234/__coverage__',
+      exclude: 'cypress/**/*.*',
+    },
+  },
   e2e: {
     setupNodeEvents(on, config) {
       require('@cypress/code-coverage/task')(on, config);
