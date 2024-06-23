@@ -1,18 +1,15 @@
+import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
+
 import { defineConfig } from 'cypress';
 
-module.exports = defineConfig({
-  fixturesFolder: false,
-  env: {
-    codeCoverage: {
-      url: 'http://localhost:1234/__coverage__',
-      //exclude: 'cypress/**/*.*',
-      specPattern	:"./cypress/integration/**/*.cy.{js,jsx,ts,tsx}"
-    },
-  },
+export default defineConfig({
   e2e: {
-    setupNodeEvents(on: any, config: any) {
-      return require('./cypress/plugins/index.ts')(on, config);
-    },
-    baseUrl: 'http://localhost:1234',
+    ...nxE2EPreset(__filename, {
+      cypressDir: 'cypress',
+      webServerCommands: { default: 'nx run frontend:start' },
+      ciWebServerCommand: 'nx run frontend:serve-static',
+    }),
+    baseUrl: 'http://localhost:3001',
+    specPattern: 'cypress/integration/**/*.cy.{js,jsx,ts,tsx}', // Update this line
   },
 });
