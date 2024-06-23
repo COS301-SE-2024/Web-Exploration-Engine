@@ -33,8 +33,8 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| [Software Requirements Specification](https://drive.google.com/file/d/1txkE7woVp0Ur_L0YmjloNBJ76xNThsVp/view?usp=sharing)     | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1woPTuEo9NdO8Ar6RWQhRUIlIPWJnpARb/view?usp=sharing)             | System design overview                     |
+| [Software Requirements Specification](https://drive.google.com/file/d/1wwzlQgMsZSCOejlKFO5LxF2ENHWYg7bx/view?usp=sharing)     | Details on project requirements            |
+| [Architectural Specification](https://drive.google.com/file/d/1ZD3nqFtdKrYqurdR8HHw5Yvjg8JevZcI/view?usp=sharing)             | System design overview                     |
 | [Architecture Diagram](https://drive.google.com/file/d/19bszabKay4TnxgkcHCeUG_R5ovr6d5wl/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
 | [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
