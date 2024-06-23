@@ -8,6 +8,9 @@ tmp
 # dependencies
 node_modules
 
+# cypress coverage
+.nyc_output
+
 # IDEs and editors
 /.idea
 .project
