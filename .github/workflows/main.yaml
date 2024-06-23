@@ -58,6 +58,11 @@ jobs:
 
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
         #continue-on-error: true
+        
+      - name: Run Cypress Test
+        uses: cypress-io/github-action@v4
+        with:
+          command: cd wee && npx nx e2e frontend --configuration=production
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
