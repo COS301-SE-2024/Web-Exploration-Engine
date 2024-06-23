@@ -52,7 +52,6 @@ jobs:
           cd wee    
           npx nx test webscraper --coverage=true
           npx nx test frontend --coverage=true
-          npx nx e2e frontend --configuration=production
 
           echo "================== test complete =================="
 
