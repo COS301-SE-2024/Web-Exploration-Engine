@@ -6,9 +6,6 @@ describe('help page', () => {
   });
 
   it('help should be available', () => {
-    cy.visit('/help');
-    cy.get('[data-testid="help-button"]').should('exist');
+    cy.testHelp('/help');
   });
-
-  
 });
