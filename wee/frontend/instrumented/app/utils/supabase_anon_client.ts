@@ -1,6 +1,6 @@
 function cov_2ihjlyljsp() {
   var path = "C:\\Users\\siyam\\Documents\\GitHub\\Web-Exploration-Engine\\wee\\frontend\\src\\app\\utils\\supabase_anon_client.ts";
-  var hash = "da5481b48ddaf71a00136466dad02200ac401cf2";
+  var hash = "72fe4673f00fa33358632824d10ec473c9df2750";
   var global = new Function("return this")();
   var gcv = "__coverage__";
   var coverageData = {
@@ -102,12 +102,12 @@ function cov_2ihjlyljsp() {
           }
         }, {
           start: {
-            line: 6,
-            column: 0
+            line: undefined,
+            column: undefined
           },
           end: {
-            line: 8,
-            column: 1
+            line: undefined,
+            column: undefined
           }
         }],
         line: 6
@@ -135,12 +135,12 @@ function cov_2ihjlyljsp() {
           }
         }, {
           start: {
-            line: 10,
-            column: 0
+            line: undefined,
+            column: undefined
           },
           end: {
-            line: 12,
-            column: 1
+            line: undefined,
+            column: undefined
           }
         }],
         line: 10
@@ -161,7 +161,7 @@ function cov_2ihjlyljsp() {
       "1": [0, 0]
     },
     _coverageSchema: "1a1c01bbd47fc00a2c39e90264f33305004495a9",
-    hash: "da5481b48ddaf71a00136466dad02200ac401cf2"
+    hash: "72fe4673f00fa33358632824d10ec473c9df2750"
   };
   var coverage = global[gcv] || (global[gcv] = {});
   if (!coverage[path] || coverage[path].hash !== hash) {
