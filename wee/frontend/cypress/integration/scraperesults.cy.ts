@@ -1,4 +1,3 @@
-//import github from '../fixtures/api-scrape/github.json';
 
 describe('scraperesults', () => {
   it('should be on right page', () => {
@@ -11,7 +10,7 @@ describe('scraperesults', () => {
         console.log(jsonGithub);
         cy.intercept(
           'GET',
-          'http://localhost:3000/api/scraper?url=https%3A%2F%2Fgithub.com',
+          'http://localhost:3000/api/scraper?*',
           jsonGithub
         ).as("mock");
       }); 
