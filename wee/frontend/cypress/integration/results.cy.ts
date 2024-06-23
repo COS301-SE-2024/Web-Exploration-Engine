@@ -1,11 +1,9 @@
 describe('results', () => {
-  /*   beforeEach(() => {
-    cy.visit('results?url=');
-  }); */
+
 
   it('should be on right page', () => {
     cy.visit('/results?url='); //results?url= should be in before each
-    cy.contains(/General overview/i).should('exist');
+    cy.contains(/domain tags/i).should('exist');
     cy.contains(/No images available/i).should('exist');
   });
 
