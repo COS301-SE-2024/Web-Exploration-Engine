@@ -12,9 +12,13 @@ node_modules
 .nyc_output
 wee/.nyc_output
 /.nyc_output
-.nyc_output/
-wee/.nyc_output/
-/.nyc_output/
+.nyc_output/*
+wee/.nyc_output/*
+/.nyc_output/*
+
+nyc_output/*
+wee/nyc_output/*
+/nyc_output/*
 # IDEs and editors
 /.idea
 .project
