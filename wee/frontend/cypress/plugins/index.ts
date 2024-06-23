@@ -2,9 +2,9 @@
 // cypress/support/index.js
 
 import '@cypress/code-coverage/support';
-import task from '@cypress/code-coverage/';
+import task from '@cypress/code-coverage/task';
 
-const codeCoverageTask = require('@cypress/code-coverage/task');
+import codeCoverageTask from '@cypress/code-coverage/task';
 console.log("testing 123")
 module.exports = (on: any, config: any) => {
   codeCoverageTask(on, config);
