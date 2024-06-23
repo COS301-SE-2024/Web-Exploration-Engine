@@ -175,163 +175,37 @@ function ResultsComponent() {
   };
 
   return (
-    <div>
-      <div className="p-4">
-        <div className="flex justify-center">
-          <WEEInput
-            data-testid="search-urls"
-            isClearable
-            search-urls
-            type="text"
-            placeholder="https://www.takealot.com/"
-            labelPlacement="outside"
-            className="py-3  w-full md:w-4/5 md:px-5"
-            startContent={
-              <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-            }
-            value={searchValue}
-            onValueChange={onSearchChange}
-          />
-        </div>
-        <div className="md:flex md:justify-between md:w-4/5 md:m-auto md:px-5">
-          <WEESelect
-            label="Live/Parked"
-            className="w-full pb-3 md:w-1/3"
-            onChange={handleStatusFilterChange}
-          >
-            <SelectItem key={'Parked'}>Parked</SelectItem>
-            <SelectItem key={'Live'}>Live</SelectItem>
-          </WEESelect>
-
-          <WEESelect
-            label="Crawlable"
-            className="w-full pb-3 md:w-1/3"
-            onChange={handleCrawlableFilterChange}
-          >
-            <SelectItem key={'Yes'}>Yes</SelectItem>
-            <SelectItem key={'No'}>No</SelectItem>
-          </WEESelect>
-        </div>
-
-        <h1 className="my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Results
-        </h1>
-
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-default-400 text-small">
-            Total {filteredItems.length} results
-          </span>
-          <label className="flex items-center text-default-400 text-small">
-            Results per page:
-            <select
-              value={resultsPerPage}
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={handleResultsPerPageChange}
-              aria-label="Number of results per page"
-            >
-              <option value="2">2</option>
-              <option value="5">5</option>
-              <option value="7">7</option>
-              <option value="9">9</option>
-            </select>
-          </label>
-        </div>
-
-        <WEETable
-          aria-label="Scrape result table"
-          bottomContent={
-            <>
-              {isLoading ? (
-                <div className="flex w-full justify-center">
-                  <Spinner color="default" />
-                </div>
-              ) : null}
-
-              {results.length > 0 && (
-                <div className="flex w-full justify-center">
-                  <WEEPagination
-                    loop
-                    showControls
-                    color="stone"
-                    page={page}
-                    total={pages}
-                    onChange={(page) => setPage(page)}
-                    aria-label="Pagination"
-                  />
-                </div>
-              )}
-            </>
+    <div className="p-4">
+      <div className="flex justify-center">
+        <WEEInput
+          data-testid="search-urls"
+          isClearable
+          type="text"
+          placeholder="https://www.takealot.com/"
+          labelPlacement="outside"
+          className="py-3  w-full md:w-4/5 md:px-5"
+          startContent={
+            <FiSearch className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
           }
-          classNames={{
-            wrapper: 'min-h-[222px]',
-          }}
-        >
-          <TableHeader>
-            <TableColumn key="name" className="rounded-lg sm:rounded-none">
-              URL
-            </TableColumn>
-            <TableColumn
-              key="role"
-              className="text-center hidden sm:table-cell"
-            >
-              CRAWLABLE
-            </TableColumn>
-            <TableColumn
-              key="status"
-              className="text-center hidden sm:table-cell"
-            >
-              RESULT &amp; REPORT
-            </TableColumn>
-          </TableHeader>
-
-          <TableBody emptyContent={'There are no results to be displayed'}>
-            {items.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Link href={`/results?url=${encodeURIComponent(item.url)}`}>
-                    {item.url}
-                  </Link>
-                </TableCell>
-                <TableCell className="text-center hidden sm:table-cell">
-                  <Chip
-                    radius="sm"
-                    color={item.domainStatus === 'live' ? 'success' : 'warning'}
-                    variant="flat"
-                  >
-                    {item.domainStatus === 'live' ? 'Yes' : 'No'}
-                  </Chip>
-                </TableCell>
-                <TableCell className="text-center hidden sm:table-cell">
-                  <Button
-                    className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                    onClick={() => handleResultPage(item.url)}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </WEETable>
-
-        <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Summary
-        </h1>
-        <Button
-          className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
-          onClick={handleSummaryPage}
-          disabled={isLoading}
-        >
-          View overall summary report
-        </Button>
+          value={searchValue}
+          onValueChange={onSearchChange}
+        />
       </div>
       <div className="md:flex md:justify-between md:w-4/5 md:m-auto md:px-5">
-        <WEESelect label="Live/Parked" className="w-full pb-3 md:w-1/3">
+        <WEESelect
+          label="Live/Parked"
+          className="w-full pb-3 md:w-1/3"
+          onChange={handleStatusFilterChange}
+        >
           <SelectItem key={'Parked'}>Parked</SelectItem>
           <SelectItem key={'Live'}>Live</SelectItem>
         </WEESelect>
 
-        <WEESelect label="Crawlable" className="w-full pb-3 md:w-1/3">
+        <WEESelect
+          label="Crawlable"
+          className="w-full pb-3 md:w-1/3"
+          onChange={handleCrawlableFilterChange}
+        >
           <SelectItem key={'Yes'}>Yes</SelectItem>
           <SelectItem key={'No'}>No</SelectItem>
         </WEESelect>
@@ -405,7 +279,7 @@ function ResultsComponent() {
           </TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={'There is no results to be displayed'}>
+        <TableBody emptyContent={'There are no results to be displayed'}>
           {items.map((item, index) => (
             <TableRow key={index}>
               <TableCell>
@@ -416,17 +290,17 @@ function ResultsComponent() {
               <TableCell className="text-center hidden sm:table-cell">
                 <Chip
                   radius="sm"
-                  color={item.robots.isUrlScrapable ? 'success' : 'warning'}
+                  color={item.domainStatus === 'live' ? 'success' : 'warning'}
                   variant="flat"
                 >
-                  {item.robots.isUrlScrapable ? 'Yes' : 'No'}
+                  {item.domainStatus === 'live' ? 'Yes' : 'No'}
                 </Chip>
               </TableCell>
               <TableCell className="text-center hidden sm:table-cell">
                 <Button
-                  data-testid={'btnView' + index}
-                  className="btnView font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                  className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                   onClick={() => handleResultPage(item.url)}
+                  data-testid={'btnView' + index}
                 >
                   View
                 </Button>
