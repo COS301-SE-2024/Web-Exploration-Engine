@@ -1,44 +1,18 @@
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
-
 import { defineConfig } from 'cypress';
 
-export default defineConfig({
+module.exports = defineConfig({
+  fixturesFolder: false,
   env: {
     codeCoverage: {
       url: 'http://localhost:1234/__coverage__',
-      exclude: 'cypress/**/*.*',
+      //exclude: 'cypress/**/*.*',
+      specPattern	:"./cypress/integration/**/*.cy.{js,jsx,ts,tsx}"
     },
   },
   e2e: {
-    setupNodeEvents(on, config) {
-      require('@cypress/code-coverage/task')(on, config);
-      // include any other plugin code...
-
-      // It's IMPORTANT to return the config object
-      // with any changed environment variables
-      return config;
+    setupNodeEvents(on: any, config: any) {
+      return require('./cypress/plugins/index.ts')(on, config);
     },
-    ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
-    baseUrl: 'http://localhost:3001',
+    baseUrl: 'http://localhost:1234',
   },
-});/* 
-
-// cypress.config.ts
-import { defineConfig } from 'cypress'
-
-export default defineConfig({
-  // setupNodeEvents can be defined in either
-  // the e2e or component configuration
-  e2e: {
-    setupNodeEvents(on, config) {
-      require('@cypress/code-coverage/task')(on, config)
-      // include any other plugin code...
-
-      // It's IMPORTANT to return the config object
-      // with any changed environment variables
-      return config
-    },
-  },
-})
-  
-*/
+});
