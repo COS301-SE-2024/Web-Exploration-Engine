@@ -15,3 +15,6 @@ export default function (on: any, config: any) {
   task(on, config);
   return config; // <-- REQUIRED
 }
+/* module.exports = (on, config) => {
+  on('task', require('@cypress/code-coverage/task'));
+}; */
