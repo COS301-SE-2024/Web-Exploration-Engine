@@ -9,7 +9,7 @@ export default defineConfig({
       webServerCommands: { default: 'nx run frontend:start' },
       ciWebServerCommand: 'nx run frontend:serve-static',
     }),
-    baseUrl: 'http://localhost:3001',
-    specPattern: 'cypress/integration/**/*.cy.{js,jsx,ts,tsx}', // Update this line
+    baseUrl: 'http://localhost:3000',
+    specPattern: 'cypress/integration/**/*.cy.{js,jsx,ts,tsx}', 
   },
 });
