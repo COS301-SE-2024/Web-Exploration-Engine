@@ -7,6 +7,10 @@ interface ScrapingContextType {
     setResults: (update: (prevResults: Scraping[]) => Scraping[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
+    processingUrls: string[];
+    setProcessingUrls: (data: string[]) => void;
+    processedUrls: string[];
+    setProcessedUrls: (data: string[]) => void;
     summaryReport: Summary;
     setSummaryReport: (data: Summary) => void;
 }

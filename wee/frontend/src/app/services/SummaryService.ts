@@ -34,11 +34,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     }
 
     // Check if the URL can be scraped
-    if (result.robots && 'errorStatus' in result.robots && result.robots.errorStatus) {
-      error++;
-    } else {
+
+    if (result.robots && 'isUrlScrapable' in result.robots && result.robots.isUrlScrapable) {
       numScrapableUrls++;
+    } else {
+      error++;
     }
+    
     
     // calculate industry classification percentages
     if (result.industryClassification && 
