@@ -33,18 +33,16 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| [Software Requirements Specification](https://drive.google.com/file/d/1SIfKK4d5_f3lxxtSpEv-k2myBYSQJW7H/view?usp=drive_link)  | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1QCfD2HvfU_gTcmQn_UaTrwcKcE-vauE_/view?usp=drive_link)          | System design overview                     |
-| [Architecture Diagram](https://drive.google.com/file/d/1bewZrGSZ7GH6wtYkbAZDB4SzqTV6pY7B/view?usp=drive_link)                 | Diagram of system overview                 |
+| [Software Requirements Specification](https://drive.google.com/file/d/1wwzlQgMsZSCOejlKFO5LxF2ENHWYg7bx/view?usp=sharing)     | Details on project requirements            |
+| [Architectural Specification](https://drive.google.com/file/d/1ZD3nqFtdKrYqurdR8HHw5Yvjg8JevZcI/view?usp=sharing)             | System design overview                     |
+| [Architecture Diagram](https://drive.google.com/file/d/19bszabKay4TnxgkcHCeUG_R5ovr6d5wl/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
 | [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
 | [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71)                                                           | Team organisation and progress tracking    |
+| [User Manual](https://drive.google.com/file/d/13PiIBegn0emiqJLaUfwy20Ir0Iw4LkrR/view?usp=sharing)                             | Guidelines to using WEE                    |
 | [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
 | [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
-
-  
-</div>
-
+| [Previous Documentation Iterations](https://drive.google.com/drive/folders/1H4omJ2xESlP8_STEu7QdVYtMf1rgsZ-S?usp=sharing)     | See how our documentation has progressed   |
 
  <h1 align="center"> Demo Resources </h1>
 
@@ -53,10 +51,10 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Demo                        | Video | Slides |
 |---------------------------------|---------------------------------|---------------------------------|
-| Demo 1  | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
+| Demo 1 | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
+| Demo 2 | [Demo 2 Video](https://drive.google.com/file/d/1fmjxiQVnpMjOAuttFO75xRElCkPtDDWh/view?usp=sharing) | [Demo 2 Slides](https://www.canva.com/design/DAGHjFa1XEo/w8trIf8dZMyJ7xtJLpWiag/edit?utm_content=DAGHjFa1XEo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 
 </div>
-
 
 
   <h1 align="center">Technologies </h1>

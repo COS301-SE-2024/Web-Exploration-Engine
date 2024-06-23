@@ -12,7 +12,7 @@ export default function NavBar() {
 
     const menuItems = [
       "Home",
-      "Results",
+      "Help"
       // "Profile",
       // "Analytics",
       // "Log Out",
@@ -67,8 +67,8 @@ export default function NavBar() {
             </Link>
           </NavbarItem>
           <NavbarItem >            
-            <Link href="/results" className="text-dark-primaryTextColor dark:text-primaryTextColor">
-              Results
+            <Link href="/help" className="text-dark-primaryTextColor dark:text-primaryTextColor">
+              Help
             </Link>
           </NavbarItem>
         </NavbarContent>
