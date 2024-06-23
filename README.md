@@ -34,7 +34,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | [Software Requirements Specification](https://drive.google.com/file/d/1txkE7woVp0Ur_L0YmjloNBJ76xNThsVp/view?usp=sharing)     | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1T_mgbhNLAIR2qybbR9UMh_n-VAu88EMY/view?usp=sharing)             | System design overview                     |
+| [Architectural Specification](https://drive.google.com/file/d/1woPTuEo9NdO8Ar6RWQhRUIlIPWJnpARb/view?usp=sharing)             | System design overview                     |
 | [Architecture Diagram](https://drive.google.com/file/d/19bszabKay4TnxgkcHCeUG_R5ovr6d5wl/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
 | [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
@@ -42,6 +42,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | [User Manual](https://drive.google.com/file/d/13PiIBegn0emiqJLaUfwy20Ir0Iw4LkrR/view?usp=sharing)                             | Guidelines to using WEE                    |
 | [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
 | [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
+| [Previous Documentation Iterations](https://drive.google.com/drive/folders/1H4omJ2xESlP8_STEu7QdVYtMf1rgsZ-S?usp=sharing)     | See how our documentation has progressed   |
 
  <h1 align="center"> Demo Resources </h1>
 
