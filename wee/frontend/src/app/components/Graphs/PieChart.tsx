@@ -8,7 +8,11 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function PieChart({dataLabel, dataSeries}: IChart) {
+interface IChartExtended extends IChart {
+    legendPosition: 'bottom' | 'right';
+}
+
+export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended) {
     const { theme } = useTheme();
     const [options, setOptions] = useState<ApexOptions>({
         chart: {
@@ -32,7 +36,7 @@ export function PieChart({dataLabel, dataSeries}: IChart) {
             mode: theme === 'dark' ? 'dark' : 'light'
         },
         legend: {
-          position: 'right',
+          position: legendPosition,
           horizontalAlign: 'left',
         },
   

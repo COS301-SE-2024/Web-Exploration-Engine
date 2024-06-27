@@ -144,7 +144,13 @@ export default function SummaryReport() {
                             placement="top" 
                         />
                     </h3>
-                    <PieChart dataLabel={industries} dataSeries={industryPercentages}/>
+
+                    <span className='sm:hidden'>
+                        <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"}/>
+                    </span>
+                    <span className='hidden sm:block'>
+                        <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
+                    </span>
                 </div>
 
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
