@@ -6,7 +6,7 @@
     "start": "nx dev frontend",
     "cy:run": "cypress run",
     "test": "start-server-and-test start http://localhost:3001 cy:run",
-    "cytest":"npm start && wait-on http://localhost:3001 && cypress run"
+    "cytest": "npm start && wait-on http://localhost:3001 && cypress run"
   },
   "private": true,
   "dependencies": {
@@ -45,8 +45,7 @@
     "robots-parser": "^3.0.1",
     "rxjs": "^7.8.0",
     "swagger-ui-express": "^5.0.0",
-    "tslib": "^2.3.0",
-    "wait-on": "^7.2.0"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
@@ -100,6 +99,7 @@
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
     "typescript": "~5.4.2",
+    "wait-on": "^7.2.0",
     "webpack-cli": "^5.1.4"
   }
 }
