@@ -8,7 +8,7 @@ export class ScrapeContactInfoService {
    * Scrapes contact information from the given URL.
    * @param url - The URL to scrape contact information from.
    * @param robots - Response object indicating if URL is scrapable.
-   * @returns {Promise<{ emails: string[], phones: string[] }>} - Returns a promise that resolves to an object containing arrays of email addresses and phone numbers found.
+   * @returns {Promise<{ emails: string[], phones: string[] }>} 
    */
   async scrapeContactInfo(url: string, robots: RobotsResponse): Promise<{ emails: string[], phones: string[] }> {
     try {
@@ -24,11 +24,10 @@ export class ScrapeContactInfoService {
       // Extract text content from the page
       const textContent = await page.evaluate(() => document.body.innerText);
 
-      // Define more specific regex patterns for emails and phones
+      
       const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-      const phonePattern = /(?:\+\d{1,3}[-.\s]?)?(?:\(\d{3}\)[-.\s]?)?\d{3,}[-.\s]?\d{3,}[-.\s]?\d{4}\b/g;
+      const phonePattern = /(?:\+\d{1,3}[-.\s]?)?(?:\(?\d{2,4}\)?[-.\s]?)?\d{2,4}[-.\s]?\d{3,4}[-.\s]?\d{3,4}\b/g;
 
-      // Extract emails and phones using the defined patterns
       const emails = textContent.match(emailPattern) || [];
       const phones = textContent.match(phonePattern) || [];
 
