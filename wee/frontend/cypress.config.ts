@@ -4,12 +4,7 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: {
-    ...nxE2EPreset(__filename, {
-      cypressDir: 'cypress',
-      webServerCommands: { default: 'nx run frontend:start' },
-      ciWebServerCommand: 'nx run frontend:serve-static',
-    }),
-    baseUrl: 'http://localhost:3000',
-    specPattern: 'cypress/integration/**/*.cy.{js,jsx,ts,tsx}', 
+    ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
+    baseUrl: 'http://localhost:3001',
   },
 });
