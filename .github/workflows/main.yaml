@@ -64,8 +64,8 @@ jobs:
       - name: Start Servers
         run: |
           cd wee    
-              npx nx serve webscraper --coverage=true
-              npx nx dev frontend --coverage=true
+              npx nx serve webscraper 
+              npx nx dev frontend 
 
 
       - name: Cypress Tests
@@ -80,7 +80,7 @@ jobs:
           cd wee    
               npx nx serve webscraper --coverage=true
               npx nx dev frontend --coverage=true
-              
+
       - name: Deploy
         run: |
           echo "================== deployment complete =================="
