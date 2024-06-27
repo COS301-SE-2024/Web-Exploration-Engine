@@ -7,6 +7,7 @@ import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 import { IndustryClassificationService } from './industry-classification/industry-classification.service';
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
+import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 // Models
 import { ErrorResponse, RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
 
@@ -19,6 +20,7 @@ export class ScraperService {
     private readonly industryClassificationService: IndustryClassificationService,
     private readonly scrapeLogoService: ScrapeLogoService,
     private readonly scrapeImagesService: ScrapeImagesService,
+    private readonly scrapeContactInfoService: ScrapeContactInfoService,
   ) {}
 
   async scrape(url: string) {
@@ -34,6 +36,7 @@ export class ScraperService {
       logo: '',
       images: [],
       slogan: '',
+      contactInfo: { emails: [], phones: [] }, 
       time: 0,
     };
 
@@ -83,12 +86,12 @@ export class ScraperService {
 
     // scrape images - doesn't use metadata -- need to check if scraping images is allowed
     const imagesPromise = this.scrapeImagesService.scrapeImages(data.url, data.robots);
-
-    const [industryClassification, logo, images] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise]);    
+    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(data.url, data.robots); 
+    const [industryClassification, logo, images, contactInfo] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, contactInfoPromise]);
     data.industryClassification = industryClassification;
     data.logo = logo;
     data.images = images;
-
+    data.contactInfo = contactInfo; 
     // scrape slogan
 
     // scrape images
@@ -155,4 +158,12 @@ export class ScraperService {
     }
     return this.scrapeImagesService.scrapeImages(url, robotsResponse);
   }
+  async scrapeContactInfo(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+    return this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse as RobotsResponse);
+  }
+  
 }
