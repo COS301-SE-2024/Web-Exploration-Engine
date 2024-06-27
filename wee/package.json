@@ -2,7 +2,12 @@
   "name": "@wee/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx dev frontend",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test start http://localhost:3001 cy:run",
+    "cytest":"npm start && wait-on http://localhost:3001 && cypress run"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
