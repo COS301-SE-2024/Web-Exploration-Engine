@@ -61,11 +61,10 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Start Servers
-        run: |
-          cd wee    
-              npx nx serve webscraper 
-              npx nx dev frontend 
+          
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3001 && npx nx e2e frontend --configuration=production
+        working-directory: ./wee/frontend
 
 
       - name: Cypress Tests
