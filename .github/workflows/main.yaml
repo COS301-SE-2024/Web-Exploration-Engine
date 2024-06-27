@@ -72,7 +72,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           command: npx nx e2e frontend --configuration=production
-          working-directory: ./wee/frontend
+          working-directory: ./wee
         #run:   echo "================== cypress complete =================="
 
       - name: Start Servers
