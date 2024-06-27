@@ -11,6 +11,7 @@ import { IndustryClassificationService } from './industry-classification/industr
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service'; 
+import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 @Module({
   controllers: [ScraperController],
   providers: [
@@ -18,7 +19,7 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
     RobotsService, 
     ScrapeMetadataService, 
     ScrapeStatusService, 
-    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService
+    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService,ScrapeAddressService
   ],
 })
 export class ScraperModule {}

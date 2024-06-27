@@ -8,6 +8,7 @@ import { IndustryClassificationService } from './industry-classification/industr
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
+import { ScrapeAddressService } from './scrape-address/scrape-address.service'; 
 // Models
 import { ErrorResponse, RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
 
@@ -21,6 +22,7 @@ export class ScraperService {
     private readonly scrapeLogoService: ScrapeLogoService,
     private readonly scrapeImagesService: ScrapeImagesService,
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
+    private readonly scrapeAddressService: ScrapeAddressService,
   ) {}
 
   async scrape(url: string) {
@@ -38,6 +40,7 @@ export class ScraperService {
       slogan: '',
       contactInfo: { emails: [], phones: [] }, 
       time: 0,
+      addresses: [],
     };
 
     // validate url
@@ -87,11 +90,14 @@ export class ScraperService {
     // scrape images - doesn't use metadata -- need to check if scraping images is allowed
     const imagesPromise = this.scrapeImagesService.scrapeImages(data.url, data.robots);
     const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(data.url, data.robots); 
-    const [industryClassification, logo, images, contactInfo] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, contactInfoPromise]);
+    const addressPromise = this.scrapeAddressService.scrapeAddress(data.url, data.robots);
+
+    const [industryClassification, logo, images, contactInfo,addresses] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, contactInfoPromise,addressPromise]);
     data.industryClassification = industryClassification;
     data.logo = logo;
     data.images = images;
     data.contactInfo = contactInfo; 
+    data.addresses = addresses.addresses;
     // scrape slogan
 
     // scrape images
@@ -165,5 +171,11 @@ export class ScraperService {
     }
     return this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse as RobotsResponse);
   }
-  
+ async scrapeAddress(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+    return this.scrapeAddressService.scrapeAddress(url, robotsResponse as RobotsResponse);
+  }
 }
