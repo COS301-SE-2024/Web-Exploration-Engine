@@ -1,4 +1,4 @@
-name: run-frontend-integration-tests
+name: Frontend tests
 on: [push]
 jobs:
   cypress-run:
