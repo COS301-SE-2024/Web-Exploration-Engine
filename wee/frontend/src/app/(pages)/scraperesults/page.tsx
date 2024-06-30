@@ -153,7 +153,7 @@ function ResultsComponent() {
 
 
     return (
-        <div className='p-4'>            
+        <div className='p-4 min-h-screen'>            
             <div className='flex justify-center'>
                 <WEEInput
                     isClearable

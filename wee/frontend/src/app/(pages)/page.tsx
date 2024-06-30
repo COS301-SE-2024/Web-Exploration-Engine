@@ -59,7 +59,7 @@ export default function Home() {
     };
 
     return (
-      <div className="p-4 flex flex-col items-center">
+      <div className="p-4 flex flex-col items-center min-h-screen">
         <div className="mb-4 md:my-8 text-center">
           <h1 className="mt-8 mb-5 font-poppins-bold text-4xl lg:text-5xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             The Web Exploration Engine
