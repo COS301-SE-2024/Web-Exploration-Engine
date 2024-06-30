@@ -47,6 +47,7 @@ export default function App() {
       <Button
         onPress={onOpen}
         isIconOnly
+        data-testid="help-button"
         className="rounded-full p-0 help-popup-button"
         style={{ bottom: '16px', right: '16px' }}
       >
@@ -54,9 +55,10 @@ export default function App() {
       </Button>
 
       <Modal
-      size={"sm"}
+        size={'sm'}
         isOpen={isOpen}
         backdrop="transparent"
+        data-testid="help-modal"
         onOpenChange={onOpenChange}
         className="my-0 md:help-popup border-2 border-jungleGreen-600 bg-primaryBackgroundColor dark:bg-dark-primaryBackgroundColor"
       >

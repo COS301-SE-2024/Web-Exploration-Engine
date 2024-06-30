@@ -1,0 +1,314 @@
+import { createContext, useContext } from "react";
+import Scraping from "../models/ScrapingModel";
+import { Summary } from "../models/ScraperModels";
+
+interface ScrapingContextType {
+    //Main Interface 1 - Scraping
+    results: Scraping[];
+    setResults: (update: (prevResults: Scraping[]) => Scraping[]) => void;
+    urls: string[];
+    setUrls: (data: string[]) => void;
+
+    //Main Interface 2 - Summary 
+    summaryReport: Summary;
+    setSummaryReport: (data: Summary) => void;
+}
+
+
+//Main Interface 1 - Scraping
+
+export default interface Scraping {
+    url: string;
+    domainStatus: string;
+    robots: Robots;
+    metadata: Metadata;
+    industryClassification: IndustryClassification;
+    logo: string;
+    images: string[];
+    slogan: string;
+    time:number;
+}
+
+// Scraping Interface uses the following 
+
+interface Robots {
+    baseUrl: string;
+    allowedPaths: string[];
+    disallowedPaths: string[];
+    isUrlScrapable: boolean;
+    isBaseUrlAllowed: boolean;
+}
+
+interface Metadata {
+    title: string;
+    description: string;
+    keywords: string;
+    ogTitle: string;
+    ogDescription: string;
+    ogImage: string;
+}
+
+interface IndustryClassification {
+    metadataClass: {
+        label: string;
+        score: number;
+    };
+    domainClass: {
+        label: string;
+        score: number;
+    };
+}
+
+//Main Interface 2 - Summary 
+
+export interface Summary {
+  domainStatus: number[];
+  domainErrorStatus: number;
+  industryClassification: {
+    unclassifiedUrls: string[];
+    industryPercentages: {
+      industries: string[];
+      percentages: number[];
+    };
+    weakClassification: {
+      url: string;
+      metadataClass: string;
+      score: number;
+    }[];
+  },
+  domainMatch: {
+    percentageMatch: number;
+    mismatchedUrls: {
+      url: string;
+      metadataClass: string;
+      domainClass: string;
+    }[];
+  }
+  totalUrls: number;
+  parkedUrls: string[];
+  scrapableUrls: number;
+  avgTime:number;
+}
+
+//1st Example - 2 urls, add report
+{
+[
+    {
+        "url": "https://tailwindcss.com/docs/installation",
+        "domainStatus": "live",
+        "robots": {
+            "baseUrl": "https://tailwindcss.com",
+            "allowedPaths": [],
+            "disallowedPaths": [],
+            "isUrlScrapable": true,
+            "isBaseUrlAllowed": true
+        },
+        "metadata": {
+            "title": "Installation - Tailwind CSS",
+            "description": "The simplest and fastest way to get up and running with Tailwind CSS from scratch is with the Tailwind CLI tool.",
+            "keywords": null,
+            "ogTitle": "Installation - Tailwind CSS",
+            "ogDescription": "The simplest and fastest way to get up and running with Tailwind CSS from scratch is with the Tailwind CLI tool.",
+            "ogImage": "https://tailwindcss.com/api/og?path=/docs/installation"
+        },
+        "industryClassification": {
+            "metadataClass": {
+                "label": "Auto Parts & Equipment",
+                "score": 0.7281099557876587
+            },
+            "domainClass": {
+                "label": "Internet & Direct Marketing Retail",
+                "score": 0.6886712908744812
+            }
+        },
+        "logo": "https://tailwindcss.com/api/og?path=/docs/installation",
+        "images": [
+            "https://tailwindcss.com/_next/static/media/docs@tinypng.d9e4dcdc.png",
+            "https://tailwindcss.com/_next/static/media/docs-dark@tinypng.1bbe175e.png",
+            "https://tailwindcss.com/_next/static/media/installation.50c59fdd.jpg"
+        ],
+        "slogan": "",
+        "time": 8.84
+    },
+    {
+        "url": "https://takealot.com",
+        "domainStatus": "live",
+        "robots": {
+            "baseUrl": "https://takealot.com",
+            "allowedPaths": [
+                "/"
+            ],
+            "disallowedPaths": [
+                "/*gclid=",
+                "/ajax/*.php",
+                "/ajax/*.php*",
+                "/help/page/",
+                "/help/faq/*",
+                "/account/*",
+                "/*qsearch=",
+                "/*custom=",
+                "/*dcat=",
+                "/*sort=ReleaseDate",
+                "/*sort=Price",
+                "/*sort=Rating",
+                "/*filter=Price",
+                "/*filter=Rating",
+                "/*filter=Availability",
+                "/*filter=Shipping",
+                "/*filter=Binding",
+                "/*filter=Promotions",
+                "/*filter=Colour",
+                "/*filter=CourseCode",
+                "/*filter=Format",
+                "/*filter=Manufacturer",
+                "/*filter=Lens",
+                "/*filter=ASScreenSize",
+                "/*filter=ASTabletDisplaySizes",
+                "/*filter=Size",
+                "/*filter=BabyAgeSize",
+                "/*filter=AlphaClothingSize",
+                "/*filter=AgeSize",
+                "/*filter=ASNappySize",
+                "/*filter=AgeGroup",
+                "/*filter=Ages",
+                "/*filter=BraSize",
+                "/*filter=TVScreenSize",
+                "/*filter=ShoeSize",
+                "/*filter=FashionSize",
+                "/*filter=ASRamSize",
+                "/*filter=LegwearSize",
+                "/*filter=LinenSize",
+                "/*filter=PaperSize",
+                "/*filter=StationarySize",
+                "/*filter=ASStorageCapacity",
+                "/*filter=EbooksFormat",
+                "/*filter=ASColours",
+                "/*filter=ColourVariant",
+                "/*filter=BasicColours",
+                "/*filter=BooksFormat",
+                "/*filter=ASCondition",
+                "/*filter=ASDigitalAppliance",
+                "/*rows="
+            ],
+            "isUrlScrapable": true,
+            "isBaseUrlAllowed": true
+        },
+        "metadata": {
+            "title": "Takealot.com: Online Shopping | SA's leading online store",
+            "description": "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+            "keywords": null,
+            "ogTitle": "Takealot.com: Online Shopping | SA's leading online store",
+            "ogDescription": "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+            "ogImage": "https://www.takealot.com/static/images/logo_transparent.png"
+        },
+        "industryClassification": {
+            "metadataClass": {
+                "label": "Internet & Direct Marketing Retail",
+                "score": 0.9973959922790527
+            },
+            "domainClass": {
+                "label": "Internet & Direct Marketing Retail",
+                "score": 0.5596058368682861
+            }
+        },
+        "logo": "https://www.takealot.com/static/images/logo_transparent.png",
+        "images": [
+            "https://shopfront.takealot.com/0d0356e6cf2ea43b5fdf8735dcc9c625f105abd0/static/media/src/images/logo.svg-f6ccb489b85bbddf97d6.svg",
+            "https://media.takealot.com/b/2/cms/p/fit-in/160x70/original_images/37937db5bf1daec7f64b2a279ac18f9c374d3f6d.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/180x120/original_images/911f9757a957cb492b4303eb294321f11717b306.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/160x70/original_images/e57a85dde44efe01889b0afe5dfd5412fe0d37ae.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/334x140/original_images/35de2f8f9395cb46ffd6c3afdc27dc8eecc10052.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/160x70/original_images/52bddbfefdc2e9ac8e57367d1029c86c6c95f88b.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/450x140/original_images/bdbce922d5b7b10bafac62003d949949c339f1fc.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/160x70/original_images/dae3f543ecf7633ec037b9339130872902bb2ee5.png",
+            "https://media.takealot.com/b/2/cms/p/fit-in/160x70/original_images/82cae5916932e63c0720addfdba0a473c2a0a423.png",
+            "https://media.takealot.com/covers_images/dcf463adc2044c49ac01e878d14a215e/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/759298efa8f64da385a19962734a0c79/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/dcf463adc2044c49ac01e878d14a215e/s-xlpreview.file",
+            "https://media.takealot.com/covers_tsins/57510830/57510830_1-xlpreview.jpg",
+            "https://media.takealot.com/covers_images/05eef6e0ba844fababef788fc25b07c6/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/2b591fea3a9a434280e5e04bb83d01f4/s-xlpreview.file",
+            "https://media.takealot.com/covers_tsins/50386857/50386857_1-xlpreview.jpg",
+            "https://media.takealot.com/covers_images/759298efa8f64da385a19962734a0c79/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/02ba5f6d56ec42d2bb62ce812d9553da/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/dcf463adc2044c49ac01e878d14a215e/s-xlpreview.file",
+            "https://media.takealot.com/promotions/94182-ribbon-large.png",
+            "https://media.takealot.com/covers_tsins/47589577/47589577-1-xlpreview.jpg",
+            "https://media.takealot.com/covers_images/f9b9e0bc19ac422ea6cfb4eb5c8c9097/s-xlpreview.file",
+            "https://media.takealot.com/promotions/94182-ribbon-large.png",
+            "https://media.takealot.com/covers_tsins/52441698/52441698_1-xlpreview.jpg",
+            "https://media.takealot.com/promotions/94182-ribbon-large.png",
+            "https://media.takealot.com/covers_images/c3cf06d206cd4214a8e7d20273e889c2/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/7383d1a19f3d4d258c5cfc4821f966ac/s-xlpreview.file",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/covers_images/f9b9e0bc19ac422ea6cfb4eb5c8c9097/s-xlpreview.file",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/covers_images/f061417af76a4ec3866586326be3340f/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/d166f62a18e54dd2a845ba533246e651/s-xlpreview.file",
+            "https://media.takealot.com/covers_images/f9b9e0bc19ac422ea6cfb4eb5c8c9097/s-xlpreview.file",
+            "https://media.takealot.com/covers_tsins/33338603/6008849000025-1-xlpreview.jpg",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/promotions/94177-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/promotions/94179-ribbon-large.png",
+            "https://media.takealot.com/b/2/cms/original_images/01911eccf7856d8bc681225c0244a2568e5c4b87.png",
+            "https://shopfront.takealot.com/0d0356e6cf2ea43b5fdf8735dcc9c625f105abd0/static/media/src/images/app-store.svg-edce310696aa7f6191a1.svg",
+            "https://shopfront.takealot.com/0d0356e6cf2ea43b5fdf8735dcc9c625f105abd0/static/media/src/images/google-play.svg-7a92427373a19e40a662.svg",
+            "https://shopfront.takealot.com/0d0356e6cf2ea43b5fdf8735dcc9c625f105abd0/static/media/src/images/huawei-appgallery.svg-bb1c8aaa1305360a018d.svg"
+        ],
+        "slogan": "",
+        "time": 12.5
+    }
+]
+,
+{
+    "domainStatus": [
+        2,
+        0
+    ],
+    "domainErrorStatus": 0,
+    "industryClassification": {
+        "unclassifiedUrls": [],
+        "industryPercentages": {
+            "industries": [
+                "Auto Parts & Equipment",
+                "Internet & Direct Marketing Retail"
+            ],
+            "percentages": [
+                50,
+                50
+            ]
+        },
+        "weakClassification": []
+    },
+    "domainMatch": {
+        "percentageMatch": 50,
+        "mismatchedUrls": [
+            {
+                "url": "https://tailwindcss.com/docs/installation",
+                "metadataClass": "Auto Parts & Equipment",
+                "domainClass": "Internet & Direct Marketing Retail"
+            }
+        ]
+    },
+    "totalUrls": 2,
+    "parkedUrls": [],
+    "scrapableUrls": 2,
+    "avgTime": 10.67
+}
+
+}//end of json object 1
+
+
+
+// Second Example - 3 urls, 1 url not allowed
+
+

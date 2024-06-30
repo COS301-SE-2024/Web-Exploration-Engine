@@ -1,0 +1,40 @@
+{
+  "url": "https://unsplash.com",
+  "domainStatus": "live",
+  "robots": {
+    "baseUrl": "https://unsplash.com",
+    "allowedPaths": [],
+    "disallowedPaths": [],
+    "isUrlScrapable": true,
+    "isBaseUrlAllowed": true
+  },
+  "metadata": {
+    "title": "Beautiful Free Images & Pictures",
+    "description": "Beautiful, free images and photos that you can download and use for any project. Better than any royalty free or stock photos.",
+    "keywords": null,
+    "ogTitle": "Beautiful Free Images & Pictures | Unsplash",
+    "ogDescription": "Beautiful, free images and photos that you can download and use for any project. Better than any royalty free or stock photos.",
+    "ogImage": "https://images.unsplash.com/opengraph/1x1.png?blend=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1716255254612-c0366e3bc5d5%3Fblend%3D000000%26blend-alpha%3D10%26blend-mode%3Dnormal%26crop%3Dfaces%252Cedges%26h%3D630%26mark%3Dhttps%253A%252F%252Fimages.unsplash.com%252Fopengraph%252Fwordmark.png%26mark-align%3Dmiddle%252Ccenter%26mark-w%3D424%26w%3D1200%26auto%3Dformat%26fit%3Dcrop%26q%3D60%26ixid%3DM3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzE5MDI1MjI2fA%26ixlib%3Drb-4.0.3&blend-w=1&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60"
+  },
+  "industryClassification": {
+    "metadataClass": {
+      "label": "Stock Photo Source",
+      "score": 98
+    },
+    "domainClass": {
+      "label": "Stock Resource Provider",
+      "score": 17
+    }
+  },
+  "logo": "https://images.unsplash.com/opengraph/1x1.png?blend=https%3A%2F%2Fimages.unsplash.com%2Fphoto-1716255254612-c0366e3bc5d5%3Fblend%3D000000%26blend-alpha%3D10%26blend-mode%3Dnormal%26crop%3Dfaces%252Cedges%26h%3D630%26mark%3Dhttps%253A%252F%252Fimages.unsplash.com%252Fopengraph%252Fwordmark.png%26mark-align%3Dmiddle%252Ccenter%26mark-w%3D424%26w%3D1200%26auto%3Dformat%26fit%3Dcrop%26q%3D60%26ixid%3DM3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzE5MDI1MjI2fA%26ixlib%3Drb-4.0.3&blend-w=1&h=630&mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-align=top%2Cleft&mark-pad=50&mark-w=64&w=1200&auto=format&fit=crop&q=60",
+  "images": [
+    "https://plus.unsplash.com/premium_photo-1715876268071-bfd76bb4d6d3?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    "https://plus.unsplash.com/premium_photo-1715876268071-bfd76bb4d6d3?fm=jpg&w=3000&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    "https://unsplash-assets.imgix.net/unsplashplus/asset-plus-017.jpg?fm=jpg&w=3000&crop=focalpoint&fp-y=0.4&auto=format&fit=crop&q=60",
+    "https://unsplash-assets.imgix.net/unsplashplus/asset-plus-018.jpg?fm=jpg&w=3000&crop=focalpoint&fp-y=0.51&auto=format&fit=crop&q=60",
+    "https://unsplash-assets.imgix.net/unsplashplus/asset-plus-004.jpg?fm=jpg&w=3000&crop=faces&auto=format&fit=crop&q=60",
+    "https://unsplash-assets.imgix.net/unsplashplus/asset-plus-005.jpg?fm=jpg&w=3000&crop=faces&auto=format&fit=crop&q=60"
+  ],
+  "slogan": "The greates website for you stock image needs",
+  "time": 6.17
+}

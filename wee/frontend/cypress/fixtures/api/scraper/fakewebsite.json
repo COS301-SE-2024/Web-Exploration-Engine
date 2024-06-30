@@ -1,0 +1,15 @@
+{
+  "url": "https://fakewebsite.co.za",
+  "domainStatus": "parked",
+  "robots": {
+    "errorStatus": 500,
+    "errorCode": "500 Internal Server Error",
+    "errorMessage": "An error occurred while interpreting robots.txt file"
+  },
+  "metadata": null,
+  "industryClassification": null,
+  "logo": "",
+  "images": [],
+  "slogan": "",
+  "time": 0
+}

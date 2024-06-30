@@ -47,22 +47,41 @@ jobs:
           
         #continue-on-error: true
 
-      - name: Test
+      - name: Jest Tests
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
           npx nx test frontend --coverage=true
-          echo "================== test complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
-        #continue-on-error: true
+
+          echo "================== jest tests complete =================="
+
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+          
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3001 && npx nx e2e frontend --configuration=production
+        working-directory: ./wee/frontend
+
+
+      - name: Cypress Tests
+        uses: cypress-io/github-action@v4
+        with:
+          command: npx nx e2e frontend --configuration=production
+          working-directory: ./wee
+        #run:   echo "================== cypress complete =================="
+
+      - name: Start Servers
+        run: |
+          cd wee    
+              npx nx serve webscraper --coverage=true
+              npx nx dev frontend --coverage=true
+
       - name: Deploy
         run: |
-          echo "================== test complete =================="
+          echo "================== deployment complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
         #continue-on-error: true

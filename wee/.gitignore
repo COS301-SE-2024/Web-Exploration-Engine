@@ -8,6 +8,17 @@ tmp
 # dependencies
 node_modules
 
+# cypress coverage
+.nyc_output
+wee/.nyc_output
+/.nyc_output
+.nyc_output/*
+wee/.nyc_output/*
+/.nyc_output/*
+
+nyc_output/*
+wee/nyc_output/*
+/nyc_output/*
 # IDEs and editors
 /.idea
 .project
