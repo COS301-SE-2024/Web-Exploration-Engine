@@ -14,7 +14,7 @@ export const ExportDropdown = () => {
           variant="flat" 
           startContent={<FiShare className={iconClasses}/>}
         >
-          Export
+          Export/Save
         </Button>
       </DropdownTrigger>
       <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">

@@ -79,14 +79,15 @@ export default function SummaryReport() {
                 Back
             </Button>
 
-            <div className="mb-8 text-center">
-                <h1 className="mt-4 font-poppins-bold text-4xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            <div className="mt-4 mb-8 text-center">
+                <h1 className="font-poppins-bold text-4xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
                     Summary Report
                 </h1>
-                <div className="mt-4 flex justify-center">
+                <div className="mt-4 mr-4 flex justify-end">
                     <ExportDropdown />
                 </div>
             </div>
+            
 
 
             {/* General stats */}
