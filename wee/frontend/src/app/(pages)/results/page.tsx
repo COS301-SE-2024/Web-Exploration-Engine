@@ -16,6 +16,7 @@ import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
+import jsPDF from 'jspdf'; 
 interface Classifications {
   label: string;
   score: number;
@@ -51,7 +52,6 @@ function ResultsComponent() {
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
-  
 
   useEffect(() => {
     if (url) {
@@ -85,7 +85,26 @@ function ResultsComponent() {
     router.push(`/scraperesults`);
   };
 
-  //Pagination Logic
+  const handleDownloadReport = () => {
+    const doc = new jsPDF();
+    doc.text(`Results for: ${url}`, 10, 10);
+
+    doc.text(`Title: ${summaryInfo?.title || 'N/A'}`, 10, 20);
+    doc.text(`Description: ${summaryInfo?.description || 'N/A'}`, 10, 30);
+
+    doc.text(`Website Status: ${websiteStatus}`, 10, 40);
+    doc.text(`Crawlable: ${isCrawlable ? 'Yes' : 'No'}`, 10, 50);
+
+    doc.text(`Industry: ${industryClassification?.label || 'N/A'}`, 10, 60);
+    doc.text(`Industry Confidence Score: ${industryClassification?.score ? (industryClassification?.score * 100).toFixed(2) : '0'}%`, 10, 70);
+
+    doc.text(`Domain Match: ${domainClassification?.label || 'N/A'}`, 10, 80);
+    doc.text(`Domain Match Confidence Score: ${domainClassification?.score ? (domainClassification?.score * 100).toFixed(2) : '0'}%`, 10, 90);
+
+    doc.save('report.pdf');
+  };
+
+  // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
 
@@ -193,7 +212,7 @@ function ResultsComponent() {
             <TableRow key="1">
               <TableCell>Crawlable</TableCell>
               <TableCell>
-                <Chip
+              <Chip
                   radius="sm"
                   color={isCrawlable === true ? 'success' : 'warning'}
                   variant="flat"
@@ -278,22 +297,21 @@ function ResultsComponent() {
         </WEETable>
       </div>
 
-      {/* Paginatin of Images */}
-
+      {/* Pagination of Images */}
       {imageList && imageList.length > 0 && (
         <div className="py-3">
-          <span className="flex justify-between ">
+          <span className="flex justify-between">
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
               Images
             </h3>
 
             <label className="flex items-center text-default-400 text-small">
-              Images Per Page :
+              Images Per Page:
               <select
                 value={itemsPerPage}
                 className="bg-transparent outline-none text-default-400 text-small"
                 onChange={handleItemsPerPageChange}
-                aria-label="Number of results per page" 
+                aria-label="Number of results per page"
               >
                 <option value="4">4</option>
                 <option value="8">8</option>
@@ -341,6 +359,17 @@ function ResultsComponent() {
           No images available.
         </p>
       )}
+
+      {/* Download Report Button */}
+      <div className="py-4 text-center">
+        <Button
+          className="bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+          onClick={handleDownloadReport}
+        >
+          Download Report
+        </Button>
+      </div>
     </div>
   );
 }
+
