@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect } from "react";
-import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar} from "@nextui-org/react";
+import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
 import { supabase } from "../utils/supabase_service_client";
 import { User } from "../models/AuthModels";
@@ -12,7 +12,8 @@ export default function NavBar() {
 
     const menuItems = [
       "Home",
-      "Help"
+      "Help",
+      "Saved Reports"
       // "Profile",
       // "Analytics",
       // "Log Out",
@@ -70,6 +71,19 @@ export default function NavBar() {
             <Link href="/help" className="text-dark-primaryTextColor dark:text-primaryTextColor">
               Help
             </Link>
+          </NavbarItem>
+          <NavbarItem>
+              {!user ? (
+                  <Tooltip content="Please log in to access Saved Reports">
+                      <span className="cursor-not-allowed">
+                          Saved Reports
+                      </span>
+                  </Tooltip>
+              ) : (
+                  <Link href="/savedreports" className="text-dark-primaryTextColor dark:text-primaryTextColor">
+                      Saved Reports
+                  </Link>
+              )}
           </NavbarItem>
         </NavbarContent>
   
