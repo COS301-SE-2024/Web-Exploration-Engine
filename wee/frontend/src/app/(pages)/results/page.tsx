@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
+import 'jspdf-autotable';
 interface Classifications {
   label: string;
   score: number;
@@ -85,23 +86,61 @@ function ResultsComponent() {
     router.push(`/scraperesults`);
   };
 
+  const sanitizeFilename = (url: string | null): string => {
+    if (!url) return 'website-summary-report'; 
+  
+    return url
+      .replace(/^https?:\/\//, '') // Remove the protocol (http:// or https://)
+      .replace(/[\/:*?"<>|]/g, '_') // Replace forbidden characters with underscores
+      .replace(/\.\.+$/, '') // Remove trailing dots 
+      .slice(0, 50); 
+  };
+
   const handleDownloadReport = () => {
     const doc = new jsPDF();
-    doc.text(`Results for: ${url}`, 10, 10);
+  
+    // Title
+    doc.setFontSize(20);
+    doc.text('Individual Report', 14, 20);
+  
+    // WEE Green theme
+    const GreenColor = [47, 139, 87]; 
+  
+    // Table Header
+    doc.setFontSize(14);
+    doc.autoTable({
+      head: [['Category', 'Information']],
+      body: [
+        ['URL', url || 'N/A'],
+        ['Title', summaryInfo?.title || 'N/A'],
+        ['Description', summaryInfo?.description || 'N/A'],
+        ['Website Status', websiteStatus || 'N/A'],
+        ['Crawlable', isCrawlable ? 'Yes' : 'No'],
+        ['Industry', industryClassification?.label || 'N/A'],
+        ['Industry Confidence Score', isCrawlable ? `${(industryClassification?.score ? (industryClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
+        ['Domain Match', domainClassification?.label || 'N/A'],
+        ['Domain Match Confidence Score', isCrawlable ? `${(domainClassification?.score ? (domainClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
+      ],
+      startY: 30,
+      margin: { horizontal: 14 },
+      styles: { cellPadding: 4 },
+      headStyles: {
+        fillColor: GreenColor, 
+        textColor: [255, 255, 255], 
+        fontStyle: 'bold',
+      },
+      columnStyles: {
+        0: { cellWidth: 60 }, 
+        1: { cellWidth: 'auto' }, 
+      },
+    });
+    const totalPages = doc.internal.getNumberOfPages();
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of ${totalPages}`, 200, 290, null, null, 'right');
 
-    doc.text(`Title: ${summaryInfo?.title || 'N/A'}`, 10, 20);
-    doc.text(`Description: ${summaryInfo?.description || 'N/A'}`, 10, 30);
-
-    doc.text(`Website Status: ${websiteStatus}`, 10, 40);
-    doc.text(`Crawlable: ${isCrawlable ? 'Yes' : 'No'}`, 10, 50);
-
-    doc.text(`Industry: ${industryClassification?.label || 'N/A'}`, 10, 60);
-    doc.text(`Industry Confidence Score: ${industryClassification?.score ? (industryClassification?.score * 100).toFixed(2) : '0'}%`, 10, 70);
-
-    doc.text(`Domain Match: ${domainClassification?.label || 'N/A'}`, 10, 80);
-    doc.text(`Domain Match Confidence Score: ${domainClassification?.score ? (domainClassification?.score * 100).toFixed(2) : '0'}%`, 10, 90);
-
-    doc.save('report.pdf');
+    const filename = sanitizeFilename(url) || 'website-summary-report';
+    doc.save(`${filename}.pdf`);
   };
 
   // Pagination Logic
