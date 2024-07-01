@@ -7,8 +7,9 @@ import { RadialBar } from '../../components/Graphs';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
-import { FiClock, FiCheck, FiSearch } from "react-icons/fi";
+import { FiClock, FiCheck, FiSearch} from "react-icons/fi";
 import { InfoPopOver } from '../../components/InfoPopOver';
+import { ExportDropdown } from '../../components/ExportDropdown';
 import Link from 'next/link';
 
 interface industryPercentages {
@@ -78,11 +79,16 @@ export default function SummaryReport() {
                 Back
             </Button>
 
-            <div className="mb-8 text-center">
-                <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Scraping Dashboard/Summary
+            <div className="mt-4 mb-8 text-center">
+                <h1 className="font-poppins-bold text-4xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                    Summary Report
                 </h1>
+                <div className="mt-4 mr-4 flex justify-end">
+                    <ExportDropdown />
+                </div>
             </div>
+            
+
 
             {/* General stats */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">

@@ -76,7 +76,7 @@ describe('SummaryReport Page', () => {
   };
   it('renders the summary report page correctly', async () => {
     render(<SummaryReport />);
-    expect(screen.getByText('Scraping Dashboard/Summary')).toBeDefined();
+    expect(screen.getByText('Summary Report')).toBeDefined();
     expect(screen.getByText('General stats')).toBeDefined();
   });
 
