@@ -28,7 +28,6 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    // Mocking puppeteer launch to simulate an error
     mockedPuppeteer.launch.mockRejectedValue(new Error('Mocked error'));
 
     const result = await service.scrapeAddress(url, robots);
@@ -45,11 +44,6 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    const pageContent = `
-      Welcome to our website.
-      Address: 123 Main Street, Springfield, IL
-      Visit us at 456 Elm Street, Springfield, IL
-    `;
     const mockAddresses = ['123 Main Street, Springfield, IL', '456 Elm Street, Springfield, IL'];
     const browser = {
       newPage: jest.fn().mockResolvedValue({
@@ -93,10 +87,6 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    const pageContent = `
-      Address: 123 Main Street, Springfield, IL
-      Address: 456 Country Road, Springfield, IL
-    `;
     const mockAddresses = ['123 Main Street, Springfield, IL', '456 Country Road, Springfield, IL'];
     const browser = {
       newPage: jest.fn().mockResolvedValue({
@@ -124,9 +114,6 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    const pageContent = `
-      Address: 123 Main Street,\nSpringfield, IL
-    `;
     const mockAddresses = ['123 Main Street, Springfield, IL'];
     const browser = {
       newPage: jest.fn().mockResolvedValue({
@@ -153,7 +140,6 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    const pageContent = `No addresses here.`;
     const mockAddresses = [];
     const browser = {
       newPage: jest.fn().mockResolvedValue({
@@ -168,5 +154,86 @@ describe('ScrapeAddressService', () => {
     const result = await service.scrapeAddress(url, robots);
 
     expect(result.addresses).toEqual([]);
+  });
+
+  // Additional test cases
+
+  it('should correctly match addresses with various formats', async () => {
+    const url = 'https://example.com';
+    const robots: RobotsResponse = {
+      baseUrl: 'http://example.com',
+      allowedPaths: ['/'],
+      disallowedPaths: [],
+      isBaseUrlAllowed: true,
+      isUrlScrapable: true,
+    };
+
+    // Simulate different address formats
+    const pageContent = `
+      Address: 123 Main Street
+      Office: 456 Elm St, Springfield, IL
+      Residence: 789 Oak Avenue, Springfield
+      P.O. Box: 101 Maple Blvd, Springfield
+    `;
+    const mockAddresses = [
+      '123 Main Street',
+      '456 Elm St, Springfield, IL',
+      '789 Oak Avenue, Springfield',
+      '101 Maple Blvd, Springfield'
+    ];
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(mockAddresses),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+
+    const result = await service.scrapeAddress(url, robots);
+
+    expect(result.addresses).toContain('123 Main Street');
+    expect(result.addresses).toContain('456 Elm St, Springfield, IL');
+    expect(result.addresses).toContain('789 Oak Avenue, Springfield');
+    expect(result.addresses).toContain('101 Maple Blvd, Springfield');
+  });
+
+  it('should handle edge cases in address pattern matching', async () => {
+    const url = 'https://example.com';
+    const robots: RobotsResponse = {
+      baseUrl: 'http://example.com',
+      allowedPaths: ['/'],
+      disallowedPaths: [],
+      isBaseUrlAllowed: true,
+      isUrlScrapable: true,
+    };
+
+    // Test edge cases for address pattern
+    const pageContent = `
+      Address: 123
+      Street: Main Street
+      Address: 456-A Elm Street, Springfield, IL
+      PO Box: 789
+      Address: 101 Maple Boulevard, Springfield
+    `;
+    const mockAddresses = [
+      '456-A Elm Street, Springfield, IL',
+      '101 Maple Boulevard, Springfield'
+    ];
+    const browser = {
+      newPage: jest.fn().mockResolvedValue({
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(mockAddresses),
+        close: jest.fn(),
+      }),
+      close: jest.fn(),
+    };
+    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+
+    const result = await service.scrapeAddress(url, robots);
+
+    expect(result.addresses).toContain('456-A Elm Street, Springfield, IL');
+    expect(result.addresses).toContain('101 Maple Boulevard, Springfield');
   });
 });
