@@ -10,6 +10,7 @@ import {
   ClassifyIndustryOperation, ClassifyIndustryQuery, ClassifyIndustryResponse200,
   ScrapeImagesOperation, ScrapeImagesQuery, ScrapeImagesResponse200, ScrapeImagesResponse400,
   ScrapeLogoOperation, ScrapeLogoQuery, ScrapeLogoResponse200, ScrapeLogoResponse400,
+  ScreenshotOperation, ScreenshotQuery, ScreenshotResponse200, ScreenshotResponse400, ScreenshotResponse500,
 } from './scraper.api';
 import { StringDecoder } from 'string_decoder';
 
@@ -20,9 +21,9 @@ export class ScraperController {
     private readonly scraperService: ScraperService,
   ) {}
 
-  /*  
-    This is the endpoint that will be used through the frontend to scrape the website 
-    Right now it only takes in a URL through a get request - but in future it will take 
+  /*
+    This is the endpoint that will be used through the frontend to scrape the website
+    Right now it only takes in a URL through a get request - but in future it will take
     in the URL and the customised scraping options
   */
   @ScrapeOperation
@@ -44,7 +45,7 @@ export class ScraperController {
   async readRobotsFile(@Query('url') url: string) {
     return this.scraperService.readRobotsFile(url);
   }
-  
+
   @ScrapeMetadataOperation
   @ScrapeMetadataQuery
   @ScrapeMetadataResponse200
@@ -89,5 +90,15 @@ export class ScraperController {
     return this.scraperService.scrapeLogo(url);
   }
 
-  
+  @ScreenshotOperation
+  @ScreenshotQuery
+  @ScreenshotResponse200
+  @ScreenshotResponse400
+  @ScreenshotResponse500
+  @Get('screenshot')
+  async getScreenshot(@Query('url') url: string) {
+    return this.scraperService.getScreenshot(url);
+  }
+
+
 }

@@ -19,11 +19,11 @@ export const ReadRobotsResponse200 = ApiResponse({
     type: 'object',
     properties: {
       baseUrl: { type: 'string' },
-      allowedPaths: { 
+      allowedPaths: {
         type: "array",
         "items": { type: "string" }
       },
-      disallowedPaths: { 
+      disallowedPaths: {
         type: "array",
         "items": { type: "string" }
       },
@@ -187,6 +187,42 @@ export const ClassifyIndustryResponse200 = ApiResponse({
           score: { type: 'number' },
         },
       },
+    },
+  },
+});
+
+// Screenshot endpoint
+export const ScreenshotOperation = ApiOperation({ summary: 'Capture screenshot of a website' });
+export const ScreenshotQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to capture screenshot' });
+export const ScreenshotResponse200 = ApiResponse({
+  status: 200,
+  description: 'Screenshot successfully captured',
+  schema: {
+    type: 'string',
+    format: 'binary',
+  },
+});
+export const ScreenshotResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+export const ScreenshotResponse500 = ApiResponse({
+  status: 500,
+  description: 'Internal Server Error. An error occurred while capturing the screenshot',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
     },
   },
 });

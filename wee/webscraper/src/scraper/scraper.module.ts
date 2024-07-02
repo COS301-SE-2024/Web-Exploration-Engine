@@ -10,15 +10,17 @@ import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 import { IndustryClassificationService } from './industry-classification/industry-classification.service';
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
+import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 
 @Module({
   controllers: [ScraperController],
   providers: [
-    ScraperService, 
-    RobotsService, 
-    ScrapeMetadataService, 
-    ScrapeStatusService, 
-    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService
+    ScraperService,
+    RobotsService,
+    ScrapeMetadataService,
+    ScrapeStatusService,
+    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,
+    ScreenshotService,
   ],
 })
 export class ScraperModule {}

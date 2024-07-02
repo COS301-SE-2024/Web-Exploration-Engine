@@ -7,6 +7,7 @@ import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 import { IndustryClassificationService } from './industry-classification/industry-classification.service';
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
+import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 // Models
 import { ErrorResponse, RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
 
@@ -19,6 +20,7 @@ export class ScraperService {
     private readonly industryClassificationService: IndustryClassificationService,
     private readonly scrapeLogoService: ScrapeLogoService,
     private readonly scrapeImagesService: ScrapeImagesService,
+    private readonly screenshotService: ScreenshotService,
   ) {}
 
   async scrape(url: string) {
@@ -76,7 +78,7 @@ export class ScraperService {
 
     // classify industry based on metadata and domain name
     const industryClassificationPromise = this.industryClassificationService.classifyIndustry(data.url, data.metadata);
-    
+
 
     // scrape logo
     const logoPromise = this.scrapeLogoService.scrapeLogo(data.url, data.metadata, data.robots);
@@ -84,7 +86,7 @@ export class ScraperService {
     // scrape images - doesn't use metadata -- need to check if scraping images is allowed
     const imagesPromise = this.scrapeImagesService.scrapeImages(data.url, data.robots);
 
-    const [industryClassification, logo, images] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise]);    
+    const [industryClassification, logo, images] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise]);
     data.industryClassification = industryClassification;
     data.logo = logo;
     data.images = images;
@@ -102,7 +104,7 @@ export class ScraperService {
     return data;
   }
 
-  scrapeUrls(urls: string[]) { 
+  scrapeUrls(urls: string[]) {
     // scrape multiple urls in parallel
     // return data
   };
@@ -154,5 +156,13 @@ export class ScraperService {
       return metadataResponse;
     }
     return this.scrapeImagesService.scrapeImages(url, robotsResponse);
+  }
+ //get screenshot of the homepage
+  async getScreenshot(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ("errorStatus" in robotsResponse) {
+      return robotsResponse;
+    }
+    return this.screenshotService.captureScreenshot(url, robotsResponse);
   }
 }
