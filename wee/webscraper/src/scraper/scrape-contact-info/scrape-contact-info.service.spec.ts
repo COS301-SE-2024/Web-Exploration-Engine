@@ -31,14 +31,11 @@ describe('ScrapeContactInfoService', () => {
     // Mocking puppeteer launch to simulate an error
     mockedPuppeteer.launch.mockRejectedValue(new Error('Mocked error'));
 
-    try {
-      await service.scrapeContactInfo(url, robots);
-    } catch (error) {
-      expect(error.message).toBe('Mocked error');
-    }
+    const result = await service.scrapeContactInfo(url, robots);
+    expect(result).toEqual({ emails: [], phones: [], socialLinks: [] });
   });
 
-  it('should scrape emails and phones when URL is scrapable', async () => {
+  it('should scrape contact information from the page', async () => {
     const url = 'https://example.com';
     const robots: RobotsResponse = {
       baseUrl: 'http://example.com',
@@ -47,28 +44,63 @@ describe('ScrapeContactInfoService', () => {
       isBaseUrlAllowed: true,
       isUrlScrapable: true,
     };
-  
+
     const pageContent = `
-      Contact us:
-      Email: test@example.com
-      Phone: 123-456-7890
+      Contact us at contact@example.com or call us at +1-800-555-1234.
+      Follow us on Facebook and Twitter.
     `;
+    const links = [
+      'https://facebook.com/example',
+      'https://twitter.com/example',
+      'https://example.com/other'
+    ];
+
+    const mockEmails = ['contact@example.com'];
+    const mockPhones = ['+1-800-555-1234'];
+    const mockSocialLinks = [
+      'https://facebook.com/example',
+      'https://twitter.com/example'
+    ];
+
     const browser = {
       newPage: jest.fn().mockResolvedValue({
         goto: jest.fn(),
-        evaluate: jest.fn().mockResolvedValue(pageContent),
+        evaluate: jest.fn()
+          .mockImplementation((fn: () => any) => {
+            if (fn.toString().includes('document.body.innerText')) {
+              return Promise.resolve(pageContent);
+            } else if (fn.toString().includes('Array.from(document.querySelectorAll')) {
+              return Promise.resolve(links);
+            }
+            return Promise.resolve([]);
+          }),
         close: jest.fn(),
       }),
       close: jest.fn(),
     };
     mockedPuppeteer.launch.mockResolvedValue(browser as any);
-  
+
     const result = await service.scrapeContactInfo(url, robots);
-  
-    expect(result.emails).toContain('test@example.com');
-    expect(result.phones).toContain('123-456-7890');
+
+    expect(result.emails).toContain('contact@example.com');
+    expect(result.phones).toContain('+1-800-555-1234');
+    expect(result.socialLinks).toContain('https://facebook.com/example');
+    expect(result.socialLinks).toContain('https://twitter.com/example');
     expect(browser.newPage).toHaveBeenCalledTimes(1);
     expect(browser.close).toHaveBeenCalledTimes(1);
   });
-  
+
+  it('should return empty arrays if URL is not scrapable', async () => {
+    const url = 'https://example.com';
+    const robots: RobotsResponse = {
+      baseUrl: 'http://example.com',
+      allowedPaths: ['/'],
+      disallowedPaths: [],
+      isBaseUrlAllowed: true,
+      isUrlScrapable: false,
+    };
+
+    const result = await service.scrapeContactInfo(url, robots);
+    expect(result).toEqual({ emails: [], phones: [], socialLinks: [] });
+  });
 });
