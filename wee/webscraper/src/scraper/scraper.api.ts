@@ -202,9 +202,11 @@ export const ScrapeContactInfoResponse200 = ApiResponse({
     properties: {
       emails: { type: 'array', items: { type: 'string' } },
       phones: { type: 'array', items: { type: 'string' } },
+      socialLinks: { type: 'array', items: { type: 'string' } }, 
     },
   },
 });
+
 export const ScrapeContactInfoResponse400 = ApiResponse({
   status: 400,
   description: 'Bad Request. URL parameter is required',
