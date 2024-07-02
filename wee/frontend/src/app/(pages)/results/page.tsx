@@ -16,6 +16,8 @@ import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
+import { ExportDropdown } from '../../components/ExportDropdown';
+
 interface Classifications {
   label: string;
   score: number;
@@ -114,9 +116,12 @@ function ResultsComponent() {
       </Button>
 
       <div className="mb-8 text-center">
-        <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Results of {url}
-        </h1>
+          <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Results of {url}
+          </h1>
+          <div className="mt-4 flex justify-center">
+              <ExportDropdown />
+          </div>
       </div>
 
       <div className="py-3">
