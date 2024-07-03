@@ -1,11 +1,10 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
 import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
-import { useUserContext } from "../context/UserContext";
 
 // Models
 import Scraping from "../models/ScrapingModel";
@@ -18,7 +17,6 @@ export default function Home() {
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
 
-    const { user, setUser } = useUserContext();
         
    
     const isValidUrl = (urlString: string) => {
