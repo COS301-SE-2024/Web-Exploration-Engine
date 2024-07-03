@@ -9,7 +9,6 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
     const [summaryReport, setSummaryReport] = useState<Summary>({} as Summary);
     const [processedUrls, setProcessedUrls] = useState<string[]>([]);
     const [processingUrls, setProcessingUrls] = useState<string[]>([]);
-    const test = 'Test the context';
 
     return (
         <ScrapingContext.Provider value={{

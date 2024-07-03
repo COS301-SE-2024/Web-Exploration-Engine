@@ -16,9 +16,9 @@ export async function login(req: LoginRequest) {
   }
 
   return { 
-    accessToken: data?.session?.access_token,
     uuid: data?.user?.id,
-   }
+    emailVerified: data?.user?.email_confirmed_at ? true : false,
+  }
 }
 
 export async function signUp(req: SignUpRequest) {
@@ -63,7 +63,7 @@ export async function signUp(req: SignUpRequest) {
   }
 
   return { 
-    accessToken: data?.session?.access_token,
     uuid: data?.user?.id,
-   }
+    emailVerified: data?.user?.email_confirmed_at ? true : false,
+  }
 }
