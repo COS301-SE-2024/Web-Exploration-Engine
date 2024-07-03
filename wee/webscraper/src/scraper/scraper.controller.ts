@@ -10,6 +10,8 @@ import {
   ClassifyIndustryOperation, ClassifyIndustryQuery, ClassifyIndustryResponse200,
   ScrapeImagesOperation, ScrapeImagesQuery, ScrapeImagesResponse200, ScrapeImagesResponse400,
   ScrapeLogoOperation, ScrapeLogoQuery, ScrapeLogoResponse200, ScrapeLogoResponse400,
+  ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
+   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
 } from './scraper.api';
 import { StringDecoder } from 'string_decoder';
 
@@ -89,5 +91,24 @@ export class ScraperController {
     return this.scraperService.scrapeLogo(url);
   }
 
+  @ScrapeContactInfoOperation
+  @ScrapeContactInfoQuery
+  @ScrapeContactInfoResponse200
+  @ScrapeContactInfoResponse400
+  @ScrapeContactInfoResponse500
+  @Get('scrape-contact-info')
+  async scrapeContactInfo(@Query('url') url: string) {
+    return this.scraperService.scrapeContactInfo(url);
+  }
+
+  @ScrapeAddressesOperation
+  @ScrapeAddressesQuery
+  @ScrapeAddressesResponse200
+  @ScrapeAddressesResponse400
+  @ScrapeAddressesResponse500
+  @Get('scrape-addresses')
+  async scrapeAddresses(@Query('url') url: string) {
+    return this.scraperService.scrapeAddress(url);
+  }
   
 }
