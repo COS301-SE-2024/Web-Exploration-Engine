@@ -105,7 +105,7 @@ function ResultsComponent() {
     const columnWidth = [60, 190];
     
     // Function to draw a horizontal line
-    const drawLine = (lineY) => {
+    const drawLine = (lineY: number): void => {
       doc.setDrawColor(200, 200, 200); // Light grey color
       doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); 
     };
@@ -122,7 +122,7 @@ function ResultsComponent() {
     doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
   
     // Function to split text into lines that fit within a max width
-    const splitText = (text, maxWidth) => {
+    const splitText =(text: string, maxWidth: number): string[] => {
       const lines = [];
       let line = '';
       const words = text.split(' ');
