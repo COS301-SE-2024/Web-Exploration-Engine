@@ -21,9 +21,7 @@ export class ScreenshotService {
     // Convert the screenshot to base64
     const screenshotBase64 = screenshotBuffer.toString('base64');
 
-    const decodedBuffer = Buffer.from(screenshotBase64, 'base64');
-    const filename = `screenshot_${Date.now()}.png`;
-    await fs.writeFile(filename, decodedBuffer);
+ 
 
     return { screenshot: screenshotBase64 };
   }
