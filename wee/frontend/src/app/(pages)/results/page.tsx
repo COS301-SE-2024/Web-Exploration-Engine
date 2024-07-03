@@ -87,15 +87,6 @@ function ResultsComponent() {
     router.push(`/scraperesults`);
   };
 
-  const sanitizeFilename = (url: string | null): string => {
-    if (!url) return 'website-summary-report'; 
-  
-    return url
-      .replace(/^https?:\/\//, '') // Remove the protocol (http:// or https://)
-      .replace(/[\/:*?"<>|]/g, '_') // Replace forbidden characters with underscores
-      .slice(0, 50); 
-  };
-
   const handleDownloadReport = () => {
     const doc = new jsPDF();
   
@@ -142,7 +133,22 @@ function ResultsComponent() {
     doc.setTextColor(150);
     doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of ${totalPages}`, 200, 290, null, null, 'right');
 
-    const filename = sanitizeFilename(url) || 'website-summary-report';
+    const cleanFilename = (url: string | null): string => {
+      if (!url) return 'website-summary-report';
+      
+      // Remove protocol
+      let filename = url.replace('http://', '').replace('https://', '');
+  
+      // Replace forbidden characters with underscores
+      filename = filename.split('').map(char => {
+        return ['/', ':', '*', '?', '"', '<', '>', '|'].includes(char) ? '_' : char;
+      }).join('');
+  
+      // Truncate to 50 characters
+      return filename.length > 50 ? filename.substring(0, 50) : filename;
+    };
+  
+    const filename = cleanFilename(url);
     doc.save(`${filename}.pdf`);
   };
 
