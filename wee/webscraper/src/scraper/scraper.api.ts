@@ -192,7 +192,7 @@ export const ClassifyIndustryResponse200 = ApiResponse({
 });
 
 // Screenshot endpoint
-export const ScreenshotOperation = ApiOperation({ summary: 'Capture screenshot of a website-homepage' });
+export const ScreenshotOperation = ApiOperation({ summary: 'Capture screenshot of a website' });
 export const ScreenshotQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to capture screenshot' });
 export const ScreenshotResponse200 = ApiResponse({
   status: 200,
