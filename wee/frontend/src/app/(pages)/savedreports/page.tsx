@@ -13,11 +13,37 @@ import { FiTrash2 } from "react-icons/fi";
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import Link from 'next/link';
+import { useScrapingContext } from '../../context/ScrapingContext';
+import { useEffect } from 'react';
+import { getReports } from '../../services/SaveReportsService';
 
 function ResultsComponent() {
- 
+  const {
+    savedReports,
+    setSavedReports,
+  } = useScrapingContext();
 
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchReports = async () => { 
+      console.log('User:', user);
+      if (user && user.id) {
+        try {
+          const reports = await getReports(user);
+          console.log('Saved reports:', reports);
+          setSavedReports(reports);
+          
+        } catch (error) {
+          console.error('Error fetching saved reports:', error);
+        }
+      } else {
+        console.error('User does not have an ID');
+      }
+    };
+
+    fetchReports();
+  }, [user, setSavedReports]);
 
   // Mock data for demonstration
   const mockItems = [
@@ -202,7 +228,7 @@ function ResultsComponent() {
             RESULT &amp; REPORT
           </TableColumn>
           <TableColumn
-            key="status"
+            key="delete"
             className="text-center hidden sm:table-cell"
           >
             DELETE
@@ -218,7 +244,7 @@ function ResultsComponent() {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
-                  {item.timestamp}
+                  {item.savedAt}
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
                   <Button
@@ -303,7 +329,7 @@ function ResultsComponent() {
             RESULT &amp; REPORT
           </TableColumn>
           <TableColumn
-            key="status"
+            key="delete"
             className="text-center hidden sm:table-cell"
           >
             DELETE
@@ -320,7 +346,7 @@ function ResultsComponent() {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
-                  {item.timestamp}
+                  {item.savedAt}
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
                   <Button

@@ -9,6 +9,7 @@ import { signUp } from "../../services/AuthService";
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
 
+
 export default function SignUp() {
     const {isOpen, onOpenChange} = useDisclosure();
 
@@ -17,6 +18,7 @@ export default function SignUp() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [error, setError] = useState('');
+
 
     const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,7 +86,7 @@ export default function SignUp() {
             return () => clearTimeout(timer);
         }
 
-        if ('uuid' in response) {
+        if ('uuid' in response) {            
             onOpenChange();
         }
 

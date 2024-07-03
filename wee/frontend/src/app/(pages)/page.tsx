@@ -1,16 +1,29 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
 import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
+import { useUserContext } from "../context/UserConext";
+import { getSupabaseClient } from '../utils/supabase_anon_client';
+
 
 export default function Home() {
     const { setUrls, setProcessedUrls, setProcessingUrls } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
+
+    const { user, setUser } = useUserContext();
+
+    useEffect(() => {
+      const checkUser = async () => {
+          
+      };
+
+      checkUser();
+  }, []);
    
     const isValidUrl = (urlString: string) => {
         try {
@@ -45,6 +58,7 @@ export default function Home() {
               return () => clearTimeout(timer);
           }
       }
+
       setError('');
 
       // set the urls to scrape in the context

@@ -12,7 +12,7 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className="min-h-screen font-poppins-regular bg-primaryBackgroundColor text-primaryTextColor dark:bg-dark-primaryBackgroundColor dark:text-dark-primaryTextColor">
           <Providers>
-            <NavBar />
+            <NavBar/>
             {children}
             <HelpPopup/>
           </Providers>
