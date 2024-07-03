@@ -1,5 +1,5 @@
 'use client';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import WEEPagination from '../../components/Util/Pagination';
 import {
   TableHeader,
@@ -13,90 +13,52 @@ import { FiTrash2 } from "react-icons/fi";
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import Link from 'next/link';
+import { getReports } from '../../services/SaveReportService';
+import { useUserContext } from '../../context/UserContext';
+import { ReportRecord } from '../../models/ReportModels';
+
 
 function ResultsComponent() {
- 
-
+  const { user } = useUserContext();
   const router = useRouter();
 
-  // Mock data for demonstration
-  const mockItems = [
-    {
-      reportName: 'Report 1',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report for https://example.com',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Summary Report 1',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: true,
-    },
-    {
-      reportName: 'Summary Report for https://example.com',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: true,
-    },
-    {
-      reportName: 'Report 2',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report 3',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report 4',
-      timestamp: '2021-09-01 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Summary Report 2',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: true,
-    },
-    {
-      reportName: 'Summary Report for https://example2.com',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: true,
-    },
-    {
-      reportName: 'Report 5',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report 6',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report 7',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: false,
-    },
-    {
-      reportName: 'Report 8',
-      timestamp: '2021-09-02 12:00:00',
-      isSummary: false,
-    },
-    // Add more mock items as needed
-  ];
+  const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState<ReportRecord[]>([]);
+  const [summaryReports, setSummaryReports] = useState<ReportRecord[]>([]);
+  const [error, setError] = useState<string>('');
 
-  // split the items into two arrays
-  const reports = mockItems.filter(item => !item.isSummary);
-  const summaryReports = mockItems.filter(item => item.isSummary);
-
-
+  
   const handleResultPage = (url: string) => {
     router.push(`/results?url=${encodeURIComponent(url)}`);
   };
+
+  useEffect(() => {
+    async function fetchReports() {
+      console.log("Fetching reports for user: ", user)
+      if(!user) {
+        console.error('User not found');
+        return;
+      };
+      try {
+        setLoading(true);
+        const reportsData = await getReports(user); // Replace with your actual getReports function
+        // console.log("Reports Data: ", reportsData);
+        const formattedReports = reportsData.filter(item => !item.isSummary);
+        const formattedSummaryReports = reportsData.filter(item => item.isSummary);
+        setReports(formattedReports);
+        setSummaryReports(formattedSummaryReports);
+        setLoading(false);
+      } catch (error) {
+        setError((error as Error).message || 'An error occurred');
+        console.error('Error fetching reports:', error);
+        setLoading(false);
+      }
+    }
+    
+    fetchReports();
+    console.log("Reports: ", reports);
+    console.log("Summary Reports: ", summaryReports);
+  }, []);
 
   // Report pagination
   const [page, setPage] = React.useState(1);
@@ -202,7 +164,7 @@ function ResultsComponent() {
             RESULT &amp; REPORT
           </TableColumn>
           <TableColumn
-            key="status"
+            key="delete"
             className="text-center hidden sm:table-cell"
           >
             DELETE
@@ -218,7 +180,7 @@ function ResultsComponent() {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
-                  {item.timestamp}
+                  {item.savedAt}
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
                   <Button
@@ -303,7 +265,7 @@ function ResultsComponent() {
             RESULT &amp; REPORT
           </TableColumn>
           <TableColumn
-            key="status"
+            key="delete"
             className="text-center hidden sm:table-cell"
           >
             DELETE
@@ -320,7 +282,7 @@ function ResultsComponent() {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
-                  {item.timestamp}
+                  {item.savedAt}
                 </TableCell>
                 <TableCell className="text-center hidden sm:table-cell">
                   <Button
