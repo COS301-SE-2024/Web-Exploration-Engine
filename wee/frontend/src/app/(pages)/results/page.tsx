@@ -89,17 +89,19 @@ function ResultsComponent() {
 
   const handleDownloadReport = () => {
     const doc = new jsPDF();
-  
+    
     // Title
     doc.setFontSize(20);
     const title = 'Web Exploration Engine Individual Report';
-    const titleWidth = doc.getStringUnitWidth(title) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+  
+    const fontSize = doc.internal.getFontSize();
+    const titleWidth = doc.getStringUnitWidth(title) * fontSize / doc.internal.scaleFactor;
     const x = (doc.internal.pageSize.width - titleWidth) / 2;
     doc.text(title, x, 20);
-  
+    
     // WEE Green theme
     const GreenColor = [47, 139, 87]; 
-  
+    
     // Table Header
     doc.setFontSize(14);
     doc.autoTable({
@@ -128,11 +130,14 @@ function ResultsComponent() {
         1: { cellWidth: 'auto' }, 
       },
     });
+  
+    // Page number
     const totalPages = doc.internal.getNumberOfPages();
     doc.setFontSize(10);
     doc.setTextColor(150);
     doc.text(`Page ${doc.internal.getCurrentPageInfo().pageNumber} of ${totalPages}`, 200, 290, null, null, 'right');
-
+  
+    // Clean Filename
     const cleanFilename = (url: string | null): string => {
       if (!url) return 'website-summary-report';
       
@@ -151,7 +156,7 @@ function ResultsComponent() {
     const filename = cleanFilename(url);
     doc.save(`${filename}.pdf`);
   };
-
+  
   // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
