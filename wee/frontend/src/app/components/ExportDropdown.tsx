@@ -1,10 +1,12 @@
-'use client'
 import React from "react";
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, cn} from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 
+interface ExportDropdownProps {
+  onDownloadReport: () => void;
+}
 
-export const ExportDropdown = () => {
+export const ExportDropdown: React.FC<ExportDropdownProps> = ({ onDownloadReport }) => {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
   return (
@@ -29,6 +31,7 @@ export const ExportDropdown = () => {
           key="download"
           startContent={<FiDownload className={iconClasses}/>}
           description="Download the report to your device"
+          onClick={onDownloadReport}
         >
           Download
         </DropdownItem>

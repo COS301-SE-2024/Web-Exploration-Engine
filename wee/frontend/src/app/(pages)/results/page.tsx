@@ -185,7 +185,7 @@ function ResultsComponent() {
             Results of {url}
           </h1>
           <div className="mt-4 flex justify-center">
-              <ExportDropdown />
+              <ExportDropdown onDownloadReport={handleDownloadReport}/>
           </div>
       </div>
 
@@ -410,16 +410,6 @@ function ResultsComponent() {
           No images available.
         </p>
       )}
-
-      {/* Download Report Button */}
-      <div className="py-4 text-center">
-        <Button
-          className="bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-          onClick={handleDownloadReport}
-        >
-          Download Report
-        </Button>
-      </div>
     </div>
   );
 }
