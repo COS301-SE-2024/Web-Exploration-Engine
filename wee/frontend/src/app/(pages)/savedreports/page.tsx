@@ -9,7 +9,6 @@ import {
   TableCell,
   Button,
 } from '@nextui-org/react';
-import { FiTrash2 } from "react-icons/fi";
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import Link from 'next/link';
@@ -201,12 +200,6 @@ function ResultsComponent() {
           >
             RESULT &amp; REPORT
           </TableColumn>
-          <TableColumn
-            key="status"
-            className="text-center hidden sm:table-cell"
-          >
-            DELETE
-          </TableColumn>
         </TableHeader>
 
         <TableBody emptyContent={'You have no saved reports'}>
@@ -227,14 +220,6 @@ function ResultsComponent() {
                     data-testid={'btnView' + index}
                   >
                     View
-                  </Button>
-                </TableCell>
-                <TableCell className="text-center hidden sm:table-cell">
-                  <Button
-                    className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
-                    data-testid={'btnDelete' + index}
-                  >
-                    <FiTrash2 />
                   </Button>
                 </TableCell>
               </TableRow>
@@ -302,13 +287,6 @@ function ResultsComponent() {
           >
             RESULT &amp; REPORT
           </TableColumn>
-          <TableColumn
-            key="status"
-            className="text-center hidden sm:table-cell"
-          >
-            DELETE
-          </TableColumn>
-
         </TableHeader>
 
         <TableBody emptyContent={'You have no saved summary reports'}>
@@ -329,14 +307,6 @@ function ResultsComponent() {
                     data-testid={'btnView' + index}
                   >
                     View
-                  </Button>
-                </TableCell>
-                <TableCell className="text-center hidden sm:table-cell">
-                  <Button
-                    className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
-                    data-testid={'btnDelete' + index}
-                  >
-                    <FiTrash2 />
                   </Button>
                 </TableCell>
               </TableRow>
