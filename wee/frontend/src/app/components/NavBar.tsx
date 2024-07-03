@@ -2,12 +2,13 @@
 import React, { useEffect } from "react";
 import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
-import { useUserContext } from "../context/UserConext";
-
+import { supabase } from "../utils/supabase_service_client";
+import { User } from "../models/AuthModels";
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const {user, handleSignOut } = useUserContext();
+    const [user, setUser] = React.useState<User | null>(null);
+
 
     const menuItems = [
       "Home",
@@ -17,7 +18,28 @@ export default function NavBar() {
       // "Analytics",
       // "Log Out",
     ];
-    
+
+    useEffect(() => {
+      const fetchUserData = async () => {
+          try {
+              const { data: { user } } = await supabase.auth.getUser();
+              setUser(user as unknown as User);
+          } catch (error) {
+              console.error("Error fetching user data:", error);
+          }
+      };
+  
+      fetchUserData();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+        await supabase.auth.signOut();
+        setUser(null); // Update the user state to reflect the user is signed out
+    } catch (error) {
+        console.error("Error signing out:", error);
+    }
+};
 
     return (
         <Navbar

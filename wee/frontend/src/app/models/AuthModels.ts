@@ -11,9 +11,8 @@ export interface SignUpRequest {
 }
 
 export interface AuthResponse {
-  accessToken?: string;
-  uuid: string | null;
-  emailVerified: boolean;
+  accessToken: string;
+  uuid: string;
 }
 
 export interface ErrorResponse {
@@ -23,6 +22,7 @@ export interface ErrorResponse {
 }
 
 export interface User {
+  user: {
     id: string;
     aud: string;
     role: string;
@@ -35,4 +35,5 @@ export interface User {
       provider: string;
       providers: string[];
     };
+  }
 }

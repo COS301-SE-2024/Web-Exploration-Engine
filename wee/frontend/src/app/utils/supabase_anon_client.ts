@@ -11,11 +11,6 @@ if (!SUPABASE_ANON_KEY) {
   throw new Error('Missing env.SUPABASE_ANON_PUBLIC_KEY')
 }
 
-let supabaseClient: ReturnType<typeof createClient> | null = null;
 
-export const getSupabaseClient = () => {
-  if (!supabaseClient) {
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-  return supabaseClient;
-};
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)

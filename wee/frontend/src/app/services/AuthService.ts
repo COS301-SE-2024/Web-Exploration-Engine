@@ -1,6 +1,7 @@
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
 import { supabase } from '../utils/supabase_service_client';
 
+
 export async function login(req: LoginRequest) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email: req.email,
@@ -17,7 +18,6 @@ export async function login(req: LoginRequest) {
   return { 
     accessToken: data?.session?.access_token,
     uuid: data?.user?.id,
-    emailVerified: data?.user?.email_confirmed_at ? true : false,
    }
 }
 
@@ -28,12 +28,14 @@ export async function signUp(req: SignUpRequest) {
     .select('*')
     .eq('email', req.email)
   
+
   if (usersError) {
     return {
       code: usersError.code,
       message: usersError.message,
     }
   }
+
 
   if (users && users.length > 0) {
     return {
@@ -61,6 +63,7 @@ export async function signUp(req: SignUpRequest) {
   }
 
   return { 
-    data
-  }
+    accessToken: data?.session?.access_token,
+    uuid: data?.user?.id,
+   }
 }

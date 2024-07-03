@@ -5,7 +5,6 @@ import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Button } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
-import { useUserContext } from '../../context/UserConext';
 
 const faqs = [
   {
@@ -66,8 +65,6 @@ export default function Help() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-  const { user } = useUserContext();
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

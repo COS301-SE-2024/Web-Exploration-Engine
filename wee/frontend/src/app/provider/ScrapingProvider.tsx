@@ -2,7 +2,6 @@ import React, { useState, ReactNode } from "react";
 import ScrapingContext from "../context/ScrapingContext";
 import Scraping from "../models/ScrapingModel";
 import { Summary } from "../models/ScraperModels";
-import { ReportRecord } from "../models/ReportModels";
 
 export const ScrapingProvider = ({children} : {children: ReactNode}) => {
     const [results, setResults] = useState<Scraping[]>([]);
@@ -10,8 +9,7 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
     const [summaryReport, setSummaryReport] = useState<Summary>({} as Summary);
     const [processedUrls, setProcessedUrls] = useState<string[]>([]);
     const [processingUrls, setProcessingUrls] = useState<string[]>([]);
-    const [savedReports, setSavedReports] = useState<ReportRecord[]>([]);
-    
+    const test = 'Test the context';
 
     return (
         <ScrapingContext.Provider value={{
@@ -19,8 +17,7 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
             urls, setUrls, 
             summaryReport, setSummaryReport, 
             processedUrls, setProcessedUrls, 
-            processingUrls, setProcessingUrls, 
-            savedReports, setSavedReports,
+            processingUrls, setProcessingUrls 
             }}>
             {children}
         </ScrapingContext.Provider>

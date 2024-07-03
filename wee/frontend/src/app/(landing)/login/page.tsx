@@ -12,8 +12,6 @@ import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
 
-// Context
-
 
 export default function Login() {
   const router = useRouter();
@@ -78,7 +76,7 @@ export default function Login() {
     const authResponse = response as AuthResponse;
 
     // Redirect to home page
-    router.push(`/`);
+    router.push(`/?url=${authResponse.accessToken}&uuid=${authResponse.uuid}`);
     
   };
   
