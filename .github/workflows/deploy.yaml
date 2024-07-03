@@ -1,0 +1,90 @@
+name: Deploy Frontend
+
+on:
+  workflow_run:
+    # workflows to run first?
+    workflows: ["🖥️ Tests"]
+    branches: [master]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checking out the repo
+      - name: 🛏️ Setup repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_NODE_ENV: production
+          envkey_NEXT_PUBLIC_API: "https://api-avalanche.sloththe.dev"
+          envkey_NEXT_PUBLIC_DSN: ${{ secrets.SENTRY_KEY }}
+          directory: frontend
+          file_name: .env.local
+          fail_on_empty: false
+
+      - name: Make admin envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          envkey_NODE_ENV: production
+          #envkey_NEXT_PUBLIC_ZEUS: "skunkworks.dns.net.za"
+          directory: admin-frontend#??
+          file_name: .env.local
+          fail_on_empty: false
+      
+      # Runs a single command using the runners shell
+      - name: 🔐 Install wireguard
+        run: sudo apt-get install wireguard
+
+      # Creating the wireguard configuration
+      - name: 🔐 Create WG Config
+        run: |
+          sed -i -e "s@{{WG_PRIVATEKEY}}@${{ secrets.WG_PRIVATEKEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WG_ADDRESS}}@${{ secrets.WG_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WG_DNS}}@${{ secrets.WG_DNS }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WG_PUBLICKEY}}@${{ secrets.WG_PUBLICKEY }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WG_ALLOWEDIPS}}@${{ secrets.WG_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sed -i -e "s@{{WG_ENDPOINT}}@${{ secrets.WG_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
+          sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
+      
+      # Initilizing the tunnel so we can connect to the server
+      - name: 🔐 WG Creating Tunnel
+        run: |
+          sudo apt install resolvconf
+          wg-quick up $GITHUB_WORKSPACE/tunnel.conf
+        # SSH Into Server
+      - name: 🗑️ Removing old files
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -r frontend
+      # Uploading files to server via SCP
+      - name: ☝️ Upload to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "frontend"
+          target: ./wee/
+
+      # Running Docker Compose
+      - name: 🐋 Composing
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker compose up --build --detach --force-recreate
