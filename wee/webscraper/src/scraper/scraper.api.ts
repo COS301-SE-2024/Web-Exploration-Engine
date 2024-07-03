@@ -190,3 +190,83 @@ export const ClassifyIndustryResponse200 = ApiResponse({
     },
   },
 });
+
+// Scrape Contact Info endpoint
+export const ScrapeContactInfoOperation = ApiOperation({ summary: 'Scrape contact information from a website' });
+export const ScrapeContactInfoQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape contact information from' });
+export const ScrapeContactInfoResponse200 = ApiResponse({
+  status: 200,
+  description: 'Contact information successfully scraped',
+  schema: {
+    type: 'object',
+    properties: {
+      emails: { type: 'array', items: { type: 'string' } },
+      phones: { type: 'array', items: { type: 'string' } },
+      socialLinks: { type: 'array', items: { type: 'string' } }, 
+    },
+  },
+});
+
+export const ScrapeContactInfoResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+export const ScrapeContactInfoResponse500 = ApiResponse({
+  status: 500,
+  description: 'Internal Server Error. An error occurred while scraping contact information',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+// Scrape Addresses endpoint
+export const ScrapeAddressesOperation = ApiOperation({ summary: 'Scrape addresses from a website' });
+export const ScrapeAddressesQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape addresses from' });
+export const ScrapeAddressesResponse200 = ApiResponse({
+  status: 200,
+  description: 'Addresses successfully scraped',
+  schema: {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+  },
+});
+export const ScrapeAddressesResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+export const ScrapeAddressesResponse500 = ApiResponse({
+  status: 500,
+  description: 'Internal Server Error. An error occurred while scraping addresses',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+
+
