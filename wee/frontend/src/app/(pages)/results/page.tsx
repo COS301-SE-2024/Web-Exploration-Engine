@@ -94,11 +94,10 @@ function ResultsComponent() {
     doc.setFontSize(20);
     const title = 'Web Exploration Engine Individual Report';
   
-    const fontSize = doc.internal.getFontSize();
-    const titleWidth = doc.getStringUnitWidth(title) * fontSize / doc.internal.scaleFactor;
+    const titleWidth = doc.getStringUnitWidth(title) * 20 / doc.internal.scaleFactor;
     const x = (doc.internal.pageSize.width - titleWidth) / 2;
-    doc.text(title, x, 20);
-    
+    doc.text(title, x, 20);;
+      
     // WEE Green theme
     const GreenColor = [47, 139, 87]; 
     
