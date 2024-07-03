@@ -57,15 +57,15 @@ function ResultsComponent() {
   useEffect(() => {
     if (url) {
       const urlResults = results.filter((res) => res.url === url);
-
+  
       if (urlResults && urlResults[0]) {
-        setWebsiteStatus(urlResults[0].domainStatus);
+        setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
         if ('errorStatus' in urlResults[0].robots) {
           setIsCrawlable(false);
         } else {
           setIsCrawlable(urlResults[0].robots.isUrlScrapable);
-          setWebsiteStatus(urlResults[0].domainStatus);
-          setSummaryInfo({ 
+          setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
+          setSummaryInfo({
             title: urlResults[0].metadata.title || urlResults[0].metadata.ogTitle,
             description: urlResults[0].metadata.description || urlResults[0].metadata.ogDescription
           });
@@ -80,7 +80,7 @@ function ResultsComponent() {
         }
       }
     }
-  }, [url]);
+  }, [url]);  
 
   const backToScrapeResults = () => {
     router.push(`/scraperesults`);
@@ -268,10 +268,10 @@ function ResultsComponent() {
               <TableCell>
                 <Chip
                   radius="sm"
-                  color={websiteStatus === 'live' ? 'success' : 'warning'}
+                  color={websiteStatus === 'Live' ? 'success' : 'warning'}
                   variant="flat"
                 >
-                  {websiteStatus === 'live' ? 'Live' : 'Parked'}
+                  {websiteStatus === 'Live' ? 'Live' : 'Parked'}
                 </Chip>
               </TableCell>
             </TableRow>
