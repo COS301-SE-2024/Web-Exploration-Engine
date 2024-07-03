@@ -93,7 +93,6 @@ function ResultsComponent() {
     return url
       .replace(/^https?:\/\//, '') // Remove the protocol (http:// or https://)
       .replace(/[\/:*?"<>|]/g, '_') // Replace forbidden characters with underscores
-      .replace(/\.\.+$/, '') // Remove trailing dots 
       .slice(0, 50); 
   };
 
