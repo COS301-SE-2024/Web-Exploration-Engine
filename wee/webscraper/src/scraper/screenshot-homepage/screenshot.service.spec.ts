@@ -43,18 +43,19 @@ describe('ScreenshotService', () => {
 
       // Mock puppeteer behavior
       (puppeteer.launch as jest.Mock).mockResolvedValue({
-        newPage: jest.fn().mockResolvedValue({
-          goto: jest.fn().mockResolvedValue(undefined),
-          screenshot: jest.fn().mockResolvedValue(screenshotBuffer), // Return the Buffer directly
-        }),
-        close: jest.fn().mockResolvedValue(undefined),
+         newPage: jest.fn().mockResolvedValue({
+            goto: jest.fn().mockResolvedValue(undefined),
+            screenshot: jest.fn().mockResolvedValue(screenshotBuffer), // Return the Buffer directly
+         }),
+         close: jest.fn().mockResolvedValue(undefined),
       });
 
       const result = await service.captureScreenshot(mockUrl, mockRobotsAllow);
 
       expect(result).toBeDefined();
-      expect(result.screenshot).toBe(mockScreenshot); // Compare base64 strings
-    });
+      expect(Buffer.from(result.screenshot, 'base64')).toEqual(screenshotBuffer); // Compare buffers
+   });
+
 
 
     it('should throw error for a non-scrapable URL', async () => {
