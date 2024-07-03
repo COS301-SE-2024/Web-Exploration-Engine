@@ -37,7 +37,7 @@ export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
 
   // Map the fetched data to ReportRecord type
   const mappedReports = reports.map((report: any) => ({
-    reportId: report.id,
+    id: report.id,
     userId: report.user_id,
     reportName: report.report_name,
     reportData: report.report_data,
@@ -46,4 +46,15 @@ export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
   }));
 
   return mappedReports;
+}
+
+export async function deleteReport(reportId: number) {
+  const { error } = await supabase
+    .from('saved_reports')
+    .delete()
+    .eq('id', reportId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }

@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { getReports } from '../../services/SaveReportService';
 import { useUserContext } from '../../context/UserContext';
 import { ReportRecord } from '../../models/ReportModels';
+import { deleteReport } from "../../services/SaveReportService";
 
 
 function ResultsComponent() {
@@ -33,29 +34,29 @@ function ResultsComponent() {
     router.push(`/results?url=${encodeURIComponent(url)}`);
   };
 
-  useEffect(() => {
-    async function fetchReports() {
-      console.log("Fetching reports for user: ", user)
-      if(!user) {
-        console.error('User not found');
-        return;
-      };
-      try {
-        setLoading(true);
-        const reportsData = await getReports(user); // Replace with your actual getReports function
-        // console.log("Reports Data: ", reportsData);
-        const formattedReports = reportsData.filter(item => !item.isSummary);
-        const formattedSummaryReports = reportsData.filter(item => item.isSummary);
-        setReports(formattedReports);
-        setSummaryReports(formattedSummaryReports);
-        setLoading(false);
-      } catch (error) {
-        setError((error as Error).message || 'An error occurred');
-        console.error('Error fetching reports:', error);
-        setLoading(false);
-      }
+  async function fetchReports() {
+    console.log("Fetching reports for user: ", user)
+    if(!user) {
+      console.error('User not found');
+      return;
+    };
+    try {
+      setLoading(true);
+      const reportsData = await getReports(user); // Replace with your actual getReports function
+      // console.log("Reports Data: ", reportsData);
+      const formattedReports = reportsData.filter(item => !item.isSummary);
+      const formattedSummaryReports = reportsData.filter(item => item.isSummary);
+      setReports(formattedReports);
+      setSummaryReports(formattedSummaryReports);
+      setLoading(false);
+    } catch (error) {
+      setError((error as Error).message || 'An error occurred');
+      console.error('Error fetching reports:', error);
+      setLoading(false);
     }
-    
+  }
+
+  useEffect(() => {
     fetchReports();
     console.log("Reports: ", reports);
     console.log("Summary Reports: ", summaryReports);
@@ -98,6 +99,18 @@ function ResultsComponent() {
     const end = start + summaryResultsPerPage;
     return summaryReports.slice(start, end);
   }, [summaryPage, summaryResultsPerPage, summaryReports]);
+
+  const handleDelete = async (reportId: number) => {
+    try {
+      console.log("Deleting report with id: ", reportId);
+      await deleteReport(reportId);
+    } catch (error) {
+      console.error('Error deleting report:', error);
+    } finally
+    {
+      await fetchReports();
+    }
+  };
 
   return (
     <div className="p-4">
@@ -177,7 +190,7 @@ function ResultsComponent() {
 
                   <TableBody emptyContent={'You have no saved reports'}>
                     {splitReports.map((item, index) => (
-                        <TableRow key={index}>
+                        <TableRow key={item.id}>
                           <TableCell>
                             <Link href={`/results?url=${encodeURIComponent(item.reportName)}`}>
                               {item.reportName}
@@ -199,6 +212,7 @@ function ResultsComponent() {
                             <Button
                               className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
                               data-testid={'btnDelete' + index}
+                              onClick={() => handleDelete(item.id as number)}
                             >
                               <FiTrash2 />
                             </Button>
@@ -281,7 +295,7 @@ function ResultsComponent() {
 
                   <TableBody emptyContent={'You have no saved summary reports'}>
                   {splitSummaryReports.map((item, index) => (
-                        <TableRow key={index}>
+                        <TableRow key={item.id}>
                           <TableCell>
                             <Link href={`/results?url=${encodeURIComponent(item.reportName)}`}>
                               {item.reportName}
@@ -303,6 +317,7 @@ function ResultsComponent() {
                             <Button
                               className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
                               data-testid={'btnDelete' + index}
+                              onClick={() => handleDelete(item.id as number)}
                             >
                               <FiTrash2 />
                             </Button>
