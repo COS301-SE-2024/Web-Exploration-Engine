@@ -2,20 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
-import { TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
+import { 
+    TableHeader, TableColumn, TableBody, TableRow, TableCell, 
+    Button,
+    Dropdown, DropdownItem, DropdownMenu, DropdownTrigger
+} from "@nextui-org/react";
 import { RadialBar } from '../../components/Graphs';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { FiClock, FiCheck, FiSearch} from "react-icons/fi";
 import { InfoPopOver } from '../../components/InfoPopOver';
-import { ExportDropdown } from '../../components/ExportDropdown';
 import Link from 'next/link';
+import { FiShare, FiDownload, FiSave } from "react-icons/fi";
+import { useUserContext } from '../../context/UserContext';
+import { saveReport } from '../../services/SaveReportService';
 
-interface industryPercentages {
-    industries: string[];
-    percentages: number[];
-}
 
 interface weakClassification {
     url: string;
@@ -30,9 +32,12 @@ interface mismatchedUrls {
 }
 
 export default function SummaryReport() {
+    const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+
     const router = useRouter();
 
     const { summaryReport } = useScrapingContext();
+    const { user } = useUserContext();
 
     const [domainStatus, setDomainStatus] = useState<number[]>([]);
     const [domainErrorStatus, setDomainErrorStatus] = useState<number>(0);
@@ -46,6 +51,7 @@ export default function SummaryReport() {
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     const [avgTime, setAvgTime] = useState<number>(0);
+   
     useEffect(() => {
         
         if (summaryReport) {
@@ -70,6 +76,26 @@ export default function SummaryReport() {
         router.push(`/scraperesults`);
     };
 
+    // Save and Download Logic
+    const handleSave = () => {
+        if (summaryReport) {
+        try {
+            saveReport({
+            reportName: "Scraping Report",
+            reportData: summaryReport,
+            userId: user?.uuid,
+            isSummary: true,
+            });
+        } catch (error) {
+            console.error("Error saving report:", error);
+        }
+        }
+    };
+
+    const handleDownload = () => {
+        console.log("Download");
+    };
+
     return (
         <div className='min-h-screen p-4'>
             <Button
@@ -84,7 +110,55 @@ export default function SummaryReport() {
                     Summary Report
                 </h1>
                 <div className="mt-4 mr-4 flex justify-end">
-                    <ExportDropdown />
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <Button 
+                            variant="flat" 
+                            startContent={<FiShare className={iconClasses}/>}
+                            >
+                            Export/Save
+                            </Button>
+                        </DropdownTrigger>
+                        {user ? (
+                            <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                            <DropdownItem
+                                key="save"
+                                startContent={<FiSave className={iconClasses}/>}
+                                description="Save the report on our website"
+                                onAction={handleSave}
+                            >
+                                Save
+                            </DropdownItem>
+                            <DropdownItem
+                                key="download"
+                                startContent={<FiDownload className={iconClasses}/>}
+                                description="Download the report to your device"
+                                onAction={handleDownload}
+                            >
+                                Download
+                            </DropdownItem>
+                            </DropdownMenu> 
+                        ) : (
+                            <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
+                            <DropdownItem
+                                key="save"
+                                startContent={<FiSave className={iconClasses}/>}
+                                description="Sign up or log in to save the report on our website"
+                                onAction={handleSave}
+                            >
+                                Save
+                            </DropdownItem>
+                            <DropdownItem
+                                key="download"
+                                startContent={<FiDownload className={iconClasses}/>}
+                                description="Download the report to your device"
+                                onAction={handleDownload}
+                            >
+                                Download
+                            </DropdownItem>
+                            </DropdownMenu> 
+                        )}
+                    </Dropdown>
                 </div>
             </div>
             

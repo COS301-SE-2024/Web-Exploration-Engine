@@ -8,15 +8,22 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from '@nextui-org/react';
+import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
+import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
-import { ExportDropdown } from '../../components/ExportDropdown';
+import { saveReport } from '../../services/SaveReportService';
+
 
 interface Classifications {
   label: string;
@@ -37,10 +44,14 @@ export default function Results() {
 }
 
 function ResultsComponent() {
+  const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
+
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
 
   const { results } = useScrapingContext();
+  const { user } = useUserContext();
+
 
   const router = useRouter();
 
@@ -106,6 +117,28 @@ function ResultsComponent() {
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
   const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
 
+
+  // Save and Download Logic
+  const handleSave = () => {
+    const urlResults = results.filter((res) => res.url === url);
+    if (urlResults && urlResults[0]) {
+      try {
+        saveReport({
+          reportName: "Scraping Report",
+          reportData: urlResults[0],
+          userId: user?.uuid,
+          isSummary: false,
+        });
+      } catch (error) {
+        console.error("Error saving report:", error);
+      }
+    }
+  };
+
+  const handleDownload = () => {
+    console.log("Download");
+  };
+
   return (
     <div className="min-h-screen p-4">
       <Button
@@ -120,7 +153,55 @@ function ResultsComponent() {
             Results of {url}
           </h1>
           <div className="mt-4 flex justify-center">
-              <ExportDropdown />
+            <Dropdown>
+              <DropdownTrigger>
+                <Button 
+                  variant="flat" 
+                  startContent={<FiShare className={iconClasses}/>}
+                >
+                  Export/Save
+                </Button>
+              </DropdownTrigger>
+              {user ? (
+                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                  <DropdownItem
+                    key="save"
+                    startContent={<FiSave className={iconClasses}/>}
+                    description="Save the report on our website"
+                    onAction={handleSave}
+                  >
+                    Save
+                  </DropdownItem>
+                  <DropdownItem
+                    key="download"
+                    startContent={<FiDownload className={iconClasses}/>}
+                    description="Download the report to your device"
+                    onAction={handleDownload}
+                  >
+                    Download
+                  </DropdownItem>
+                </DropdownMenu> 
+              ) : (
+                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
+                  <DropdownItem
+                    key="save"
+                    startContent={<FiSave className={iconClasses}/>}
+                    description="Sign up or log in to save the report on our website"
+                    onAction={handleSave}
+                  >
+                    Save
+                  </DropdownItem>
+                  <DropdownItem
+                    key="download"
+                    startContent={<FiDownload className={iconClasses}/>}
+                    description="Download the report to your device"
+                    onAction={handleDownload}
+                  >
+                    Download
+                  </DropdownItem>
+                </DropdownMenu> 
+              )}
+            </Dropdown>
           </div>
       </div>
 

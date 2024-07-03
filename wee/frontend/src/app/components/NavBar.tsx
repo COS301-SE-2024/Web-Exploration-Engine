@@ -2,13 +2,16 @@
 import React, { useEffect } from "react";
 import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
-import { supabase } from "../utils/supabase_service_client";
+import { getSupabase } from "../utils/supabase_service_client";
 import { User } from "../models/AuthModels";
 import { useRouter } from 'next/navigation';
+import { useUserContext } from "../context/UserContext";
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const [user, setUser] = React.useState<User | null>(null);
+    const { user, setUser } = useUserContext();
+    const supabase = getSupabase();
+    
 
     const router = useRouter();
 
@@ -24,7 +27,14 @@ export default function NavBar() {
       const fetchUserData = async () => {
           try {
               const { data: { user } } = await supabase.auth.getUser();
-              setUser(user as unknown as User);
+              if (!user) {
+                  setUser(null);
+                  return;
+              }
+              setUser({
+                  uuid: user.id,
+                  emailVerified: user?.email_confirmed_at ? true : false,
+              });
           } catch (error) {
               console.error("Error fetching user data:", error);
           }
@@ -57,6 +67,10 @@ export default function NavBar() {
 
   const handleSignup = () => {
     router.push('/signup');
+  }
+
+  const handleSavedReports = () => {  
+    router.push('/savedreports');
   }
 
   return (
@@ -98,7 +112,7 @@ export default function NavBar() {
                       </span>
                   </Tooltip>
               ) : (
-                  <Link href="/savedreports" className="text-dark-primaryTextColor dark:text-primaryTextColor">
+                  <Link onClick={handleSavedReports} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
                       Saved Reports
                   </Link>
               )}

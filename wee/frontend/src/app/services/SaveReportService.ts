@@ -4,15 +4,23 @@ import { ReportRecord } from "../models/ReportModels"
 
 const supabase = getSupabase();
 
-export async function saveReport(report: ReportRecord, user: AuthResponse) {
+export async function saveReport(report: ReportRecord) {
 
-  // const { error } = await supabase
-  //   .from('saved_reports')
-  //   .insert(report)
+  const { error } = await supabase
+    .from('saved_reports')
+    .insert([
+      {
+        user_id: report.userId,
+        report_name: report.reportName,
+        report_data: report.reportData,
+        is_summary: report.isSummary,
+        saved_at: new Date(),
+      }
+    ])
 
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
+  if (error) {
+    throw new Error(error.message);
+  }
 }
 
 export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
