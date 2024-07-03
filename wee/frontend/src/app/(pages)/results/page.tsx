@@ -102,21 +102,27 @@ function ResultsComponent() {
     const margin = 14;
     const headerHeight = 10;
     const rowHeight = 10;
-    const columnWidth = [60, 190]; 
-  
+    const columnWidth = [60, 190];
+    
+    // Function to draw a horizontal line
+    const drawLine = (lineY) => {
+      doc.setDrawColor(200, 200, 200); // Light grey color
+      doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); 
+    };
+    
     // Draw Table Header
     const darkTealGreenR = 47; 
     const darkTealGreenG = 139; 
     const darkTealGreenB = 87; 
     doc.setFontSize(14);
-    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB);// Set header background color
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
     doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
     doc.setTextColor(255, 255, 255);
     doc.text('Category', margin + 2, startY + 7);
     doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
-    
+  
     // Function to split text into lines that fit within a max width
-    const splitText = (text: string, maxWidth: number) => {
+    const splitText = (text, maxWidth) => {
       const lines = [];
       let line = '';
       const words = text.split(' ');
@@ -155,7 +161,7 @@ function ResultsComponent() {
     let y = startY + headerHeight;
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    
+  
     rows.forEach(row => {
       const [category, info] = row;
       const categoryLines = splitText(category, columnWidth[0] - 4);
@@ -167,6 +173,10 @@ function ResultsComponent() {
       infoLines.forEach((line, i) => {
         doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
       });
+      
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+      
       y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
       
       if (y > 270) { // Check if the y position exceeds the page limit
@@ -191,6 +201,7 @@ function ResultsComponent() {
     const filename = cleanFilename(url);
     doc.save(`${filename}.pdf`);
   };
+  
  
  
   
