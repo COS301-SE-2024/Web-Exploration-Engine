@@ -11,11 +11,11 @@ jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
-jest.mock('../../src/app/context/UserContext', () => ({
+jest.mock('../../src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
 }));
 
-jest.mock('frontend/src/app/context/UserContext', () => ({
+jest.mock('../../src/app/context/UserContext', () => ({
     useUserContext: jest.fn(),
 }));
 
