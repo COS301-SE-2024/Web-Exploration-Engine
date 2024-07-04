@@ -12,7 +12,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import { ExportDropdown } from '../../components/ExportDropdown';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
-
+import html2canvas from 'html2canvas';
 interface industryPercentages {
     industries: string[];
     percentages: number[];
@@ -71,36 +71,34 @@ export default function SummaryReport() {
         router.push(`/scraperesults`);
     };
 
-    const handleDownloadReport = () => {
-        console.log("Download report triggered");
-    
+    const handleDownloadReport = async () => {
         if (!summaryReport) {
             console.error("Summary report is undefined");
             return;
         }
     
         const doc = new jsPDF();
-        
+    
         // Title
         doc.setFontSize(20);
         const title = 'Web Exploration Engine Summary Report';
         const titleWidth = doc.getStringUnitWidth(title) * 20 / doc.internal.scaleFactor;
         const x = (doc.internal.pageSize.width - titleWidth) / 2;
         doc.text(title, x, 20);
-      
+    
         // Define table positions and dimensions
         const startY = 30;
         const margin = 14;
         const headerHeight = 10;
         const rowHeight = 10;
         const columnWidth = [60, 190];
-        
+    
         // Function to draw a horizontal line
         const drawLine = (lineY: number): void => {
-          doc.setDrawColor(200, 200, 200); // Light grey color
-          doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); 
+            doc.setDrawColor(200, 200, 200); // Set line color to light grey
+            doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); // Draw horizontal line
         };
-        
+    
         // Draw Table Header
         const darkTealGreenR = 47; 
         const darkTealGreenG = 139; 
@@ -111,80 +109,87 @@ export default function SummaryReport() {
         doc.setTextColor(255, 255, 255);
         doc.text('Category', margin + 2, startY + 7);
         doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
-      
+    
         // Function to split text into lines that fit within a max width
         const splitText = (text: string, maxWidth: number): string[] => {
-          const lines = [];
-          let line = '';
-          const words = text.split(' ');
-      
-          for (const word of words) {
-            const testLine = line + (line.length > 0 ? ' ' : '') + word;
-            const testWidth = doc.getStringUnitWidth(testLine) * 20 / doc.internal.scaleFactor;
-      
-            if (testWidth > maxWidth) {
-              lines.push(line);
-              line = word;
-            } else {
-              line = testLine;
+            const lines = [];
+            let line = '';
+            const words = text.split(' ');
+    
+            for (const word of words) {
+                const testLine = line + (line.length > 0 ? ' ' : '') + word;
+                const testWidth = doc.getStringUnitWidth(testLine) * 20 / doc.internal.scaleFactor;
+    
+                if (testWidth > maxWidth) {
+                    lines.push(line);
+                    line = word;
+                } else {
+                    line = testLine;
+                }
             }
-          }
-          if (line.length > 0) {
-            lines.push(line);
-          }
-          
-          return lines;
+            if (line.length > 0) {
+                lines.push(line);
+            }
+    
+            return lines;
         };
-      
+    
         // Draw Table Rows
         const rows = [
-          ['Total URLs', summaryReport.totalUrls?.toString() || 'N/A'],
-          ['Scrapable URLs', summaryReport.scrapableUrls?.toString() || 'N/A'],
-          ['Average Time', summaryReport.avgTime?.toString() || 'N/A'],
+            ['Total URLs', summaryReport.totalUrls?.toString() || 'N/A'],
+            ['Scrapable URLs', summaryReport.scrapableUrls?.toString() || 'N/A'],
+            ['Average Time', summaryReport.avgTime?.toString() || 'N/A'],
         ];
-      
+    
         let y = startY + headerHeight;
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
-      
+    
         rows.forEach(row => {
-          const [category, info] = row;
-          const categoryLines = splitText(category, columnWidth[0] - 4);
-          const infoLines = splitText(info, columnWidth[1] - 4);
-          
-          categoryLines.forEach((line, i) => {
-            doc.text(line, margin + 2, y + (i * rowHeight) + 7);
-          });
-          infoLines.forEach((line, i) => {
-            doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
-          });
-          
-          // Draw line after each row
-          drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
-          
-          y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
-          
-          if (y > 270) { // Check if the y position exceeds the page limit
-            doc.addPage();
-            y = 20; // Reset y position on the new page
-            doc.text('Category', margin + 2, y + 7);
-            doc.text('Information', margin + columnWidth[0] + 2, y + 7);
-            y += headerHeight;
-          }
+            const [category, info] = row;
+            const categoryLines = splitText(category, columnWidth[0] - 4);
+            const infoLines = splitText(info, columnWidth[1] - 4);
+    
+            categoryLines.forEach((line, i) => {
+                doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+            });
+            infoLines.forEach((line, i) => {
+                doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+            });
+    
+            // Draw line after each row
+            drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+    
+            y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+    
+            if (y > 270) { // Check if the y position exceeds the page limit
+                doc.addPage();
+                y = 20; // Reset y position on the new page
+                doc.text('Category', margin + 2, y + 7);
+                doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+                y += headerHeight;
+            }
         });
-      
-        // Clean Filename
-        const cleanFilename = (url: string | null): string => {
-          if (!url) return 'website-summary-report';
-          let filename = url.replace('http://', '').replace('https://', '');
-          filename = filename.split('').map(char => {
-            return ['/', ':', '*', '?', '"', '<', '>', '|'].includes(char) ? '_' : char;
-          }).join('');
-          return filename.length > 50 ? filename.substring(0, 50) : filename;
+    
+        // Function to add chart to PDF
+        const addChartToPDF = async () => {
+            // Capture pie chart
+            const pieChartElement = document.getElementById('pie-chart'); // Replace with the actual ID of your chart component
+            if (pieChartElement) {
+                const canvas = await html2canvas(pieChartElement);
+                const imgData = canvas.toDataURL('image/png');
+                doc.addPage();
+                doc.text('Industry Classification Distribution', 20, 20);
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); // Adjust image size and position as needed
+            }
         };
-      
-        doc.save(`website-summary-report.pdf`);
+    
+        // Add charts and save the PDF
+        await addChartToPDF();
+        doc.save('website-summary-report.pdf');
     };
+    
+    
     
 
     return (
@@ -258,24 +263,23 @@ export default function SummaryReport() {
                 Industry classification
             </h3>
             <div className='gap-4 grid md:grid-cols-2'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
-                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
-                        Classification Distribution
-                        <InfoPopOver 
-                            heading="Industry classification" 
-                            content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
-                            placement="top" 
-                        />
-                    </h3>
+                    <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                            Classification Distribution
+                            <InfoPopOver 
+                                heading="Industry classification" 
+                                content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
+                                placement="top" 
+                            />
+                        </h3>
 
-                    <span className='sm:hidden'>
-                        <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"}/>
-                    </span>
-                    <span className='hidden sm:block'>
-                        <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
-                    </span>
-                </div>
-
+                        <span className='sm:hidden'>
+                            <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"}/>
+                        </span>
+                        <span className='hidden sm:block'>
+                            <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
+                        </span>
+                    </div>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Weak classifications
@@ -328,7 +332,7 @@ export default function SummaryReport() {
                 />
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                <div id="radial-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
                 </div>
 
@@ -380,7 +384,7 @@ export default function SummaryReport() {
                 Website status
             </h3>
             <div className='gap-4 grid md:grid-cols-3'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
+                <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
                     <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
                 </div>
 
