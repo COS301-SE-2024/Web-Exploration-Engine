@@ -6,6 +6,11 @@ const supabase = getSupabase();
 
 export async function saveReport(report: ReportRecord) {
 
+  if (!report.userId) throw new Error('User id is required');
+  if (!report.reportName) throw new Error('Report name is required');
+  if (!report.reportData) throw new Error('Report data is required');
+
+
   const { error } = await supabase
     .from('saved_reports')
     .insert([
@@ -26,7 +31,7 @@ export async function saveReport(report: ReportRecord) {
 export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
   if (!user.uuid) throw new Error('User id is required');
 
-  const { data: reports, error } = await supabase
+  const { data, error } = await supabase
     .from('saved_reports')
     .select('*')
     .eq('user_id', user.uuid);
@@ -35,8 +40,10 @@ export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
     throw new Error(error.message);
   }
 
+  if(!data) return [];
+
   // Map the fetched data to ReportRecord type
-  const mappedReports = reports.map((report: any) => ({
+  const mappedReports = data.map((report: any) => ({
     id: report.id,
     userId: report.user_id,
     reportName: report.report_name,

@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SummaryReport from '../../src/app/(pages)/summaryreport/page';
 import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
 import { useScrapingContext } from '../../src/app/context/ScrapingContext';
+import { useUserContext } from 'frontend/src/app/context/UserContext';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
@@ -10,6 +11,9 @@ jest.mock('next/navigation', () => ({
 }));
 jest.mock('../../src/app/context/ScrapingContext', () => ({
   useScrapingContext: jest.fn(),
+}));
+jest.mock('frontend/src/app/context/UserContext', () => ({
+  useUserContext: jest.fn(),
 }));
 
 class ResizeObserver {
@@ -35,10 +39,12 @@ jest.mock('apexcharts', () => {
 
 describe('SummaryReport Page', () => {
   const mockPush = jest.fn();
+  const mockBack = jest.fn();
   
   beforeEach(() => {
-    (useRouter as jest.Mock)?.mockReturnValue({ push: mockPush });
+    (useRouter as jest.Mock)?.mockReturnValue({ push: mockPush, back: mockBack});
     (useScrapingContext as jest.Mock).mockReturnValue({ summaryReport: mockSummaryReport });
+    (useUserContext as jest.Mock).mockReturnValue({ user: mockUser });
   });
 
   const mockSummaryReport = {
@@ -74,6 +80,12 @@ describe('SummaryReport Page', () => {
     scrapableUrls: 2,
     avgTime: 100,
   };
+
+  const mockUser = {
+    uuid: '48787157-7555-4104-bafc-e2c95bbaa959',
+    emailVerified: true,
+  };
+  
   it('renders the summary report page correctly', async () => {
     render(<SummaryReport />);
     expect(screen.getByText('Summary Report')).toBeDefined();
@@ -83,7 +95,7 @@ describe('SummaryReport Page', () => {
   it('navigates back to scrape results on button click', () => {
     render(<SummaryReport />);
     fireEvent.click(screen.getByText('Back'));
-    expect(mockPush).toHaveBeenCalledWith('/scraperesults');
+    expect(mockBack).toHaveBeenCalled();
   });
 
   it('displays general stats correctly', () => {

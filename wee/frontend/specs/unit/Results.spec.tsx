@@ -4,20 +4,25 @@ import Results from '../../src/app/(pages)/results/page';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext'
+import { useUserContext } from 'frontend/src/app/context/UserContext';
 
 // Mock the useSearchParams hook
 jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
-
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
+}));
+
+jest.mock('frontend/src/app/context/UserContext', () => ({
+    useUserContext: jest.fn(),
 }));
 
 describe('Results Component', () => {
     const mockUrl = 'https://www.example.com';
     const mockPush = jest.fn();
+    const mockBack = jest.fn();
 
     const mockResults = [
         {
@@ -41,10 +46,17 @@ describe('Results Component', () => {
         },
     ];
 
+    const mockUser = {
+        uuid: '48787157-7555-4104-bafc-e2c95bbaa959',
+        emailVerified: true,
+    };
+
     beforeEach(() => {
         (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`url=${mockUrl}`));   
-        (useRouter as jest.Mock).mockReturnValue({ push: mockPush });   
+        (useRouter as jest.Mock).mockReturnValue({ push: mockPush, back: mockBack});   
         (useScrapingContext as jest.Mock).mockReturnValue({ results: mockResults }); 
+        (useUserContext as jest.Mock).mockReturnValue({ user: mockUser });
+
     });
 
     it('should display website status, crawlable status, industry classification, and domain classification', async () => {
@@ -110,7 +122,7 @@ describe('Results Component', () => {
         const backButton = screen.getByRole('button', { name: /Back/i });
         fireEvent.click(backButton);
 
-        expect(mockPush).toHaveBeenCalledWith('/scraperesults');
+        expect(mockBack).toHaveBeenCalled();
     });
 
     it('should set crawlable status to No when an error response is returned', async () => {

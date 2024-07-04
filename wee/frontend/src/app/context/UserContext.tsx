@@ -16,7 +16,7 @@ const UserConext = createContext<UserConextType | undefined>(undefined);
 export const useUserContext = () => {
     const context = useContext(UserConext);
     if (!context) {
-        throw new Error("useScrapingContext must be used within a ScrapingProvider");
+        throw new Error("useUserContext must be used within a UserProvider");
     }
     return context;
 };
