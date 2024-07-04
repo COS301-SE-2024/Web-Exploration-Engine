@@ -20,6 +20,46 @@ docker run --rm -it -v "$(pwd)":/github/workspace -w /github/workspace nektos/ac
 - **From GitHub Releases (for Windows or other systems)**:
 Go to the releases page, download the appropriate binary for your system, and follow the installation instructions.
 
+**If you dont have brew installed**
+
+You can install it in the following ways : 
+
+<details><summary>Windwos/Linux Installation</summary>
+<p>
+
+inux/macOS (Bash script):
+
+```curl <https://raw.githubusercontent.com/nektos/act/master/install.sh> | sudo bash```
+
+macOS (Homebrew):
+
+```brew install act```
+
+Windows (Chocolatey):
+
+```choco install act-cli```
+
+Windows (Scoop):
+
+```scoop install act```
+
+</p>
+</details> 
+
+
+
+<details><summary>Install Scoop or Chocolatey - Windows </summary>
+<p>
+
+Install Scoop :
+https://github.com/ScoopInstaller/Scoop
+
+
+Alternatively Install Chocolatey :
+https://chocolatey.org/install#install-step2
+
+</p>
+</details> 
 
 ### 2. Prepare Your GitHub 
 
