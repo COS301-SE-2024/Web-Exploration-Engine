@@ -3,13 +3,10 @@ import {Tabs, Tab, Card, CardBody} from "@nextui-org/react";
 import React, { Suspense, useEffect, useState } from 'react';
 import WEEPagination from '../../components/Util/Pagination';
 import {
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
+  TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Button,
   Link,
+  Modal, ModalContent, ModalBody, useDisclosure, ModalFooter,
 } from '@nextui-org/react';
 import { FiTrash2 } from "react-icons/fi";
 import { useRouter } from 'next/navigation';
@@ -101,6 +98,11 @@ function ResultsComponent() {
     return summaries.slice(start, end);
   }, [summaryPage, summaryResultsPerPage, summaries]);
 
+
+  // Delete report
+  const {isOpen, onOpenChange} = useDisclosure();
+  const [idToDelete, setIdToDelete] = useState<number>(0);
+
   const handleDelete = async (reportId: number) => {
     try {
       console.log("Deleting report with id: ", reportId);
@@ -114,227 +116,260 @@ function ResultsComponent() {
   };
 
   return (
-    <div className="p-4">
-      <div className="text-center">
-        <h1 className="my-4 mx-9 font-poppins-bold text-3xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          My Reports
-        </h1>
-      </div>
-      <div className="flex flex-col">
-        <Tabs aria-label="Options" size="lg">
-          <Tab key="individual" title="Reports">
-            <Card>
-              <CardBody>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-default-400 text-small">
-                    Total {results.length} reports saved
-                  </span>
-                  <label className="flex items-center text-default-400 text-small">
-                    Results per page:
-                    <select
-                      value={resultsPerPage}
-                      className="bg-transparent outline-none text-default-400 text-small"
-                      onChange={handleReportsPerPageChange}
-                      aria-label="Number of results per page"
-                    >
-                      <option value="2">2</option>
-                      <option value="5">5</option>
-                      <option value="7">7</option>
-                      <option value="9">9</option>
-                    </select>
-                  </label>
-                </div>
+    <>
+      <div className="p-4">
+        <div className="text-center">
+          <h1 className="my-4 mx-9 font-poppins-bold text-3xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            My Reports
+          </h1>
+        </div>
+        <div className="flex flex-col">
+          <Tabs aria-label="Options" size="lg">
+            <Tab key="individual" title="Reports">
+              <Card>
+                <CardBody>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-default-400 text-small">
+                      Total {results.length} reports saved
+                    </span>
+                    <label className="flex items-center text-default-400 text-small">
+                      Results per page:
+                      <select
+                        value={resultsPerPage}
+                        className="bg-transparent outline-none text-default-400 text-small"
+                        onChange={handleReportsPerPageChange}
+                        aria-label="Number of results per page"
+                      >
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                        <option value="9">9</option>
+                      </select>
+                    </label>
+                  </div>
 
-                <WEETable
-                  aria-label="Scrape result table"
-                  bottomContent={
-                    <>
-                      {results.length > 0 && (
-                        <div className="flex w-full justify-center">
-                          <WEEPagination
-                            loop
-                            showControls
-                            color="stone"
-                            page={page}
-                            total={pages}
-                            onChange={(page) => setPage(page)}
-                            aria-label="Pagination"
-                          />
-                        </div>
+                  <WEETable
+                    aria-label="Scrape result table"
+                    bottomContent={
+                      <>
+                        {results.length > 0 && (
+                          <div className="flex w-full justify-center">
+                            <WEEPagination
+                              loop
+                              showControls
+                              color="stone"
+                              page={page}
+                              total={pages}
+                              onChange={(page) => setPage(page)}
+                              aria-label="Pagination"
+                            />
+                          </div>
+                        )}
+                      </>
+                    }
+                    classNames={{
+                      wrapper: 'min-h-[222px]',
+                    }}
+                  >
+                    <TableHeader>
+                      <TableColumn key="name" className="rounded-lg sm:rounded-none">
+                        NAME
+                      </TableColumn>
+                      <TableColumn key="role" className="text-center hidden sm:table-cell">
+                        TIMESTAMP
+                      </TableColumn>
+                      <TableColumn
+                        key="status"
+                        className="text-center hidden sm:table-cell"
+                      >
+                        RESULT &amp; REPORT
+                      </TableColumn>
+                      <TableColumn
+                        key="delete"
+                        className="text-center hidden sm:table-cell"
+                      >
+                        DELETE
+                      </TableColumn>
+                    </TableHeader>
+
+                    <TableBody emptyContent={'You have no saved reports'}>
+                      {splitReports.map((item, index) => (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              <Link onClick={() => handleResultPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                {item.reportName}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              {item.savedAt}
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              <Button
+                                className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                                onClick={() => handleResultPage(item.id as number)}
+                                data-testid={'btnView' + index}
+                              >
+                                View
+                              </Button>
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              <Button
+                                className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
+                                data-testid={'btnDelete' + index}
+                                onClick={() => {setIdToDelete(item.id as number); onOpenChange()}}
+                              >
+                                <FiTrash2 />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        )
                       )}
-                    </>
-                  }
-                  classNames={{
-                    wrapper: 'min-h-[222px]',
-                  }}
-                >
-                  <TableHeader>
+                    </TableBody>
+                  </WEETable>
+                </CardBody>
+              </Card>  
+            </Tab>
+            <Tab key="summary" title="Summaries">
+              <Card>
+                <CardBody>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-default-400 text-small">
+                      Total {summaries.length} saved summary reports
+                    </span>
+                    <label className="flex items-center text-default-400 text-small">
+                      Results per page:
+                      <select
+                        value={summaryResultsPerPage}
+                        className="bg-transparent outline-none text-default-400 text-small"
+                        onChange={handleSummaryReportsPerPageChange}
+                        aria-label="Number of results per page"
+                      >
+                        <option value="2">2</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                        <option value="9">9</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <WEETable
+                    aria-label="Scrape result table"
+                    bottomContent={
+                      <>
+                        {summaries.length > 0 && (
+                          <div className="flex w-full justify-center">
+                            <WEEPagination
+                              loop
+                              showControls
+                              color="stone"
+                              page={summaryPage}
+                              total={summaryPages}
+                              onChange={(page) => setSummaryPage(page)}
+                              aria-label="Pagination"
+                            />
+                          </div>
+                        )}
+                      </>
+                    }
+                    classNames={{
+                      wrapper: 'min-h-[222px]',
+                    }}
+                  >
+                    <TableHeader>
                     <TableColumn key="name" className="rounded-lg sm:rounded-none">
-                      NAME
-                    </TableColumn>
-                    <TableColumn key="role" className="text-center hidden sm:table-cell">
-                      TIMESTAMP
-                    </TableColumn>
-                    <TableColumn
-                      key="status"
-                      className="text-center hidden sm:table-cell"
-                    >
-                      RESULT &amp; REPORT
-                    </TableColumn>
-                    <TableColumn
-                      key="delete"
-                      className="text-center hidden sm:table-cell"
-                    >
-                      DELETE
-                    </TableColumn>
-                  </TableHeader>
+                        NAME
+                      </TableColumn>
+                      <TableColumn key="role" className="text-center hidden sm:table-cell">
+                        TIMESTAMP
+                      </TableColumn>
+                      <TableColumn
+                        key="status"
+                        className="text-center hidden sm:table-cell"
+                      >
+                        RESULT &amp; REPORT
+                      </TableColumn>
+                      <TableColumn
+                        key="delete"
+                        className="text-center hidden sm:table-cell"
+                      >
+                        DELETE
+                      </TableColumn>
 
-                  <TableBody emptyContent={'You have no saved reports'}>
-                    {splitReports.map((item, index) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <Link onClick={() => handleResultPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
-                              {item.reportName}
-                            </Link>
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            {item.savedAt}
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            <Button
-                              className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                              onClick={() => handleResultPage(item.id as number)}
-                              data-testid={'btnView' + index}
-                            >
-                              View
-                            </Button>
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            <Button
-                              className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
-                              data-testid={'btnDelete' + index}
-                              onClick={() => handleDelete(item.id as number)}
-                            >
-                              <FiTrash2 />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </WEETable>
-              </CardBody>
-            </Card>  
-          </Tab>
-          <Tab key="summary" title="Summaries">
-            <Card>
-              <CardBody>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-default-400 text-small">
-                    Total {summaries.length} saved summary reports
-                  </span>
-                  <label className="flex items-center text-default-400 text-small">
-                    Results per page:
-                    <select
-                      value={summaryResultsPerPage}
-                      className="bg-transparent outline-none text-default-400 text-small"
-                      onChange={handleSummaryReportsPerPageChange}
-                      aria-label="Number of results per page"
-                    >
-                      <option value="2">2</option>
-                      <option value="5">5</option>
-                      <option value="7">7</option>
-                      <option value="9">9</option>
-                    </select>
-                  </label>
-                </div>
+                    </TableHeader>
 
-                <WEETable
-                  aria-label="Scrape result table"
-                  bottomContent={
-                    <>
-                      {summaries.length > 0 && (
-                        <div className="flex w-full justify-center">
-                          <WEEPagination
-                            loop
-                            showControls
-                            color="stone"
-                            page={summaryPage}
-                            total={summaryPages}
-                            onChange={(page) => setSummaryPage(page)}
-                            aria-label="Pagination"
-                          />
-                        </div>
+                    <TableBody emptyContent={'You have no saved summary reports'}>
+                    {splitSummaryReports.map((item, index) => (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              <Link onClick={() => handleSummaryPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                {item.reportName}
+                              </Link>
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              {item.savedAt}
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              <Button
+                                className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                                onClick={() => handleSummaryPage(item.id as number)}
+                                data-testid={'btnView' + index}
+                              >
+                                View
+                              </Button>
+                            </TableCell>
+                            <TableCell className="text-center hidden sm:table-cell">
+                              <Button
+                                className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
+                                data-testid={'btnDelete' + index}
+                                onClick={() => {setIdToDelete(item.id as number); onOpenChange() }}
+                              >
+                                <FiTrash2 />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        )
                       )}
-                    </>
-                  }
-                  classNames={{
-                    wrapper: 'min-h-[222px]',
-                  }}
+                    </TableBody>
+                  </WEETable>
+                </CardBody>
+              </Card>  
+            </Tab>
+          </Tabs>
+        </div>  
+      </div>
+
+      {/* Confirm delete */}
+      <Modal 
+        isOpen={isOpen} 
+        onOpenChange={onOpenChange}
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalBody>
+                <h1 className="text-center my-4 font-poppins-bold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                    Are you sure you want to delete this report?
+                </h1>
+              </ModalBody>
+              <ModalFooter>
+                <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
+                  onPress={() => {handleDelete(idToDelete); onClose();}}
                 >
-                  <TableHeader>
-                  <TableColumn key="name" className="rounded-lg sm:rounded-none">
-                      NAME
-                    </TableColumn>
-                    <TableColumn key="role" className="text-center hidden sm:table-cell">
-                      TIMESTAMP
-                    </TableColumn>
-                    <TableColumn
-                      key="status"
-                      className="text-center hidden sm:table-cell"
-                    >
-                      RESULT &amp; REPORT
-                    </TableColumn>
-                    <TableColumn
-                      key="delete"
-                      className="text-center hidden sm:table-cell"
-                    >
-                      DELETE
-                    </TableColumn>
-
-                  </TableHeader>
-
-                  <TableBody emptyContent={'You have no saved summary reports'}>
-                  {splitSummaryReports.map((item, index) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <Link onClick={() => handleSummaryPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
-                              {item.reportName}
-                            </Link>
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            {item.savedAt}
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            <Button
-                              className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                              onClick={() => handleSummaryPage(item.id as number)}
-                              data-testid={'btnView' + index}
-                            >
-                              View
-                            </Button>
-                          </TableCell>
-                          <TableCell className="text-center hidden sm:table-cell">
-                            <Button
-                              className="font-poppins-semibold text-xl bg-transparent text-primaryTextColor dark:text-dark-primaryTextColor"
-                              data-testid={'btnDelete' + index}
-                              onClick={() => handleDelete(item.id as number)}
-                            >
-                              <FiTrash2 />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </WEETable>
-              </CardBody>
-            </Card>  
-          </Tab>
-        </Tabs>
-      </div>  
-    </div>
-    
+                  Yes
+                </Button>
+                <Button 
+                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
+                  onPress={onClose}
+                  >
+                  Cancel
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 
