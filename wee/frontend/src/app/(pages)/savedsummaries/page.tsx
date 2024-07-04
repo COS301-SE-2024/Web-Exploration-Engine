@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { PieChart } from '../../components/Graphs';
 import { BarChart } from '../../components/Graphs';
 import { 
@@ -30,8 +30,14 @@ interface mismatchedUrls {
     metadataClass: string;
     domainClass: string;
 }
-
 export default function SummaryReport() {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <SummaryComponent />
+      </Suspense>
+    );
+}
+function SummaryComponent() {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
     const router = useRouter();
