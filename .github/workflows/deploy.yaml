@@ -3,7 +3,7 @@ name: Deploy Frontend
 on:
   workflow_run:
     # workflows to run first?
-    workflows: ["🖥️ Tests"]
+    # workflows: ["Tests"]
     branches: [master]
     types:
       - completed
@@ -13,29 +13,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checking out the repo
-      - name: 🛏️ Setup repo
+      - name: Setup repo
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
           
-      - name: Make envfile
+      - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_NODE_ENV: production
+          #what are production vs dev environments?
           envkey_NEXT_PUBLIC_API: "https://api-avalanche.sloththe.dev"
           envkey_NEXT_PUBLIC_DSN: ${{ secrets.SENTRY_KEY }}
+          #what is the sentry key?
+          # for the frontend app we have to add the supabase keys
+
           directory: frontend
           file_name: .env.local
+
           fail_on_empty: false
 
-      - name: Make admin envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_NODE_ENV: production
+          #removed because no need for env file
+     # - name: Make admin envfile
+     #  uses: SpicyPizza/create-envfile@v1.3
+    #  with:
+      #    envkey_NODE_ENV: production
           #envkey_NEXT_PUBLIC_ZEUS: "skunkworks.dns.net.za"
-          directory: admin-frontend#??
-          file_name: .env.local
-          fail_on_empty: false
+      #    directory: admin-frontend#??
+       #   file_name: .env.local
+        #  fail_on_empty: false
       
       # Runs a single command using the runners shell
       - name: 🔐 Install wireguard
