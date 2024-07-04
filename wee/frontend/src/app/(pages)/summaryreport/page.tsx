@@ -114,14 +114,6 @@ export default function SummaryReport() {
         }
     };
 
-    const handleDownload = () => {
-        console.log("Download");
-    };
-
-    const handleDownloadReport = () => {
-        console.log("Download report triggered");
-    };
-
     const handleDownloadReport = () => {
         console.log("Download report triggered");
     };
@@ -164,7 +156,7 @@ export default function SummaryReport() {
                                     key="download"
                                     startContent={<FiDownload className={iconClasses}/>}
                                     description="Download the report to your device"
-                                    onAction={handleDownload}
+                                    onAction={handleDownloadReport}
                                 >
                                     Download
                                 </DropdownItem>
@@ -182,7 +174,7 @@ export default function SummaryReport() {
                                     key="download"
                                     startContent={<FiDownload className={iconClasses}/>}
                                     description="Download the report to your device"
-                                    onAction={handleDownload}
+                                    onAction={handleDownloadReport}
                                 >
                                     Download
                                 </DropdownItem>
