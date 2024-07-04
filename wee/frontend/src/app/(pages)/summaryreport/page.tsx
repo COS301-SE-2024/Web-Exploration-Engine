@@ -174,13 +174,33 @@ export default function SummaryReport() {
         // Function to add chart to PDF
         const addChartToPDF = async () => {
             // Capture pie chart
-            const pieChartElement = document.getElementById('pie-chart'); // Replace with the actual ID of your chart component
+            const pieChartElement = document.getElementById('pie-chart'); 
             if (pieChartElement) {
                 const canvas = await html2canvas(pieChartElement);
                 const imgData = canvas.toDataURL('image/png');
                 doc.addPage();
                 doc.text('Industry Classification Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); // Adjust image size and position as needed
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
+            }
+    
+            // Capture bar chart
+            const barChartElement = document.getElementById('bar-chart'); 
+            if (barChartElement) {
+                const canvas = await html2canvas(barChartElement);
+                const imgData = canvas.toDataURL('image/png');
+                doc.addPage();
+                doc.text('Website Status Distribution', 20, 20);
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
+            }
+    
+            // Capture radial chart
+            const radialChartElement = document.getElementById('radial-chart'); 
+            if (radialChartElement) {
+                const canvas = await html2canvas(radialChartElement);
+                const imgData = canvas.toDataURL('image/png');
+                doc.addPage();
+                doc.text('Domain Match Distribution', 20, 20);
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
             }
         };
     
