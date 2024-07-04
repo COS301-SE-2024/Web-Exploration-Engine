@@ -3,7 +3,7 @@ import { render, screen, act, waitFor, fireEvent } from '@testing-library/react'
 import Results from '../../src/app/(pages)/results/page'; 
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import {useScrapingContext} from '../../src/app/context/ScrapingContext'
+import { useScrapingContext } from '../../src/app/context/ScrapingContext';
 
 // Mock the useSearchParams hook
 jest.mock('next/navigation', () => ({
@@ -118,7 +118,7 @@ describe('Results Component', () => {
             results: [
                 {
                     ...mockResults[0],
-                    robots: { errorStatus: 404, errorCode: 'Not Found', errorMessage: 'Page not found'},
+                    robots: { errorStatus: 404, errorCode: 'Not Found', errorMessage: 'Page not found' },
                 },
             ],
         });
@@ -131,5 +131,49 @@ describe('Results Component', () => {
             expect(screen.queryByText('No')).toBeDefined();
         });
     });
+
+    it('should display correct summary information', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.queryByText('Example Title')).toBeDefined();
+            expect(screen.queryByText('Example Description')).toBeDefined();
+        });
+    });
+
+    it('should display a fallback message when summary information is not available', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    metadata: {
+                        title: '',
+                        description: '',
+                        ogTitle: '',
+                        ogDescription: '',
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('No summary information available.')).toBeDefined();
+        });
+    });
+
+    it('should display images correctly when images are present', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
+        });
+    });
 });
- 

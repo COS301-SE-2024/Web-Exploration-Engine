@@ -70,6 +70,10 @@ export default function SummaryReport() {
         router.push(`/scraperesults`);
     };
 
+    const handleDownloadReport = () => {
+        console.log("Download report triggered");
+    };
+
     return (
         <div className='min-h-screen p-4'>
             <Button
@@ -84,7 +88,7 @@ export default function SummaryReport() {
                     Summary Report
                 </h1>
                 <div className="mt-4 mr-4 flex justify-end">
-                    <ExportDropdown />
+                    <ExportDropdown onDownloadReport={handleDownloadReport} />
                 </div>
             </div>
             

@@ -16,8 +16,9 @@ import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
+import jsPDF from 'jspdf'; 
+import 'jspdf-autotable';
 import { ExportDropdown } from '../../components/ExportDropdown';
-
 interface Classifications {
   label: string;
   score: number;
@@ -53,20 +54,19 @@ function ResultsComponent() {
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
-  
 
   useEffect(() => {
     if (url) {
       const urlResults = results.filter((res) => res.url === url);
-
+  
       if (urlResults && urlResults[0]) {
-        setWebsiteStatus(urlResults[0].domainStatus);
+        setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
         if ('errorStatus' in urlResults[0].robots) {
           setIsCrawlable(false);
         } else {
           setIsCrawlable(urlResults[0].robots.isUrlScrapable);
-          setWebsiteStatus(urlResults[0].domainStatus);
-          setSummaryInfo({ 
+          setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
+          setSummaryInfo({
             title: urlResults[0].metadata.title || urlResults[0].metadata.ogTitle,
             description: urlResults[0].metadata.description || urlResults[0].metadata.ogDescription
           });
@@ -81,13 +81,131 @@ function ResultsComponent() {
         }
       }
     }
-  }, [url]);
+  }, [url]);  
 
   const backToScrapeResults = () => {
     router.push(`/scraperesults`);
   };
 
-  //Pagination Logic
+  const handleDownloadReport = () => {
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    const title = 'Web Exploration Engine Individual Report';
+    const titleWidth = doc.getStringUnitWidth(title) * 20 / doc.internal.scaleFactor;
+    const x = (doc.internal.pageSize.width - titleWidth) / 2;
+    doc.text(title, x, 20);
+  
+    // Define table positions and dimensions
+    const startY = 30;
+    const margin = 14;
+    const headerHeight = 10;
+    const rowHeight = 10;
+    const columnWidth = [60, 190];
+    
+    // Function to draw a horizontal line
+    const drawLine = (lineY: number): void => {
+      doc.setDrawColor(200, 200, 200); // Light grey color
+      doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); 
+    };
+    
+    // Draw Table Header
+    const darkTealGreenR = 47; 
+    const darkTealGreenG = 139; 
+    const darkTealGreenB = 87; 
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  
+    // Function to split text into lines that fit within a max width
+    const splitText =(text: string, maxWidth: number): string[] => {
+      const lines = [];
+      let line = '';
+      const words = text.split(' ');
+  
+      for (const word of words) {
+        const testLine = line + (line.length > 0 ? ' ' : '') + word;
+        const testWidth = doc.getStringUnitWidth(testLine) * 20 / doc.internal.scaleFactor;
+  
+        if (testWidth > maxWidth) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = testLine;
+        }
+      }
+      if (line.length > 0) {
+        lines.push(line);
+      }
+      
+      return lines;
+    };
+  
+    // Draw Table Rows
+    const rows = [
+      ['URL', url || 'N/A'],
+      ['Title', summaryInfo?.title || 'N/A'],
+      ['Description', summaryInfo?.description || 'N/A'],
+      ['Website Status', websiteStatus || 'N/A'],
+      ['Crawlable', isCrawlable ? 'Yes' : 'No'],
+      ['Industry', industryClassification?.label || 'N/A'],
+      ['Confidence Score', isCrawlable ? `${(industryClassification?.score ? (industryClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
+      ['Domain Match', domainClassification?.label || 'N/A'],
+      ['Confidence Score', isCrawlable ? `${(domainClassification?.score ? (domainClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
+    ];
+  
+    let y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+  
+    rows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(category, columnWidth[0] - 4);
+      const infoLines = splitText(info, columnWidth[1] - 4);
+      
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+      
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+      
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+      
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  
+    // Clean Filename
+    const cleanFilename = (url: string | null): string => {
+      if (!url) return 'website-summary-report';
+      let filename = url.replace('http://', '').replace('https://', '');
+      filename = filename.split('').map(char => {
+        return ['/', ':', '*', '?', '"', '<', '>', '|'].includes(char) ? '_' : char;
+      }).join('');
+      return filename.length > 50 ? filename.substring(0, 50) : filename;
+    };
+  
+    const filename = cleanFilename(url);
+    doc.save(`${filename}.pdf`);
+  };
+  
+ 
+ 
+  
+  // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
 
@@ -120,7 +238,7 @@ function ResultsComponent() {
             Results of {url}
           </h1>
           <div className="mt-4 flex justify-center">
-              <ExportDropdown />
+              <ExportDropdown onDownloadReport={handleDownloadReport}/>
           </div>
       </div>
 
@@ -198,7 +316,7 @@ function ResultsComponent() {
             <TableRow key="1">
               <TableCell>Crawlable</TableCell>
               <TableCell>
-                <Chip
+              <Chip
                   radius="sm"
                   color={isCrawlable === true ? 'success' : 'warning'}
                   variant="flat"
@@ -212,10 +330,10 @@ function ResultsComponent() {
               <TableCell>
                 <Chip
                   radius="sm"
-                  color={websiteStatus === 'live' ? 'success' : 'warning'}
+                  color={websiteStatus === 'Live' ? 'success' : 'warning'}
                   variant="flat"
                 >
-                  {websiteStatus === 'live' ? 'Live' : 'Parked'}
+                  {websiteStatus === 'Live' ? 'Live' : 'Parked'}
                 </Chip>
               </TableCell>
             </TableRow>
@@ -283,22 +401,21 @@ function ResultsComponent() {
         </WEETable>
       </div>
 
-      {/* Paginatin of Images */}
-
+      {/* Pagination of Images */}
       {imageList && imageList.length > 0 && (
         <div className="py-3">
-          <span className="flex justify-between ">
+          <span className="flex justify-between">
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
               Images
             </h3>
 
             <label className="flex items-center text-default-400 text-small">
-              Images Per Page :
+              Images Per Page:
               <select
                 value={itemsPerPage}
                 className="bg-transparent outline-none text-default-400 text-small"
                 onChange={handleItemsPerPageChange}
-                aria-label="Number of results per page" 
+                aria-label="Number of results per page"
               >
                 <option value="4">4</option>
                 <option value="8">8</option>
@@ -349,3 +466,4 @@ function ResultsComponent() {
     </div>
   );
 }
+
