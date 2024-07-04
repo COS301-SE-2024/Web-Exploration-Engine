@@ -10,8 +10,9 @@ import { ScrapeStatusService } from './scrape-status/scrape-status.service';
 import { IndustryClassificationService } from './industry-classification/industry-classification.service';
 import { ScrapeLogoService } from './scrape-logo/scrape-logo.service';
 import { ScrapeImagesService } from './scrape-images/scrape-images.service';
+import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
+import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
-
 @Module({
   controllers: [ScraperController],
   providers: [
@@ -19,8 +20,8 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
     RobotsService,
     ScrapeMetadataService,
     ScrapeStatusService,
-    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,
-    ScreenshotService,
+    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService,ScrapeAddressService,
+    ScreenshotService
   ],
 })
 export class ScraperModule {}
