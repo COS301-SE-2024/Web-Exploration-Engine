@@ -118,6 +118,14 @@ export default function SummaryReport() {
         console.log("Download");
     };
 
+    const handleDownloadReport = () => {
+        console.log("Download report triggered");
+    };
+
+    const handleDownloadReport = () => {
+        console.log("Download report triggered");
+    };
+
     return (
         <>
             <div className='min-h-screen p-4'>

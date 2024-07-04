@@ -5,4 +5,3 @@ import { ScraperModule } from '../scraper/scraper.module';
   imports: [ScraperModule],
 })
 export class AppModule {}
-
