@@ -21,12 +21,7 @@ import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
-import { saveReport } from '../../services/SaveReportService';
 
-// Models
-import { ScraperResult } from '../../models/ScraperModels';
-import { set } from 'cypress/types/lodash';
-import { BsTypeH2 } from 'react-icons/bs';
 
 
 interface Classifications {
@@ -68,20 +63,21 @@ function ResultsComponent() {
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
   const [reportName, setReportName] = useState<string>('');
   const [reportUrl, setReportUrl] = useState<string>('');
+  const [summaryDate, setSummaryDate] = useState<string>("");
+
   
 
   useEffect(() => {
-    console.log("Results:", results);
     if (id) {
-      console.log("ID:", id);
       const savedResult = results.filter((res) => res.id == id);
-      console.log("Saved Result:", savedResult);
       let resultsData;
       if (savedResult && savedResult[0]) {
         resultsData = savedResult[0].reportData as any;
       }
 
       if (resultsData) {
+        const date = new Date(savedResult[0].savedAt ?? "");
+        setSummaryDate(date.toDateString());
         setReportName(savedResult[0].reportName);
         setReportUrl(resultsData.url);
         setWebsiteStatus(resultsData.domainStatus);
@@ -145,12 +141,12 @@ function ResultsComponent() {
 
       <div className="mb-8 text-center">
           <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-            {reportName ? reportName : "Report"}
+            {reportName ? reportName : "Report"}: {reportUrl}
           </h1>
-          <h2 className="mt-4 font-poppins-bold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-            Results for {reportUrl}
+          <h2 className="mt-4 font-poppins-semibold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            {summaryDate}
           </h2>
-          <div className="mt-4 flex justify-center">
+          <div className="mt-4 mr-4 flex justify-end">
             <Dropdown>
               <DropdownTrigger>
                 <Button 
