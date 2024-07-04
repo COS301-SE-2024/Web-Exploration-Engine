@@ -4,14 +4,14 @@ import Results from '../../src/app/(pages)/results/page';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext'
-import { useUserContext } from 'frontend/src/app/context/UserContext';
+import { useUserContext } from '../../src/app/context/UserContext';
 
 // Mock the useSearchParams hook
 jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
-jest.mock('frontend/src/app/context/ScrapingContext', () => ({
+jest.mock('../../src/app/context/UserContext', () => ({
     useScrapingContext: jest.fn(),
 }));
 

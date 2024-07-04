@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SummaryReport from '../../src/app/(pages)/summaryreport/page';
 import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
 import { useScrapingContext } from '../../src/app/context/ScrapingContext';
-import { useUserContext } from 'frontend/src/app/context/UserContext';
+import { useUserContext } from '../../src/app/context/UserContext';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
@@ -12,7 +12,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('../../src/app/context/ScrapingContext', () => ({
   useScrapingContext: jest.fn(),
 }));
-jest.mock('frontend/src/app/context/UserContext', () => ({
+jest.mock('../../src/app/context/UserContext', () => ({
   useUserContext: jest.fn(),
 }));
 
