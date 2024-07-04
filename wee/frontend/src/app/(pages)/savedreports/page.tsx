@@ -9,30 +9,31 @@ import {
   TableRow,
   TableCell,
   Button,
+  Link,
 } from '@nextui-org/react';
 import { FiTrash2 } from "react-icons/fi";
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
-import Link from 'next/link';
 import { getReports } from '../../services/SaveReportService';
 import { useUserContext } from '../../context/UserContext';
-import { ReportRecord } from '../../models/ReportModels';
 import { deleteReport } from "../../services/SaveReportService";
 
 
 function ResultsComponent() {
-  const { user } = useUserContext();
+  const { user, results, setResults, summaries, setSummaries } = useUserContext();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const [reports, setReports] = useState<ReportRecord[]>([]);
-  const [summaryReports, setSummaryReports] = useState<ReportRecord[]>([]);
   const [error, setError] = useState<string>('');
 
   
-  const handleResultPage = (url: string) => {
-    router.push(`/results?url=${encodeURIComponent(url)}`);
+  const handleResultPage = (reportID: number) => {
+    router.push(`/savedresults?id=${reportID}`);
   };
+
+  const handleSummaryPage = (reportID: number) => {
+    router.push(`/savedsummaries?id=${reportID}`);
+  }
 
   async function fetchReports() {
     console.log("Fetching reports for user: ", user)
@@ -46,8 +47,8 @@ function ResultsComponent() {
       // console.log("Reports Data: ", reportsData);
       const formattedReports = reportsData.filter(item => !item.isSummary);
       const formattedSummaryReports = reportsData.filter(item => item.isSummary);
-      setReports(formattedReports);
-      setSummaryReports(formattedSummaryReports);
+      setResults(formattedReports);
+      setSummaries(formattedSummaryReports);
       setLoading(false);
     } catch (error) {
       setError((error as Error).message || 'An error occurred');
@@ -58,14 +59,14 @@ function ResultsComponent() {
 
   useEffect(() => {
     fetchReports();
-    console.log("Reports: ", reports);
-    console.log("Summary Reports: ", summaryReports);
+    console.log("Reports: ", results);
+    console.log("Summary Reports: ", summaries);
   }, []);
 
   // Report pagination
   const [page, setPage] = React.useState(1);
   const [resultsPerPage, setResultsPerPage] = React.useState(5);
-  const pages = Math.ceil(reports.length / resultsPerPage);
+  const pages = Math.ceil(results.length / resultsPerPage);
 
   const handleReportsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -78,13 +79,13 @@ function ResultsComponent() {
   const splitReports = React.useMemo(() => {
     const start = (page - 1) * resultsPerPage;
     const end = start + resultsPerPage;
-    return reports.slice(start, end);
-  }, [page, resultsPerPage, reports]);
+    return results.slice(start, end);
+  }, [page, resultsPerPage, results]);
 
   // Summary report pagination
   const [summaryPage, setSummaryPage] = React.useState(1);
   const [summaryResultsPerPage, setSummaryResultsPerPage] = React.useState(5);
-  const summaryPages = Math.ceil(summaryReports.length / summaryResultsPerPage);
+  const summaryPages = Math.ceil(summaries.length / summaryResultsPerPage);
 
   const handleSummaryReportsPerPageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -97,8 +98,8 @@ function ResultsComponent() {
   const splitSummaryReports = React.useMemo(() => {
     const start = (summaryPage - 1) * summaryResultsPerPage;
     const end = start + summaryResultsPerPage;
-    return summaryReports.slice(start, end);
-  }, [summaryPage, summaryResultsPerPage, summaryReports]);
+    return summaries.slice(start, end);
+  }, [summaryPage, summaryResultsPerPage, summaries]);
 
   const handleDelete = async (reportId: number) => {
     try {
@@ -126,7 +127,7 @@ function ResultsComponent() {
               <CardBody>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-default-400 text-small">
-                    Total {reports.length} reports saved
+                    Total {results.length} reports saved
                   </span>
                   <label className="flex items-center text-default-400 text-small">
                     Results per page:
@@ -148,7 +149,7 @@ function ResultsComponent() {
                   aria-label="Scrape result table"
                   bottomContent={
                     <>
-                      {reports.length > 0 && (
+                      {results.length > 0 && (
                         <div className="flex w-full justify-center">
                           <WEEPagination
                             loop
@@ -192,7 +193,7 @@ function ResultsComponent() {
                     {splitReports.map((item, index) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            <Link href={`/results?url=${encodeURIComponent(item.reportName)}`}>
+                            <Link onClick={() => handleResultPage(item.id as number)}>
                               {item.reportName}
                             </Link>
                           </TableCell>
@@ -202,7 +203,7 @@ function ResultsComponent() {
                           <TableCell className="text-center hidden sm:table-cell">
                             <Button
                               className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                              onClick={() => handleResultPage(item.reportName)}
+                              onClick={() => handleResultPage(item.id as number)}
                               data-testid={'btnView' + index}
                             >
                               View
@@ -230,7 +231,7 @@ function ResultsComponent() {
               <CardBody>
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-default-400 text-small">
-                    Total {summaryReports.length} saved summary reports
+                    Total {summaries.length} saved summary reports
                   </span>
                   <label className="flex items-center text-default-400 text-small">
                     Results per page:
@@ -252,7 +253,7 @@ function ResultsComponent() {
                   aria-label="Scrape result table"
                   bottomContent={
                     <>
-                      {summaryReports.length > 0 && (
+                      {summaries.length > 0 && (
                         <div className="flex w-full justify-center">
                           <WEEPagination
                             loop
@@ -297,7 +298,7 @@ function ResultsComponent() {
                   {splitSummaryReports.map((item, index) => (
                         <TableRow key={item.id}>
                           <TableCell>
-                            <Link href={`/results?url=${encodeURIComponent(item.reportName)}`}>
+                            <Link onClick={() => handleSummaryPage(item.id as number)}>
                               {item.reportName}
                             </Link>
                           </TableCell>
@@ -307,7 +308,7 @@ function ResultsComponent() {
                           <TableCell className="text-center hidden sm:table-cell">
                             <Button
                               className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                              onClick={() => handleResultPage(item.reportName)}
+                              onClick={() => handleSummaryPage(item.id as number)}
                               data-testid={'btnView' + index}
                             >
                               View

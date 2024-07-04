@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
 import { getSupabase } from "../utils/supabase_service_client";
-import { User } from "../models/AuthModels";
 import { useRouter } from 'next/navigation';
 import { useUserContext } from "../context/UserContext";
 

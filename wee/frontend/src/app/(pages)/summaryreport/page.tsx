@@ -73,7 +73,7 @@ export default function SummaryReport() {
     }, [summaryReport]);
 
     const backToScrapeResults = () => {
-        router.push(`/scraperesults`);
+        router.back();
     };
 
     // Save and Download Logic

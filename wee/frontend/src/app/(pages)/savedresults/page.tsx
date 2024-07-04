@@ -19,10 +19,14 @@ import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from '../../context/ScrapingContext';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { saveReport } from '../../services/SaveReportService';
+
+// Models
+import { ScraperResult } from '../../models/ScraperModels';
+import { set } from 'cypress/types/lodash';
+import { BsTypeH2 } from 'react-icons/bs';
 
 
 interface Classifications {
@@ -47,11 +51,9 @@ function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
   const searchParams = useSearchParams();
-  const url = searchParams.get('url');
+  const id = searchParams.get('id') as number | null;
 
-  const { results } = useScrapingContext();
-  const { user } = useUserContext();
-
+  const { results } = useUserContext();
 
   const router = useRouter();
 
@@ -64,35 +66,46 @@ function ResultsComponent() {
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
+  const [reportName, setReportName] = useState<string>('');
+  const [reportUrl, setReportUrl] = useState<string>('');
   
 
   useEffect(() => {
-    if (url) {
-      const urlResults = results.filter((res) => res.url === url);
+    console.log("Results:", results);
+    if (id) {
+      console.log("ID:", id);
+      const savedResult = results.filter((res) => res.id == id);
+      console.log("Saved Result:", savedResult);
+      let resultsData;
+      if (savedResult && savedResult[0]) {
+        resultsData = savedResult[0].reportData as any;
+      }
 
-      if (urlResults && urlResults[0]) {
-        setWebsiteStatus(urlResults[0].domainStatus);
-        if ('errorStatus' in urlResults[0].robots) {
+      if (resultsData) {
+        setReportName(savedResult[0].reportName);
+        setReportUrl(resultsData.url);
+        setWebsiteStatus(resultsData.domainStatus);
+        if ('errorStatus' in resultsData.robots) {
           setIsCrawlable(false);
         } else {
-          setIsCrawlable(urlResults[0].robots.isUrlScrapable);
-          setWebsiteStatus(urlResults[0].domainStatus);
+          setIsCrawlable(resultsData.robots.isUrlScrapable);
+          setWebsiteStatus(resultsData.domainStatus);
           setSummaryInfo({ 
-            title: urlResults[0].metadata.title || urlResults[0].metadata.ogTitle,
-            description: urlResults[0].metadata.description || urlResults[0].metadata.ogDescription
+            title: resultsData.metadata.title || resultsData.metadata.ogTitle,
+            description: resultsData.metadata.description || resultsData.metadata.ogDescription
           });
-          setLogo(urlResults[0].logo);
-          setImageList(urlResults[0].images);
+          setLogo(resultsData.logo);
+          setImageList(resultsData.images);
           setIndustryClassification(
-            urlResults[0].industryClassification.metadataClass
+            resultsData.industryClassification.metadataClass
           );
           setDomainClassification(
-            urlResults[0].industryClassification.domainClass
+            resultsData.industryClassification.domainClass
           );
         }
       }
     }
-  }, [url]);
+  }, [id]);
 
   const backToScrapeResults = () => {
     router.back();
@@ -117,24 +130,6 @@ function ResultsComponent() {
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
   const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
 
-
-  // Save and Download Logic
-  const handleSave = () => {
-    const urlResults = results.filter((res) => res.url === url);
-    if (urlResults && urlResults[0]) {
-      try {
-        saveReport({
-          reportName: "Scraping Report",
-          reportData: urlResults[0],
-          userId: user?.uuid,
-          isSummary: false,
-        });
-      } catch (error) {
-        console.error("Error saving report:", error);
-      }
-    }
-  };
-
   const handleDownload = () => {
     console.log("Download");
   };
@@ -150,8 +145,11 @@ function ResultsComponent() {
 
       <div className="mb-8 text-center">
           <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-            Results of {url}
+            {reportName ? reportName : "Report"}
           </h1>
+          <h2 className="mt-4 font-poppins-bold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Results for {reportUrl}
+          </h2>
           <div className="mt-4 flex justify-center">
             <Dropdown>
               <DropdownTrigger>
@@ -159,48 +157,19 @@ function ResultsComponent() {
                   variant="flat" 
                   startContent={<FiShare className={iconClasses}/>}
                 >
-                  Export/Save
+                  Export
                 </Button>
               </DropdownTrigger>
-              {user ? (
-                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
-                  <DropdownItem
-                    key="save"
-                    startContent={<FiSave className={iconClasses}/>}
-                    description="Save the report on our website"
-                    onAction={handleSave}
-                  >
-                    Save
-                  </DropdownItem>
-                  <DropdownItem
-                    key="download"
-                    startContent={<FiDownload className={iconClasses}/>}
-                    description="Download the report to your device"
-                    onAction={handleDownload}
-                  >
-                    Download
-                  </DropdownItem>
-                </DropdownMenu> 
-              ) : (
-                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
-                  <DropdownItem
-                    key="save"
-                    startContent={<FiSave className={iconClasses}/>}
-                    description="Sign up or log in to save the report on our website"
-                    onAction={handleSave}
-                  >
-                    Save
-                  </DropdownItem>
-                  <DropdownItem
-                    key="download"
-                    startContent={<FiDownload className={iconClasses}/>}
-                    description="Download the report to your device"
-                    onAction={handleDownload}
-                  >
-                    Download
-                  </DropdownItem>
-                </DropdownMenu> 
-              )}
+              <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                <DropdownItem
+                  key="download"
+                  startContent={<FiDownload className={iconClasses}/>}
+                  description="Download the report to your device"
+                  onAction={handleDownload}
+                >
+                  Download
+                </DropdownItem>
+              </DropdownMenu> 
             </Dropdown>
           </div>
       </div>
