@@ -423,10 +423,10 @@ function ResultsComponent() {
                 <TableCell>
                   <Chip
                     radius="sm"
-                    color={websiteStatus === 'live' ? 'success' : 'warning'}
+                    color={websiteStatus === 'Live' ? 'success' : 'warning'}
                     variant="flat"
                   >
-                    {websiteStatus === 'live' ? 'Live' : 'Parked'}
+                    {websiteStatus === 'Live' ? 'Live' : 'Parked'}
                   </Chip>
                 </TableCell>
               </TableRow>
