@@ -1,6 +1,10 @@
 import { generateSummary } from '../../src/app/services/SummaryService';
 import { ScraperResult } from '../../src/app/models/ScraperModels';
 
+jest.mock('../../src/app/context/ScrapingContext', () => ({
+  useScrapingContext: jest.fn(),
+}));
+
 describe('SummaryService', () => {
   const scraperResults: ScraperResult[] = [
     { 
