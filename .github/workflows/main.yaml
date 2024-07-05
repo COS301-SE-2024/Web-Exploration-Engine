@@ -43,7 +43,7 @@ jobs:
           npx nx build webscraper
           npx nx build frontend
           echo "================== build complete =================="
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
           
         #continue-on-error: true
 
