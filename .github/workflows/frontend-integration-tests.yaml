@@ -1,0 +1,50 @@
+name: Integration Test
+on:
+  push:
+    branches: [ master, development ]
+
+permissions:
+  contents: read
+
+jobs:
+  pre-start:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Start Build
+        run: |
+          echo "Beginning to Build ${{ github.repository }}"
+
+  cypress-test:
+    name: Cypress Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Install dependencies
+        run: |
+          cd wee/frontend
+          npm ci
+
+      - name: Start application
+        run: |
+          cd wee/frontend
+          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} \
+          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
+          npm run dev &
+          npx wait-on http://localhost:3000
+
+      - name: Run Cypress tests
+        run: |
+          cd wee/frontend
+          npx cypress run   
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL}}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY}}
+          NEXT_PUBLIC_GOOGLE_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_API_KEY}}  
