@@ -1,11 +1,11 @@
 name: integration-tests
- 
+
 on:
   pull_request:
     branches: [master, development]
   push:
     branches: [master, development]
-    
+
 permissions:
   contents: read
 
@@ -18,9 +18,14 @@ jobs:
         run: |
           echo "Beginning to Build ${{ github.repository }}"
 
-  cypress-test:
+  run-cypress-tests:
     name: Cypress Test
     runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,15 +43,13 @@ jobs:
       - name: Start application
         run: |
           cd wee/frontend
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
           npx nx dev frontend  &
           npx wait-on http://localhost:3000
 
       - name: Run Cypress tests
         run: |
           cd wee/frontend
-          npx cypress run   
+          npx cypress run
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
