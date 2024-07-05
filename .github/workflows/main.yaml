@@ -8,6 +8,7 @@ on:
 
 jobs:
   lint-build-test-deploy:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
 
     env:
