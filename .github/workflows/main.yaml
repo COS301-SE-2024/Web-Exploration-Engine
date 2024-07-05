@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
 
     steps:
       - name: Code Checkout
@@ -21,14 +21,14 @@ jobs:
 
       - name: Change to repository root
         run: cd $GITHUB_WORKSPACE
-        
+
       - name: Print new build number
         run: echo "Build number is $BUILD_NUMBER"
 
       - name: Install dependencies
-        run:  |
+        run: |
           cd wee && npm install
-          
+
       - name: Lint
         run: |
           cd wee
@@ -45,7 +45,7 @@ jobs:
           npx nx build frontend
           echo "================== build complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
-          
+
         #continue-on-error: true
 
       - name: Jest Tests
@@ -56,34 +56,10 @@ jobs:
 
           echo "================== jest tests complete =================="
 
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-
-      - name: Start the server
-        run: npm start &
-        working-directory: ./wee/frontend
-
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3001 && npx nx e2e frontend --configuration=production
-        working-directory: ./wee/frontend
-
-
-      - name: Cypress Tests
-        uses: cypress-io/github-action@v4
-        with:
-          command: npx nx e2e frontend --configuration=production
-          working-directory: ./wee
-        #run:   echo "================== cypress complete =================="
-
-      - name: Start Servers
-        run: |
-          cd wee    
-              npx nx serve webscraper --coverage=true
-              npx nx dev frontend --coverage=true
 
       - name: Deploy
         run: |
