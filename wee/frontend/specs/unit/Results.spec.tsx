@@ -198,7 +198,7 @@ describe('Results Component', () => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
         });
     });
-    it('should call jsPDF and save the PDF when download button is clicked', async () => {
+    it('should call jsPDF and download the PDF when download button is clicked', async () => {
         render(<Results />);
       
         // Ensure the component has rendered and the dropdown button is available

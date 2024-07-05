@@ -3,7 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import SummaryReport from '../../src/app/(pages)/summaryreport/page';
 import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
 import { useScrapingContext } from '../../src/app/context/ScrapingContext';
-
+import jsPDF from 'jspdf'; 
+import '@testing-library/jest-dom';
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -19,7 +20,23 @@ class ResizeObserver {
 }
 
 global.ResizeObserver = ResizeObserver;
-
+jest.mock('jspdf', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    text: jest.fn(),
+    addPage: jest.fn(),
+    save: jest.fn(),
+    internal: {
+      pageSize: { width: 200, height: 300 }, // Adjust dimensions as needed
+    },
+  })),
+}));
+jest.mock('html2canvas', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    toDataURL: jest.fn().mockResolvedValue('data:image/png;base64,MockImage'),
+  })),
+}));
 // Mocking apexcharts default export
 jest.mock('apexcharts', () => {
   return {
@@ -93,4 +110,17 @@ describe('SummaryReport Page', () => {
     expect(screen.getByText('2 Urls')).toBeDefined(); // Scrapable URLs
     expect(screen.getByText('100 sec')).toBeDefined(); // Average Time
   });
+  it('should call jsPDF and download the PDF when download button is clicked', async () => {
+      render(<SummaryReport />);
+      const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+      expect(dropdownButton).toBeInTheDocument();
+
+      //Click the dropdown button to open the menu
+      fireEvent.click(dropdownButton);
+  
+      // Wait for the download button to appear
+      const downloadButton = await screen.findByTestId('download-report-button');
+      expect(downloadButton).toBeInTheDocument();
+
+    });
 });
