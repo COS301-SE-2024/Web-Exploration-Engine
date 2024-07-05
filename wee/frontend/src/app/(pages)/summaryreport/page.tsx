@@ -78,6 +78,13 @@ export default function SummaryReport() {
         }
     
         const doc = new jsPDF();
+        let currentPage = 1;
+    
+        // Function to add page number to the footer
+        const addPageNumber = (pageNumber: number) => {
+            doc.setFontSize(10);
+            doc.text(`Page ${pageNumber-1}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+        };
     
         // Title
         doc.setFontSize(20);
@@ -100,9 +107,9 @@ export default function SummaryReport() {
         };
     
         // Draw Table Header
-        const darkTealGreenR = 47; 
-        const darkTealGreenG = 139; 
-        const darkTealGreenB = 87; 
+        const darkTealGreenR = 47;
+        const darkTealGreenG = 139;
+        const darkTealGreenB = 87;
         doc.setFontSize(14);
         doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
         doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
@@ -164,6 +171,7 @@ export default function SummaryReport() {
     
             if (y > 270) { // Check if the y position exceeds the page limit
                 doc.addPage();
+                addPageNumber(++currentPage); // Add page number before the new content
                 y = 20; // Reset y position on the new page
                 doc.text('Category', margin + 2, y + 7);
                 doc.text('Information', margin + columnWidth[0] + 2, y + 7);
@@ -171,36 +179,76 @@ export default function SummaryReport() {
             }
         });
     
+        // Add page number to the last page
+        addPageNumber(++currentPage);
+    
         // Function to add chart to PDF
         const addChartToPDF = async () => {
             // Capture pie chart
-            const pieChartElement = document.getElementById('pie-chart'); 
+            const pieChartElement = document.getElementById('pie-chart');
             if (pieChartElement) {
                 const canvas = await html2canvas(pieChartElement);
                 const imgData = canvas.toDataURL('image/png');
                 doc.addPage();
+                addPageNumber(++currentPage); // Add page number before the new content
                 doc.text('Industry Classification Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100);
+    
+                // Add list of URLs with confidence score below 50%
+                const lowConfidenceUrls = (weakClassification || []).map(item => item.url);
+                doc.text('Low Confidence URLs (Confidence Score < 50%)', 20, 140);
+                lowConfidenceUrls.forEach((url, index) => {
+                    if (index % 30 === 0 && index !== 0) {
+                        doc.addPage();
+                        addPageNumber(++currentPage); // Add page number before the new content
+                        doc.text('Low Confidence URLs (Confidence Score < 50%)', 20, 20);
+                    }
+                    doc.text(`${index + 1}. ${url}`, 20, 150 + (index % 30) * 10);
+                });
             }
     
             // Capture bar chart
-            const barChartElement = document.getElementById('bar-chart'); 
+            const barChartElement = document.getElementById('bar-chart');
             if (barChartElement) {
                 const canvas = await html2canvas(barChartElement);
                 const imgData = canvas.toDataURL('image/png');
                 doc.addPage();
+                addPageNumber(++currentPage); // Add page number before the new content
                 doc.text('Website Status Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
+                doc.addImage(imgData, 'PNG', 20, 30, 170, 100);
+    
+                // Add list of parked URLs
+                doc.text('Parked URLs', 20, 140);
+                (parkedUrls || []).forEach((url, index) => {
+                    if (index % 30 === 0 && index !== 0) {
+                        doc.addPage();
+                        addPageNumber(++currentPage); // Add page number before the new content
+                        doc.text('Parked URLs', 20, 20);
+                    }
+                    doc.text(`${index + 1}. ${url}`, 20, 150 + (index % 30) * 10);
+                });
             }
     
             // Capture radial chart
-            const radialChartElement = document.getElementById('radial-chart'); 
+            const radialChartElement = document.getElementById('radial-chart');
             if (radialChartElement) {
                 const canvas = await html2canvas(radialChartElement);
                 const imgData = canvas.toDataURL('image/png');
                 doc.addPage();
+                addPageNumber(++currentPage); // Add page number before the new content
                 doc.text('Domain Match Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100); 
+                doc.addImage(imgData, 'PNG', 20, 30, 160, 100);
+    
+                // Add list of mismatched URLs
+                doc.text('Mismatched URLs', 20, 140);
+                (mismatchedUrls || []).forEach((item, index) => {
+                    if (index % 30 === 0 && index !== 0) {
+                        doc.addPage();
+                        addPageNumber(++currentPage); // Add page number before the new content
+                        doc.text('Mismatched URLs', 20, 20);
+                    }
+                    doc.text(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, 20, 150 + (index % 30) * 10);
+                });
             }
         };
     
@@ -208,6 +256,8 @@ export default function SummaryReport() {
         await addChartToPDF();
         doc.save('website-summary-report.pdf');
     };
+    
+
     
     
     
