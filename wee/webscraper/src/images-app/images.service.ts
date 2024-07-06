@@ -18,7 +18,7 @@ export class ImagesService {
 
         try {
             const browser = await puppeteer.launch({
-                executablePath: '/usr/bin/google-chrome',
+                executablePath: '/usr/bin/google-chrome-stable',
                 ignoreDefaultArgs: ['--disable-extensions'],
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
             });
