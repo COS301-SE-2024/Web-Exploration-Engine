@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
     wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google-archive.gpg && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' && \
     apt-get update && \
-    apt-get install google-chrome-stable -y --no-install-recommends && \
+    apt-get install google-chrome-stable python3-pip python3.11-venv -y --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -23,7 +23,14 @@ COPY ../tsconfig.base.json ./
 COPY ../webscraper ./webscraper
 COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
 
-# RUN npm cache clean --force
+# accommodate for hugging face
+# Set up a virtual environment for Python packages
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --upgrade pip
+RUN pip install torch transformers
+
+RUN npm cache clean --force
 RUN npm install -g npm@latest
 RUN npm install
 
