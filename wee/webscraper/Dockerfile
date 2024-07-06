@@ -1,5 +1,3 @@
-#FROM node:lts-alpine
-
 FROM node:18
 
 # Install Google Chrome Stable and fonts
@@ -13,7 +11,6 @@ RUN apt-get update && apt-get install gnupg wget -y && \
 
 WORKDIR /app
 RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist
-
 
 COPY ../.editorconfig ./
 COPY ../.eslintignore ./
@@ -30,41 +27,15 @@ COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
 RUN npm install -g npm@latest
 RUN npm install
 
-# Create a user and group for running the application
 RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 
-# Change ownership of the necessary directories
 RUN chown -R webscraper:webscraper /app
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-# RUN mkdir -p /app/.nx/cache && chown -R node:node /app/.nx
-
 EXPOSE 3000
 
-# RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 USER webscraper
 
 CMD ["npx", "nx", "serve", "webscraper", "--skip-nx-cache", "--configuration=production", "--verbose"]
-
-
-# RUN apk update && apk add --no-cache \
-#     nmap \
-#     chromium \
-#     harfbuzz \
-#     "freetype>2.8" \
-#     ttf-freefont \
-#     nss \
-#     python3 \
-#     make \
-#     g++ \
-#     bash
-
-# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# # # Add Chrome flags to disable sandboxing (when running as root)
-# ENV CHROME_BIN=/usr/bin/chromium-browser
-# ENV CHROME_PATH=/usr/lib/chromium/
-# ENV PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox"
