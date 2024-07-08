@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy 
 
 on:
   workflow_run:
@@ -22,10 +22,10 @@ jobs:
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_NODE_ENV: production
-          #what are production vs dev environments?
+          # what are production vs dev environments?
           envkey_NEXT_PUBLIC_API: "https://api-avalanche.sloththe.dev"
           envkey_NEXT_PUBLIC_DSN: ${{ secrets.SENTRY_KEY }}
-          #what is the sentry key?
+          # what is the sentry key?
           # for the frontend app we have to add the supabase keys
 
           directory: frontend
