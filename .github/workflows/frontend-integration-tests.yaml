@@ -1,4 +1,4 @@
-name: integration-tests
+name: Integration Tests
 
 on:
   pull_request:
@@ -10,16 +10,9 @@ permissions:
   contents: read
 
 jobs:
-  pre-start:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Start Build
-        run: |
-          echo "Beginning to Build ${{ github.repository }}"
 
   run-cypress-tests:
-    name: Cypress Test
+    name: Cypress Frontend Tests
     runs-on: ubuntu-latest
 
     env:
