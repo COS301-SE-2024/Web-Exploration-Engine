@@ -30,6 +30,7 @@ jest.mock('jspdf', () => ({
     addImage: jest.fn(),
     save: jest.fn(),
     setFontSize: jest.fn(),
+    splitTextToSize: jest.fn(),
     setTextColor: jest.fn(),
     setDrawColor: jest.fn(),
     setFillColor: jest.fn(),
