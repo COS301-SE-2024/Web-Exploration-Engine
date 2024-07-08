@@ -145,7 +145,7 @@ export default function SummaryReport() {
         const rows = [
             ['Total URLs', summaryReport.totalUrls?.toString() || 'N/A'],
             ['Scrapable URLs', summaryReport.scrapableUrls?.toString() || 'N/A'],
-            ['Average Time', summaryReport.avgTime?.toString() || 'N/A'],
+            ['Average Time',  `${summaryReport.avgTime?.toString() || 'N/A'} seconds`],
         ];
     
         let y = startY + headerHeight;
@@ -184,81 +184,101 @@ export default function SummaryReport() {
     
         // Function to add chart to PDF
         const addChartToPDF = async () => {
-            // Capture pie chart
-            const pieChartElement = document.getElementById('pie-chart');
-            if (pieChartElement) {
-                const canvas = await html2canvas(pieChartElement);
-                const imgData = canvas.toDataURL('image/png');
+            const captureChart = async (chartId: string, title: string, yPosition: number) => {
+                const chartElement = document.getElementById(chartId);
+                if (chartElement) {
+                    const canvas = await html2canvas(chartElement);
+                    const imgData = canvas.toDataURL('image/png');
+                    doc.addPage();
+                    addPageNumber(++currentPage); // Add page number before the new content
+                    doc.setFontSize(18);
+                    doc.text(title, 20, 20);
+        
+                    // Calculate image dimensions based on aspect ratio
+                    const width = doc.internal.pageSize.width - 40; // Adjust as needed
+                    const height = canvas.height * (width / canvas.width);
+        
+                    doc.addImage(imgData, 'PNG', 20, yPosition, width, height);
+    
+                }
+            };
+        
+            // Example usage
+            await captureChart('pie-chart', 'Industry Classification Distribution', 30);
+            // Add list of low confidence URLs
+            if (weakClassification && weakClassification.length > 0) {
+                let lowConfidenceUrls = weakClassification
+                    .filter(item => item.score < 0.5) // Adjust threshold as needed
+                    .map(item => item.url);
+        
+                if (lowConfidenceUrls.length > 0) {
+                    doc.addPage();
+                    addPageNumber(++currentPage); // Add page number before the new content
+                    doc.setFontSize(18);
+                    doc.text('Low Confidence URLs (Confidence Score < 50%)', 20, 20);
+                    doc.setFontSize(12);
+                    lowConfidenceUrls.forEach((url, index) => {
+                        const y = 30 + index * 10; // Adjust as needed for spacing
+                        doc.text(`${index + 1}. ${url}`, 20, y);
+                    });
+                }
+            }
+
+            await captureChart('bar-chart', 'Website Status Distribution', 30);
+            if (parkedUrls && parkedUrls.length > 0) {
                 doc.addPage();
                 addPageNumber(++currentPage); // Add page number before the new content
-                doc.text('Industry Classification Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100);
-    
-                // Add list of URLs with confidence score below 50%
-                const lowConfidenceUrls = (weakClassification || []).map(item => item.url);
-                doc.text('Low Confidence URLs (Confidence Score < 50%)', 20, 140);
-                lowConfidenceUrls.forEach((url, index) => {
-                    if (index % 30 === 0 && index !== 0) {
-                        doc.addPage();
-                        addPageNumber(++currentPage); // Add page number before the new content
-                        doc.text('Low Confidence URLs (Confidence Score < 50%)', 20, 20);
-                    }
-                    doc.text(`${index + 1}. ${url}`, 20, 150 + (index % 30) * 10);
+                doc.setFontSize(12);
+                doc.text('Parked URLs', 20, 20);
+        
+                parkedUrls.forEach((url, index) => {
+                    const y = 30 + index * 10; // Adjust as needed for spacing
+                    doc.text(`${index + 1}. ${url}`, 20, y);
                 });
             }
-    
-            // Capture bar chart
-            const barChartElement = document.getElementById('bar-chart');
-            if (barChartElement) {
-                const canvas = await html2canvas(barChartElement);
-                const imgData = canvas.toDataURL('image/png');
+
+
+            await captureChart('radial-chart', 'Domain Match Distribution', 30);
+             // Add list of mismatched URLs
+             if (mismatchedUrls && mismatchedUrls.length > 0) {
                 doc.addPage();
                 addPageNumber(++currentPage); // Add page number before the new content
-                doc.text('Website Status Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 170, 100);
-    
-                // Add list of parked URLs
-                doc.text('Parked URLs', 20, 140);
-                (parkedUrls || []).forEach((url, index) => {
-                    if (index % 30 === 0 && index !== 0) {
-                        doc.addPage();
-                        addPageNumber(++currentPage); // Add page number before the new content
-                        doc.text('Parked URLs', 20, 20);
+                doc.setFontSize(12);
+                doc.text('Mismatched URLs', 20, 20);
+        
+                mismatchedUrls.forEach((item, index) => {
+                    const startY: number = 30;
+                    const lineHeight: number = 10; // Line height for each item
+                    const maxLinesPerPage: number = Math.floor((doc.internal.pageSize.height - startY) / lineHeight); // Calculate max lines per page
+                    const lines: string[] | undefined = doc.splitTextToSize(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, doc.internal.pageSize.width - 40);
+                
+                    if (lines) {
+                        if (index > 0 && (startY + lines.length * lineHeight) > doc.internal.pageSize.height - 20) {
+                            doc.addPage();
+                            addPageNumber(++currentPage);
+                            doc.setFontSize(12);
+                            doc.text('Mismatched URLs (Continued)', 20, 20);
+                        }
+                
+                        lines.forEach((line: string, i: number) => {
+                            const y: number = startY + i * lineHeight;
+                            doc.text(line, 20, y);
+                        });
+                    } else {
+                        console.error('splitTextToSize returned undefined for item:', item);
                     }
-                    doc.text(`${index + 1}. ${url}`, 20, 150 + (index % 30) * 10);
                 });
+                
             }
-    
-            // Capture radial chart
-            const radialChartElement = document.getElementById('radial-chart');
-            if (radialChartElement) {
-                const canvas = await html2canvas(radialChartElement);
-                const imgData = canvas.toDataURL('image/png');
-                doc.addPage();
-                addPageNumber(++currentPage); // Add page number before the new content
-                doc.text('Domain Match Distribution', 20, 20);
-                doc.addImage(imgData, 'PNG', 20, 30, 160, 100);
-    
-                // Add list of mismatched URLs
-                doc.text('Mismatched URLs', 20, 140);
-                (mismatchedUrls || []).forEach((item, index) => {
-                    if (index % 30 === 0 && index !== 0) {
-                        doc.addPage();
-                        addPageNumber(++currentPage); // Add page number before the new content
-                        doc.text('Mismatched URLs', 20, 20);
-                    }
-                    doc.text(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, 20, 150 + (index % 30) * 10);
-                });
-            }
-        };
+        
+            // Save the PDF
+            doc.save('website-summary-report.pdf');
+        };        
     
         // Add charts and save the PDF
         await addChartToPDF();
         doc.save('website-summary-report.pdf');
     };
-    
-
-    
     
     
 
