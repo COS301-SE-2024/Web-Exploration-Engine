@@ -207,7 +207,7 @@ export default function SummaryReport() {
             await captureChart('pie-chart', 'Industry Classification Distribution', 30);
             // Add list of low confidence URLs
             if (weakClassification && weakClassification.length > 0) {
-                let lowConfidenceUrls = weakClassification
+                const lowConfidenceUrls = weakClassification
                     .filter(item => item.score < 0.5) // Adjust threshold as needed
                     .map(item => item.url);
         
@@ -247,9 +247,9 @@ export default function SummaryReport() {
                 doc.text('Mismatched URLs', 20, 20);
         
                 mismatchedUrls.forEach((item, index) => {
-                    const startY: number = 30;
-                    const lineHeight: number = 10; // Line height for each item
-                    const maxLinesPerPage: number = Math.floor((doc.internal.pageSize.height - startY) / lineHeight); // Calculate max lines per page
+                    const startY = 30;
+                    const lineHeight = 10; // Line height for each item
+                    const maxLinesPerPage = Math.floor((doc.internal.pageSize.height - startY) / lineHeight); // Calculate max lines per page
                     const lines: string[] | undefined = doc.splitTextToSize(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, doc.internal.pageSize.width - 40);
                 
                     if (lines) {
