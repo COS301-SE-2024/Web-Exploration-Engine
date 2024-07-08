@@ -17,7 +17,6 @@ import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
-import 'jspdf-autotable';
 import { ExportDropdown } from '../../components/ExportDropdown';
 interface Classifications {
   label: string;
