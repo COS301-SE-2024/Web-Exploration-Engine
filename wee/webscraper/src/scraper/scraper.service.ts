@@ -10,6 +10,10 @@ import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
+import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+
 // Models
 import {
   ErrorResponse,
@@ -29,7 +33,9 @@ export class ScraperService {
     private readonly scrapeImagesService: ScrapeImagesService,
     private readonly screenshotService: ScreenshotService,
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
-    private readonly scrapeAddressService: ScrapeAddressService
+    private readonly scrapeAddressService: ScrapeAddressService,
+    private readonly seoAnalysisService: SeoAnalysisService 
+
   ) {}
 
   async scrape(url: string) {
@@ -49,6 +55,7 @@ export class ScraperService {
       time: 0,
       addresses: [],
       screenshot:'' as string | ErrorResponse,
+      seoAnalysis: null as any,
     };
 
     // validate url
@@ -124,7 +131,7 @@ export class ScraperService {
 
     // get screenshot
     const screenshotPromise = this.getScreenshot(data.url);
-
+    const seoAnalysisPromise = this.seoAnalysisService.analyzeTitleTag(data.url);
     const [
       industryClassification,
       logo,
@@ -132,6 +139,7 @@ export class ScraperService {
       contactInfo,
       addresses,
       screenshot,
+      seoAnalysis,
     ] = await Promise.all([
       industryClassificationPromise,
       logoPromise,
@@ -139,6 +147,7 @@ export class ScraperService {
       contactInfoPromise,
       addressPromise,
       screenshotPromise,
+      seoAnalysisPromise,
     ]);
     data.industryClassification = industryClassification;
     data.logo = logo;
@@ -151,6 +160,8 @@ export class ScraperService {
     } else {
       data.screenshot = (screenshot as { screenshot: string }).screenshot; // Assign the screenshot URL
     }
+
+    data.seoAnalysis = seoAnalysis;
     // scrape slogan
 
     // scrape images
@@ -262,4 +273,18 @@ export class ScraperService {
       robotsResponse as RobotsResponse
     );
   }
+  async seoAnalysis(url: string) {
+    const htmlContent = await this.fetchHtmlContent(url);
+    return this.seoAnalysisService.analyzeTitleTag(htmlContent);
+  }
+
+  private async fetchHtmlContent(url: string): Promise<string> {
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      throw new Error(`Error fetching HTML from ${url}: ${error.message}`);
+    }
+  }
 }
+

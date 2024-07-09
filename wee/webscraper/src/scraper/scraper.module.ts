@@ -13,6 +13,7 @@ import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
+import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
 @Module({
   controllers: [ScraperController],
   providers: [
@@ -21,7 +22,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
     ScrapeMetadataService,
     ScrapeStatusService,
     IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService,ScrapeAddressService,
-    ScreenshotService
+    ScreenshotService,SeoAnalysisService  
   ],
 })
 export class ScraperModule {}
