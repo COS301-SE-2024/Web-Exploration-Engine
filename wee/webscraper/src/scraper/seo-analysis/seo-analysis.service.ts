@@ -11,17 +11,20 @@ export class SeoAnalysisService {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
       headingAnalysis,  
+      imageAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
+      this.analyzeImageOptimization(htmlContent),
     ]);
 
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
       headingAnalysis,
+      imageAnalysis,
 
     };
   }
@@ -103,6 +106,66 @@ export class SeoAnalysisService {
       count,
       recommendations,
     };
+  }
+  async analyzeImageOptimization(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const images = $('img').toArray();
+    
+    let missingAltTextCount = 0;
+    let nonOptimizedCount = 0;
+    const recommendations = [];
+
+    images.forEach((img, index) => {
+      const altText = $(img).attr('alt') || '';
+      const src = $(img).attr('src') || '';
+
+      if (!altText) {
+        missingAltTextCount++;
+        recommendations.push(`Missing alt text for image ${index + 1}. URL: ${src}`);
+      }
+      if (src && !this.isImageOptimized(src)) {
+        nonOptimizedCount++;
+        recommendations.push(`Image ${index + 1} may not be optimized for faster loading. URL: ${src}`);
+      }
+    });
+
+    return {
+      missingAltTextCount,
+      nonOptimizedCount,
+      recommendations: recommendations.join(' '),
+    };
+  }
+  async isImageOptimized(src: string): Promise<boolean> {
+    const lowerSrc = src.toLowerCase();
+    const optimizedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg']; // Include SVG as it's often optimized
+    const isOptimizedExtension = optimizedExtensions.some(ext => lowerSrc.endsWith(ext));
+  
+    if (!isOptimizedExtension) {
+      return false;
+    }
+  
+    try {
+      // Fetch the image to analyze its size and properties
+      const response = await axios.head(src); // Use HEAD request to get headers without downloading the entire image
+      const contentLength = parseInt(response.headers['content-length'], 10);
+      const contentType = response.headers['content-type'];
+  
+      // Check if the image size is reasonable for its type
+      if (contentType.includes('image') && contentLength > 0) {
+        //Check if JPEG size is below a certain threshold
+        if (lowerSrc.endsWith('.jpg') || lowerSrc.endsWith('.jpeg')) {
+          const maxSizeForJpeg = 1024 * 1024; // 1MB (adjust as needed)
+          if (contentLength > maxSizeForJpeg) {
+            return false;
+          }
+        }
+      }
+  
+      return true;
+    } catch (error) {
+      console.error(`Error checking image optimization for ${src}:`, error);
+      return false; 
+    }
   }
 
 }
