@@ -11,8 +11,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
-import axios from 'axios';
-import * as cheerio from 'cheerio';
+
 
 // Models
 import {
@@ -275,15 +274,17 @@ export class ScraperService {
   }
   async seoAnalysis(url: string) {
     const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
-    const [metaDescriptionAnalysis,titleTagsAnalysis] = await Promise.all([
+    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis] = await Promise.all([
       this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
-      this.seoAnalysisService.analyzeTitleTag(htmlContent)
+      this.seoAnalysisService.analyzeTitleTag(htmlContent),
+      this.seoAnalysisService.analyzeHeadings(htmlContent),
 
     ]);
   
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
+      headingAnalysis,
 
     };
   }

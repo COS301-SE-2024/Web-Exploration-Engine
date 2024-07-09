@@ -8,16 +8,21 @@ export class SeoAnalysisService {
     const htmlContent = await this.fetchHtmlContent(url);
 
     const [
-      metaDescriptionAnalysis,
       titleTagsAnalysis,
+      metaDescriptionAnalysis,
+      headingAnalysis,  
+
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
-      this.analyzeTitleTag(htmlContent)
+      this.analyzeTitleTag(htmlContent),
+      this.analyzeHeadings(htmlContent),
     ]);
 
     return {
+      titleTagsAnalysis,
       metaDescriptionAnalysis,
-      titleTagsAnalysis
+      headingAnalysis,
+
     };
   }
 
@@ -86,4 +91,18 @@ export class SeoAnalysisService {
       recommendations,
     };
   }
+
+  async analyzeHeadings(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const headings = $('h1, h2, h3, h4, h5, h6').toArray().map(el => $(el).text().trim());
+    const count = headings.length;
+    const recommendations = count > 0 ? '' : 'No headings (H1-H6) found. Add headings to improve structure.';
+
+    return {
+      headings,
+      count,
+      recommendations,
+    };
+  }
+
 }
