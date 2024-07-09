@@ -34,6 +34,8 @@ function ResultsComponent() {
     setProcessedUrls,
     processingUrls,
     setProcessingUrls,
+    comparisonIndexes,
+    setComparisonIndexes
   } = useScrapingContext();
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -182,7 +184,13 @@ function ResultsComponent() {
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   
   useEffect(() => {
-    console.log("SELECTED KEYS: ", selectedKeys);
+    if (selectedKeys == 'all') {
+      console.log(selectedKeys);
+    }
+    else {
+      console.log("SELECTED KEYS: ", Array.from(selectedKeys));
+      setComparisonIndexes(Array.from(selectedKeys));
+    }
   }, [selectedKeys]);
 
   return (

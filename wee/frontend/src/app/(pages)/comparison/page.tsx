@@ -7,11 +7,13 @@ import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 
 export default function ComparisonReport() {
-    const { results } = useScrapingContext();
+    const { results, comparisonIndexes } = useScrapingContext();
     const router = useRouter();
 
     useEffect(() => {
-        console.log('COMPARISON', results);
+        console.log('COMPARISON', results, comparisonIndexes);
+        console.log(results[comparisonIndexes[0]]);
+        console.log(results[comparisonIndexes[1]]);
     }, []);
 
     const backToScrapeResults = () => {
