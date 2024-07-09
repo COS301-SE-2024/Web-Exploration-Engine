@@ -131,7 +131,7 @@ export class ScraperService {
 
     // get screenshot
     const screenshotPromise = this.getScreenshot(data.url);
-    const seoAnalysisPromise = this.seoAnalysisService.analyzeTitleTag(data.url);
+    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url);
     const [
       industryClassification,
       logo,
@@ -274,17 +274,18 @@ export class ScraperService {
     );
   }
   async seoAnalysis(url: string) {
-    const htmlContent = await this.fetchHtmlContent(url);
-    return this.seoAnalysisService.analyzeTitleTag(htmlContent);
-  }
+    const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
+    const [metaDescriptionAnalysis,titleTagsAnalysis] = await Promise.all([
+      this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
+      this.seoAnalysisService.analyzeTitleTag(htmlContent)
 
-  private async fetchHtmlContent(url: string): Promise<string> {
-    try {
-      const response = await axios.get(url);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Error fetching HTML from ${url}: ${error.message}`);
-    }
+    ]);
+  
+    return {
+      titleTagsAnalysis,
+      metaDescriptionAnalysis,
+
+    };
   }
 }
 

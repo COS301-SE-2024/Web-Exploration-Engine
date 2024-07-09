@@ -315,19 +315,8 @@ export const SeoAnalysisResponse200 = ApiResponse({
     properties: {
       titleTags: { type: 'string' },
       metaDescriptions: { type: 'string' },
-      headings: {
-        type: 'object',
-        properties: {
-          h1: { type: 'array', items: { type: 'string' } },
-          h2: { type: 'array', items: { type: 'string' } },
+
         },
-      },
-      contentQuality: { type: 'string' },
-      keywordDensity: { type: 'string' },
-      internalLinking: { type: 'string' },
-      urlStructure: { type: 'string' },
-      imageOptimization: { type: 'string' },
-    },
   },
 });
 export const SeoAnalysisResponse400 = ApiResponse({
