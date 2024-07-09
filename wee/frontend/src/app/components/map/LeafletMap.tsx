@@ -23,7 +23,7 @@ const LeafletMap: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [center, setCenter] = useState<[number, number] | null>(null);
   const [showUserMarker, setShowUserMarker] = useState(false);
-  const [markers, setMarkers] = useState<Array<{ coords: [number, number], address: string }>>([]);
+  const [markers, setMarkers] = useState<{ coords: [number, number]; address: string; }[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -56,27 +56,10 @@ const LeafletMap: React.FC = () => {
       const convertAddressesToCoords = async () => {
         const geocodedMarkers = await Promise.all(
           mockAddresses.map(async (address: string) => {
-            const retryFetch = async (url: string, options: any = {}, retries = 3, backoff = 3000): Promise<Response> => {
-              try {
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error('Network response was not ok');
-                return response;
-              } catch (error) {
-                if (retries > 1) {
-                  console.warn(`Retrying (${retries - 1} left): ${url}`);
-                  await new Promise(resolve => setTimeout(resolve, backoff));
-                  return retryFetch(url, options, retries - 1, backoff * 2);
-                } else {
-                  console.error(`Failed to fetch: ${url}`);
-                  throw error;
-                }
-              }
-            };
-
             try {
               const geoResponse = await retryFetch(
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`,
-                { timeout: 10000 } // 10 seconds timeout
+                { timeout: 10000 }
               );
               const data = await geoResponse.json();
               console.log(`Geocoding response for ${address}:`, data);
@@ -94,8 +77,10 @@ const LeafletMap: React.FC = () => {
           })
         );
         console.log('Filtered geocoded markers:', geocodedMarkers.filter(marker => marker !== null));
-        setMarkers(geocodedMarkers.filter(marker => marker !== null));
+        setMarkers(geocodedMarkers.filter(marker => marker !== null) as { coords: [number, number]; address: string; }[]);
       };
+
+
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -129,7 +114,7 @@ const LeafletMap: React.FC = () => {
     <MapContainer
       center={center || [0, 0]}
       zoom={2}
-      style={{ height: '80vh', width: '100%' }}
+      style={{ height: '100%', width: '100%' }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
