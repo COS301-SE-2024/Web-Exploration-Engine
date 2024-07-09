@@ -8,7 +8,7 @@ export class IndustryClassificationService {
   private readonly HUGGING_FACE_API_URL =
     'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.access_Token;
+  private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     try {
@@ -72,7 +72,7 @@ export class IndustryClassificationService {
       };
     }
     const inputText = `${url}`;
-
+    
     try {
       const response = await axios.post(
         this.HUGGING_FACE_API_URL,

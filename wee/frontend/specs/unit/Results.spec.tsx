@@ -3,14 +3,36 @@ import { render, screen, act, waitFor, fireEvent } from '@testing-library/react'
 import Results from '../../src/app/(pages)/results/page'; 
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from '../../src/app/context/ScrapingContext';
+import {useScrapingContext} from '../../src/app/context/ScrapingContext'
+import jsPDF from 'jspdf'; 
+import '@testing-library/jest-dom';
 
-// Mock the useSearchParams hook
+// Mock the u'seSearchParams hook
 jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
-
+jest.mock('jspdf', () => ({
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => ({
+      setFontSize: jest.fn(),
+      text: jest.fn(),
+      rect: jest.fn(),
+      setFillColor: jest.fn(),
+      setTextColor: jest.fn(),
+      setDrawColor: jest.fn(),
+      line: jest.fn(),
+      addPage: jest.fn(),
+      save: jest.fn(),
+      getStringUnitWidth: jest.fn().mockReturnValue(50),
+      internal: {
+        scaleFactor: 1.5,
+        pageSize: { width: 180, height: 297 },
+      },
+    })),
+  }));
+  
+  
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
 }));
@@ -118,7 +140,7 @@ describe('Results Component', () => {
             results: [
                 {
                     ...mockResults[0],
-                    robots: { errorStatus: 404, errorCode: 'Not Found', errorMessage: 'Page not found' },
+                    robots: { errorStatus: 404, errorCode: 'Not Found', errorMessage: 'Page not found'},
                 },
             ],
         });
@@ -131,7 +153,7 @@ describe('Results Component', () => {
             expect(screen.queryByText('No')).toBeDefined();
         });
     });
-
+    
     it('should display correct summary information', async () => {
         await act(async () => {
             render(<Results />);
@@ -176,4 +198,30 @@ describe('Results Component', () => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
         });
     });
+    it('should call jsPDF and download the PDF when download button is clicked', async () => {
+        render(<Results />);
+      
+        // Ensure the component has rendered and the dropdown button is available
+        const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+        expect(dropdownButton).toBeInTheDocument();
+      
+        // Click the dropdown button to open the menu
+        fireEvent.click(dropdownButton);
+      
+        // Wait for the download button to appear
+        const downloadButton = await screen.findByTestId('download-report-button');
+        expect(downloadButton).toBeInTheDocument();
+      
+        // Click the download button
+        fireEvent.click(downloadButton);
+      
+        await waitFor(() => {
+          // Ensure jsPDF was called
+          expect(jsPDF).toHaveBeenCalled();
+      
+        });
+      });
+      
+
 });
+ 
