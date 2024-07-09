@@ -3,11 +3,9 @@ name: Deploy
 on:
   workflow_run:
     # workflows to run first?
-    # workflows: ["Tests"]
+    workflows: ["lint-build-test"]
     branches: [master]
-    types:
-      - completed
-
+ 
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,10 +19,10 @@ jobs:
       - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          access_token : ${{secrets.access_token}}
-          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+          access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
+          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
           NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY}}
+          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
@@ -32,10 +30,10 @@ jobs:
       - name: Make backend envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          access_token : ${{secrets.access_token}}
-          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+          access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
+          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
           NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY}}
+          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
