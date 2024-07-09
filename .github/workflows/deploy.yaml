@@ -3,7 +3,7 @@ name: Deploy
 on:
   workflow_run:
     # workflows to run first?
-    workflows: ["lint-build-test"]
+    workflows: ["lint-build-test-deploy"]
     branches: [master]
  
 jobs:
@@ -67,8 +67,8 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            rm -r frontend  
-            rm -r webscraper
+            rm -r wee  
+            
 
       # Uploading files to server via SCP
       - name: Upload to server
@@ -78,8 +78,8 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "frontend"
-          target: ./wee/
+          source: "wee"
+          target: ./
 
 
       # Running Docker Compose
@@ -91,5 +91,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
+            cd wee
             docker-compose up --build
 #docker compose up --build --detach --force-recreate
