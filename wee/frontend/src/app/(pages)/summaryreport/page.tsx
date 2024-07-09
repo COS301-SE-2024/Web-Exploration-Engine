@@ -366,6 +366,7 @@ export default function SummaryReport() {
                                     startContent={<FiDownload className={iconClasses}/>}
                                     description="Download the report to your device"
                                     onAction={handleDownloadReport}
+                                    data-testid="download-report-button"
                                 >
                                     Download
                                 </DropdownItem>
@@ -384,6 +385,7 @@ export default function SummaryReport() {
                                     startContent={<FiDownload className={iconClasses}/>}
                                     description="Download the report to your device"
                                     onAction={handleDownloadReport}
+                                    data-testid="download-report-button"
                                 >
                                     Download
                                 </DropdownItem>

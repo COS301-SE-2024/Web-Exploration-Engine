@@ -307,6 +307,7 @@ function ResultsComponent() {
                       startContent={<FiDownload className={iconClasses}/>}
                       description="Download the report to your device"
                       onAction={handleDownloadReport}
+                      data-testid="download-report-button"
                     >
                       Download
                     </DropdownItem>
@@ -325,6 +326,7 @@ function ResultsComponent() {
                       startContent={<FiDownload className={iconClasses}/>}
                       description="Download the report to your device"
                       onAction={handleDownloadReport}
+                      data-testid="download-report-button"
                     >
                       Download
                     </DropdownItem>
