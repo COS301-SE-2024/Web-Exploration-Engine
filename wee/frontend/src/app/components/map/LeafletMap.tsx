@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -7,16 +8,25 @@ import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Custom icon for user location
+const userIcon = new L.Icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+  shadowSize: [41, 41]
+});
+
 const LeafletMap: React.FC = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [center, setCenter] = useState<[number, number] | null>(null);
   const [showUserMarker, setShowUserMarker] = useState(false);
-  const [markers, setMarkers] = useState<Array<{ coords: [number, number]; address: string }>>([]);
+  const [markers, setMarkers] = useState<Array<{ coords: [number, number], address: string }>>([]);
 
   useEffect(() => {
-    // Check if window is defined to ensure this runs only in the browser
     if (typeof window !== 'undefined') {
-      // Fix the missing icon issue for Leaflet
       delete (L.Icon.Default.prototype as any)._getIconUrl;
 
       L.Icon.Default.mergeOptions({
@@ -25,80 +35,114 @@ const LeafletMap: React.FC = () => {
         shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
-      // Convert mock addresses to coordinates
-      const convertAddressesToCoords = async () => {
-        try {
-          const mockAddresses = [
-            '28 Manchester Road Chiselhurst, East London',
-            '655 Cape Road Hunters Retreat, Port Elizabeth',
-            '3 8th Avenue Summerstrand, Port Elizabeth',
-            'Tokyo, Japan',
-          ];
+      const mockAddresses = [
+        '28 Manchester Road, Chiselhurst, East London',
+        '655 Cape Road, Hunters Retreat, Port Elizabeth',
+        '3 8th Avenue, Summerstrand, Port Elizabeth',
+        'Tokyo, Japan',
+        '1600 Amphitheatre Parkway, Mountain View, CA',
+        '1 Infinite Loop, Cupertino, CA',
+        '221B Baker Street, London, UK',
+        'Eiffel Tower, Paris, France',
+        'Colosseum, Rome, Italy',
+        'Sydney Opera House, Sydney, Australia',
+        'Great Wall of China, China',
+        'Statue of Liberty, New York, USA',
+        'Taj Mahal, Agra, India',
+        'Christ the Redeemer, Rio de Janeiro, Brazil',
+        'Mount Everest, Nepal',
+      ];
 
-          const geocodedMarkers = await Promise.all(
-            mockAddresses.map(async (address: string) => {
-              const geoResponse = await fetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`
+      const convertAddressesToCoords = async () => {
+        const geocodedMarkers = await Promise.all(
+          mockAddresses.map(async (address: string) => {
+            const retryFetch = async (url: string, options: any = {}, retries = 3, backoff = 3000): Promise<Response> => {
+              try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response;
+              } catch (error) {
+                if (retries > 1) {
+                  console.warn(`Retrying (${retries - 1} left): ${url}`);
+                  await new Promise(resolve => setTimeout(resolve, backoff));
+                  return retryFetch(url, options, retries - 1, backoff * 2);
+                } else {
+                  console.error(`Failed to fetch: ${url}`);
+                  throw error;
+                }
+              }
+            };
+
+            try {
+              const geoResponse = await retryFetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`,
+                { timeout: 10000 } // 10 seconds timeout
               );
               const data = await geoResponse.json();
-
+              console.log(`Geocoding response for ${address}:`, data);
               if (Array.isArray(data) && data.length > 0) {
                 const { lat, lon } = data[0];
                 return { coords: [parseFloat(lat), parseFloat(lon)], address };
               } else {
-                console.error('Empty or unexpected response from geocoding service');
+                console.error('Empty or unexpected response from geocoding service for address:', address);
                 return null;
               }
-            })
-          );
-
-          // Filter out null values if any
-          setMarkers(geocodedMarkers.filter(marker => marker !== null));
-        } catch (error) {
-          console.error('Error converting addresses to coordinates:', error);
-        }
+            } catch (error) {
+              console.error('Error converting address to coordinates for address:', address, error);
+              return null;
+            }
+          })
+        );
+        console.log('Filtered geocoded markers:', geocodedMarkers.filter(marker => marker !== null));
+        setMarkers(geocodedMarkers.filter(marker => marker !== null));
       };
 
-      // Request user location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
+            console.log('User location retrieved:', { latitude, longitude });
             setUserLocation([latitude, longitude]);
             setCenter([latitude, longitude]);
             setShowUserMarker(true);
           },
           (error) => {
             console.error('Error getting user location:', error);
-            // Set a random location if user denies permission
-            setCenter(null); // No specific center if permission denied
+            setCenter([0, 0]); // No specific center if permission denied
             setShowUserMarker(false);
           }
         );
+      } else {
+        console.error('Geolocation not supported by this browser');
+        setCenter([0, 0]);
       }
 
       convertAddressesToCoords();
     }
   }, []);
 
+  console.log('User location:', userLocation);
+  console.log('Center:', center);
+  console.log('Markers:', markers);
+
   return (
     <MapContainer
-      center={center || [0, 0]} // Default center if not set
-      zoom={4} // Default zoom level
-      style={{ height: '50vh', width: '100%' }}
+      center={center || [0, 0]}
+      zoom={2}
+      style={{ height: '80vh', width: '100%' }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {showUserMarker && userLocation && (
-        <Marker position={userLocation}>
+        <Marker position={userLocation} icon={userIcon}>
           <Popup>You are here.</Popup>
         </Marker>
       )}
       {markers.map((marker, index) => (
-        <Marker key={index} position={marker.coords}>
-          <Popup>{marker.address}</Popup>
+        <Marker key={index} position={marker!.coords}>
+          <Popup>{marker!.address}</Popup>
         </Marker>
       ))}
     </MapContainer>
