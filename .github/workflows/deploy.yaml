@@ -17,27 +17,26 @@ jobs:
           ref: ${{ github.event.workflow_run.head_branch }}
           
       - name: Make frontend envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2.0
         with:
-          access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
-          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
-          NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
+          envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
+          envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
+          envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
+          envkey_NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
 
       - name: Make backend envfile
-        uses: SpicyPizza/create-envfile@v1.3
+        uses: SpicyPizza/create-envfile@v2.0
         with:
-          access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
-          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
-          NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
+          envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
+          envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
+          envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
+          envkey_NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
-
 
       # Runs a single command using the runners shell
       - name: Install wireguard
