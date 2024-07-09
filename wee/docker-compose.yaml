@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  webscraper:
+    build: 
+      context: .
+      dockerfile: webscraper/Dockerfile
+    env_file:
+      - webscraper/.env
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_EXECUTABLE_PATH: '/usr/bin/google-chrome-stable'
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
+    user: webscraper
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    env_file:
+      - frontend/.env
+    ports:
+      - "3001:3001"
+    command: >
+      sh -c "npx nx start frontend --port 3001 --verbose"
+    depends_on:
+      - webscraper 

@@ -17,7 +17,6 @@ import { useScrapingContext } from '../../context/ScrapingContext';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
-import 'jspdf-autotable';
 import { saveReport } from '../../services/SaveReportService';
 
 interface Classifications {
