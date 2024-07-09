@@ -14,6 +14,7 @@ import {
   Chip,
   Button,
   Spinner,
+  Selection
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -174,6 +175,12 @@ function ResultsComponent() {
     router.push(`/summaryreport`);
   };
 
+  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
+  
+  useEffect(() => {
+    console.log("SELECTED KEYS: ", selectedKeys);
+  }, [selectedKeys]);
+
   return (
     <div className="p-4">
       <div className="flex justify-center">
@@ -237,6 +244,13 @@ function ResultsComponent() {
 
       <WEETable
         aria-label="Scrape result table"
+        selectionMode="multiple" 
+        checkboxesProps={{
+          classNames: {
+            wrapper: "after:bg-foreground after:text-background text-background",
+          },
+        }}
+        onSelectionChange={setSelectedKeys}
         bottomContent={
           <>
             {isLoading ? (
@@ -265,7 +279,7 @@ function ResultsComponent() {
         }}
       >
         <TableHeader>
-          <TableColumn key="name" className="rounded-lg sm:rounded-none">
+          <TableColumn key="name" className="rounded-r-lg sm:rounded-none">
             URL
           </TableColumn>
           <TableColumn key="role" className="text-center hidden sm:table-cell">
