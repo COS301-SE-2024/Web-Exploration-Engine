@@ -21,34 +21,32 @@ jobs:
       - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_NODE_ENV: production
-          # what are production vs dev environments?
-          envkey_NEXT_PUBLIC_API: "https://api-avalanche.sloththe.dev"
-          envkey_NEXT_PUBLIC_DSN: ${{ secrets.SENTRY_KEY }}
-          # what is the sentry key?
-          # for the frontend app we have to add the supabase keys
-
-          directory: frontend
-          file_name: .env.local
-
+          access_token : ${{secrets.access_token}}
+          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+          NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
+          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY}}
+          directory: wee/frontend
+          file_name: .env
           fail_on_empty: false
 
-          #removed because no need for env file
-     # - name: Make admin envfile
-     #  uses: SpicyPizza/create-envfile@v1.3
-    #  with:
-      #    envkey_NODE_ENV: production
-          #envkey_NEXT_PUBLIC_ZEUS: "skunkworks.dns.net.za"
-      #    directory: admin-frontend#??
-       #   file_name: .env.local
-        #  fail_on_empty: false
-      
+      - name: Make backend envfile
+        uses: SpicyPizza/create-envfile@v1.3
+        with:
+          access_token : ${{secrets.access_token}}
+          NEXT_PUBLIC_SUPABASE_URL : ${{secrets.NEXT_PUBLIC_SUPABASE_URL}}
+          NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
+          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY}}
+          directory: wee/webscraper
+          file_name: .env
+          fail_on_empty: false
+
+
       # Runs a single command using the runners shell
-      - name: 🔐 Install wireguard
+      - name: Install wireguard
         run: sudo apt-get install wireguard
 
       # Creating the wireguard configuration
-      - name: 🔐 Create WG Config
+      - name: Create WG Config
         run: |
           sed -i -e "s@{{WG_PRIVATEKEY}}@${{ secrets.WG_PRIVATEKEY }}@" $GITHUB_WORKSPACE/tunnel.conf
           sed -i -e "s@{{WG_ADDRESS}}@${{ secrets.WG_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
@@ -59,12 +57,12 @@ jobs:
           sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
       
       # Initilizing the tunnel so we can connect to the server
-      - name: 🔐 WG Creating Tunnel
+      - name: WG Creating Tunnel
         run: |
           sudo apt install resolvconf
           wg-quick up $GITHUB_WORKSPACE/tunnel.conf
         # SSH Into Server
-      - name: 🗑️ Removing old files
+      - name: Removing old files
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -72,9 +70,11 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            rm -r frontend
+            rm -r frontend  
+            rm -r webscraper
+
       # Uploading files to server via SCP
-      - name: ☝️ Upload to server
+      - name: Upload to server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -84,8 +84,9 @@ jobs:
           source: "frontend"
           target: ./wee/
 
+
       # Running Docker Compose
-      - name: 🐋 Composing
+      - name: Composing
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -93,4 +94,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            docker compose up --build --detach --force-recreate
+            docker-compose up --build
+#docker compose up --build --detach --force-recreate
