@@ -175,6 +175,10 @@ function ResultsComponent() {
     router.push(`/summaryreport`);
   };
 
+  const handleComparisonPage = () => {
+    router.push(`/comparison`);
+  };
+
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   
   useEffect(() => {
@@ -334,6 +338,17 @@ function ResultsComponent() {
         disabled={isLoading}
       >
         View overall summary report
+      </Button>
+
+      <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+        Comparison
+      </h1>
+      <Button
+        data-testid="btn-report-summary"
+        className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+        onClick={handleComparisonPage}
+      >
+        View comparison report
       </Button>
     </div>
   );
