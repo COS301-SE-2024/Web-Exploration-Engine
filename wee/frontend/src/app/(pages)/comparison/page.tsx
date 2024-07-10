@@ -5,10 +5,12 @@ import WEESelect from "../../components/Util/Select";
 import { Button, Chip, TableHeader, TableColumn, TableBody, TableRow, TableCell, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
+import Scraping from "../../models/ScrapingModel";
 
 export default function ComparisonReport() {
     const { results } = useScrapingContext();
     const router = useRouter();
+    const [websiteOne, setWebsiteOne] = React.useState<Scraping>();
 
     useEffect(() => {
 
@@ -17,6 +19,12 @@ export default function ComparisonReport() {
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);
     };
+
+    const handleWebsiteOne = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const website1: number = parseInt(event.target.value, 10);
+        console.log(website1);
+        setWebsiteOne(results[website1]);
+    }
 
     return (
         <div className="min-h-screen p-4"> 
@@ -36,6 +44,7 @@ export default function ComparisonReport() {
                 <WEESelect
                     label="Website 1"
                     className="w-1/2 pr-3 pb-3"
+                    onChange={handleWebsiteOne}
                 >
                     {results.map((item, index) => (
                         <SelectItem key={index}>{item.url}</SelectItem>
@@ -57,13 +66,13 @@ export default function ComparisonReport() {
                     <TableColumn>WEBSITE 1</TableColumn>
                     <TableColumn>WEBSITE 2</TableColumn>
                 </TableHeader>
-                <TableBody>
+                <TableBody>                  
                     <TableRow key="1">
-                        <TableCell>abc</TableCell>
+                        <TableCell>{websiteOne ? websiteOne.url : 'Url'}</TableCell>
                         <TableCell>abc</TableCell>
                     </TableRow>
                     <TableRow key="2">
-                        <TableCell>abc</TableCell>
+                        <TableCell>{websiteOne ? websiteOne.domainStatus : 'Domain Status'}</TableCell>
                         <TableCell>abc</TableCell>
                     </TableRow>
                     <TableRow key="3">
