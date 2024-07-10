@@ -73,4 +73,4 @@ jobs:
           script: |
             cd wee
             ls
-            docker compose up --build --detach --force-recreate
+            docker compose up --build 
