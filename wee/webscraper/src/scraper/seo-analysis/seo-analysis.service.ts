@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import axios from 'axios';
-
+import puppeteer from 'puppeteer';
 @Injectable()
 export class SeoAnalysisService {
   async seoAnalysis(url: string) {
@@ -16,9 +16,10 @@ export class SeoAnalysisService {
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
-      this.analyzeImageOptimization(htmlContent, url),
+      this.analyzeImageOptimization( url),
     ]);
 
+    // Reorder to place imageAnalysis after other analyses
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
@@ -100,33 +101,35 @@ export class SeoAnalysisService {
     };
   }
 
-  async analyzeImageOptimization(htmlContent: string, baseUrl: string) {
-    const $ = cheerio.load(htmlContent);
-    const images = $('img').toArray();
+  async analyzeImageOptimization(url: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-    let missingAltTextCount = 0;
-    let nonOptimizedCount = 0;
-    const totalImages = images.length;
-    const reasonsMap = {
-      format: 0,
-      size: 0,
-    };
-    const errorUrls: string[] = [];
+    try {
+      await page.goto(url, { waitUntil: 'networkidle0' });
 
-    for (const [index, img] of images.entries()) {
-      const altText = $(img).attr('alt') || '';
-      let src = $(img).attr('src') || '';
+      const images = await page.$$eval('img', imgs => imgs.map(img => ({
+        src: img.getAttribute('src') || '',
+        alt: img.getAttribute('alt') || '',
+      })));
 
-      if (!altText) {
-        missingAltTextCount++;
-      }
+      let missingAltTextCount = 0;
+      let nonOptimizedCount = 0;
+      const totalImages = images.length;
+      const reasonsMap = {
+        format: 0,
+        size: 0,
+      };
+      const errorUrls: string[] = [];
 
-      // Check if src is a relative path
-      if (src && !src.startsWith('http://') && !src.startsWith('https://')) {
+      for (const img of images) {
+        if (!img.alt) {
+          missingAltTextCount++;
+        }
+
+        const imageUrl = new URL(img.src, url).toString();
+
         try {
-          // Construct absolute URL dynamically using base URL
-          const imageUrl = new URL(src, baseUrl).toString();
-
           const { optimized, reasons } = await this.isImageOptimized(imageUrl);
           if (!optimized) {
             nonOptimizedCount++;
@@ -134,32 +137,37 @@ export class SeoAnalysisService {
               if (reason.includes('format')) reasonsMap.format++;
               if (reason.includes('size')) reasonsMap.size++;
             });
-            errorUrls.push(`Error optimizing image: ${src}. ${reasons.join(', ')}`);
+            errorUrls.push(`Error optimizing image: ${img.src}. ${reasons.join(', ')}`);
           }
         } catch (error) {
-          console.error(`Error checking optimization for image ${src}: ${error.message}`);
+          console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
           nonOptimizedCount++;
-          errorUrls.push(`Error checking optimization for image: ${src}. Error: ${error.message}`);
+          errorUrls.push(`Error checking optimization for image: ${img.src}.`);
         }
       }
-    }
 
-    let recommendations = '';
-    if (missingAltTextCount > 0) {
-      recommendations += `Some images are missing alt text. `;
-    }
-    if (nonOptimizedCount > 0) {
-      recommendations += `Some images are not optimized. `;
-    }
+      let recommendations = '';
+      if (missingAltTextCount > 0) {
+        recommendations += `Some images are missing alt text. `;
+      }
+      if (nonOptimizedCount > 0) {
+        recommendations += `Some images are not optimized. `;
+      }
 
-    return {
-      totalImages,
-      missingAltTextCount,
-      nonOptimizedCount,
-      reasonsMap,
-      recommendations: recommendations.trim(),
-      errorUrls,
-    };
+      return {
+        totalImages,
+        missingAltTextCount,
+        nonOptimizedCount,
+        reasonsMap,
+        recommendations: recommendations.trim(),
+        errorUrls,
+      };
+    } catch (error) {
+      console.error(`Error analyzing images using Puppeteer: ${error.message}`);
+      throw new Error(`Error analyzing images using Puppeteer: ${error.message}`);
+    } finally {
+      await browser.close();
+    }
   }
 
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {

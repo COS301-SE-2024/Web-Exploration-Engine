@@ -278,7 +278,7 @@ export class ScraperService {
       this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
       this.seoAnalysisService.analyzeTitleTag(htmlContent),
       this.seoAnalysisService.analyzeHeadings(htmlContent),
-      this.seoAnalysisService.analyzeImageOptimization(htmlContent,url),
+      this.seoAnalysisService.analyzeImageOptimization(url),
     ]);
   
     return {
