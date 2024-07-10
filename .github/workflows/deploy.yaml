@@ -11,7 +11,7 @@ on:
 
   push:
     branches: [master, development]
-       
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -44,26 +44,7 @@ jobs:
           file_name: .env
           fail_on_empty: false
 
-      # Runs a single command using the runners shell
-      - name: Install wireguard
-        run: sudo apt-get install wireguard
-
-      # Creating the wireguard configuration
-      - name: Create WG Config
-        run: |
-          sed -i -e "s@{{WG_PRIVATEKEY}}@${{ secrets.WG_PRIVATEKEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sed -i -e "s@{{WG_ADDRESS}}@${{ secrets.WG_ADDRESS }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sed -i -e "s@{{WG_DNS}}@${{ secrets.WG_DNS }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sed -i -e "s@{{WG_PUBLICKEY}}@${{ secrets.WG_PUBLICKEY }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sed -i -e "s@{{WG_ALLOWEDIPS}}@${{ secrets.WG_ALLOWEDIPS }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sed -i -e "s@{{WG_ENDPOINT}}@${{ secrets.WG_ENDPOINT }}@" $GITHUB_WORKSPACE/tunnel.conf
-          sudo cp $GITHUB_WORKSPACE/tunnel.conf /etc/wireguard/
-      
-      # Initilizing the tunnel so we can connect to the server
-      - name: WG Creating Tunnel
-        run: |
-          sudo apt install resolvconf
-          wg-quick up $GITHUB_WORKSPACE/tunnel.conf
+     
         # SSH Into Server
       - name: Removing old files
         uses: appleboy/ssh-action@v1.0.0
