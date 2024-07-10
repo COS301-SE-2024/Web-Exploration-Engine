@@ -13,8 +13,6 @@ interface ScrapingContextType {
     setProcessedUrls: (data: string[]) => void;
     summaryReport: Summary;
     setSummaryReport: (data: Summary) => void;
-    comparisonIndexes: any[];
-    setComparisonIndexes: (data: any[]) => void;
 }
 
 const ScrapingContext = createContext<ScrapingContextType | undefined>(undefined);

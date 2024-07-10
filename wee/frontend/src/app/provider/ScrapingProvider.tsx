@@ -9,7 +9,6 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
     const [summaryReport, setSummaryReport] = useState<Summary>({} as Summary);
     const [processedUrls, setProcessedUrls] = useState<string[]>([]);
     const [processingUrls, setProcessingUrls] = useState<string[]>([]);
-    const [comparisonIndexes, setComparisonIndexes] = useState<Number[]>([]);
     const test = 'Test the context';
 
     return (
@@ -19,7 +18,6 @@ export const ScrapingProvider = ({children} : {children: ReactNode}) => {
                 summaryReport, setSummaryReport, 
                 processedUrls, setProcessedUrls, 
                 processingUrls, setProcessingUrls,
-                comparisonIndexes, setComparisonIndexes
             }}>
             {children}
         </ScrapingContext.Provider>

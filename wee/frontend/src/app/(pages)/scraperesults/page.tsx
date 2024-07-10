@@ -33,9 +33,7 @@ function ResultsComponent() {
     processedUrls,
     setProcessedUrls,
     processingUrls,
-    setProcessingUrls,
-    comparisonIndexes,
-    setComparisonIndexes
+    setProcessingUrls
   } = useScrapingContext();
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -181,18 +179,6 @@ function ResultsComponent() {
     router.push(`/comparison`);
   };
 
-  const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
-  
-  useEffect(() => {
-    if (selectedKeys == 'all') {
-      console.log(selectedKeys);
-    }
-    else {
-      console.log("SELECTED KEYS: ", Array.from(selectedKeys));
-      setComparisonIndexes(Array.from(selectedKeys));
-    }
-  }, [selectedKeys]);
-
   return (
     <div className="p-4">
       <div className="flex justify-center">
@@ -256,13 +242,6 @@ function ResultsComponent() {
 
       <WEETable
         aria-label="Scrape result table"
-        selectionMode="multiple" 
-        checkboxesProps={{
-          classNames: {
-            wrapper: "after:bg-foreground after:text-background text-background",
-          },
-        }}
-        onSelectionChange={setSelectedKeys}
         bottomContent={
           <>
             {isLoading ? (
