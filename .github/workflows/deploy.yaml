@@ -72,5 +72,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wee
+            ls
             docker-compose up --build
 #docker compose up --build --detach --force-recreate
