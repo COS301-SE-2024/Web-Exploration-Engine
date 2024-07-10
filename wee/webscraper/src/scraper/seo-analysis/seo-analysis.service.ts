@@ -219,12 +219,13 @@ export class SeoAnalysisService {
   }
   async analyzeContentQuality(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-  
+
     const text = $('body').text();
-    const textWords = text.split(/\s+/).filter(word => word.length > 0);
+    const textWords = text.split(/\s+/)
+      .filter(word => /^[a-zA-Z]+$/.test(word));
     const textLength = textWords.length;
     const wordCounts = new Map<string, number>();
-  
+
     textWords.forEach(word => {
       const lowerCaseWord = word.toLowerCase();
       if (wordCounts.has(lowerCaseWord)) {
@@ -233,15 +234,15 @@ export class SeoAnalysisService {
         wordCounts.set(lowerCaseWord, 1);
       }
     });
-  
+
     const repeatedWords = [...wordCounts.entries()]
       .filter(([_, count]) => count > 1)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
       .map(([word, count]) => ({ word, count }));
-  
+
     const uniqueWordsPercentage = new Set(textWords).size / textWords.length;
-  
+
     let recommendations = '';
     if (textLength < 500) {
       recommendations += 'Content length should ideally be more than 500 characters. ';
@@ -249,7 +250,7 @@ export class SeoAnalysisService {
     if (uniqueWordsPercentage < 0.5) {
       recommendations += 'Unique words percentage is very low, consider revising your content to increase its uniqueness. ';
     }
-  
+
     return {
       textLength,
       uniqueWordsPercentage,
