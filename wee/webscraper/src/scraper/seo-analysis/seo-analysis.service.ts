@@ -13,21 +13,24 @@ export class SeoAnalysisService {
       headingAnalysis,
       imageAnalysis,
       uniqueContentAnalysis,
+      internalLinksAnalysis,
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
       this.analyzeImageOptimization( url),
       this.analyzeImageOptimization( htmlContent),
+      this.analyzeInternalLinks( htmlContent),
     ]);
 
-    // Reorder to place imageAnalysis after other analyses
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
       headingAnalysis,
       imageAnalysis,
       uniqueContentAnalysis,
+      internalLinksAnalysis,
+
     };
   }
 
@@ -217,12 +220,12 @@ export class SeoAnalysisService {
       };
     }
   }
-  async analyzeContentQuality(htmlContent: string) {
+   async analyzeContentQuality(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
 
     const text = $('body').text();
     const textWords = text.split(/\s+/)
-      .filter(word => /^[a-zA-Z]+$/.test(word));
+      .filter(word => /^[a-zA-Z]+$/.test(word)); 
     const textLength = textWords.length;
     const wordCounts = new Map<string, number>();
 
@@ -255,6 +258,25 @@ export class SeoAnalysisService {
       textLength,
       uniqueWordsPercentage,
       repeatedWords,
+      recommendations: recommendations.trim(),
+    };
+  }
+  async analyzeInternalLinks(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const internalLinks = $('a[href^="/"], a[href^="' + $('base').attr('href') + '"]')
+      .toArray()
+      .map(el => $(el).attr('href'));
+
+    const uniqueLinks = new Set(internalLinks).size;
+
+    let recommendations = '';
+    if (uniqueLinks < 5) {
+      recommendations += 'Internal linking is sparse. Consider adding more internal links to aid navigation and SEO. ';
+    }
+
+    return {
+      totalLinks: internalLinks.length,
+      uniqueLinks,
       recommendations: recommendations.trim(),
     };
   }
