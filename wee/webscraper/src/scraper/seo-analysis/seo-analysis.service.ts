@@ -12,11 +12,13 @@ export class SeoAnalysisService {
       metaDescriptionAnalysis,
       headingAnalysis,
       imageAnalysis,
+      uniqueContentAnalysis,
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
       this.analyzeImageOptimization( url),
+      this.analyzeImageOptimization( htmlContent),
     ]);
 
     // Reorder to place imageAnalysis after other analyses
@@ -25,6 +27,7 @@ export class SeoAnalysisService {
       metaDescriptionAnalysis,
       headingAnalysis,
       imageAnalysis,
+      uniqueContentAnalysis,
     };
   }
 
@@ -195,8 +198,8 @@ export class SeoAnalysisService {
         reasons.push('format');
       }
 
-      // Check if image size exceeds 200 KB
-      if (contentLength && contentLength > 200 * 1024) {
+      // Check if image size exceeds 500 KB
+      if (contentLength && contentLength > 500 * 1024) {
         reasons.push('size');
       }
 
@@ -214,4 +217,45 @@ export class SeoAnalysisService {
       };
     }
   }
+  async analyzeContentQuality(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+  
+    const text = $('body').text();
+    const textWords = text.split(/\s+/).filter(word => word.length > 0);
+    const textLength = textWords.length;
+    const wordCounts = new Map<string, number>();
+  
+    textWords.forEach(word => {
+      const lowerCaseWord = word.toLowerCase();
+      if (wordCounts.has(lowerCaseWord)) {
+        wordCounts.set(lowerCaseWord, wordCounts.get(lowerCaseWord)! + 1);
+      } else {
+        wordCounts.set(lowerCaseWord, 1);
+      }
+    });
+  
+    const repeatedWords = [...wordCounts.entries()]
+      .filter(([_, count]) => count > 1)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([word, count]) => ({ word, count }));
+  
+    const uniqueWordsPercentage = new Set(textWords).size / textWords.length;
+  
+    let recommendations = '';
+    if (textLength < 500) {
+      recommendations += 'Content length should ideally be more than 500 characters. ';
+    }
+    if (uniqueWordsPercentage < 0.5) {
+      recommendations += 'Unique words percentage is very low, consider revising your content to increase its uniqueness. ';
+    }
+  
+    return {
+      textLength,
+      uniqueWordsPercentage,
+      repeatedWords,
+      recommendations: recommendations.trim(),
+    };
+  }
+
 }
