@@ -10,14 +10,13 @@ export class SeoAnalysisService {
     const [
       titleTagsAnalysis,
       metaDescriptionAnalysis,
-      headingAnalysis,  
+      headingAnalysis,
       imageAnalysis,
-
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
-      this.analyzeImageOptimization(htmlContent),
+      this.analyzeImageOptimization(htmlContent, url),
     ]);
 
     return {
@@ -25,7 +24,6 @@ export class SeoAnalysisService {
       metaDescriptionAnalysis,
       headingAnalysis,
       imageAnalysis,
-
     };
   }
 
@@ -35,10 +33,7 @@ export class SeoAnalysisService {
     const length = metaDescription.length;
     const isOptimized = length >= 120 && length <= 160;
 
-    // Extract words from the URL
     const urlWords = this.extractWordsFromUrl(url);
-
-    // Check if all words from the URL are in the meta description
     const isUrlWordsInDescription = this.areUrlWordsInDescription(urlWords, metaDescription);
 
     let recommendations = '';
@@ -46,7 +41,7 @@ export class SeoAnalysisService {
       recommendations += 'Meta description length should be between 120 and 160 characters. ';
     }
     if (!isUrlWordsInDescription) {
-      recommendations += `Consider including words from the URL in the meta description: ${urlWords.join(' ')}.`;
+      recommendations += `Consider including words from the URL in the meta description: ${urlWords.join(' ')}. `;
     }
 
     return {
@@ -58,11 +53,8 @@ export class SeoAnalysisService {
     };
   }
 
-
   extractWordsFromUrl(url: string): string[] {
-    // Extract the main part of the URL 
     const mainUrlPart = url.replace(/^(https?:\/\/)?(www\.)?/, '').split('.')[0];
-    // Split the main part into words based on non-alphanumeric characters
     return mainUrlPart.split(/[^a-zA-Z0-9]+/).filter(word => word.length > 0);
   }
 
@@ -107,65 +99,111 @@ export class SeoAnalysisService {
       recommendations,
     };
   }
-  async analyzeImageOptimization(htmlContent: string) {
+
+  async analyzeImageOptimization(htmlContent: string, baseUrl: string) {
     const $ = cheerio.load(htmlContent);
     const images = $('img').toArray();
-    
+
     let missingAltTextCount = 0;
     let nonOptimizedCount = 0;
-    const recommendations = [];
+    const totalImages = images.length;
+    const reasonsMap = {
+      format: 0,
+      size: 0,
+    };
+    const errorUrls: string[] = [];
 
-    images.forEach((img, index) => {
+    for (const [index, img] of images.entries()) {
       const altText = $(img).attr('alt') || '';
-      const src = $(img).attr('src') || '';
+      let src = $(img).attr('src') || '';
 
       if (!altText) {
         missingAltTextCount++;
-        recommendations.push(`Missing alt text for image ${index + 1}. URL: ${src}`);
       }
-      if (src && !this.isImageOptimized(src)) {
-        nonOptimizedCount++;
-        recommendations.push(`Image ${index + 1} may not be optimized for faster loading. URL: ${src}`);
-      }
-    });
 
-    return {
-      missingAltTextCount,
-      nonOptimizedCount,
-      recommendations: recommendations.join(' '),
-    };
-  }
-  async isImageOptimized(src: string): Promise<boolean> {
-    const lowerSrc = src.toLowerCase();
-    const optimizedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg']; // Include SVG as it's often optimized
-    const isOptimizedExtension = optimizedExtensions.some(ext => lowerSrc.endsWith(ext));
-  
-    if (!isOptimizedExtension) {
-      return false;
-    }
-  
-    try {
-      // Fetch the image to analyze its size and properties
-      const response = await axios.head(src); // Use HEAD request to get headers without downloading the entire image
-      const contentLength = parseInt(response.headers['content-length'], 10);
-      const contentType = response.headers['content-type'];
-  
-      // Check if the image size is reasonable for its type
-      if (contentType.includes('image') && contentLength > 0) {
-        //Check if JPEG size is below a certain threshold
-        if (lowerSrc.endsWith('.jpg') || lowerSrc.endsWith('.jpeg')) {
-          const maxSizeForJpeg = 1024 * 1024; // 1MB (adjust as needed)
-          if (contentLength > maxSizeForJpeg) {
-            return false;
+      // Check if src is a relative path
+      if (src && !src.startsWith('http://') && !src.startsWith('https://')) {
+        try {
+          // Construct absolute URL dynamically using base URL
+          const imageUrl = new URL(src, baseUrl).toString();
+
+          const { optimized, reasons } = await this.isImageOptimized(imageUrl);
+          if (!optimized) {
+            nonOptimizedCount++;
+            reasons.forEach(reason => {
+              if (reason.includes('format')) reasonsMap.format++;
+              if (reason.includes('size')) reasonsMap.size++;
+            });
+            errorUrls.push(`Error optimizing image: ${src}. ${reasons.join(', ')}`);
           }
+        } catch (error) {
+          console.error(`Error checking optimization for image ${src}: ${error.message}`);
+          nonOptimizedCount++;
+          errorUrls.push(`Error checking optimization for image: ${src}. Error: ${error.message}`);
         }
       }
-  
-      return true;
-    } catch (error) {
-      console.error(`Error checking image optimization for ${src}:`, error);
-      return false; 
     }
+
+    let recommendations = '';
+    if (missingAltTextCount > 0) {
+      recommendations += `Some images are missing alt text. `;
+    }
+    if (nonOptimizedCount > 0) {
+      recommendations += `Some images are not optimized. `;
+    }
+
+    return {
+      totalImages,
+      missingAltTextCount,
+      nonOptimizedCount,
+      reasonsMap,
+      recommendations: recommendations.trim(),
+      errorUrls,
+    };
   }
 
+  async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
+    try {
+      // Check if the URL ends with a supported image format
+      if (!/\.(png|jpe?g|webp|svg)$/i.test(imageUrl)) {
+        return {
+          optimized: true,
+          reasons: [],
+        };
+      }
+
+      // Attempt to fetch image info with GET request
+      const response = await axios.get(imageUrl, {
+        responseType: 'arraybuffer', // Ensure we receive binary data
+      });
+
+      const contentType = response.headers['content-type'];
+      const contentLength = Number(response.headers['content-length']);
+
+      const reasons: string[] = [];
+
+      // Check if image is in a web-friendly format
+      if (!contentType || !contentType.startsWith('image/')) {
+        reasons.push('format');
+      }
+
+      // Check if image size exceeds 200 KB
+      if (contentLength && contentLength > 200 * 1024) {
+        reasons.push('size');
+      }
+
+      const optimized = reasons.length === 0;
+
+      return {
+        optimized,
+        reasons,
+      };
+    } catch (error) {
+      console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
+      return {
+        optimized: false,
+        reasons: [],
+      };
+    }
+  }
 }
