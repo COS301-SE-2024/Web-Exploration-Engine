@@ -1,14 +1,6 @@
 name: Deploy 
 
 on:
-  workflow_run:
-    # workflows to run first?
-    workflows: ["lint-build-test-deploy"]
-    branches: [master]
-  
-  pull_request:
-    branches: [master, development]
-
   push:
     branches: [master, development, config/deploy]
 
@@ -46,7 +38,7 @@ jobs:
      
         # SSH Into Server
       - name: Removing old files
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
