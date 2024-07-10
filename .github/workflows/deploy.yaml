@@ -5,7 +5,13 @@ on:
     # workflows to run first?
     workflows: ["lint-build-test-deploy"]
     branches: [master]
- 
+  
+  pull_request:
+    branches: [master, development]
+
+  push:
+    branches: [master, development]
+       
 jobs:
   deploy:
     runs-on: ubuntu-latest
