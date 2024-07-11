@@ -1,8 +1,7 @@
 'use client';
 import React, { useEffect } from "react";
-import WEETable from '../../components/Util/Table';
 import WEESelect from "../../components/Util/Select";
-import { Image, Button, Chip, TableHeader, TableColumn, TableBody, TableRow, TableCell, SelectItem } from '@nextui-org/react';
+import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import Scraping from "../../models/ScrapingModel";
@@ -53,7 +52,7 @@ export default function ComparisonReport() {
                     onChange={handleWebsiteOne}
                 >
                     {results.map((item, index) => (
-                        <SelectItem key={index}>{item.url}</SelectItem>
+                        <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
                     ))}
                 </WEESelect>
 
@@ -63,13 +62,23 @@ export default function ComparisonReport() {
                     onChange={handleWebsiteTwo}
                 >
                     {results.map((item, index) => (
-                        <SelectItem key={index}>{item.url}</SelectItem>
+                        <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
                     ))}
                 </WEESelect>
             </div>
 
+            <div className="bg-jungleGreen-800 dark:bg-jungleGreen-400 text-dark-primaryTextColor dark:text-primaryTextColor rounded-xl flex justify-between p-2 px-3">
+                <div className="text-xs my-auto sm:text-lg">
+                    {websiteOne ? websiteOne.url : 'Website 1'}
+                </div>
+
+                <div className="text-xs my-auto sm:text-lg">
+                    {websiteTwo ? websiteTwo.url : 'Website 2'}
+                </div>
+            </div>
+
             {/* Website Status */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 sm:bg-pink-200 rounded-xl flex justify-between p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
                 <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
                     {!websiteOne ? '-' : (websiteOne.domainStatus === 'live' ? 'Live' : 'Parked')}
                 </div>
@@ -147,75 +156,6 @@ export default function ComparisonReport() {
                     </div>
                 </div>
             </div>
-        
-
-            <WEETable isStriped aria-label="Example static collection table">
-                <TableHeader>
-                    <TableColumn>WEBSITE 1</TableColumn>
-                    <TableColumn>WEBSITE 2</TableColumn>
-                </TableHeader>
-                <TableBody>                  
-                    <TableRow key="1">
-                        <TableCell>{websiteOne ? websiteOne.url : 'Url'}</TableCell>
-                        <TableCell>{websiteTwo ? websiteTwo.url : 'Url'}</TableCell>
-                    </TableRow>
-                    <TableRow key="2">
-                        <TableCell>
-                            {websiteOne 
-                            ? 
-                            <>
-                                <Chip
-                                    radius="sm"
-                                    color={websiteOne && websiteOne.domainStatus === 'live' ? 'success' : 'warning'}
-                                    variant="flat"
-                                >
-                                    {websiteOne && websiteOne.domainStatus === 'live' ? 'Live' : 'Parked'}
-                                </Chip>
-                            </>
-                            : 'Domain Status'}
-                        </TableCell>
-                        <TableCell>
-                            {websiteTwo 
-                            ? 
-                            <>
-                                <Chip
-                                    radius="sm"
-                                    color={websiteTwo && websiteTwo.domainStatus === 'live' ? 'success' : 'warning'}
-                                    variant="flat"
-                                >
-                                    {websiteTwo && websiteTwo.domainStatus === 'live' ? 'Live' : 'Parked'}
-                                </Chip>
-                            </>
-                            : 'Domain Status'}
-                        </TableCell>
-                    </TableRow>
-                    <TableRow key="3">
-                        <TableCell>
-                            {/* <div className="flex justify-center"> */}
-                                {/* <div className="flex justify-center"> */}
-                                    <Image
-                                        alt="Logo"
-                                        src={websiteOne?.logo}
-                                        className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-                                    />
-                                {/* </div> */}
-                            {/* </div> */}
-                    
-                        </TableCell>
-                        <TableCell>
-                            <Image
-                                alt="Logo"
-                                src={websiteTwo?.logo}
-                                className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-                            />
-                        </TableCell>
-                    </TableRow>
-                    <TableRow key="4">
-                        <TableCell>abc</TableCell>
-                        <TableCell>abc</TableCell>
-                    </TableRow>
-                </TableBody>
-            </WEETable>
         </div>
     );
 }
