@@ -6,7 +6,7 @@ import { Image, Button, Chip, TableHeader, TableColumn, TableBody, TableRow, Tab
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import Scraping from "../../models/ScrapingModel";
-import { FiClock, FiCheck, FiSearch, FiEye } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye } from "react-icons/fi";
 
 export default function ComparisonReport() {
     const { results } = useScrapingContext();
@@ -71,7 +71,7 @@ export default function ComparisonReport() {
             {/* Website Status */}
             <div className="bg-zinc-200 dark:bg-zinc-700 sm:bg-pink-200 rounded-xl flex justify-between p-4 my-3">
                 <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
-                    Live
+                    {!websiteOne ? '-' : (websiteOne.domainStatus === 'live' ? 'Live' : 'Parked')}
                 </div>
 
                 <div className="text-center m-auto">
@@ -84,7 +84,7 @@ export default function ComparisonReport() {
                 </div>
 
                 <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
-                    Parked
+                    {!websiteTwo ? '-' : (websiteTwo.domainStatus === 'live' ? 'Live' : 'Parked')}
                 </div>
             </div>
 
@@ -92,10 +92,10 @@ export default function ComparisonReport() {
             <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
                 <div className="text-center w-1/3">
                     <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                       99.16%
+                       {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
                     </div>
                     <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        Regional Banking
+                        {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
                     </div>
                 </div>
 
@@ -110,52 +110,44 @@ export default function ComparisonReport() {
 
                 <div className="text-center w-1/3">
                     <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                       46.66%
+                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.score ? (websiteTwo.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
                     </div>
                     <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        Application Software
+                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.label ? websiteTwo.industryClassification.metadataClass.label : 'N/A')}
                     </div>
                 </div>
             </div>
-        {/* 
-            <div className='gap-4 grid sm:grid-cols-3 bg-pink-400'>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-                    <div className='text-5xl flex justify-center'>
-                        <FiSearch />
+
+            {/* Domain match */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
+                <div className="text-center w-1/3">
+                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                       {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.score ? (websiteOne.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
                     </div>
-                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                       Urls
-                    </div>
-                    <div className='font-poppins-semibold text-lg'>
-                        Scraped
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.label ? websiteOne.industryClassification.domainClass.label : 'N/A')}
                     </div>
                 </div>
 
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-                    <div className='text-5xl flex justify-center'>
+                <div className="text-center m-auto">
+                    <div className='hidden text-5xl sm:flex justify-center'>
                         <FiCheck />
                     </div>
-                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                         Urls
-                    </div>
-                    <div className='font-poppins-semibold text-lg'>
-                        Crawlable
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        Domain Match
                     </div>
                 </div>
 
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-                    <div className='text-5xl flex justify-center'>
-                        <FiClock />
+                <div className="text-center w-1/3">
+                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.score ? (websiteTwo.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
                     </div>
-                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        sec
-                    </div>
-                    <div className='font-poppins-semibold text-lg'>
-                        Avg scrape time
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
                     </div>
                 </div>
-            </div> */}
-
+            </div>
+        
 
             <WEETable isStriped aria-label="Example static collection table">
                 <TableHeader>
