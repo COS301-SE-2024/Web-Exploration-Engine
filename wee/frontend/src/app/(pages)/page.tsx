@@ -88,6 +88,7 @@ export default function Home() {
             onChange={(e) => setUrl(e.target.value)}
           />
           <Button
+            data-testid="btn-start-scraping"
             className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
             onClick={handleScraping}
           >
