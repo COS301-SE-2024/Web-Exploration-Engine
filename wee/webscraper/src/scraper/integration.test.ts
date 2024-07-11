@@ -28,7 +28,7 @@ describe('ScraperController', () => {
 
     expect(response.body).toBeDefined();
 
-  });
+  },20000);
 
 
   // it('/GET read-robots - should read robots.txt successfully', async () => {
