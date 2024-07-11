@@ -70,52 +70,49 @@ export default function ComparisonReport() {
 
             {/* Website Status */}
             <div className="bg-zinc-200 dark:bg-zinc-700 sm:bg-pink-200 rounded-xl flex justify-between p-4 my-3">
-                <div className='text-center font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
+                <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
                     Live
                 </div>
 
                 <div className="text-center m-auto">
-                    <div className='text-5xl flex justify-center'>
+                    <div className='hidden text-5xl sm:flex justify-center'>
                         <FiSearch />
                     </div>
-                    <div className='font-poppins-semibold text-lg'>
+                    <div className='font-poppins-semibold text-md sm:text-lg'>
                         Website Status
                     </div>
                 </div>
 
-                <div className='text-center font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
+                <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
                     Parked
                 </div>
             </div>
 
             {/* Industry Classification */}
             <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
-                {/* <div className='text-center font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
-                    Live
-                </div> */}
                 <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                        99.16%
                     </div>
-                    <div className='font-poppins-semibold text-lg'>
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
                         Regional Banking
                     </div>
                 </div>
 
                 <div className="text-center m-auto">
-                    <div className='text-5xl flex justify-center'>
+                    <div className='hidden text-5xl sm:flex justify-center'>
                         <FiEye />
                     </div>
-                    <div className='font-poppins-semibold text-lg'>
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
                         Industry Classification
                     </div>
                 </div>
 
                 <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                        46.66%
                     </div>
-                    <div className='font-poppins-semibold text-lg'>
+                    <div className='font-poppins-semibold text-sm sm:text-lg'>
                         Application Software
                     </div>
                 </div>
