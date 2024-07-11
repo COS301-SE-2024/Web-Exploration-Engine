@@ -14,6 +14,7 @@ export class SeoAnalysisService {
       imageAnalysis,
       uniqueContentAnalysis,
       internalLinksAnalysis,
+      siteSpeedAnalysis,
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
@@ -21,6 +22,7 @@ export class SeoAnalysisService {
       this.analyzeImageOptimization( url),
       this.analyzeImageOptimization( htmlContent),
       this.analyzeInternalLinks( htmlContent),
+      this.analyzeSiteSpeed(url),
     ]);
 
     return {
@@ -30,7 +32,7 @@ export class SeoAnalysisService {
       imageAnalysis,
       uniqueContentAnalysis,
       internalLinksAnalysis,
-
+      siteSpeedAnalysis,
     };
   }
 
@@ -284,6 +286,31 @@ export class SeoAnalysisService {
       uniqueLinks,
       recommendations: recommendations.trim(),
     };
+  }
+  async analyzeSiteSpeed(url: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    const start = Date.now();
+
+    try {
+      await page.goto(url, { waitUntil: 'networkidle2' });
+      const loadTime = Date.now() - start;
+
+      let recommendations = '';
+      if (loadTime > 3000) {
+        recommendations += 'Page load time is above 3 seconds. Consider optimizing resources to improve site speed.';
+      }
+
+      return {
+        loadTime,
+        recommendations: recommendations.trim(),
+      };
+    } catch (error) {
+      console.error(`Error analyzing site speed: ${error.message}`);
+      throw new Error(`Error analyzing site speed: ${error.message}`);
+    } finally {
+      await browser.close();
+    }
   }
 
 }
