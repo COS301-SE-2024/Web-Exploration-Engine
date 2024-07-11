@@ -54,8 +54,8 @@ export class SeoAnalysisService {
     return {
       metaDescription,
       length,
-      isOptimized,
-      isUrlWordsInDescription,
+      // isOptimized,
+      // isUrlWordsInDescription,
       recommendations: recommendations.trim(),
     };
   }
@@ -89,17 +89,21 @@ export class SeoAnalysisService {
     return {
       titleTag,
       length,
-      isOptimized,
+      //isOptimized,
       recommendations,
     };
   }
 
   async analyzeHeadings(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const headings = $('h1, h2, h3, h4, h5, h6').toArray().map(el => $(el).text().trim());
+    const headings = $('h1, h2, h3, h4, h5, h6')
+      .toArray()
+      .map(el => $(el).text().trim())
+      .filter(text => text.length > 0);
+    
     const count = headings.length;
     const recommendations = count > 0 ? '' : 'No headings (H1-H6) found. Add headings to improve structure.';
-
+  
     return {
       headings,
       count,
@@ -110,15 +114,15 @@ export class SeoAnalysisService {
   async analyzeImageOptimization(url: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-
+  
     try {
       await page.goto(url, { waitUntil: 'networkidle0' });
-
+  
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
         src: img.getAttribute('src') || '',
         alt: img.getAttribute('alt') || '',
       })));
-
+  
       let missingAltTextCount = 0;
       let nonOptimizedCount = 0;
       const totalImages = images.length;
@@ -127,14 +131,14 @@ export class SeoAnalysisService {
         size: 0,
       };
       const errorUrls: string[] = [];
-
+  
       for (const img of images) {
         if (!img.alt) {
           missingAltTextCount++;
         }
-
+  
         const imageUrl = new URL(img.src, url).toString();
-
+  
         try {
           const { optimized, reasons } = await this.isImageOptimized(imageUrl);
           if (!optimized) {
@@ -151,15 +155,15 @@ export class SeoAnalysisService {
           errorUrls.push(`Error checking optimization for image: ${img.src}.`);
         }
       }
-
+  
       let recommendations = '';
       if (missingAltTextCount > 0) {
-        recommendations += `Some images are missing alt text. `;
+        recommendations += `${missingAltTextCount} images are missing alt text. `;
       }
       if (nonOptimizedCount > 0) {
-        recommendations += `Some images are not optimized. `;
+        recommendations += `${nonOptimizedCount} images are not optimized. `;
       }
-
+  
       return {
         totalImages,
         missingAltTextCount,
@@ -175,6 +179,7 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
+  
 
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
     try {
