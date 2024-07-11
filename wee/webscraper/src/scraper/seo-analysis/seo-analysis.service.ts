@@ -15,6 +15,8 @@ export class SeoAnalysisService {
       uniqueContentAnalysis,
       internalLinksAnalysis,
       siteSpeedAnalysis,
+      mobileFriendlinessAnalysis,
+
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
@@ -23,6 +25,8 @@ export class SeoAnalysisService {
       this.analyzeImageOptimization( htmlContent),
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
+      this.analyzeMobileFriendliness(url),
+
     ]);
 
     return {
@@ -33,6 +37,8 @@ export class SeoAnalysisService {
       uniqueContentAnalysis,
       internalLinksAnalysis,
       siteSpeedAnalysis,
+      mobileFriendlinessAnalysis,
+
     };
   }
 
@@ -312,5 +318,40 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
+  async analyzeMobileFriendliness(url: string) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    try {
+      await page.setViewport({
+        width: 375,
+        height: 667,
+        isMobile: true,
+        hasTouch: true,
+      });
+
+      await page.goto(url, { waitUntil: 'networkidle2' });
+
+      const isResponsive = await page.evaluate(() => {
+        return window.innerWidth === 375;
+      });
+
+      let recommendations = '';
+      if (!isResponsive) {
+        recommendations += 'Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.';
+      }
+
+      return {
+        isResponsive,
+        recommendations: recommendations.trim(),
+      };
+    } catch (error) {
+      console.error(`Error analyzing mobile-friendliness: ${error.message}`);
+      throw new Error(`Error analyzing mobile-friendliness: ${error.message}`);
+    } finally {
+      await browser.close();
+    }
+  }
+
 
 }
