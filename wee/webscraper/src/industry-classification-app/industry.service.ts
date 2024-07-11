@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
 import { extractAllowedPaths } from '../robots-app/robots'; //import the correct one once robot-checker is merged
 import axios from 'axios';
 
@@ -41,7 +41,11 @@ export class IndustryService {
       throw new Error('URL IS NOT ALLOWED TO SCRAPE');
     }
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/google-chrome-stable',
+      ignoreDefaultArgs: ['--disable-extensions'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     const page = await browser.newPage();
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded' });

@@ -17,9 +17,13 @@ export class ImagesService {
         }
 
         try {
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({
+                executablePath: '/usr/bin/google-chrome-stable',
+                ignoreDefaultArgs: ['--disable-extensions'],
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            });
             const page = await browser.newPage();
-            await page.goto(url);
+            await page.goto(url, { waitUntil: 'networkidle2' });
             const imageUrls = await page.evaluate(() => {
                 const images = document.querySelectorAll('img');
                 return Array.from(images).map((img: HTMLImageElement) => img.src);
@@ -41,7 +45,11 @@ export class ImagesService {
         }
 
         try {
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({
+                executablePath: '/usr/bin/google-chrome-stable',
+                ignoreDefaultArgs: ['--disable-extensions'],
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            });
             const page = await browser.newPage();
             await page.goto(url);
 
@@ -92,7 +100,11 @@ export class ImagesService {
         }
 
         try {
-            const browser = await puppeteer.launch();
+            const browser = await puppeteer.launch({
+                executablePath: '/usr/bin/google-chrome-stable',
+                ignoreDefaultArgs: ['--disable-extensions'],
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            });
             const page = await browser.newPage();
             await page.goto(url, { waitUntil: 'domcontentloaded' });
 
