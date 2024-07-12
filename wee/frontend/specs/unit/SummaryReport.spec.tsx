@@ -263,4 +263,40 @@ describe('SummaryReport Page', () => {
         expect(saveReport).toHaveBeenCalled();
       });
   });
+
+  it('should display a success message when the report is saved successfully', async () => {
+    render(<SummaryReport />);
+  
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+  
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+  
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+  
+    // Click the save button
+    fireEvent.click(saveButton);
+  
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+
+    // Enter a report name
+    const reportNameInput = screen.getByLabelText(/Report Name/i);
+    expect(reportNameInput).toBeInTheDocument();
+    fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+  
+    // Click the save button in the modal
+    const saveModalButton = screen.getByRole('button', { name: /Save/i });
+    expect(saveModalButton).toBeInTheDocument();
+    fireEvent.click(saveModalButton);
+  
+    await waitFor(() => {
+      expect(screen.getByText('Report saved successfully')).toBeDefined();
+    });
+});
 });
