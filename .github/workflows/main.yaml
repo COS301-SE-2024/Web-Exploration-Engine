@@ -6,13 +6,16 @@ on:
   push:
     branches: [master, development]
 
+permissions:
+  contents: read
+
 jobs:
   lint-build-test:
     runs-on: ubuntu-latest
 
     env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
 
     steps:
       - name: Code Checkout
@@ -20,14 +23,14 @@ jobs:
 
       - name: Change to repository root
         run: cd $GITHUB_WORKSPACE
-        
+
       - name: Print new build number
         run: echo "Build number is $BUILD_NUMBER"
 
       - name: Install dependencies
-        run:  |
+        run: |
           cd wee && npm install
-          
+
       - name: Lint
         run: |
           cd wee
@@ -44,10 +47,10 @@ jobs:
           npx nx build frontend
           echo "================== build complete =================="
           bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
-          
+
         #continue-on-error: true
 
-      - name: Test
+      - name: Run Jest Tests
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
@@ -63,4 +66,38 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  
+  run-cypress-tests:
+    name: Frontend Integration Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Install dependencies
+        run: |
+          cd wee/frontend
+          npm ci
+
+      - name: Start application
+        run: |
+          cd wee/frontend
+          npx nx dev frontend  &
+          npx wait-on http://localhost:3000
+
+      - name: Run Cypress tests
+        run: |
+          cd wee/frontend
+          npx cypress run
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
