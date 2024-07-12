@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Scraping from "../../models/ScrapingModel";
 import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock } from "react-icons/fi";
 
-export default function ComparisonReport() {
+export default function Comparison() {
     const { results } = useScrapingContext();
     const router = useRouter();
     const [websiteOne, setWebsiteOne] = React.useState<Scraping>();
@@ -50,6 +50,7 @@ export default function ComparisonReport() {
                     label="Website 1"
                     className="w-1/2 pr-3 pb-3"
                     onChange={handleWebsiteOne}
+                    data-testid="website1-select"
                 >
                     {results.map((item, index) => (
                         <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
@@ -60,6 +61,7 @@ export default function ComparisonReport() {
                     label="Website 2"
                     className="w-1/2 pl-3 pb-3"
                     onChange={handleWebsiteTwo}
+                    data-testid="website2-select"
                 >
                     {results.map((item, index) => (
                         <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
@@ -122,7 +124,7 @@ export default function ComparisonReport() {
                             <FiEye />
                         </div>
                         <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
-                            Website Status
+                            Industry Classification
                         </div>
                     </div>
 
@@ -157,7 +159,7 @@ export default function ComparisonReport() {
                             <FiCheck />
                         </div>
                         <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
-                            Website Status
+                            Domain Match
                         </div>
                     </div>
 

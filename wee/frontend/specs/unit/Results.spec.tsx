@@ -12,6 +12,7 @@ jest.mock('next/navigation', () => ({
     useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
+
 jest.mock('jspdf', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
@@ -30,8 +31,7 @@ jest.mock('jspdf', () => ({
         pageSize: { width: 180, height: 297 },
       },
     })),
-  }));
-  
+}));  
   
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
