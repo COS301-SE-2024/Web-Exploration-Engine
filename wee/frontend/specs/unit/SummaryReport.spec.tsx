@@ -7,6 +7,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import '@testing-library/jest-dom';
 import { useUserContext } from '../../src/app/context/UserContext';
+import { saveReport } from 'frontend/src/app/services/SaveReportService';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
@@ -61,6 +62,10 @@ jest.mock('apexcharts', () => ({
     destroy: jest.fn(),
     updateOptions: jest.fn(),
   })),
+}));
+
+jest.mock('../../src/app/services/SaveReportService', () => ({
+  saveReport: jest.fn(),
 }));
 
 describe('SummaryReport Page', () => {
@@ -190,5 +195,72 @@ describe('SummaryReport Page', () => {
     // wait for popup to appear
     const modal = await screen.findByTestId('save-report-modal');
     expect(modal).toBeInTheDocument();
+  });
+
+  it('should not call the saveReport function when the save button is clicked and the report name is empty', async () => {
+    render(<SummaryReport />);
+  
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+  
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+  
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+  
+    // Click the save button
+    fireEvent.click(saveButton);
+  
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+  
+    // Click the save button in the modal
+    const saveModalButton = screen.getByRole('button', { name: /Save/i });
+    expect(saveModalButton).toBeInTheDocument();
+    fireEvent.click(saveModalButton);
+  
+    await waitFor(() => {
+      expect(saveReport).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should call the saveReport function when the save button is clicked', async () => {
+      render(<SummaryReport />);
+    
+      // Ensure the component has rendered and the dropdown button is available
+      const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+      expect(dropdownButton).toBeInTheDocument();
+    
+      // Click the dropdown button to open the menu
+      fireEvent.click(dropdownButton);
+    
+      // Wait for the save button to appear
+      const saveButton = await screen.findByTestId('save-report-button');
+      expect(saveButton).toBeInTheDocument();
+    
+      // Click the save button
+      fireEvent.click(saveButton);
+    
+      // wait for popup to appear
+      const modal = await screen.findByTestId('save-report-modal');
+      expect(modal).toBeInTheDocument();
+
+      // Enter a report name
+      const reportNameInput = screen.getByLabelText(/Report Name/i);
+      expect(reportNameInput).toBeInTheDocument();
+      fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+    
+      // Click the save button in the modal
+      const saveModalButton = screen.getByRole('button', { name: /Save/i });
+      expect(saveModalButton).toBeInTheDocument();
+      fireEvent.click(saveModalButton);
+    
+      await waitFor(() => {
+        expect(saveReport).toHaveBeenCalled();
+      });
   });
 });
