@@ -67,7 +67,7 @@ export default function ComparisonReport() {
                 </WEESelect>
             </div>
 
-            <div className="bg-jungleGreen-800 dark:bg-jungleGreen-400 text-dark-primaryTextColor dark:text-primaryTextColor rounded-xl flex justify-between p-2 px-3">
+            <div className="bg-jungleGreen-800 dark:bg-jungleGreen-400 text-dark-primaryTextColor dark:text-primaryTextColor rounded-xl flex justify-around p-2 px-3">
                 <div className="text-xs my-auto sm:text-lg">
                     {websiteOne ? websiteOne.url : 'Website 1'}
                 </div>
@@ -78,22 +78,27 @@ export default function ComparisonReport() {
             </div>
 
             {/* Website Status */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
-                <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
-                    {!websiteOne ? '-' : (websiteOne.domainStatus === 'live' ? 'Live' : 'Parked')}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Website Status
                 </div>
-
-                <div className="text-center m-auto">
-                    <div className='hidden text-5xl sm:flex justify-center'>
-                        <FiSearch />
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        {!websiteOne ? '-' : (websiteOne.domainStatus === 'live' ? 'Live' : 'Parked')}
                     </div>
-                    <div className='font-poppins-semibold text-md sm:text-lg'>
-                        Website Status
-                    </div>
-                </div>
 
-                <div className='text-center font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4 w-1/3'>
-                    {!websiteTwo ? '-' : (websiteTwo.domainStatus === 'live' ? 'Live' : 'Parked')}
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center'>
+                            <FiSearch />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Website Status
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        {!websiteTwo ? '-' : (websiteTwo.domainStatus === 'live' ? 'Live' : 'Parked')}
+                    </div>
                 </div>
             </div>
 
