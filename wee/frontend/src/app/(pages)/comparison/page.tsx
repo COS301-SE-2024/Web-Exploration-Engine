@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from "react";
+import React from "react";
 import WEESelect from "../../components/Util/Select";
 import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
@@ -12,10 +12,6 @@ export default function Comparison() {
     const router = useRouter();
     const [websiteOne, setWebsiteOne] = React.useState<Scraping>();
     const [websiteTwo, setWebsiteTwo] = React.useState<Scraping>();
-
-    useEffect(() => {
-
-    }, []);
 
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);

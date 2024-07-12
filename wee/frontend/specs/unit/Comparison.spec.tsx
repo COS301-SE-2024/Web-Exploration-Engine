@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
-import Comparison from 'frontend/src/app/(pages)/comparison/page';
+import Comparison from '../../src/app/(pages)/comparison/page';
 import '@testing-library/jest-dom';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext';
 import { useRouter } from 'next/navigation';
