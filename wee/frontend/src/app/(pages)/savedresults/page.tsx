@@ -162,6 +162,7 @@ function ResultsComponent() {
                   startContent={<FiDownload className={iconClasses}/>}
                   description="Download the report to your device"
                   onAction={handleDownload}
+                  data-testid="download-report-button"
                 >
                   Download
                 </DropdownItem>
