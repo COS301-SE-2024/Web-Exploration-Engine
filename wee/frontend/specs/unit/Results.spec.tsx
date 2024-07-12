@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../src/app/context/UserContext';
 import { useScrapingContext } from '../../src/app/context/ScrapingContext'
 import jsPDF from 'jspdf'; 
-import { saveReport } from 'frontend/src/app/services/SaveReportService';
+import { saveReport } from '../../src/app/services/SaveReportService';
 import '@testing-library/jest-dom';
 
 // Mock the u'seSearchParams hook

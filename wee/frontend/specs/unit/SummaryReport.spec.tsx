@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import '@testing-library/jest-dom';
 import { useUserContext } from '../../src/app/context/UserContext';
-import { saveReport } from 'frontend/src/app/services/SaveReportService';
+import { saveReport } from '../../src/app/services/SaveReportService';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
