@@ -248,6 +248,7 @@ function ResultsComponent() {
   };
 
   const handleSave = async (reportName: string) => {
+    reportName = reportName.trim();
     if(reportName.length === 0) {
       setIsInvalid(true);
       setIsDisabled(true);

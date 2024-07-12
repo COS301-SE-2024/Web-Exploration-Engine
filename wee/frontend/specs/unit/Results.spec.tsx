@@ -33,8 +33,7 @@ jest.mock('jspdf', () => ({
         pageSize: { width: 180, height: 297 },
       },
     })),
-  }));
-  
+}));
   
 jest.mock('../../src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
@@ -267,7 +266,7 @@ describe('Results Component', () => {
         expect(modal).toBeInTheDocument();
     });
 
-    it('should not call the saveReport function when the save button is clicked and the report name is empty', async () => {
+    it('should enter an error state if no report name is entered and save is clicked', async () => {
         render(<Results />);
       
         // Ensure the component has rendered and the dropdown button is available
@@ -296,7 +295,46 @@ describe('Results Component', () => {
         await waitFor(() => {
           expect(saveReport).not.toHaveBeenCalled();
         });
+
+        // Ensure the error state is displayed in the Input component
+        const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
+        expect(inputWithError).toBeInTheDocument();
     });
+
+    it('should enter an error state if name is entered then removed', async () => {
+        render(<Results />);
+
+        // Ensure the component has rendered and the dropdown button is available
+        const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+        expect(dropdownButton).toBeInTheDocument();
+
+        // Click the dropdown button to open the menu
+        fireEvent.click(dropdownButton);
+
+        // Wait for the save button to appear
+        const saveButton = await screen.findByTestId('save-report-button');
+        expect(saveButton).toBeInTheDocument();
+
+        // Click the save button
+        fireEvent.click(saveButton);
+
+        // wait for popup to appear
+        const modal = await screen.findByTestId('save-report-modal');
+        expect(modal).toBeInTheDocument();
+
+        // Enter a report name
+        const reportNameInput = screen.getByLabelText(/Report Name/i);
+        expect(reportNameInput).toBeInTheDocument();
+        fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+
+        // Clear the report name
+        fireEvent.change(reportNameInput, { target: { value: '' } });
+
+        const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
+        expect(inputWithError).toBeInTheDocument();
+    });
+
+
 
     it('should call the saveReport function when the save button is clicked', async () => {
         render(<Results />);

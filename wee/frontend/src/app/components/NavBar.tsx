@@ -119,7 +119,7 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarContent justify="end">
-      <NavbarItem>
+        <NavbarItem>
           <ThemeSwitch/>
         </NavbarItem>
 
