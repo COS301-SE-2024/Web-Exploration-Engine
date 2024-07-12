@@ -56,8 +56,6 @@ function ResultsComponent() {
 
   useEffect(() => {
     fetchReports();
-    console.log("Reports: ", results);
-    console.log("Summary Reports: ", summaries);
   }, []);
 
   // Report pagination
@@ -105,7 +103,6 @@ function ResultsComponent() {
 
   const handleDelete = async (reportId: number) => {
     try {
-      console.log("Deleting report with id: ", reportId);
       await deleteReport(reportId);
     } catch (error) {
       console.error('Error deleting report:', error);
