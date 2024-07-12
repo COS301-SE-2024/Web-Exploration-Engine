@@ -358,6 +358,7 @@ export default function SummaryReport() {
                                     startContent={<FiSave className={iconClasses}/>}
                                     description="Save the report on our website"
                                     onAction={onOpenChange}
+                                    data-testid="save-report-button"
                                 >
                                     Save
                                 </DropdownItem>
@@ -611,6 +612,7 @@ export default function SummaryReport() {
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
         placement="top-center"
+        data-testid="save-report-modal"
       >
         <ModalContent>
           {(onClose) => (

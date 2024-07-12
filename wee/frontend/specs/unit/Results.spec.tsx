@@ -4,9 +4,10 @@ import Results from '../../src/app/(pages)/results/page';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../src/app/context/UserContext';
-import {useScrapingContext} from '../../src/app/context/ScrapingContext'
+import { useScrapingContext } from '../../src/app/context/ScrapingContext'
 import jsPDF from 'jspdf'; 
 import '@testing-library/jest-dom';
+import exp from 'constants';
 
 // Mock the u'seSearchParams hook
 jest.mock('next/navigation', () => ({
@@ -211,6 +212,7 @@ describe('Results Component', () => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
         });
     });
+
     it('should call jsPDF and download the PDF when download button is clicked', async () => {
         render(<Results />);
       
@@ -233,8 +235,28 @@ describe('Results Component', () => {
           expect(jsPDF).toHaveBeenCalled();
       
         });
-      });
-      
+    });
 
+    it('should display a popup when the save button is clicked', async () => {
+        render(<Results />);
+      
+        // Ensure the component has rendered and the dropdown button is available
+        const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+        expect(dropdownButton).toBeInTheDocument();
+      
+        // Click the dropdown button to open the menu
+        fireEvent.click(dropdownButton);
+      
+        // Wait for the save button to appear
+        const saveButton = await screen.findByTestId('save-report-button');
+        expect(saveButton).toBeInTheDocument();
+      
+        // Click the save button
+        fireEvent.click(saveButton);
+      
+        // wait for popup to appear
+        const modal = await screen.findByTestId('save-report-modal');
+        expect(modal).toBeInTheDocument();
+    });
 });
  

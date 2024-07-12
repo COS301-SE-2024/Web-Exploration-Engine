@@ -248,6 +248,11 @@ function ResultsComponent() {
   };
 
   const handleSave = async (reportName: string) => {
+    if(reportName.length === 0) {
+      setIsInvalid(true);
+      setIsDisabled(true);
+      return;
+    }
     const urlResults = results.filter((res) => res.url === url);
     if (urlResults && urlResults[0]) {
       try {
@@ -299,6 +304,7 @@ function ResultsComponent() {
                       startContent={<FiSave className={iconClasses}/>}
                       description="Save the report on our website"
                       onAction={onOpenChange}
+                      data-testid="save-report-button"
                     >
                       Save
                     </DropdownItem>
@@ -564,6 +570,7 @@ function ResultsComponent() {
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
         placement="top-center"
+        data-testid="save-report-modal"
       >
         <ModalContent>
           {(onClose) => (
@@ -579,19 +586,22 @@ function ResultsComponent() {
                   variant="bordered"
                   isInvalid={isInvalid}
                   color={isInvalid ? "danger" : "default"}
-                  errorMessage="Please provide a report name"
+                  errorMessage="Please provide a name for the report"
                   value={reportName}
                   onChange={handleInputChange}
                 />
               </ModalBody>
               <ModalFooter>
-                <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" onPress={onClose}>
+                <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" onPress={onClose}
+                  data-testid="close-save-report-modal"
+                >
                   Close
                 </Button>
                 <Button 
                   className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
                   onPress={() => handleSave(reportName)}
                   disabled={isDisabled}
+                  data-testid="submit-report-name"
                   >
                   Save
                 </Button>
