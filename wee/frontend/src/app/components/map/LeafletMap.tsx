@@ -1,38 +1,31 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Custom icon for user location
-const userIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-  shadowSize: [41, 41]
-});
-
 const LeafletMap: React.FC = () => {
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null
+  );
   const [center, setCenter] = useState<[number, number] | null>(null);
   const [showUserMarker, setShowUserMarker] = useState(false);
-  const [markers, setMarkers] = useState<{ coords: [number, number]; address: string; }[]>([]);
+  const [markers, setMarkers] = useState<
+    { coords: [number, number]; address: string }[]
+  >([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       delete (L.Icon.Default.prototype as any)._getIconUrl;
 
       L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+        iconRetinaUrl:
+          'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
         iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
       const mockAddresses = [
@@ -57,9 +50,10 @@ const LeafletMap: React.FC = () => {
         const geocodedMarkers = await Promise.all(
           mockAddresses.map(async (address: string) => {
             try {
-              const geoResponse = await retryFetch(
-                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`,
-                { timeout: 10000 }
+              const geoResponse = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+                  address
+                )}&format=json&addressdetails=1`
               );
               const data = await geoResponse.json();
               console.log(`Geocoding response for ${address}:`, data);
@@ -67,20 +61,33 @@ const LeafletMap: React.FC = () => {
                 const { lat, lon } = data[0];
                 return { coords: [parseFloat(lat), parseFloat(lon)], address };
               } else {
-                console.error('Empty or unexpected response from geocoding service for address:', address);
+                console.error(
+                  'Empty or unexpected response from geocoding service for address:',
+                  address
+                );
                 return null;
               }
             } catch (error) {
-              console.error('Error converting address to coordinates for address:', address, error);
+              console.error(
+                'Error converting address to coordinates for address:',
+                address,
+                error
+              );
               return null;
             }
           })
         );
-        console.log('Filtered geocoded markers:', geocodedMarkers.filter(marker => marker !== null));
-        setMarkers(geocodedMarkers.filter(marker => marker !== null) as { coords: [number, number]; address: string; }[]);
+        console.log(
+          'Filtered geocoded markers:',
+          geocodedMarkers.filter((marker) => marker !== null)
+        );
+        setMarkers(
+          geocodedMarkers.filter((marker) => marker !== null) as {
+            coords: [number, number];
+            address: string;
+          }[]
+        );
       };
-
-
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -110,11 +117,25 @@ const LeafletMap: React.FC = () => {
   console.log('Center:', center);
   console.log('Markers:', markers);
 
+  const userIcon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+    iconRetinaUrl:
+      'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    shadowSize: [41, 41],
+  });
+
   return (
     <MapContainer
       center={center || [0, 0]}
       zoom={2}
-      style={{ height: '100%', width: '100%' }}
+      style={{ height: '95%', width: '100%' }}
+      zoomControl={false} // Disable zoom control buttons
+      minZoom={1} // Set the minimum zoom level
+      maxZoom={20} // Set the maximum zoom level
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -126,8 +147,8 @@ const LeafletMap: React.FC = () => {
         </Marker>
       )}
       {markers.map((marker, index) => (
-        <Marker key={index} position={marker!.coords}>
-          <Popup>{marker!.address}</Popup>
+        <Marker key={index} position={marker.coords}>
+          <Popup>{marker.address}</Popup>
         </Marker>
       ))}
     </MapContainer>
