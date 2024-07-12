@@ -297,7 +297,7 @@ describe('Results Component', () => {
         });
 
         // Ensure the error state is displayed in the Input component
-        const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
+        const inputWithError = screen.getByLabelText('Report Name', { invalid: true, disabled: true});
         expect(inputWithError).toBeInTheDocument();
     });
 
@@ -333,8 +333,6 @@ describe('Results Component', () => {
         const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
         expect(inputWithError).toBeInTheDocument();
     });
-
-
 
     it('should call the saveReport function when the save button is clicked', async () => {
         render(<Results />);

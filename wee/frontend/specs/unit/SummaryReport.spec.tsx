@@ -228,7 +228,7 @@ describe('SummaryReport Page', () => {
     });
 
     // Ensure the error state is displayed in the Input component
-    const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
+    const inputWithError = screen.getByLabelText('Report Name', { invalid: true, disabled: true });
     expect(inputWithError).toBeInTheDocument();
   });
 
@@ -335,5 +335,5 @@ describe('SummaryReport Page', () => {
     await waitFor(() => {
       expect(screen.getByText('Report saved successfully')).toBeDefined();
     });
-});
+  });
 });
