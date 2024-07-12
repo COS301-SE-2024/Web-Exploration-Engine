@@ -95,7 +95,7 @@ export default function SummaryReport() {
           setIsInvalid(true);
           setIsDisabled(true);
         }
-      };
+    };
 
     const handleSave = async (reportName: string) => {
         if (summaryReport) {
@@ -114,6 +114,15 @@ export default function SummaryReport() {
             }
         }
     };
+
+    // clear the input field when the modal is closed
+    useEffect(() => {
+        if (!isOpen) {
+          setReportName('');
+          setIsInvalid(false);
+          setIsDisabled(true);
+        }
+    }, [isOpen]);
 
 
     const handleDownloadReport = async () => {
@@ -324,8 +333,6 @@ export default function SummaryReport() {
         await addChartToPDF();
         doc.save('website-summary-report.pdf');
     };
-    
-    
 
     return (
         <>

@@ -272,6 +272,14 @@ function ResultsComponent() {
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      setReportName('');
+      setIsInvalid(false);
+      setIsDisabled(true);
+    }
+}, [isOpen]);
+
 
   return (
     <>
