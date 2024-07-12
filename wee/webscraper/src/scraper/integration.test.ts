@@ -13,134 +13,152 @@ describe('ScraperController', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
-  });
+  }, 60000); 
 
   afterAll(async () => {
     await app.close();
+  }, 60000);
+
+  describe('/GET scraper', () => {
+    it('should scrape a website successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
+
+      expect(response.body).toBeDefined();
+    }, 60000);
   });
 
-  it('/GET scraper - should scrape a website successfully', async () => {
-    const url = 'https://example.com';
-    const response = await request(app.getHttpServer())
-      .get('/scraper?url=' + encodeURIComponent(url))
-      .expect(HttpStatus.OK)
-      .expect('Content-Type', /json/);
+  describe('/GET read-robots', () => {
+    it('should read robots.txt successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/read-robots?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
 
-    expect(response.body).toBeDefined();
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
-  },20000);
+  describe('/GET scrape-metadata', () => {
+    it('should scrape metadata successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-metadata?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
 
-
-  // it('/GET read-robots - should read robots.txt successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/read-robots?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-  //   // Add more assertions based on expected response structure
-  // });
-
-
-
-  // it('/GET scrape-metadata - should scrape metadata successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-metadata?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
-
-
-  // it('/GET scrape-status - should return status successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-status?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
 
 
-  // it('/GET classify-industry - should classify industry successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/classify-industry?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
+  describe('/GET classify-industry', () => {
+    it('should classify industry successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/classify-industry?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
 
-  //   expect(response.body).toBeDefined();
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
-  // });
+  describe('/GET scrape-images', () => {
+    it('should scrape images successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-images?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
 
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
-  // it('/GET scrape-images - should scrape images successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-images?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
+  describe('/GET scrape-status', () => {
+    it('should return status successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-status?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .timeout(60000)
+        .catch(err => {
+          if (err.response) {
+            console.error('Error Response:', err.response.text);
+          }
+          throw err;
+        });
 
-  //   expect(response.body).toBeDefined();
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
-  // });
+  describe('/GET scrape-logo', () => {
+    it('should scrape logo successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-logo?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .timeout(60000)
+        .catch(err => {
+          if (err.response) {
+            console.error('Error Response:', err.response.text);
+          }
+          throw err;
+        });
 
-
-  // it('/GET scrape-logo - should scrape logo successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-logo?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
-
-
-  // it('/GET screenshot - should get screenshot successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/screenshot?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
-
-
-  // it('/GET scrape-contact-info - should scrape contact info successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-contact-info?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
-
-
-  // it('/GET scrape-addresses - should scrape addresses successfully', async () => {
-  //   const url = 'https://example.com';
-  //   const response = await request(app.getHttpServer())
-  //     .get('/scraper/scrape-addresses?url=' + encodeURIComponent(url))
-  //     .expect(HttpStatus.OK)
-  //     .expect('Content-Type', /json/);
-
-  //   expect(response.body).toBeDefined();
-
-  // });
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 
 
+  describe('/GET screenshot', () => {
+    it('should get screenshot successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/screenshot?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
 
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
+
+  describe('/GET scrape-contact-info', () => {
+    it('should scrape contact info successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-contact-info?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
+
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
+
+  describe('/GET scrape-addresses', () => {
+    it('should scrape addresses successfully', async () => {
+      const url = 'https://example.com';
+      const response = await request(app.getHttpServer())
+        .get('/scraper/scrape-addresses?url=' + encodeURIComponent(url))
+        .expect(HttpStatus.OK)
+        .expect('Content-Type', /json/)
+        .timeout(60000);
+
+      expect(response.body).toBeDefined();
+    }, 60000);
+  });
 });
-
