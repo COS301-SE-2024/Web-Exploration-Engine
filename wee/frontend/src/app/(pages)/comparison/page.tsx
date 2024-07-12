@@ -103,61 +103,71 @@ export default function ComparisonReport() {
             </div>
 
             {/* Industry Classification */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
-                <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                       {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
-                    </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
-                    </div>
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Industry Classification
                 </div>
+                <div className="flex justify-between ">
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
+                        </div>
+                    </div>
 
-                <div className="text-center m-auto">
-                    <div className='hidden text-5xl sm:flex justify-center'>
-                        <FiEye />
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center'>
+                            <FiEye />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Website Status
+                        </div>
                     </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        Industry Classification
-                    </div>
-                </div>
 
-                <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.score ? (websiteTwo.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
-                    </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.label ? websiteTwo.industryClassification.metadataClass.label : 'N/A')}
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.score ? (websiteTwo.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.label ? websiteTwo.industryClassification.metadataClass.label : 'N/A')}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Domain match */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl flex justify-between p-4 my-3">
-                <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                       {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.score ? (websiteOne.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
-                    </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.label ? websiteOne.industryClassification.domainClass.label : 'N/A')}
-                    </div>
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Domain Match
                 </div>
+                <div className="flex justify-between ">
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.score ? (websiteOne.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.label ? websiteOne.industryClassification.domainClass.label : 'N/A')}
+                        </div>
+                    </div>
 
-                <div className="text-center m-auto">
-                    <div className='hidden text-5xl sm:flex justify-center'>
-                        <FiCheck />
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center'>
+                            <FiCheck />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Website Status
+                        </div>
                     </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        Domain Match
-                    </div>
-                </div>
 
-                <div className="text-center w-1/3">
-                    <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.score ? (websiteTwo.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
-                    </div>
-                    <div className='font-poppins-semibold text-sm sm:text-lg'>
-                        {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.score ? (websiteTwo.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
+                        </div>
                     </div>
                 </div>
             </div>
