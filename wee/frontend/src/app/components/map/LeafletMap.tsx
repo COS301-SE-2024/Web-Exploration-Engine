@@ -132,10 +132,10 @@ const LeafletMap: React.FC = () => {
     <MapContainer
       center={center || [0, 0]}
       zoom={2}
-      style={{ height: '95%', width: '100%' }}
+      style={{ height: '100%', width: '100%' }}
       zoomControl={false} // Disable zoom control buttons
-      minZoom={1} // Set the minimum zoom level
-      maxZoom={20} // Set the maximum zoom level
+      minZoom={2} // Set the minimum zoom level
+      maxZoom={17} // Set the maximum zoom level
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
