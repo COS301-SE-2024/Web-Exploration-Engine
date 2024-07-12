@@ -5,7 +5,7 @@ import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import Scraping from "../../models/ScrapingModel";
-import { FiCheck, FiSearch, FiEye } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock } from "react-icons/fi";
 
 export default function ComparisonReport() {
     const { results } = useScrapingContext();
@@ -168,6 +168,66 @@ export default function ComparisonReport() {
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Site Speed */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Site Speed
+                </div>
+                <div className="flex justify-between ">
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            9.54
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            seconds
+                        </div>
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiClock />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Site Speed
+                        </div>
+                    </div>
+
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            2.87
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            seconds
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Friendly */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Mobile Friendly
+                </div>
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        Yes
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiSmartphone />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Mobile Friendly
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        No
                     </div>
                 </div>
             </div>
