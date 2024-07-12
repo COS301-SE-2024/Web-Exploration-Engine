@@ -5,6 +5,7 @@ import { useUserContext } from '../../src/app/context/UserContext';
 import { getReports, deleteReport } from '../../src/app/services/SaveReportService';
 import { useRouter } from 'next/navigation';
 
+
 jest.mock('../../src/app/services/SaveReportService');
 jest.mock('../../src/app/context/UserContext');
 jest.mock('next/navigation', () => ({
@@ -81,4 +82,42 @@ describe('SavedReports Page', () => {
 
     expect(getByText('Test Report')).toBeDefined();
   });
+
+  it('handles pagination correctly', async () => {
+    // Render the SavedReports component with mocked reports and pagination controls
+    const { getByText, getByLabelText } = render(<SavedReports />);
+
+    // Mock getReports to resolve with mockReports
+    (getReports as jest.Mock).mockResolvedValue(mockReports);
+
+    // Ensure initial page is loaded correctly
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+    expect(getByText('Test Report')).toBeDefined();
+
+    // Change page and verify the change
+    fireEvent.change(getByLabelText('Number of results per page'), { target: { value: '2' } });
+    await waitFor(() => expect(getByText('Test Report')).toBeDefined());
+  });
+  
+  
+
+  // it('deletes a report correctly', async () => {
+  //   // Mock deleteReport to resolve successfully
+  //   (deleteReport as jest.Mock).mockResolvedValueOnce();
+
+  //   // Render the SavedReports component with mocked reports
+  //   const { getByText, getByTestId } = render(<SavedReports />);
+  //   await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+
+  //   // Click delete button
+  //   fireEvent.click(getByTestId('btnDelete0'));
+
+  //   // Confirm delete and check if deleteReport is called with correct ID
+  //   fireEvent.click(getByText('Yes'));
+  //   await waitFor(() => expect(deleteReport).toHaveBeenCalledWith(mockReports[0].id));
+
+  //   // Ensure fetchReports is called after deletion
+  //   expect(getReports).toHaveBeenCalledTimes(2); // Check the correct number of calls
+  // });
+
 });
