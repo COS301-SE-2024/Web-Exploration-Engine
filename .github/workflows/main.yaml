@@ -1,4 +1,4 @@
-name: lint-build-test-deploy
+name: Lint Build and Test
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
     branches: [master, development]
 
 jobs:
-  lint-build-test-deploy:
+  lint-build-test:
     runs-on: ubuntu-latest
 
     env:
@@ -63,8 +63,4 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Deploy
-        run: |
-          echo "================== test complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
-        #continue-on-error: true
+  
