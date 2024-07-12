@@ -1,8 +1,7 @@
 import React from 'react';
 import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
 import SavedResults from '../../src/app/(pages)/savedresults/page'; 
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUserContext } from '../../src/app/context/UserContext';
 import '@testing-library/jest-dom';
 
