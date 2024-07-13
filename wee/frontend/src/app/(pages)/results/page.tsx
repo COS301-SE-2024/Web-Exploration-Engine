@@ -53,6 +53,7 @@ function ResultsComponent() {
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
+  const [homePageScreenShot, setHomePageScreenShot] = useState('');
 
   useEffect(() => {
     if (url) {
@@ -60,9 +61,11 @@ function ResultsComponent() {
   
       if (urlResults && urlResults[0]) {
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
+
         if ('errorStatus' in urlResults[0].robots) {
           setIsCrawlable(false);
-        } else {
+        } 
+        else {
           setIsCrawlable(urlResults[0].robots.isUrlScrapable);
           setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
           setSummaryInfo({
@@ -71,12 +74,12 @@ function ResultsComponent() {
           });
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
-          setIndustryClassification(
-            urlResults[0].industryClassification.metadataClass
-          );
-          setDomainClassification(
-            urlResults[0].industryClassification.domainClass
-          );
+          setIndustryClassification(urlResults[0].industryClassification.metadataClass);
+          setDomainClassification(urlResults[0].industryClassification.domainClass);
+
+          const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
+          const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
+          setHomePageScreenShot(screenShotUrl);
         }
       }
     }
@@ -289,7 +292,8 @@ function ResultsComponent() {
           </CardBody>
         </Card>
       </div>
-
+      
+      {/* Domain Tags */}
       <div className="py-3">
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
           Domain Tags
@@ -400,6 +404,19 @@ function ResultsComponent() {
         </WEETable>
       </div>
 
+      {/* Home page screenshot */}
+      <div className='py-3'>
+        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+          Home page screenshot
+        </h3>
+
+        <Image
+          alt="HomePageScreenShot"
+          src={homePageScreenShot}
+          className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+        />
+      </div>
+
       {/* Pagination of Images */}
       {imageList && imageList.length > 0 && (
         <div className="py-3">
@@ -428,7 +445,7 @@ function ResultsComponent() {
 
           <div
             id="unique-results-image-container"
-            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 py-6"
+            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 py-6 pt-3"
           >
             {currentImages.map((item, index) => (
               <Card shadow="sm" key={index} id="unique-results-image">
