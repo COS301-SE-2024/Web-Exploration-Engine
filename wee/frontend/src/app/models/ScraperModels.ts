@@ -7,7 +7,10 @@ export interface ScraperResult {
   logo: string;
   images: string[];
   slogan: string;
+  contactInfo: ContactInfo;
   time:number;
+  addresses: string[];
+  screenshot: string;
 }
 
 export interface ErrorResponse {
@@ -47,6 +50,12 @@ export interface IndustryClassification {
     label: string;
     score: number;
   }
+}
+
+export interface ContactInfo {
+  emails: string[],
+  phones: string[],
+  socialLinks: string[]
 }
 
 export interface Summary {

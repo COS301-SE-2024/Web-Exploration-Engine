@@ -1,10 +1,9 @@
 import React, { useState, ReactNode } from "react";
 import ScrapingContext from "../context/ScrapingContext";
-import Scraping from "../models/ScrapingModel";
-import { Summary } from "../models/ScraperModels";
+import { Summary, ScraperResult } from "../models/ScraperModels";
 
 export const ScrapingProvider = ({children} : {children: ReactNode}) => {
-    const [results, setResults] = useState<Scraping[]>([]);
+    const [results, setResults] = useState<ScraperResult[]>([]);
     const [urls, setUrls] = useState<string[]>(['']);
     const [summaryReport, setSummaryReport] = useState<Summary>({} as Summary);
     const [processedUrls, setProcessedUrls] = useState<string[]>([]);

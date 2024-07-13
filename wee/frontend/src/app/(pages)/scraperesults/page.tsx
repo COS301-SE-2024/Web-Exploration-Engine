@@ -18,7 +18,7 @@ import {
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import Scraping from '../../models/ScrapingModel';
+import { ScraperResult } from '../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 
@@ -58,11 +58,11 @@ function ResultsComponent() {
     // Apply crawlable filter
     if (selectedCrawlableFilter === 'Yes') {
       filteredUrls = filteredUrls.filter(
-        (url) => url.robots && url.robots.isUrlScrapable
+        (url) => url.robots && 'isUrlScrapable' in url.robots && url.robots.isUrlScrapable
       );
     } else if (selectedCrawlableFilter === 'No') {
       filteredUrls = filteredUrls.filter(
-        (url) => url.robots && !url.robots.isUrlScrapable
+        (url) => url.robots && 'isUrlScrapable' in url.robots && !url.robots.isUrlScrapable
       );
     }
 
@@ -139,9 +139,9 @@ function ResultsComponent() {
       const response = await fetch(
         `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
       );
-      const data = (await response.json()) as Scraping;
+      const data = (await response.json()) as ScraperResult;
       console.log('Response', data);
-      setResults((prevResults: Scraping[]) => [...prevResults, data]);
+      setResults((prevResults: ScraperResult[]) => [...prevResults, data]);
     } catch (error) {
       console.error('Error when scraping website:', error);
     }
