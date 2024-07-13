@@ -133,6 +133,27 @@ describe('Comparison Component', () => {
             expect(screen.queryByText('Retail')).toBeDefined();
             expect(screen.queryByText('90%')).toBeDefined();
         });
+
+        const websiteOneState = mockResults[0];
+        expect(websiteOneState).toEqual({
+            url: 'https://www.example.com',
+            robots: { isUrlScrapable: true },
+            metadata: {
+                title: 'Example Title',
+                description: 'Example Description',
+                keywords: 'example, keywords',
+                ogTitle: 'Example OG Title',
+                ogDescription: 'Example OG Description',
+                ogImage: 'https://www.example.com/ogimage.png',
+            },
+            domainStatus: 'parked',
+            logo: 'https://www.example.com/logo.png',
+            images: ['https://www.example.com/image1.png', 'https://www.example.com/image2.png'],
+            industryClassification: {
+                metadataClass: { label: 'E-commerce', score: 95 },
+                domainClass: { label: 'Retail', score: 90 },
+            },
+        });
     });
 
     it('should update websiteTwo state when a new option is selected', async () => {
@@ -150,6 +171,26 @@ describe('Comparison Component', () => {
             expect(screen.queryByText('Application Software')).toBeDefined();
             expect(screen.queryByText('78%')).toBeDefined();
         });
-    });
 
+        const websiteTwoState = mockResults[1];
+        expect(websiteTwoState).toEqual({
+            url: 'https://www.example2.com',
+            robots: { isUrlScrapable: true },
+            metadata: {
+                title: 'Example Title2',
+                description: 'Example Description2',
+                keywords: 'example, keywords2',
+                ogTitle: 'Example OG Title2',
+                ogDescription: 'Example OG Description2',
+                ogImage: 'https://www.example.com/ogimage2.png',
+            },
+            domainStatus: 'live',
+            logo: 'https://www.example.com/logo2.png',
+            images: ['https://www.example.com/image21.png', 'https://www.example.com/image22.png'],
+            industryClassification: {
+                metadataClass: { label: 'Regional Banks', score: 62 },
+                domainClass: { label: 'Application Software', score: 78 },
+            },
+        });
+    });
 })
