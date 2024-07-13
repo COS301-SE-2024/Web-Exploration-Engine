@@ -117,4 +117,39 @@ describe('Comparison Component', () => {
             expect(screen.queryByText('78%')).toBeDefined();
         });
     });
+
+    it('should update websiteOne state when a new option is selected', async () => {
+        await act(async () => {
+            render(<Comparison />);
+        });
+
+        const selectOne = screen.getByTestId('website1-select');
+        fireEvent.change(selectOne, { target: { value: '0' } });
+
+        await waitFor(() => {
+            expect(screen.queryByText('Parked')).toBeDefined();
+            expect(screen.queryByText('E-commerce')).toBeDefined();
+            expect(screen.queryByText('95%')).toBeDefined();
+            expect(screen.queryByText('Retail')).toBeDefined();
+            expect(screen.queryByText('90%')).toBeDefined();
+        });
+    });
+
+    it('should update websiteTwo state when a new option is selected', async () => {
+        await act(async () => {
+            render(<Comparison />);
+        });
+
+        const selectTwo = screen.getByTestId('website2-select');
+        fireEvent.change(selectTwo, { target: { value: '1' } });
+
+        await waitFor(() => {
+            expect(screen.queryByText('Live')).toBeDefined();
+            expect(screen.queryByText('Regional Banks')).toBeDefined();
+            expect(screen.queryByText('62%')).toBeDefined();
+            expect(screen.queryByText('Application Software')).toBeDefined();
+            expect(screen.queryByText('78%')).toBeDefined();
+        });
+    });
+
 })

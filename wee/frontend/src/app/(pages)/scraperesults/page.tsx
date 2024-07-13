@@ -335,7 +335,7 @@ function ResultsComponent() {
               Comparison
             </h1>
             <Button
-              data-testid="btn-report-summary"
+              data-testid="btn-comparison-summary"
               className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
               onClick={handleComparisonPage}
             >
