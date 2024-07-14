@@ -118,7 +118,6 @@ export class SeoAnalysisService {
       recommendations,
     };
   }
-
   async analyzeImageOptimization(url: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -135,8 +134,9 @@ export class SeoAnalysisService {
       let nonOptimizedCount = 0;
       const totalImages = images.length;
       const reasonsMap = {
-        format: 0,
-        size: 0,
+        format: [] as string[],
+        size: [] as string[],
+        other: [] as string[],
       };
       const errorUrls: string[] = [];
   
@@ -151,16 +151,28 @@ export class SeoAnalysisService {
           const { optimized, reasons } = await this.isImageOptimized(imageUrl);
           if (!optimized) {
             nonOptimizedCount++;
+            let reasonFound = false;
             reasons.forEach(reason => {
-              if (reason.includes('format')) reasonsMap.format++;
-              if (reason.includes('size')) reasonsMap.size++;
+              if (reason.includes('format')) {
+                reasonsMap.format.push(imageUrl);
+                reasonFound = true;
+              } else if (reason.includes('size')) {
+                reasonsMap.size.push(imageUrl);
+                reasonFound = true;
+              }
             });
+  
+            if (!reasonFound) {
+              reasonsMap.other.push(imageUrl);
+            }
+  
             errorUrls.push(`Error optimizing image: ${img.src}. ${reasons.join(', ')}`);
           }
         } catch (error) {
           console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
           nonOptimizedCount++;
-          errorUrls.push(`Error checking optimization for image: ${img.src}.`);
+          reasonsMap.other.push(imageUrl);  // Categorize as "other"
+          errorUrls.push(`Error checking optimization for image: ${img.src}. ${error.message}`);
         }
       }
   
@@ -257,7 +269,7 @@ export class SeoAnalysisService {
       .slice(0, 10)
       .map(([word, count]) => ({ word, count }));
 
-    const uniqueWordsPercentage = new Set(textWords).size / textWords.length;
+    const uniqueWordsPercentage = new Set(textWords).size / textWords.length*100;
 
     let recommendations = '';
     if (textLength < 500) {
@@ -297,16 +309,17 @@ export class SeoAnalysisService {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     const start = Date.now();
-
+  
     try {
       await page.goto(url, { waitUntil: 'networkidle2' });
-      const loadTime = Date.now() - start;
-
+      const loadTimeMs = Date.now() - start;
+      const loadTime = loadTimeMs / 1000; // Convert milliseconds to seconds
+  
       let recommendations = '';
-      if (loadTime > 3000) {
+      if (loadTime > 3) {
         recommendations += 'Page load time is above 3 seconds. Consider optimizing resources to improve site speed.';
       }
-
+  
       return {
         loadTime,
         recommendations: recommendations.trim(),
@@ -318,6 +331,7 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
+  
   async analyzeMobileFriendliness(url: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
