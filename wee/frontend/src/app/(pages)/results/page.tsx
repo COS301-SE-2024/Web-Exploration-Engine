@@ -421,7 +421,7 @@ function ResultsComponent() {
 
         <WEETable isStriped aria-label="Address and contact info table">
           <TableHeader>
-            <TableColumn>SCRAPING CATEGORY</TableColumn>
+            <TableColumn>CONTACT DETAILS</TableColumn>
             <TableColumn>INFORMATION</TableColumn>
           </TableHeader>
           <TableBody>
@@ -483,11 +483,23 @@ function ResultsComponent() {
           Home page screenshot
         </h3>
 
-        <Image
-          alt="HomePageScreenShot"
-          src={homePageScreenShot}
-          className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-        />
+        {homePageScreenShot && (
+          <div className="flex justify-center">
+            <div className="flex justify-center">
+              <Image
+                alt="HomePageScreenShot"
+                src={homePageScreenShot}
+                className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+              />
+            </div>            
+          </div>
+        )}
+
+        {!homePageScreenShot && (
+          <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+            No homepage screenshot available.
+          </p>
+        )}
       </div>
 
       {/* Pagination of Images */}

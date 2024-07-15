@@ -60,7 +60,7 @@ describe('Results Component', () => {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
             },
-            screenshot: 'abc',
+            screenshot: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
             addresses: ['15 Troye Street, Johannesburg, Gauteng'],
             contactInfo: {
                 emails: [],
@@ -120,6 +120,73 @@ describe('Results Component', () => {
         });
     });
 
+    it('should display emails', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    contactInfo: {
+                        emails: ['emailOne@gmail.com', 'emailTwo@outlook.com'],
+                        phones: [],
+                        socialLinks: [
+                            "https://www.facebook.com/AbsaSouthAfrica/",
+                            "https://twitter.com/AbsaSouthAfrica",
+                            "https://www.linkedin.com/company/absa/"
+                        ]
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('15 Troye Street, Johannesburg, Gauteng')).toBeDefined();
+            expect(screen.getByText('emailOne@gmail.com')).toBeDefined();
+            expect(screen.getByText('emailTwo@outlook.com')).toBeDefined();
+            expect(screen.getByText('No phone numbers available')).toBeDefined();
+            expect(screen.getByText('https://www.facebook.com/AbsaSouthAfrica/')).toBeDefined();
+            expect(screen.getByText('https://twitter.com/AbsaSouthAfrica')).toBeDefined();
+            expect(screen.getByText('https://www.linkedin.com/company/absa/')).toBeDefined();
+        });
+    });
+
+    it('should display phones', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    contactInfo: {
+                        emails: ['emailOne@gmail.com', 'emailTwo@outlook.com'],
+                        phones: ['0124567890', '9874563214'],
+                        socialLinks: [
+                            "https://www.facebook.com/AbsaSouthAfrica/",
+                            "https://twitter.com/AbsaSouthAfrica",
+                            "https://www.linkedin.com/company/absa/"
+                        ]
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('15 Troye Street, Johannesburg, Gauteng')).toBeDefined();
+            expect(screen.getByText('emailOne@gmail.com')).toBeDefined();
+            expect(screen.getByText('emailTwo@outlook.com')).toBeDefined();
+            expect(screen.getByText('0124567890')).toBeDefined();
+            expect(screen.getByText('9874563214')).toBeDefined();
+            expect(screen.getByText('https://www.facebook.com/AbsaSouthAfrica/')).toBeDefined();
+            expect(screen.getByText('https://twitter.com/AbsaSouthAfrica')).toBeDefined();
+            expect(screen.getByText('https://www.linkedin.com/company/absa/')).toBeDefined();
+        });
+    });
+
     it('should display address and socialLinks', async () => {
         await act(async () => {
             render(<Results />);
@@ -170,6 +237,40 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText('No images available.')).toBeDefined();
+        });
+    });
+
+    // it('should display no screenshot available when screenshot is not present', async () => {
+    //     (useScrapingContext as jest.Mock).mockReturnValueOnce({
+    //         results: [
+    //             {
+    //                 ...mockResults[0],
+    //                 screenshot: '',
+    //             },
+    //         ],
+    //     });
+
+    //     await act(async () => {
+    //         render(<Results />);
+    //     });
+
+    //     await waitFor(() => {
+    //         expect(screen.getByText('No homepage screenshot available.')).toBeDefined();
+    //     });
+    // });
+
+    it('should display the screenshot when it is present', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+          results: mockResults,
+        });
+    
+        await act(async () => {
+          render(<Results />);
+        });
+    
+        await waitFor(() => {
+          expect(screen.getByAltText('HomePageScreenShot')).toBeInTheDocument();
+          expect(screen.getByAltText('HomePageScreenShot').src).toBe(`data:image/png;base64,${mockResults[0].screenshot}`);
         });
     });
 
@@ -251,6 +352,7 @@ describe('Results Component', () => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
         });
     });
+
     it('should call jsPDF and download the PDF when download button is clicked', async () => {
         render(<Results />);
       
