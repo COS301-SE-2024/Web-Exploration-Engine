@@ -244,4 +244,84 @@ describe('analyzeHeadings', () => {
       expect(result).toBe(true);
     });
   });
+  describe('isImageOptimized', () => {
+    it('should return optimized true for a valid optimized image with no content-length', async () => {
+      const imageUrl = 'http://example.com/image.png';
+  
+      // Mock Axios response for image request with no content-length
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'image/png',
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(true);
+      expect(result.reasons).toEqual([]);
+    });
+  
+    it('should return optimized true for a valid optimized image with a large content-length', async () => {
+      const imageUrl = 'http://example.com/large_image.jpg';
+  
+      // Mock Axios response for image request with a large content-length
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'image/jpeg',
+          'content-length': '1000000',
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(false);
+      expect(result.reasons).toEqual(["size"]);
+    });
+  
+    it('should return optimized true for an unsupported image format with no content-length', async () => {
+      const imageUrl = 'http://example.com/image.webp';
+  
+      // Mock Axios response for image request with an unsupported image format and no content-length
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'image/webp',
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(true);
+      expect(result.reasons).toEqual([]);
+    });
+  
+    it('should return optimized false and reasons for multiple optimization issues', async () => {
+      const imageUrl = 'http://example.com/image.jpg';
+  
+      // Mock Axios response for image request with multiple optimization issues
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'text/html',
+          'content-length': '600000', 
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(false);
+      expect(result.reasons).toEqual(['format', 'size']);
+    });
+  
+    it('should handle unexpected errors during image optimization check', async () => {
+      const imageUrl = 'http://example.com/image.jpg';
+  
+      // Mock Axios to simulate an unexpected error
+      (axios.get as jest.Mock).mockRejectedValue(new Error('Unexpected error fetching image'));
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(false);
+      expect(result.reasons).toEqual([]);
+    });
+  });
+  
 });
