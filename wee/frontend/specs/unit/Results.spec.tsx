@@ -8,6 +8,7 @@ import { useScrapingContext } from '../../src/app/context/ScrapingContext'
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../src/app/services/SaveReportService';
 import '@testing-library/jest-dom';
+import exp from 'constants';
 
 // Mock the u'seSearchParams hook
 jest.mock('next/navigation', () => ({
@@ -303,35 +304,39 @@ describe('Results Component', () => {
 
     it('should enter an error state if name is entered then removed', async () => {
         render(<Results />);
-
+    
         // Ensure the component has rendered and the dropdown button is available
         const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
         expect(dropdownButton).toBeInTheDocument();
-
+    
         // Click the dropdown button to open the menu
         fireEvent.click(dropdownButton);
-
+    
         // Wait for the save button to appear
         const saveButton = await screen.findByTestId('save-report-button');
         expect(saveButton).toBeInTheDocument();
-
+    
         // Click the save button
         fireEvent.click(saveButton);
-
-        // wait for popup to appear
+    
+        // Wait for the modal to appear
         const modal = await screen.findByTestId('save-report-modal');
         expect(modal).toBeInTheDocument();
-
+    
         // Enter a report name
         const reportNameInput = screen.getByLabelText(/Report Name/i);
         expect(reportNameInput).toBeInTheDocument();
         fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
-
+    
         // Clear the report name
         fireEvent.change(reportNameInput, { target: { value: '' } });
+    
+        // Check if isInvalid and isDisabled are set to true
+        expect(screen.getByLabelText('Report Name')).toHaveAttribute('aria-invalid', 'true');
 
-        const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
-        expect(inputWithError).toBeInTheDocument();
+        const confirmButton = screen.getByTestId('submit-report-name');
+        expect(confirmButton).toBeInTheDocument();
+        expect(confirmButton).toBeDisabled();
     });
 
     it('should call the saveReport function when the save button is clicked', async () => {

@@ -198,5 +198,36 @@ describe('SavedReports Page', () => {
     fireEvent.click(getByText('Test Report'));
     expect(mockPush).toHaveBeenCalledWith('/savedsummaries?id=1');
   });
+
+  it ('should print an error if there is no user', async () => {
+    (useUserContext as jest.Mock).mockReturnValue({
+      user: null,
+      results: [],
+      setResults: jest.fn(),
+      summaries: [],
+      setSummaries: jest.fn(),
+    });
+
+    // check for console.error
+    // Assuming you have a specific error message you expect to be logged
+    const expectedErrorMessage = 'User not found';
+
+    // Spy on console.error
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Render your component
+    render(<SavedReports />);
+
+    // Check if console.error was called
+    expect(errorSpy).toHaveBeenCalled();
+
+    // Check for specific error message
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining(expectedErrorMessage));
+
+    // Restore the original console.error
+    errorSpy.mockRestore();
+  });
+
+  
   
 });
