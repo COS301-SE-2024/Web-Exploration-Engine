@@ -2,7 +2,25 @@
 
 `act` is a tool that allows you to run GitHub Actions locally. It's particularly useful for testing and debugging your GitHub Actions workflows before pushing them to GitHub. Here's a step-by-step guide on how to set it up and use it:
 
-### 1. Install `act`
+# General Shortcuts :)
+
+
+- **Running Specific Jobs** :
+
+```typescript
+  act -j lint-build-test
+```
+
+```typescript
+  act -j run-cypress-tests
+```
+
+```typescript
+  act -j lint-build-test
+```
+
+
+# 1. Install `act`
 
 First, you need to install `act`. You can do this via Homebrew, the `act` GitHub releases page, or by using Docker.
 
@@ -61,7 +79,7 @@ https://chocolatey.org/install#install-step2
 </p>
 </details> 
 
-### 2. Prepare Your GitHub 
+# 2. Prepare Your GitHub 
 
 Make sure you have your GitHub Actions workflow defined in your repository, typically in the `.github/workflows/` directory.
 
@@ -71,7 +89,7 @@ Make sure you have your GitHub Actions workflow defined in your repository, typi
 
 Make sure you have at least one workflow file here eg
 
-### 3. Set Up Secrets and Environment Variables
+# 3. Set Up Secrets and Environment Variables
 
 If your workflow requires secrets or environment variables, you need to set them up for act. You can do this in two ways:
 
@@ -91,7 +109,7 @@ act -s SECRET_NAME=your_secret_value
 
 **Don't forget to make sure this is added to your gitignore 🫡**
 
-### 4. Run act
+# 4. Run act
 Navigate to your repository's root directory and run act. 
 By default, act uses the push event. If you need to run a different event, specify it using the -e flag.
 
@@ -109,4 +127,6 @@ Run a specific job:
 
 ```bash
 act -j job_id
+act -j lint-build-test
+act -j
 ```
