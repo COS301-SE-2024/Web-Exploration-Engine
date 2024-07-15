@@ -3,3 +3,4 @@
 /wee/.nyc_output
 node_modules/.bin/node-which
 /node_modules
+/wee/logging/prometheus
