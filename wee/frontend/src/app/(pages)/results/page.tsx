@@ -54,6 +54,10 @@ function ResultsComponent() {
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
   const [homePageScreenShot, setHomePageScreenShot] = useState('');
+  const [addresses, setAddresses] = useState<string[]>([]);
+  const [emails, setEmails] = useState<string[]>([]);
+  const [phones, setPhones] = useState<string[]>([]);
+  const [socialLinks, setSocialLinks] = useState<string[]>([]);
 
   useEffect(() => {
     if (url) {
@@ -80,6 +84,11 @@ function ResultsComponent() {
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
           setHomePageScreenShot(screenShotUrl);
+
+          setAddresses(urlResults[0].addresses);
+          setEmails(urlResults[0].contactInfo.emails);
+          setPhones(urlResults[0].contactInfo.phones);
+          setSocialLinks(urlResults[0].contactInfo.socialLinks);
         }
       }
     }
@@ -398,6 +407,70 @@ function ResultsComponent() {
                       }%`
                     : 'Confidence Score: 0%'}
                 </Chip>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </WEETable>
+      </div>
+
+      {/* Address and contact details */}
+      <div className='py-3'>
+        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+          Address and contact details
+        </h3>
+
+        <WEETable isStriped aria-label="Address and contact info table">
+          <TableHeader>
+            <TableColumn>SCRAPING CATEGORY</TableColumn>
+            <TableColumn>INFORMATION</TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow key="1">
+              <TableCell>Address</TableCell>
+              <TableCell>
+                {addresses && addresses.length == 0
+                  ? <p>No address available</p>
+                  :
+                  addresses.map((address, index) => (
+                    <p key={index}>{address}</p>
+                  ))
+                }
+              </TableCell>
+            </TableRow>
+            <TableRow key="2">
+              <TableCell>Email</TableCell>
+              <TableCell>
+                {emails && emails.length == 0
+                  ? <p>No email address available</p>
+                  :
+                  emails.map((email, index) => (
+                    <p key={index}>{email}</p>
+                  ))
+                }
+              </TableCell>
+            </TableRow>
+            <TableRow key="3">
+              <TableCell>Phone</TableCell>
+              <TableCell>
+                {phones && phones.length == 0
+                  ? <p>No phone numbers available</p>
+                  :
+                  phones.map((phone, index) => (
+                    <p key={index}>{phone}</p>
+                  ))
+                }
+              </TableCell>
+            </TableRow>
+            <TableRow key="4">
+              <TableCell>Social Links</TableCell>
+              <TableCell>
+                {socialLinks && socialLinks.length == 0
+                  ? <p>No social links available</p>
+                  :
+                  socialLinks.map((socialLink, index) => (
+                    <p key={index}>{socialLink}</p>
+                  ))
+                }
               </TableCell>
             </TableRow>
           </TableBody>
