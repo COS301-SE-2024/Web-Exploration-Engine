@@ -76,7 +76,7 @@ export default function Login() {
     const authResponse = response as AuthResponse;
 
     // Redirect to home page
-    router.push(`/?url=${authResponse.accessToken}&uuid=${authResponse.uuid}`);
+    router.push(`/?uuid=${authResponse.uuid}`);
     
   };
   
