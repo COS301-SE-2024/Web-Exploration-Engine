@@ -6,6 +6,7 @@ import { RobotsResponse } from '../models/ServiceModels';
 import { spawn } from 'child_process';
 @Injectable()
 export class SeoAnalysisService {
+  private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse) {
     if (!robots.isUrlScrapable) {
       console.error('Crawling not allowed for this URL');
@@ -478,15 +479,55 @@ export class SeoAnalysisService {
     });
   }
 
+  async runPageSpeedInsights(url: string) {
+    try {
+      const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=seo&category=accessibility&category=best-practices`);
+      const data = response.data;
+  
+      const getCategoryScore = (category: string) => {
+        const categoryData = data.lighthouseResult?.categories?.[category];
+        if (categoryData?.score !== undefined) {
+          return categoryData.score * 100;
+        } else {
+          console.warn(`Category score for ${category} is not available.`);
+          return null;
+        }
+      };
+  
+      const scores = {
+        performance: getCategoryScore('performance'),
+        accessibility: getCategoryScore('accessibility'),
+        bestPractices: getCategoryScore('best-practices'),
+        seo: getCategoryScore('seo'),
+      };
+  
+      // Additional details for accessibility, best practices, and SEO if needed
+      const details = {
+        accessibilityDetails: data.lighthouseResult?.audits?.['accessibility'],
+        bestPracticesDetails: data.lighthouseResult?.audits?.['best-practices'],
+        seoDetails: data.lighthouseResult?.audits?.['seo'],
+      };
+  
+      return { scores, details, rawResponse: data }; // Include raw JSON response for debugging or additional processing
+    } catch (error) {
+      console.error(`Error fetching PageSpeed Insights data: ${error.message}`);
+      throw new Error(`Error fetching PageSpeed Insights data: ${error.message}`);
+    }
+  }
+  
+  
+  
+  
+
   filterLighthouseAudits(lighthouseResult: any) {
     const categoriesToInclude = ['performance', 'accessibility', 'best-practices', 'seo'];
     const performanceAudits = ['largest-contentful-paint', 'interactive', 'total-blocking-time', 'cumulative-layout-shift'];
     const accessibilityAudits = ['color-contrast', 'image-alt', 'label'];
     const bestPracticesAudits = ['is-on-https', 'external-anchors-use-rel-noopener', 'geolocation-on-start'];
     const seoAudits = ['viewport', 'document-title', 'meta-description'];
-  
+
     const filteredAudits: any = {};
-  
+
     for (const category of categoriesToInclude) {
       if (lighthouseResult.categories.hasOwnProperty(category)) {
         filteredAudits[category] = {};
@@ -500,7 +541,7 @@ export class SeoAnalysisService {
         } else if (category === 'seo') {
           audits = seoAudits;
         }
-  
+
         for (const auditId of audits) {
           if (lighthouseResult.audits.hasOwnProperty(auditId)) {
             filteredAudits[category][auditId] = lighthouseResult.audits[auditId];
@@ -508,9 +549,7 @@ export class SeoAnalysisService {
         }
       }
     }
-  
+
     return filteredAudits;
-  } 
-
-
+  }
 }
