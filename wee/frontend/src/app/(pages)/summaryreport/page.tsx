@@ -19,6 +19,9 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
+import dynamic from 'next/dynamic';
+
+const LeafletMap = dynamic(() => import('../../components/map/LeafletMap'), { ssr: false });
 
 
 interface weakClassification {
@@ -53,6 +56,7 @@ export default function SummaryReport() {
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     const [avgTime, setAvgTime] = useState<number>(0);
+    const [addresses, setAddresses] = useState<string[]>([]);
    
     useEffect(() => {
         
@@ -70,6 +74,7 @@ export default function SummaryReport() {
             setParkedUrls(summaryReport.parkedUrls ?? []); 
             setscrapableUrls(summaryReport.scrapableUrls ?? 0); 
             setAvgTime(summaryReport.avgTime ?? 0);
+            setAddresses(summaryReport.addresses ?? []);
         }
 
     }, [summaryReport]);
@@ -402,7 +407,6 @@ export default function SummaryReport() {
                         </Dropdown>
                     </div>
                 </div>
-                
 
 
                 {/* General stats */}
@@ -451,222 +455,232 @@ export default function SummaryReport() {
                     </div>
                 </div>
 
-            {/* Industry classification */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Industry classification
-            </h3>
-            <div className='gap-4 grid md:grid-cols-2'>
-                    <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                {/* Industry classification */}
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Industry classification
+                </h3>
+                <div className='gap-4 grid md:grid-cols-2'>
+                        <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                                Classification Distribution
+                                <InfoPopOver 
+                                    heading="Industry classification" 
+                                    content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
+                                    placement="top" 
+                                />
+                            </h3>
+
+                            <span className='sm:hidden'>
+                                <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"}/>
+                            </span>
+                            <span className='hidden sm:block'>
+                                <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
+                            </span>
+                        </div>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
-                            Classification Distribution
+                            Weak classifications
                             <InfoPopOver 
                                 heading="Industry classification" 
-                                content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
+                                content="Weak classifications are those that have a low confidence score (below 50%). WEE cannot guarantee the accuracy of the classifications." 
                                 placement="top" 
                             />
-                        </h3>
-
-                        <span className='sm:hidden'>
-                            <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"}/>
-                        </span>
-                        <span className='hidden sm:block'>
-                            <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
-                        </span>
-                    </div>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
-                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
-                        Weak classifications
-                        <InfoPopOver 
-                            heading="Industry classification" 
-                            content="Weak classifications are those that have a low confidence score (below 50%). WEE cannot guarantee the accuracy of the classifications." 
-                            placement="top" 
-                        />
-                    </h3>
-                    <WEETable 
-                        isHeaderSticky
-                        className='max-h-[15rem]'
-                        aria-label="Industry classification table"
-                    >
-                        <TableHeader>
-                            <TableColumn key="name" className='rounded-lg sm:rounded-none'>
-                                URL
-                            </TableColumn>
-                            <TableColumn key="role" className='hidden sm:table-cell'>
-                                SCORE
-                            </TableColumn>
-                        </TableHeader>
-
-                            <TableBody emptyContent={"There was no weak classifications"}>
-                                {   (weakClassification || []).map((item, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>
-                                                <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
-                                                    {item.url}
-                                                </Link>
-                                            </TableCell>
-                                            <TableCell className='hidden sm:table-cell'>
-                                                {(item.score * 100).toFixed(2)}%
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                }
-                            </TableBody>
-                        </WEETable>
-                    </div>
-                </div> {/* Grid */}
-
-            {/* Domain match */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Domain match
-                <InfoPopOver 
-                    heading="Domain Match" 
-                    content="Domain match refers to the percentage of URLs that have the same domain classification as the metadata classification. WEE cannot guarantee the accuracy of the classifications." 
-                    placement="right-end" 
-                />
-            </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
-                <div id="radial-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
-                    <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
-                </div>
-
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-2'>
-                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
-                            Domain mismatch information
                         </h3>
                         <WEETable 
                             isHeaderSticky
                             className='max-h-[15rem]'
-                            aria-label="Domain mismatch information table"
+                            aria-label="Industry classification table"
                         >
                             <TableHeader>
                                 <TableColumn key="name" className='rounded-lg sm:rounded-none'>
                                     URL
                                 </TableColumn>
                                 <TableColumn key="role" className='hidden sm:table-cell'>
-                                    CLASSIFICATION - META
-                                </TableColumn>
-                                <TableColumn key="status" className='hidden sm:table-cell'>
-                                    DOMAIN MATCH
+                                    SCORE
                                 </TableColumn>
                             </TableHeader>
 
-                            <TableBody emptyContent={"There was no mismatch"}>
-                                {   (mismatchedUrls || []).map((item, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell>
-                                                <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
-                                                    {item.url}
+                                <TableBody emptyContent={"There was no weak classifications"}>
+                                    {   (weakClassification || []).map((item, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
+                                                        {item.url}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell className='hidden sm:table-cell'>
+                                                    {(item.score * 100).toFixed(2)}%
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </WEETable>
+                        </div>
+                </div> {/* Grid */}
+
+                {/* Domain match */}
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Domain match
+                    <InfoPopOver 
+                        heading="Domain Match" 
+                        content="Domain match refers to the percentage of URLs that have the same domain classification as the metadata classification. WEE cannot guarantee the accuracy of the classifications." 
+                        placement="right-end" 
+                    />
+                </h3>
+                <div className='gap-4 grid md:grid-cols-3'>
+                    <div id="radial-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
+                        <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
+                    </div>
+
+                        <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-2'>
+                            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                                Domain mismatch information
+                            </h3>
+                            <WEETable 
+                                isHeaderSticky
+                                className='max-h-[15rem]'
+                                aria-label="Domain mismatch information table"
+                            >
+                                <TableHeader>
+                                    <TableColumn key="name" className='rounded-lg sm:rounded-none'>
+                                        URL
+                                    </TableColumn>
+                                    <TableColumn key="role" className='hidden sm:table-cell'>
+                                        CLASSIFICATION - META
+                                    </TableColumn>
+                                    <TableColumn key="status" className='hidden sm:table-cell'>
+                                        DOMAIN MATCH
+                                    </TableColumn>
+                                </TableHeader>
+
+                                <TableBody emptyContent={"There was no mismatch"}>
+                                    {   (mismatchedUrls || []).map((item, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>
+                                                    <Link href={`/results?url=${encodeURIComponent(item.url)}`}>                               
+                                                        {item.url}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell className='hidden sm:table-cell'>
+                                                    {item.metadataClass}
+                                                </TableCell>
+                                                <TableCell className='hidden sm:table-cell'>
+                                                    {item.domainClass}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    }
+                                </TableBody>
+                            </WEETable>
+                        </div>
+                </div> {/* Grid */}
+
+                {/* Website status */}
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Website status
+                </h3>
+                <div className='gap-4 grid md:grid-cols-3'>
+                    <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
+                        <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
+                    </div>
+
+                        <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                                Parked sites
+                            </h3>
+                            <WEETable 
+                                isHeaderSticky
+                                className='max-h-[15rem]'
+                                aria-label="Parked sites table"
+                            >
+                                <TableHeader>
+                                    <TableColumn key="name" className='rounded-lg sm:rounded-none'>
+                                        URL
+                                    </TableColumn>
+                                </TableHeader>
+
+                                <TableBody emptyContent={"There were no parked websites"}>
+                                    {   (parkedUrls || []).map((url, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                                <Link href={`/results?url=${encodeURIComponent(url)}`}>                               
+                                                    {url}
                                                 </Link>
-                                            </TableCell>
-                                            <TableCell className='hidden sm:table-cell'>
-                                                {item.metadataClass}
-                                            </TableCell>
-                                            <TableCell className='hidden sm:table-cell'>
-                                                {item.domainClass}
-                                            </TableCell>
-                                        </TableRow>
+                                        </TableCell>
+                                    </TableRow>
                                     ))
-                                }
-                            </TableBody>
-                        </WEETable>
-                    </div>
-                </div> {/* Grid */}
+                                    }
+                                </TableBody>
 
-            {/* Website status */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                Website status
-            </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
-                <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
-                    <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
+                            </WEETable>
+                        </div>
+                </div> {/* Grid */}
+                
+                {/* Map */}
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Address Map
+                </h3>
+                <div className='gap-4 grid md:grid-cols-1 w-full'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center overflow-hidden relative h-96 z-10'>
+                        <LeafletMap addresses={addresses}/>
+                    </div>
                 </div>
-
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
-                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
-                            Parked sites
-                        </h3>
-                        <WEETable 
-                            isHeaderSticky
-                            className='max-h-[15rem]'
-                            aria-label="Parked sites table"
-                        >
-                            <TableHeader>
-                                <TableColumn key="name" className='rounded-lg sm:rounded-none'>
-                                    URL
-                                </TableColumn>
-                            </TableHeader>
-
-                            <TableBody emptyContent={"There were no parked websites"}>
-                                {   (parkedUrls || []).map((url, index) => (
-                                <TableRow key={index}>
-                                    <TableCell>
-                                            <Link href={`/results?url=${encodeURIComponent(url)}`}>                               
-                                                {url}
-                                            </Link>
-                                    </TableCell>
-                                </TableRow>
-                                ))
-                                }
-                            </TableBody>
-
-                        </WEETable>
-                    </div>
-                </div> {/* Grid */}
             </div>
+                
+            {/* Confirm save */}
+            <Modal 
+                isOpen={isOpen} 
+                onOpenChange={onOpenChange}
+                placement="top-center"
+                data-testid="save-report-modal"
+            >
+                <ModalContent>
+                {(onClose) => (
+                    <>
+                    <ModalBody>
+                        <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                            Save Report
+                        </h1>
+                        <Input
+                        autoFocus
+                        label="Report Name"
+                        placeholder="Enter a name for the report"
+                        variant="bordered"
+                        isInvalid={isInvalid}
+                        color={isInvalid ? "danger" : "default"}
+                        errorMessage="Please provide a report name"
+                        value={reportName}
+                        onChange={handleInputChange}
+                        />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" onPress={onClose}>
+                        Close
+                        </Button>
+                        <Button 
+                        className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
+                        onPress={() => handleSave(reportName)}
+                        disabled={isDisabled}
+                        >
+                        Save
+                        </Button>
+                    </ModalFooter>
+                    </>
+                )}
+                </ModalContent>
+            </Modal>
 
-        {/* Confirm save */}
-      <Modal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange}
-        placement="top-center"
-        data-testid="save-report-modal"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody>
-                <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Save Report
-                </h1>
-                <Input
-                  autoFocus
-                  label="Report Name"
-                  placeholder="Enter a name for the report"
-                  variant="bordered"
-                  isInvalid={isInvalid}
-                  color={isInvalid ? "danger" : "default"}
-                  errorMessage="Please provide a report name"
-                  value={reportName}
-                  onChange={handleInputChange}
-                />
-              </ModalBody>
-              <ModalFooter>
-                <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" onPress={onClose}>
-                  Close
-                </Button>
-                <Button 
-                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
-                  onPress={() => handleSave(reportName)}
-                  disabled={isDisabled}
-                  >
-                  Save
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-
-       {/* successfull save */}
-       <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
-          <ModalContent>
-              <ModalBody>
-                  <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                      Report saved successfully
-                  </h1>
-              </ModalBody>
-          </ModalContent>
-      </Modal>
+            {/* successfull save */}
+            <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
+            <ModalContent>
+                <ModalBody>
+                    <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                        Report saved successfully
+                    </h1>
+                </ModalBody>
+            </ModalContent>
+            </Modal>
         </>
     );
 } 

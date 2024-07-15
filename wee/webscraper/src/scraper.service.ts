@@ -130,7 +130,7 @@ export class ScraperService {
 
     // get screenshot
     const screenshotPromise = this.getScreenshot(data.url);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url,data.robots);
+    // const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url,data.robots);
     const [
       industryClassification,
       logo,
@@ -138,7 +138,7 @@ export class ScraperService {
       contactInfo,
       addresses,
       screenshot,
-      seoAnalysis,
+      // seoAnalysis,
     ] = await Promise.all([
       industryClassificationPromise,
       logoPromise,
@@ -146,7 +146,7 @@ export class ScraperService {
       contactInfoPromise,
       addressPromise,
       screenshotPromise,
-      seoAnalysisPromise,
+      // seoAnalysisPromise,
     ]);
     data.industryClassification = industryClassification;
     data.logo = logo;
@@ -160,7 +160,7 @@ export class ScraperService {
       data.screenshot = (screenshot as { screenshot: string }).screenshot; // Assign the screenshot URL
     }
 
-    data.seoAnalysis = seoAnalysis;
+    // data.seoAnalysis = seoAnalysis;
     // scrape slogan
 
     // scrape images
@@ -251,6 +251,7 @@ export class ScraperService {
     }
     return this.screenshotService.captureScreenshot(url, robotsResponse);
   }
+
   async scrapeContactInfo(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {

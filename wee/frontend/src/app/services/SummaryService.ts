@@ -15,7 +15,9 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const industries: string[] = [];
   const industryPercentages: number[] = [];
   const weakClassification: { url: string; metadataClass: string; score: number }[] = [];
-  
+  // addresses
+  const addresses: string[] = [];
+
   // domain match classification
   let numMatched = 0;
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
@@ -79,6 +81,11 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     }
     console.log(`URL: ${result.url}, Time: ${result.time}`);
     totalTime += result.time;
+
+    // addresses
+    if (result.addresses) {
+      addresses.push(...result.addresses[0]);
+    }
   }
 
   for (const industry in industryCounts) {
@@ -117,6 +124,7 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
       percentageMatch,
       mismatchedUrls,
     },
+    addresses: [],
     totalUrls: numResults,
     parkedUrls,
     scrapableUrls: numScrapableUrls,

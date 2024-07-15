@@ -11,6 +11,7 @@ interface LeafletMapProps {
 }
 
 const LeafletMap: React.FC<LeafletMapProps> = ({ addresses }) => {
+  console.log('Addresses:', addresses);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
@@ -59,6 +60,9 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ addresses }) => {
                   address
                 )}&format=json&addressdetails=1`
               );
+              console.log(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+                  address
+                )}&format=json&addressdetails=1`)
               const data = await geoResponse.json();
               console.log(`Geocoding response for ${address}:`, data);
               if (Array.isArray(data) && data.length > 0) {
@@ -115,7 +119,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ addresses }) => {
 
       convertAddressesToCoords();
     }
-  }, [addresses]);
+  }, []);
 
   console.log('User location:', userLocation);
   console.log('Center:', center);

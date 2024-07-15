@@ -8,6 +8,7 @@ export interface ScraperResult {
   images: string[];
   slogan: string;
   time:number;
+  addresses: string[];  
 }
 
 export interface ErrorResponse {
@@ -72,6 +73,7 @@ export interface Summary {
       domainClass: string;
     }[];
   }
+  addresses: string[];
   totalUrls: number;
   parkedUrls: string[];
   scrapableUrls: number;
