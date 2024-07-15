@@ -1,22 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, act } from '@testing-library/react';
+import '@testing-library/jest-dom'; // Import jest-dom matchers
 import LeafletMap from '../../src/app/components/map/LeafletMap';
 
-
-// Mock Leaflet components and functions
-jest.mock('leaflet', () => {
-  const actualLeaflet = jest.requireActual('leaflet');
-  return {
-    ...actualLeaflet,
-    Icon: {
-      Default: jest.fn(() => ({
-        mergeOptions: jest.fn(),
-      })),
-    },
-    icon: jest.fn(),
-  };
-});
+// Mock fetch globally
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 jest.mock('react-leaflet', () => ({
   MapContainer: ({ children }) => <div data-testid="map-container">{children}</div>,
@@ -25,59 +14,104 @@ jest.mock('react-leaflet', () => ({
   Popup: ({ children }) => <div data-testid="popup">{children}</div>,
 }));
 
-// Mock the geolocation API
+// Mock navigator.geolocation
 global.navigator.geolocation = {
   getCurrentPosition: jest.fn(),
 };
 
-// Mock dynamic import
-jest.mock('next/dynamic', () => (component) => component);
-
 describe('LeafletMap Component', () => {
   beforeEach(() => {
-    fetchMock.resetMocks();
     jest.clearAllMocks();
   });
 
-  test('renders without crashing', () => {
-    render(<LeafletMap />);
+  it('renders without crashing', async () => {
+    await act(async () => {
+      render(<LeafletMap />);
+    });
     expect(screen.getByTestId('map-container')).toBeInTheDocument();
   });
 
-  test('sets user location when geolocation is supported', async () => {
-    const mockPosition = { coords: { latitude: -29.849622, longitude: 31.022042 } };
-    (navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (success) => success(mockPosition)
-    );
+  it('displays user location marker', async () => {
+    const mockPosition = {
+      coords: { latitude: -29.849622, longitude: 31.022042 },
+    };
+    global.navigator.geolocation.getCurrentPosition.mockImplementationOnce((success) => {
+      success(mockPosition);
+    });
 
-    render(<LeafletMap />);
+    await act(async () => {
+      render(<LeafletMap />);
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure the state updates
+    });
 
-    await waitFor(() => expect(screen.getByTestId('marker')).toBeInTheDocument());
+    expect(screen.getByTestId('marker')).toBeInTheDocument();
     expect(screen.getByTestId('marker')).toHaveAttribute('data-position', '-29.849622,31.022042');
   });
 
-  test('handles geolocation not supported', async () => {
-    (navigator.geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (_, error) => error({ code: 1 })
-    );
+  it('handles error when user location is not supported', async () => {
+    global.navigator.geolocation.getCurrentPosition.mockImplementationOnce((_, error) => {
+      error({ code: 1 });
+    });
 
-    render(<LeafletMap />);
+    await act(async () => {
+      render(<LeafletMap />);
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Ensure the state updates
+    });
 
-    await waitFor(() => expect(screen.getByTestId('map-container')).toBeInTheDocument());
+    expect(screen.getByTestId('map-container')).toBeInTheDocument();
     expect(screen.queryByTestId('marker')).not.toBeInTheDocument();
   });
 
-  test('adds markers after fetching geocoded addresses', async () => {
-    const mockGeocodeResponse = [
-      { lat: '37.4224764', lon: '-122.0842499' },
+  it('handles error when fetching geocoded addresses fails', async () => {
+    const mockAddresses = [
+      '1600 Amphitheatre Parkway, Mountain View, CA',
+      '1 Infinite Loop, Cupertino, CA',
     ];
 
-    fetchMock.mockResponseOnce(JSON.stringify(mockGeocodeResponse));
+    // Mock fetch failure for each address
+    mockAddresses.forEach(() => {
+      mockFetch.mockRejectedValueOnce(new Error('Failed to fetch geocoded addresses'));
+    });
 
-    render(<LeafletMap />);
+    await act(async () => {
+      render(<LeafletMap addresses={mockAddresses} />);
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for fetch and state update
+    });
 
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(15)); // Assuming 15 addresses
-
-    await waitFor(() => expect(screen.getAllByTestId('marker')).toHaveLength(15));
+    expect(mockFetch).toHaveBeenCalledTimes(mockAddresses.length);
+    expect(screen.getByText('Failed to fetch geocoded addresses')).toBeInTheDocument();
   });
-});
+
+  it('displays markers after fetching geocoded addresses', async () => {
+    const mockGeocodeResponse = [
+        { lat: '37.4224764', lon: '-122.0842499' }, // Googleplex
+        { lat: '37.33182', lon: '-122.03118' }, // Apple Park
+      ];
+
+      const mockAddresses = [
+        '1600 Amphitheatre Parkway, Mountain View, CA',
+        '1 Infinite Loop, Cupertino, CA',
+      ];
+
+      // Mock fetch success for each address
+      mockAddresses.forEach((address, index) => {
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: async () => [mockGeocodeResponse[index]],
+        });
+      });
+
+      await act(async () => {
+        render(<LeafletMap addresses={mockAddresses} />);
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for fetch and state update
+      });
+
+      expect(mockFetch).toHaveBeenCalledTimes(mockAddresses.length);
+      const markers = screen.getAllByTestId('marker');
+      expect(markers).toHaveLength(mockGeocodeResponse.length);
+      markers.forEach((marker, index) => {
+        expect(marker).toHaveAttribute('data-position', `${mockGeocodeResponse[index].lat},${mockGeocodeResponse[index].lon}`);
+      });
+    });
+  });
+
