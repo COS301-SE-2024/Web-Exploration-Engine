@@ -16,7 +16,7 @@
 ```
 
 ```typescript
-  act -j lint-build-test
+  act -j deploy
 ```
 
 
