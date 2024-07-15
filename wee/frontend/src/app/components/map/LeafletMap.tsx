@@ -7,10 +7,10 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 interface LeafletMapProps {
-  mockAddresses?: string[];
+  addresses?: string[];
 }
 
-const LeafletMap: React.FC<LeafletMapProps> = ({ mockAddresses }) => {
+const LeafletMap: React.FC<LeafletMapProps> = ({ addresses }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
@@ -32,7 +32,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ mockAddresses }) => {
           'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
-      const addresses = mockAddresses || [
+      const defaultAddresses = [
         '28 Manchester Road, Chiselhurst, East London',
         '655 Cape Road, Hunters Retreat, Port Elizabeth',
         '3 8th Avenue, Summerstrand, Port Elizabeth',
@@ -52,7 +52,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ mockAddresses }) => {
 
       const convertAddressesToCoords = async () => {
         const geocodedMarkers = await Promise.all(
-          addresses.map(async (address: string) => {
+          (addresses || defaultAddresses).map(async (address: string) => {
             try {
               const geoResponse = await fetch(
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
@@ -115,7 +115,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({ mockAddresses }) => {
 
       convertAddressesToCoords();
     }
-  }, [mockAddresses]);
+  }, [addresses]);
 
   console.log('User location:', userLocation);
   console.log('Center:', center);
