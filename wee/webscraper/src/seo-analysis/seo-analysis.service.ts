@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import { spawn } from 'child_process';
 @Injectable()
 export class SeoAnalysisService {
   async seoAnalysis(url: string, robots: RobotsResponse) {
@@ -24,9 +25,9 @@ export class SeoAnalysisService {
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
       indexabilityAnalysis,
-      robotsAnalysis,
       XMLSitemapAnalysis,
       canonicalTagAnalysis,
+      lighthouseAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -39,10 +40,9 @@ export class SeoAnalysisService {
       this.analyzeMobileFriendliness(url),
       this.analyzeStructuredData(htmlContent),
       this.analyzeIndexability(htmlContent),
-      this.analyzeRobotsTxt(url),
       this.analyzeXmlSitemap(url),
       this.analyzeCanonicalTags(htmlContent),
-
+      this.runLighthouse(url),
     ]);
 
     return {
@@ -56,9 +56,9 @@ export class SeoAnalysisService {
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
       indexabilityAnalysis,
-      robotsAnalysis,
       XMLSitemapAnalysis,
-      canonicalTagAnalysis
+      canonicalTagAnalysis,
+      lighthouseAnalysis,
     };
   }
 
@@ -395,7 +395,7 @@ export class SeoAnalysisService {
     const recommendations = count > 0 ? '' : 'No structured data found. Add structured data to improve SEO.';
 
     return {
-      structuredData,
+     // structuredData,
       count,
       recommendations,
     };
@@ -412,26 +412,6 @@ export class SeoAnalysisService {
       isIndexable,
       recommendations,
     };
-  }
-  async analyzeRobotsTxt(url: string) {
-    try {
-      const robotsTxtUrl = new URL('/robots.txt', url).toString();
-      const response = await axios.get(robotsTxtUrl);
-
-      const isRobotsTxtValid = response.status === 200;
-      const recommendations = isRobotsTxtValid ? '' : 'robots.txt file is missing or inaccessible. Ensure it is present and accessible.';
-
-      return {
-        isRobotsTxtValid,
-        recommendations,
-      };
-    } catch (error) {
-      console.error(`Error fetching robots.txt: ${error.message}`);
-      return {
-        isRobotsTxtValid: false,
-        recommendations: 'robots.txt file is missing or inaccessible. Ensure it is present and accessible.',
-      };
-    }
   }
   async analyzeXmlSitemap(url: string) {
     try {
@@ -466,4 +446,71 @@ export class SeoAnalysisService {
       recommendations,
     };
   }
+  async runLighthouse(url: string) {
+    const lighthouseCmd = `lighthouse ${url} --output=json --chrome-flags="--headless"`;
+
+    return new Promise((resolve, reject) => {
+      const lighthouseProcess = spawn(lighthouseCmd, { shell: true });
+
+      let lighthouseOutput = '';
+
+      lighthouseProcess.stdout.on('data', (data) => {
+        lighthouseOutput += data.toString();
+      });
+
+      lighthouseProcess.stderr.on('data', (data) => {
+        //console.error(`Lighthouse error: ${data.toString()}`);
+      });
+
+      lighthouseProcess.on('close', (code) => {
+        if (code === 0) {
+          try {
+            const lighthouseResult = JSON.parse(lighthouseOutput);
+            const filteredAudits = this.filterLighthouseAudits(lighthouseResult);
+            resolve(filteredAudits);
+          } catch (error) {
+            reject(new Error(`Error parsing Lighthouse JSON: ${error.message}`));
+          }
+        } else {
+          reject(new Error(`Lighthouse process exited with code ${code}`));
+        }
+      });
+    });
+  }
+
+  filterLighthouseAudits(lighthouseResult: any) {
+    const categoriesToInclude = ['performance', 'accessibility', 'best-practices', 'seo'];
+    const performanceAudits = ['largest-contentful-paint', 'interactive', 'total-blocking-time', 'cumulative-layout-shift'];
+    const accessibilityAudits = ['color-contrast', 'image-alt', 'label'];
+    const bestPracticesAudits = ['is-on-https', 'external-anchors-use-rel-noopener', 'geolocation-on-start'];
+    const seoAudits = ['viewport', 'document-title', 'meta-description'];
+  
+    const filteredAudits: any = {};
+  
+    for (const category of categoriesToInclude) {
+      if (lighthouseResult.categories.hasOwnProperty(category)) {
+        filteredAudits[category] = {};
+        let audits;
+        if (category === 'performance') {
+          audits = performanceAudits;
+        } else if (category === 'accessibility') {
+          audits = accessibilityAudits;
+        } else if (category === 'best-practices') {
+          audits = bestPracticesAudits;
+        } else if (category === 'seo') {
+          audits = seoAudits;
+        }
+  
+        for (const auditId of audits) {
+          if (lighthouseResult.audits.hasOwnProperty(auditId)) {
+            filteredAudits[category][auditId] = lighthouseResult.audits[auditId];
+          }
+        }
+      }
+    }
+  
+    return filteredAudits;
+  } 
+
+
 }
