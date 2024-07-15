@@ -25,6 +25,7 @@ export class SeoAnalysisService {
       structuredDataAnalysis,
       indexabilityAnalysis,
       robotsAnalysis,
+      XMLSitemapAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -38,6 +39,7 @@ export class SeoAnalysisService {
       this.analyzeStructuredData(htmlContent),
       this.analyzeIndexability(htmlContent),
       this.analyzeRobotsTxt(url),
+      this.analyzeXmlSitemap(url),
 
     ]);
 
@@ -52,7 +54,8 @@ export class SeoAnalysisService {
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
       indexabilityAnalysis,
-      robotsAnalysis
+      robotsAnalysis,
+      XMLSitemapAnalysis
     };
   }
 
@@ -424,6 +427,26 @@ export class SeoAnalysisService {
       return {
         isRobotsTxtValid: false,
         recommendations: 'robots.txt file is missing or inaccessible. Ensure it is present and accessible.',
+      };
+    }
+  }
+  async analyzeXmlSitemap(url: string) {
+    try {
+      const sitemapUrl = new URL('/sitemap.xml', url).toString();
+      const response = await axios.get(sitemapUrl);
+
+      const isSitemapValid = response.status === 200;
+      const recommendations = isSitemapValid ? '' : 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.';
+
+      return {
+        isSitemapValid,
+        recommendations,
+      };
+    } catch (error) {
+      console.error(`Error fetching XML sitemap: ${error.message}`);
+      return {
+        isSitemapValid: false,
+        recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
       };
     }
   }
