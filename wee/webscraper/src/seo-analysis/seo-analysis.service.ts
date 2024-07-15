@@ -126,9 +126,10 @@ export class SeoAnalysisService {
   }
   async analyzeImageOptimization(url: string) {
     const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    
   
     try {
+      const page = await browser.newPage();
       await page.goto(url, { waitUntil: 'networkidle0' });
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
