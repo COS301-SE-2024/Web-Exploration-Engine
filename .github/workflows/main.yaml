@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   lint-build-test:
+    name: Lint Build and Test
     runs-on: ubuntu-latest
 
     env:
@@ -37,8 +38,6 @@ jobs:
           npx nx lint webscraper
           npx nx lint frontend
           echo "================== lint complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
-        #continue-on-error: true
 
       - name: Build
         run: |
@@ -48,8 +47,6 @@ jobs:
           echo "================== build complete =================="
           bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
 
-        #continue-on-error: true
-
       - name: Run Jest Tests
         run: |
           cd wee    
@@ -57,9 +54,6 @@ jobs:
           npx nx test frontend --coverage=true
 
           echo "================== test complete =================="
-
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
-        #continue-on-error: true
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
