@@ -93,6 +93,48 @@ describe('Results Component', () => {
         });
     });
 
+    it('should display no address, phone, emails and socialLinks if not present', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    addresses: [],
+                    contactInfo: {
+                        emails: [],
+                        phones: [],
+                        socialLinks: []
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('No address available')).toBeDefined();
+            expect(screen.getByText('No email address available')).toBeDefined();
+            expect(screen.getByText('No phone numbers available')).toBeDefined();
+            expect(screen.getByText('No social links available')).toBeDefined();
+        });
+    });
+
+    it('should display address and socialLinks', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('15 Troye Street, Johannesburg, Gauteng')).toBeDefined();
+            expect(screen.getByText('No email address available')).toBeDefined();
+            expect(screen.getByText('No phone numbers available')).toBeDefined();
+            expect(screen.getByText('https://www.facebook.com/AbsaSouthAfrica/')).toBeDefined();
+            expect(screen.getByText('https://twitter.com/AbsaSouthAfrica')).toBeDefined();
+            expect(screen.getByText('https://www.linkedin.com/company/absa/')).toBeDefined();
+        });
+    });
+
     it('should display no logo available when logo is not present', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
