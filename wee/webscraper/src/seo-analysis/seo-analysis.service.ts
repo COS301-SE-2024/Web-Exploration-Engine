@@ -26,6 +26,7 @@ export class SeoAnalysisService {
       indexabilityAnalysis,
       robotsAnalysis,
       XMLSitemapAnalysis,
+      canonicalTagAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -40,6 +41,7 @@ export class SeoAnalysisService {
       this.analyzeIndexability(htmlContent),
       this.analyzeRobotsTxt(url),
       this.analyzeXmlSitemap(url),
+      this.analyzeCanonicalTags(htmlContent),
 
     ]);
 
@@ -55,7 +57,8 @@ export class SeoAnalysisService {
       structuredDataAnalysis,
       indexabilityAnalysis,
       robotsAnalysis,
-      XMLSitemapAnalysis
+      XMLSitemapAnalysis,
+      canonicalTagAnalysis
     };
   }
 
@@ -449,5 +452,18 @@ export class SeoAnalysisService {
         recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
       };
     }
+  }
+  async analyzeCanonicalTags(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const canonicalTag = $('link[rel="canonical"]').attr('href') || '';
+
+    const isCanonicalTagPresent = !!canonicalTag;
+    const recommendations = isCanonicalTagPresent ? '' : 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.';
+
+    return {
+      canonicalTag,
+      isCanonicalTagPresent,
+      recommendations,
+    };
   }
 }
