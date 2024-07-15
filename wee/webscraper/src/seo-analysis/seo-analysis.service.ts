@@ -369,7 +369,6 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       console.error(`Error analyzing mobile-friendliness: ${error.message}`);
-      throw new Error(`Error analyzing mobile-friendliness: ${error.message}`);
     } finally {
       await browser.close();
     }
