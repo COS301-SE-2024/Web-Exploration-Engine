@@ -196,6 +196,7 @@ function ResultsComponent() {
           label="Live/Parked"
           className="w-full pb-3 md:w-1/3"
           onChange={handleStatusFilterChange}
+          data-testid="status-filter"
         >
           <SelectItem key={'Parked'}>Parked</SelectItem>
           <SelectItem key={'Live'}>Live</SelectItem>
@@ -205,6 +206,7 @@ function ResultsComponent() {
           label="Crawlable"
           className="w-full pb-3 md:w-1/3"
           onChange={handleCrawlableFilterChange}
+          data-testid="crawlable-filter"
         >
           <SelectItem key={'Yes'}>Yes</SelectItem>
           <SelectItem key={'No'}>No</SelectItem>

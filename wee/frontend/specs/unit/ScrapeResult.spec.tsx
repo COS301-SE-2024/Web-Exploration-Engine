@@ -91,6 +91,4 @@ describe('Scrape Results Component', () => {
         expect(fetch).toHaveBeenCalledTimes(1); // Assuming 2 URLs were processed
         expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/scraper?url=https%3A%2F%2Fwww.example3.com');
     });
-
-    
 });
