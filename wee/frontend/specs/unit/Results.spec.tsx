@@ -60,6 +60,17 @@ describe('Results Component', () => {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
             },
+            screenshot: 'abc',
+            addresses: ['15 Troye Street, Johannesburg, Gauteng'],
+            contactInfo: {
+                emails: [],
+                phones: [],
+                socialLinks: [
+                    "https://www.facebook.com/AbsaSouthAfrica/",
+                    "https://twitter.com/AbsaSouthAfrica",
+                    "https://www.linkedin.com/company/absa/"
+                ]
+            }
         },
     ];
 
