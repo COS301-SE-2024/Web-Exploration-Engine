@@ -130,7 +130,7 @@ export class ScraperService {
 
     // get screenshot
     const screenshotPromise = this.getScreenshot(data.url);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url);
+    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url,data.robots);
     const [
       industryClassification,
       logo,

@@ -2,11 +2,17 @@ import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
+import { RobotsResponse } from '../models/ServiceModels';
 @Injectable()
 export class SeoAnalysisService {
-  async seoAnalysis(url: string) {
+  async seoAnalysis(url: string, robots: RobotsResponse) {
+    if (!robots.isUrlScrapable) {
+      console.error('Crawling not allowed for this URL');
+      return {
+        error: 'Crawling not allowed for this URL',
+      };
+    }
     const htmlContent = await this.fetchHtmlContent(url);
-
     const [
       titleTagsAnalysis,
       metaDescriptionAnalysis,
