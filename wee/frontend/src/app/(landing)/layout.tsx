@@ -2,6 +2,14 @@ import { FlipWords } from '../components/FlipWords';
 import '../global.css'
 import { Providers } from "../providers";
 import { BackgroundGradientAnimation } from '../components/BackgroundGradientAnimation';
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: "Web Exploration Engine",
+  icons: {
+    icon: "favicon.ico",
+  },
+}
 
 export default function RootLayout({
     children,

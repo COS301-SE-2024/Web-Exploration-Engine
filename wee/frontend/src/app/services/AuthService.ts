@@ -1,6 +1,7 @@
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
-import { supabase } from '../utils/supabase_service_client';
+import { getSupabase } from '../utils/supabase_service_client';
 
+const supabase = getSupabase();
 
 export async function login(req: LoginRequest) {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -16,9 +17,9 @@ export async function login(req: LoginRequest) {
   }
 
   return { 
-    accessToken: data?.session?.access_token,
     uuid: data?.user?.id,
-   }
+    emailVerified: data?.user?.email_confirmed_at ? true : false,
+  }
 }
 
 export async function signUp(req: SignUpRequest) {
@@ -63,7 +64,7 @@ export async function signUp(req: SignUpRequest) {
   }
 
   return { 
-    accessToken: data?.session?.access_token,
     uuid: data?.user?.id,
-   }
+    emailVerified: data?.user?.email_confirmed_at ? true : false,
+  }
 }
