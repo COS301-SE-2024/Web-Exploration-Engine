@@ -35,6 +35,7 @@
     "clsx": "^2.1.1",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.2.6",
+    "jest-styled-components": "^7.2.0",
     "jsdom": "^24.1.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

@@ -11,8 +11,8 @@ export interface SignUpRequest {
 }
 
 export interface AuthResponse {
-  accessToken: string;
   uuid: string;
+  emailVerified: boolean;
 }
 
 export interface ErrorResponse {

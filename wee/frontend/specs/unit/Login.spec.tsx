@@ -85,7 +85,7 @@ describe('Login Component', () => {
 
     fireEvent.click(screen.getByTestId('login-button'));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith('/?url=mockToken&uuid=mockUuid'));
+    await waitFor(() => expect(push).toHaveBeenCalledWith('/?uuid=mockUuid'));
   });
   it('should display error if invalid login credentials are provided', async () => {
     (login as jest.Mock).mockResolvedValue({ message: 'Invalid login credentials' });
