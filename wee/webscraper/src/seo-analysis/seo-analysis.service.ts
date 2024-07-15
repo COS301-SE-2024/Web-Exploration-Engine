@@ -22,6 +22,7 @@ export class SeoAnalysisService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
+      structuredDataAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -32,6 +33,7 @@ export class SeoAnalysisService {
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
       this.analyzeMobileFriendliness(url),
+      this.analyzeStructuredData(htmlContent),
 
     ]);
 
@@ -44,7 +46,7 @@ export class SeoAnalysisService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
-
+      structuredDataAnalysis
     };
   }
 
@@ -373,6 +375,28 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
+  async analyzeStructuredData(htmlContent: string): Promise<any> {
+    const $ = cheerio.load(htmlContent);
+    const structuredData = [];
+    let recommendations = '';
+
+    $('script[type="application/ld+json"]').each((index, element) => {
+        const json = $(element).html();
+        try {
+            structuredData.push(JSON.parse(json));
+        } catch (e) {
+            // Handle JSON parsing error
+        }
+    });
+
+    if (structuredData.length === 0) {
+        recommendations = 'No structured data found. It is recommended to implement structured data using schema.org to enhance search engine understanding and improve SEO.';
+    } 
+    return {
+        structuredData,
+        recommendations,
+    };
+}
 
 
 }

@@ -274,7 +274,7 @@ export class ScraperService {
   }
   async seoAnalysis(url: string) {
     const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
-    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,
+    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,structuredDataAnalysis
     ] = await Promise.all([
       this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
       this.seoAnalysisService.analyzeTitleTag(htmlContent),
@@ -284,6 +284,7 @@ export class ScraperService {
       this.seoAnalysisService.analyzeInternalLinks(htmlContent),
       this.seoAnalysisService.analyzeSiteSpeed(url),
       this.seoAnalysisService.analyzeMobileFriendliness(url),
+      this.seoAnalysisService.analyzeStructuredData(htmlContent),
     ]);
   
     return {
@@ -295,7 +296,7 @@ export class ScraperService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
-
+      structuredDataAnalysis
       
    };
   }
