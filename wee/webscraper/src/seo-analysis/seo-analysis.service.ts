@@ -201,12 +201,13 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       console.error(`Error analyzing images using Puppeteer: ${error.message}`);
-      throw new Error(`Error analyzing images using Puppeteer: ${error.message}`);
+      return {
+        error: `Error analyzing images using Puppeteer: ${error.message}`,
+      };
     } finally {
       await browser.close();
     }
   }
-  
 
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
     try {
