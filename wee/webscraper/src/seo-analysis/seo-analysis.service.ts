@@ -23,6 +23,8 @@ export class SeoAnalysisService {
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
+      indexabilityAnalysis,
+
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -34,6 +36,7 @@ export class SeoAnalysisService {
       this.analyzeSiteSpeed(url),
       this.analyzeMobileFriendliness(url),
       this.analyzeStructuredData(htmlContent),
+      this.analyzeIndexability(htmlContent),
 
     ]);
 
@@ -46,7 +49,8 @@ export class SeoAnalysisService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
-      structuredDataAnalysis
+      structuredDataAnalysis,
+      indexabilityAnalysis,
     };
   }
 
@@ -375,28 +379,30 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
-  async analyzeStructuredData(htmlContent: string): Promise<any> {
+  async analyzeStructuredData(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const structuredData = [];
-    let recommendations = '';
+    const structuredData = $('script[type="application/ld+json"]').toArray().map(el => $(el).html());
 
-    $('script[type="application/ld+json"]').each((index, element) => {
-        const json = $(element).html();
-        try {
-            structuredData.push(JSON.parse(json));
-        } catch (e) {
-            // Handle JSON parsing error
-        }
-    });
+    const count = structuredData.length;
+    const recommendations = count > 0 ? '' : 'No structured data found. Add structured data to improve SEO.';
 
-    if (structuredData.length === 0) {
-        recommendations = 'No structured data found. It is recommended to implement structured data using schema.org to enhance search engine understanding and improve SEO.';
-    } 
     return {
-        structuredData,
-        recommendations,
+      structuredData,
+      count,
+      recommendations,
     };
-}
+  }
 
+  async analyzeIndexability(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const metaRobots = $('meta[name="robots"]').attr('content') || '';
+    const isIndexable = !metaRobots.includes('noindex');
 
+    const recommendations = isIndexable ? '' : 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.';
+
+    return {
+      isIndexable,
+      recommendations,
+    };
+  }
 }
