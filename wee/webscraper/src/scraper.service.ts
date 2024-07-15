@@ -276,7 +276,7 @@ export class ScraperService {
     const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
     const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis
       ,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,structuredDataAnalysis,
-      indexabilityAnalysis,XMLSitemapAnalysis,canonicalTagAnalysis,lighthouseAnalysis
+      indexabilityAnalysis,XMLSitemapAnalysis,canonicalTagAnalysis,lighthouseAnalysis,insightsAnalysis
     ] = await Promise.all([
       this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
       this.seoAnalysisService.analyzeTitleTag(htmlContent),
@@ -291,6 +291,7 @@ export class ScraperService {
       this.seoAnalysisService.analyzeXmlSitemap(url),
       this.seoAnalysisService.analyzeCanonicalTags(htmlContent),
       this.seoAnalysisService.runLighthouse(url),
+      this.seoAnalysisService.runPageSpeedInsights(url),
     ]);
   
     return {
@@ -306,7 +307,8 @@ export class ScraperService {
       indexabilityAnalysis,
       XMLSitemapAnalysis,
       canonicalTagAnalysis,
-      lighthouseAnalysis
+      lighthouseAnalysis,
+      insightsAnalysis
       
    };
   }
