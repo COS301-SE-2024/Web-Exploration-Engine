@@ -437,4 +437,29 @@ describe('analyzeHeadings', () => {
         });
     });
 });
+describe('analyzeCanonicalTags', () => {
+  it('should return analysis for page with canonical tag', async () => {
+      const htmlContent = '<html><head><link rel="canonical" href="http://example.com/canonical"></head><body></body></html>';
+
+      const result = await service.analyzeCanonicalTags(htmlContent);
+
+      expect(result).toEqual({
+          canonicalTag: 'http://example.com/canonical',
+          isCanonicalTagPresent: true,
+          recommendations: '',
+      });
+  });
+
+  it('should return analysis for page without canonical tag', async () => {
+      const htmlContent = '<html><head></head><body></body></html>';
+
+      const result = await service.analyzeCanonicalTags(htmlContent);
+
+      expect(result).toEqual({
+          canonicalTag: '',
+          isCanonicalTagPresent: false,
+          recommendations: 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.',
+      });
+  });
+});
 });
