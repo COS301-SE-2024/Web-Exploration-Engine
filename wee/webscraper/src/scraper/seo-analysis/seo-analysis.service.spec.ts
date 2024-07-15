@@ -8,15 +8,30 @@ jest.mock('axios');
 jest.mock('puppeteer');
 
 describe('SeoAnalysisService', () => {
-  let service: SeoAnalysisService;
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [SeoAnalysisService],
-    }).compile();
-
-    service = module.get<SeoAnalysisService>(SeoAnalysisService);
-  });
+    let service: SeoAnalysisService;
+    let mockBrowser: any;
+    let mockPage: any;
+  
+    beforeEach(async () => {
+      mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      };
+      mockPage = {
+        goto: jest.fn(),
+        setViewport: jest.fn().mockResolvedValue(null), // Mock setViewport function
+        evaluate: jest.fn(),
+        close: jest.fn(),
+      };
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+  
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [SeoAnalysisService],
+      }).compile();
+  
+      service = module.get<SeoAnalysisService>(SeoAnalysisService);
+    });
 
   describe('seoAnalysis', () => {
     it('should return an error if crawling is not allowed', async () => {
@@ -96,6 +111,137 @@ describe('SeoAnalysisService', () => {
         recommendations: '',
         errorUrls: [],
       });
+    });
+  });
+  describe('analyzeTitleTag', () => {
+    it('should return title tag analysis', async () => {
+      const htmlContent = '<html><head><title>Test Title</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+
+      expect(result).toEqual({
+        titleTag: 'Test Title',
+        length: 10,
+        recommendations: 'Title tag length should be between 50 and 60 characters.',
+      });
+    });
+});
+describe('analyzeHeadings', () => {
+    it('should return headings analysis', async () => {
+      const htmlContent = '<html><body><h1>Heading 1</h1><h2>Heading 2</h2></body></html>';
+      const result = await service.analyzeHeadings(htmlContent);
+
+      expect(result).toEqual({
+        headings: ['Heading 1', 'Heading 2'],
+        count: 2,
+        recommendations: '',
+      });
+    });
+  });
+  describe('analyzeContentQuality', () => {
+    it('should return content quality analysis', async () => {
+      const htmlContent = '<html><body>This is a test content. This is a test content.</body></html>';
+      const result = await service.analyzeContentQuality(htmlContent);
+
+      expect(result.textLength).toBe(8);
+      expect(result.uniqueWordsPercentage).toBeCloseTo(50); 
+      expect(result.repeatedWords.length).toBe(4);
+      expect(result.recommendations).toBe('Content length should ideally be more than 500 characters.');
+    });
+  });
+  describe('analyzeInternalLinks', () => {
+    it('should return internal links analysis', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+
+      expect(result.totalLinks).toBe(2); 
+      expect(result.uniqueLinks).toBe(2); 
+      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.'); 
+    });
+  });
+  describe('analyzeSiteSpeed', () => {
+    it('should return site speed analysis', async () => {
+      const url = 'http://example.com';
+      const result = await service.analyzeSiteSpeed(url);
+
+      expect(result.loadTime).toBeLessThanOrEqual(3); 
+      expect(result.recommendations).toBe('');
+    });
+  });
+  describe('analyzeMobileFriendliness', () => {
+    it('should return mobile friendliness analysis', async () => {
+      const url = 'http://example.com';
+      const result = await service.analyzeMobileFriendliness(url);
+
+      expect(result.isResponsive).toBe(undefined); 
+      expect(result.recommendations).toBe('Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.'); 
+    });
+  });
+
+  describe('analyzeHeadings', () => {
+    it('should handle pages with no headings', async () => {
+      const htmlContent = '<html><body></body></html>';
+      const result = await service.analyzeHeadings(htmlContent);
+
+      expect(result.headings).toEqual([]);
+      expect(result.count).toBe(0);
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+    });
+  });
+  describe('extractWordsFromUrl', () => {
+    it('should extract words from a URL', () => {
+      const url = 'https://example.com/path/to/page';
+      const expectedWords = ['example'];
+
+      const extractedWords = service.extractWordsFromUrl(url);
+
+      expect(extractedWords).toEqual(expectedWords);
+    });
+
+    it('should handle URLs without protocol and www', () => {
+      const url = 'example.com/path/to/page';
+      const expectedWords = ['example'];
+
+      const extractedWords = service.extractWordsFromUrl(url);
+
+      expect(extractedWords).toEqual(expectedWords);
+    });
+
+    it('should handle URLs with hyphens and underscores', () => {
+      const url = 'https://example-site.com/this_is_a_test-page';
+      const expectedWords = ['example', 'site'];
+
+      const extractedWords = service.extractWordsFromUrl(url);
+
+      expect(extractedWords).toEqual(expectedWords);
+    });
+  });
+
+  describe('areUrlWordsInDescription', () => {
+    it('should return true if URL words are in meta description', () => {
+      const urlWords = ['example', 'com'];
+      const description = 'This is an example of a meta description for example.com';
+
+      const result = service.areUrlWordsInDescription(urlWords, description);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false if URL words are not in meta description', () => {
+      const urlWords = ['example', 'com'];
+      const description = 'This is a test meta description';
+
+      const result = service.areUrlWordsInDescription(urlWords, description);
+
+      expect(result).toBe(false);
+    });
+
+    it('should handle case insensitivity', () => {
+      const urlWords = ['example', 'com'];
+      const description = 'This is an Example of a Meta Description for Example.com';
+
+      const result = service.areUrlWordsInDescription(urlWords, description);
+
+      expect(result).toBe(true);
     });
   });
 });
