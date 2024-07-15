@@ -66,6 +66,7 @@ export default function Help() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(email, name, message);
@@ -110,7 +111,7 @@ export default function Help() {
     <main className="">
       <div id="faq" className="my-16 text-center">
         <h1 className="my-4 mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Frequently Asked Questions
+          Frequently Asked Questions 
         </h1>
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
           How can we help you?{' '}
