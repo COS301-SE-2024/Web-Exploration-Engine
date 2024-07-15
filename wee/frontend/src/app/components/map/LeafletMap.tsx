@@ -6,7 +6,11 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const LeafletMap: React.FC = () => {
+interface LeafletMapProps {
+  mockAddresses?: string[];
+}
+
+const LeafletMap: React.FC<LeafletMapProps> = ({ mockAddresses }) => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
   );
@@ -28,7 +32,7 @@ const LeafletMap: React.FC = () => {
           'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
       });
 
-      const mockAddresses = [
+      const addresses = mockAddresses || [
         '28 Manchester Road, Chiselhurst, East London',
         '655 Cape Road, Hunters Retreat, Port Elizabeth',
         '3 8th Avenue, Summerstrand, Port Elizabeth',
@@ -48,7 +52,7 @@ const LeafletMap: React.FC = () => {
 
       const convertAddressesToCoords = async () => {
         const geocodedMarkers = await Promise.all(
-          mockAddresses.map(async (address: string) => {
+          addresses.map(async (address: string) => {
             try {
               const geoResponse = await fetch(
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
@@ -111,7 +115,7 @@ const LeafletMap: React.FC = () => {
 
       convertAddressesToCoords();
     }
-  }, []);
+  }, [mockAddresses]);
 
   console.log('User location:', userLocation);
   console.log('Center:', center);
