@@ -375,5 +375,36 @@ describe('analyzeHeadings', () => {
             recommendations: '',
         });
     });
-});
+  });
+  describe('analyzeIndexability', () => {
+    it('should return indexability analysis for indexable page', async () => {
+        const htmlContent = '<html><head><meta name="robots" content="index, follow"></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: true,
+            recommendations: '',
+        });
+    });
+
+    it('should return indexability analysis for noindex page', async () => {
+        const htmlContent = '<html><head><meta name="robots" content="noindex, nofollow"></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: false,
+            recommendations: 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.',
+        });
+    });
+
+    it('should return indexability analysis for page without meta robots tag', async () => {
+        const htmlContent = '<html><head></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: true,
+            recommendations: '',
+        });
+    });
+  });
 });
