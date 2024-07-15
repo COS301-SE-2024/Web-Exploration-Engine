@@ -1,8 +1,8 @@
 import { login, signUp } from '../../src/app/services/AuthService';
-import { supabase } from '../../src/app/utils/supabase_service_client';
+import { supabase, getSupabase } from '../../src/app/utils/supabase_service_client';
 
-jest.mock('../../src/app/utils/supabase_service_client', () => ({
-  supabase: {
+jest.mock('../../src/app/utils/supabase_service_client', () => {
+  const mockSupabase = {
     auth: {
       signInWithPassword: jest.fn(),
       signUp: jest.fn(),
@@ -10,10 +10,14 @@ jest.mock('../../src/app/utils/supabase_service_client', () => ({
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      // Add other methods if needed
     })),
-  },
-}));
+  };
+
+  return {
+    getSupabase: jest.fn(() => mockSupabase),
+    supabase: mockSupabase,
+  };
+});
 
 describe('Auth functions', () => {
   describe('login', () => {
@@ -21,7 +25,7 @@ describe('Auth functions', () => {
       const mockResponse = {
         data: {
           session: { access_token: 'mockAccessToken' },
-          user: { id: 'mockUuid' },
+          user: { id: 'mockUuid', email_confirmed_at: '2021-01-01T00:00:00.000000'},
         },
         error: null,
       };
@@ -32,8 +36,8 @@ describe('Auth functions', () => {
       const result = await login(req);
 
       expect(result).toEqual({
-        accessToken: 'mockAccessToken',
         uuid: 'mockUuid',
+        emailVerified: true,
       });
     });
 
@@ -61,7 +65,7 @@ describe('Auth functions', () => {
       const mockResponse = {
         data: {
           session: { access_token: 'mockAccessToken' },
-          user: { id: 'mockUuid' },
+          user: { id: 'mockUuid', email_confirmed_at: null},
         },
         error: null,
       };
@@ -77,8 +81,8 @@ describe('Auth functions', () => {
       const result = await signUp(req);
 
       expect(result).toEqual({
-        accessToken: 'mockAccessToken',
         uuid: 'mockUuid',
+        emailVerified: false,
       });
     });
 

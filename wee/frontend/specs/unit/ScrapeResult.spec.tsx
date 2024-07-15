@@ -24,11 +24,17 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
         results: [        
             {
                 url: 'https://www.example.com',
-                robots: { isUrlScrapable: false },
+                robots: { 
+                    isUrlScrapable: false,
+                    domainStatus: 'parked', 
+                },
             },
             {
                 url: 'https://www.example2.com',
-                robots: { isUrlScrapable: true },
+                robots: { 
+                    isUrlScrapable: true,
+                    domainStatus: 'live',
+                },
             },
         ],
         processedUrls: ['https://www.example.com', 'https://www.example2.com'],
@@ -91,6 +97,4 @@ describe('Scrape Results Component', () => {
         expect(fetch).toHaveBeenCalledTimes(1); // Assuming 2 URLs were processed
         expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/scraper?url=https%3A%2F%2Fwww.example3.com');
     });
-
-    
 });
