@@ -24,11 +24,17 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
         results: [        
             {
                 url: 'https://www.example.com',
-                robots: { isUrlScrapable: false },
+                robots: { 
+                    isUrlScrapable: false,
+                    domainStatus: 'parked', 
+                },
             },
             {
                 url: 'https://www.example2.com',
-                robots: { isUrlScrapable: true },
+                robots: { 
+                    isUrlScrapable: true,
+                    domainStatus: 'live',
+                },
             },
         ],
         processedUrls: ['https://www.example.com', 'https://www.example2.com'],

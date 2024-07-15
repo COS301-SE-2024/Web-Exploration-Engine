@@ -58,6 +58,48 @@ describe('SavedReports Page', () => {
     },
   ];
 
+  const mockSummaries = [
+    {
+      id: 1,
+      userId: '48787157-7555-4104-bafc-e2c95bbaa959',
+      reportName: 'Test Report',
+      reportData: {
+        domainStatus: [200, 404],
+        domainErrorStatus: 1,
+        industryClassification: {
+          unclassifiedUrls: ['https://www.example.com'],
+          industryPercentages: {
+            industries: ['E-commerce', 'Unknown'],
+            percentages: [75, 25],
+          },
+          weakClassification: [
+            {
+              url: 'https://www.example3.com',
+              metadataClass: 'E-commerce',
+              score: 21,
+            },
+          ],
+        },
+        domainMatch: {
+          percentageMatch: 75,
+          mismatchedUrls: [
+            {
+              url: 'https://www.example.com',
+              metadataClass: 'Automotive',
+              domainClass: 'Unknown',
+            },
+          ],
+        },
+        totalUrls: 3,
+        parkedUrls: ['https://www.example2.com'],
+        scrapableUrls: 2,
+        avgTime: 100,
+      },
+      isSummary: true,
+      savedAt: '2021-01-01',
+    },
+  ] 
+
   beforeEach(() => {
     (useUserContext as jest.Mock).mockReturnValue({
       user: { uuid: "1ad80d59-e8b1-426c-8254-4cb96abc4857", emailVerified: true },
@@ -118,4 +160,43 @@ describe('SavedReports Page', () => {
     // Ensure fetchReports is called after deletion
     expect(getReports).toHaveBeenCalledTimes(2); // Check the correct number of calls
   });
+  
+  it ('navigates to results page when clicking on a report', async () => {
+    const mockPush = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+    });
+
+    const { getByText } = render(<SavedReports />);
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+
+    fireEvent.click(getByText('Test Report'));
+    expect(mockPush).toHaveBeenCalledWith('/savedresults?id=0');
+  });
+
+  it ('navigates to summaries page when clicking on a summary', async () => {
+    const mockPush = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+    });
+
+    (useUserContext as jest.Mock).mockReturnValue({
+      user: { uuid: "48787157-7555-4104-bafc-e2c95bbaa959", emailVerified: true },
+      results: [], // Mocked reports should be set here
+      setResults: jest.fn(),
+      summaries: mockSummaries, // Mocked summaries can be set if needed
+      setSummaries: jest.fn(),
+    });
+
+    const { getByText } = render(<SavedReports />);
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+    // navigate to summaries page
+
+    const summaries = screen.getByText('Summaries');
+    fireEvent.click(summaries);
+    
+    fireEvent.click(getByText('Test Report'));
+    expect(mockPush).toHaveBeenCalledWith('/savedsummaries?id=1');
+  });
+  
 });
