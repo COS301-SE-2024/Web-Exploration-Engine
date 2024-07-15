@@ -407,4 +407,34 @@ describe('analyzeHeadings', () => {
         });
     });
   });
+  describe('analyzeXmlSitemap', () => {
+    it('should return valid analysis for accessible XML sitemap', async () => {
+        const url = 'http://example.com';
+        const sitemapUrl = new URL('/sitemap.xml', url).toString();
+
+        // Mock axios to simulate successful response
+        (axios.get as jest.Mock).mockResolvedValue({ status: 200 });
+
+        const result = await service.analyzeXmlSitemap(url);
+
+        expect(result).toEqual({
+            isSitemapValid: true,
+            recommendations: '',
+        });
+    });
+
+    it('should return invalid analysis for inaccessible XML sitemap', async () => {
+        const url = 'http://example.com';
+        const sitemapUrl = new URL('/sitemap.xml', url).toString();
+
+        (axios.get as jest.Mock).mockRejectedValue(new Error('Failed to fetch'));
+
+        const result = await service.analyzeXmlSitemap(url);
+
+        expect(result).toEqual({
+            isSitemapValid: false,
+            recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+        });
+    });
+});
 });
