@@ -76,13 +76,18 @@ describe('ScraperController', () => {
   describe('/GET scrape-images', () => {
     it('should scrape images successfully', async () => {
       const url = 'https://example.com';
-      const response = await request(app.getHttpServer())
-        .get('/scraper/scrape-images?url=' + encodeURIComponent(url))
-        .expect(HttpStatus.OK)
-        .expect('Content-Type', /json/)
-        .timeout(60000);
-
-      expect(response.body).toBeDefined();
+      try {
+        const response = await request(app.getHttpServer())
+          .get('/scraper/scrape-images?url=' + encodeURIComponent(url))
+          .expect(HttpStatus.OK)
+          .expect('Content-Type', /json/)
+          .timeout(60000);
+  
+        expect(response.body).toBeDefined();
+      } catch (error) {
+        console.error('Error in scrape-images test:', error.message);
+        throw error;
+      }
     }, 60000);
   });
 
