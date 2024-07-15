@@ -35,6 +35,7 @@ jest.mock('jspdf', () => ({
       },
     })),
 }));
+
   
 jest.mock('../../src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
