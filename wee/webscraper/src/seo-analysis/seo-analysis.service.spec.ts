@@ -323,5 +323,57 @@ describe('analyzeHeadings', () => {
       expect(result.reasons).toEqual([]);
     });
   });
-  
+  describe('analyzeStructuredData', () => {
+    it('should return structured data analysis with structured data', async () => {
+        const htmlContent = `
+            <html>
+                <head>
+                    <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "Organization",
+                            "url": "http://www.example.com",
+                            "name": "Example"
+                        }
+                    </script>
+                </head>
+                <body></body>
+            </html>
+        `;
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 1,
+            recommendations: '',
+        });
+    });
+
+    it('should return structured data analysis without structured data', async () => {
+        const htmlContent = '<html><head></head><body></body></html>';
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 0,
+            recommendations: 'No structured data found. Add structured data to improve SEO.',
+        });
+    });
+
+    it('should handle multiple structured data scripts', async () => {
+        const htmlContent = `
+            <html>
+                <head>
+                    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "url": "http://www.example.com", "name": "Example"}</script>
+                    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "url": "http://www.example.com", "name": "Example"}</script>
+                </head>
+                <body></body>
+            </html>
+        `;
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 2,
+            recommendations: '',
+        });
+    });
+});
 });
