@@ -24,7 +24,7 @@ export class SeoAnalysisService {
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
       indexabilityAnalysis,
-
+      robotsAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -37,6 +37,7 @@ export class SeoAnalysisService {
       this.analyzeMobileFriendliness(url),
       this.analyzeStructuredData(htmlContent),
       this.analyzeIndexability(htmlContent),
+      this.analyzeRobotsTxt(url),
 
     ]);
 
@@ -51,6 +52,7 @@ export class SeoAnalysisService {
       mobileFriendlinessAnalysis,
       structuredDataAnalysis,
       indexabilityAnalysis,
+      robotsAnalysis
     };
   }
 
@@ -404,5 +406,25 @@ export class SeoAnalysisService {
       isIndexable,
       recommendations,
     };
+  }
+  async analyzeRobotsTxt(url: string) {
+    try {
+      const robotsTxtUrl = new URL('/robots.txt', url).toString();
+      const response = await axios.get(robotsTxtUrl);
+
+      const isRobotsTxtValid = response.status === 200;
+      const recommendations = isRobotsTxtValid ? '' : 'robots.txt file is missing or inaccessible. Ensure it is present and accessible.';
+
+      return {
+        isRobotsTxtValid,
+        recommendations,
+      };
+    } catch (error) {
+      console.error(`Error fetching robots.txt: ${error.message}`);
+      return {
+        isRobotsTxtValid: false,
+        recommendations: 'robots.txt file is missing or inaccessible. Ensure it is present and accessible.',
+      };
+    }
   }
 }
