@@ -18,6 +18,7 @@ import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
+import { Metadata, ErrorResponse } from '../../models/ScraperModels';
 
 interface Classifications {
   label: string;
@@ -35,6 +36,10 @@ export default function Results() {
       <ResultsComponent />
     </Suspense>
   );
+}
+
+function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
+  return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
 }
 
 function ResultsComponent() {
@@ -76,10 +81,14 @@ function ResultsComponent() {
         else {
           setIsCrawlable(urlResults[0].robots.isUrlScrapable);
           setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
-          setSummaryInfo({
-            title: urlResults[0].metadata.title || urlResults[0].metadata.ogTitle,
-            description: urlResults[0].metadata.description || urlResults[0].metadata.ogDescription
-          });
+
+          if (isMetadata(urlResults[0].metadata)) {
+            setSummaryInfo({
+              title: urlResults[0].metadata.title ?? urlResults[0].metadata.ogTitle ?? '',
+              description: urlResults[0].metadata.description ?? urlResults[0].metadata.ogDescription ?? ''
+            });
+          }
+
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
           setIndustryClassification(urlResults[0].industryClassification.metadataClass);
