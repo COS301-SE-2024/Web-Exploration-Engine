@@ -483,23 +483,24 @@ function ResultsComponent() {
           Home page screenshot
         </h3>
 
-        {homePageScreenShot && (
-          <div className="flex justify-center">
+        {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,') 
+        ? (
             <div className="flex justify-center">
-              <Image
-                alt="HomePageScreenShot"
-                src={homePageScreenShot}
-                className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-              />
-            </div>            
-          </div>
-        )}
-
-        {!homePageScreenShot && (
-          <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-            No homepage screenshot available.
-          </p>
-        )}
+              <div className="flex justify-center">
+                <Image
+                  alt="HomePageScreenShot"
+                  src={homePageScreenShot}
+                  className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+                />
+              </div>
+            </div>
+          ) 
+        : (
+            <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+              No homepage screenshot available.
+            </p>
+          )
+        }
       </div>
 
       {/* Pagination of Images */}

@@ -240,24 +240,24 @@ describe('Results Component', () => {
         });
     });
 
-    // it('should display no screenshot available when screenshot is not present', async () => {
-    //     (useScrapingContext as jest.Mock).mockReturnValueOnce({
-    //         results: [
-    //             {
-    //                 ...mockResults[0],
-    //                 screenshot: '',
-    //             },
-    //         ],
-    //     });
+    it('should display no screenshot available when screenshot is not present', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    screenshot: '',
+                },
+            ],
+        });
 
-    //     await act(async () => {
-    //         render(<Results />);
-    //     });
+        await act(async () => {
+            render(<Results />);
+        });
 
-    //     await waitFor(() => {
-    //         expect(screen.getByText('No homepage screenshot available.')).toBeDefined();
-    //     });
-    // });
+        await waitFor(() => {
+            expect(screen.getByText('No homepage screenshot available.')).toBeDefined();
+        });
+    });
 
     it('should display the screenshot when it is present', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
