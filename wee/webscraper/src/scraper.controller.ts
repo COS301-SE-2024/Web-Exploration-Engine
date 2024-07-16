@@ -12,7 +12,10 @@ import {
   ScrapeLogoOperation, ScrapeLogoQuery, ScrapeLogoResponse200, ScrapeLogoResponse400,
   ScreenshotOperation, ScreenshotQuery, ScreenshotResponse200, ScreenshotResponse400, ScreenshotResponse500,
   ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
-   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
+  ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
+  SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
+  
+
 } from './scraper.api';
 import { StringDecoder } from 'string_decoder';
 
@@ -121,6 +124,16 @@ export class ScraperController {
   @Get('scrape-addresses')
   async scrapeAddresses(@Query('url') url: string) {
     return this.scraperService.scrapeAddress(url);
+  }
+
+  @SeoAnalysisOperation
+  @SeoAnalysisQuery
+  @SeoAnalysisResponse200
+  @SeoAnalysisResponse400
+  @SeoAnalysisResponse500
+  @Get('seo-analysis')
+  async seoAnalysis(@Query('url') url: string) {
+    return this.scraperService.seoAnalysis(url);
   }
 
 }
