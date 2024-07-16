@@ -7,8 +7,7 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 // Models
-import Scraping from "../models/ScrapingModel";
-import { Summary } from "../models/ScraperModels";
+import { ScraperResult, Summary } from "../models/ScraperModels";
 
 
 export default function Home() {
@@ -60,7 +59,7 @@ export default function Home() {
       // Clear the processing and processed urls
       setProcessedUrls([]);
       setProcessingUrls([]);
-      setResults((prevResults: Scraping[]) => []);
+      setResults((prevResults: ScraperResult[]) => []);
       setSummaryReport({} as Summary);
 
       // Navigate to Results page with the entered URL as query parameter

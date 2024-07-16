@@ -4,14 +4,14 @@ import WEESelect from "../../components/Util/Select";
 import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
-import Scraping from "../../models/ScrapingModel";
+import { ScraperResult } from '../../models/ScraperModels';
 import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock } from "react-icons/fi";
 
 export default function Comparison() {
     const { results } = useScrapingContext();
     const router = useRouter();
-    const [websiteOne, setWebsiteOne] = React.useState<Scraping>();
-    const [websiteTwo, setWebsiteTwo] = React.useState<Scraping>();
+    const [websiteOne, setWebsiteOne] = React.useState<ScraperResult>();
+    const [websiteTwo, setWebsiteTwo] = React.useState<ScraperResult>();
 
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);
