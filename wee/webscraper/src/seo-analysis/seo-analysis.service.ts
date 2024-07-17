@@ -482,13 +482,14 @@ export class SeoAnalysisService {
       const scores = {
         performance: getCategoryScore('performance'),
         accessibility: getCategoryScore('accessibility'),
-        bestPractices: getCategoryScore('best-practices'), // Add best practices score
+        bestPractices: getCategoryScore('best-practices'), 
       };
   
       const diagnostics = {
-        performance: getDiagnostics('performance'),
-        accessibility: getDiagnostics('accessibility'),
-        bestPractices: getDiagnostics('best-practices'), // Add best practices diagnostics
+        //recommendations for performance, accessibility and best-pratices will be the same. That is why I just do it for performance.
+        recommendations: getDiagnostics('performance'),
+        // accessibility: getDiagnostics('accessibility'),
+        // bestPractices: getDiagnostics('best-practices'),
       };
   
       // Debugging logs to verify the output
