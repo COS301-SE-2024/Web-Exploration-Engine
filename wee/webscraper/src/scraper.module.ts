@@ -33,7 +33,8 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
           socket: {
             host: config.get('redis.host'),
             port: config.get('redis.port')
-          }
+          },
+          password: config.get('redis.password'),
         })
         return { store }
       },
