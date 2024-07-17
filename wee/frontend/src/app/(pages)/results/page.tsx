@@ -495,12 +495,8 @@ function ResultsComponent() {
                             variant="flat"
                             className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
                           >
-                            {isCrawlable
-                              ? `Confidence Score: ${
-                                  industryClassification?.score
-                                    ? (industryClassification?.score * 100).toFixed(2)
-                                    : 0
-                                }%`
+                            {isCrawlable && industryClassification?.score
+                              ? `Confidence Score: ${(industryClassification?.score * 100).toFixed(2)}%`
                               : 'Confidence Score: 0%'}
                           </Chip>
                         </TableCell>
@@ -525,12 +521,8 @@ function ResultsComponent() {
                             variant="flat"
                             className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
                           >
-                            {isCrawlable
-                              ? `Confidence Score: ${
-                                  domainClassification?.score
-                                    ? (domainClassification?.score * 100).toFixed(2)
-                                    : 0
-                                }%`
+                            {isCrawlable && domainClassification?.score
+                              ? `Confidence Score: ${(domainClassification?.score * 100).toFixed(2)}%`
                               : 'Confidence Score: 0%'}
                           </Chip>
                         </TableCell>
