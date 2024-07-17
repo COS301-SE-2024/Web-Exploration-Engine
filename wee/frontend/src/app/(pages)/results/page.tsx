@@ -637,12 +637,12 @@ function ResultsComponent() {
                 </div>
 
                 {/* Pagination of Images */}
-                <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
-                  Images
-                </h3>
                 {imageList && imageList.length > 0 && (
                   <div className="py-3">
                     <span className="flex justify-between">
+                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                          Images
+                        </h3>
                         <label className="flex items-center text-default-400 text-small">
                           Images Per Page :
                           <select
@@ -694,9 +694,14 @@ function ResultsComponent() {
                 )}
 
                 {imageList.length === 0 && (
-                  <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-                    No images available.
-                  </p>
+                  <>                 
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                      Images
+                    </h3>
+                    <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                      No images available.
+                    </p>
+                  </>
                 )}
 
               </CardBody>
