@@ -8,7 +8,7 @@ export class SeoAnalysisService {
   private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse) {
     if (!robots.isUrlScrapable) {
-      console.error('Crawling not allowed for this URL');
+      //console.error('Crawling not allowed for this URL');
       return {
         error: 'Crawling not allowed for this URL',
       };
@@ -260,7 +260,7 @@ export class SeoAnalysisService {
         reasons,
       };
     } catch (error) {
-      console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
+      //console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
       return {
         optimized: false,
         reasons: [],
@@ -426,7 +426,7 @@ export class SeoAnalysisService {
         recommendations,
       };
     } catch (error) {
-      console.error(`Error fetching XML sitemap: ${error.message}`);
+      //console.error(`Error fetching XML sitemap: ${error.message}`);
       return {
         isSitemapValid: false,
         recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
@@ -448,7 +448,7 @@ export class SeoAnalysisService {
   }
   async runLighthouse(url: string) {
     try {
-      const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&strategy=desktop`);
+      const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&category=best-practices&strategy=desktop`);
       const data = response.data;
   
       const getCategoryScore = (category: string) => {
@@ -482,18 +482,26 @@ export class SeoAnalysisService {
       const scores = {
         performance: getCategoryScore('performance'),
         accessibility: getCategoryScore('accessibility'),
+        bestPractices: getCategoryScore('best-practices'), // Add best practices score
       };
   
       const diagnostics = {
         performance: getDiagnostics('performance'),
         accessibility: getDiagnostics('accessibility'),
+        bestPractices: getDiagnostics('best-practices'), // Add best practices diagnostics
       };
+  
+      // Debugging logs to verify the output
+      // console.log('Lighthouse Scores:', scores);
+      // console.log('Lighthouse Diagnostics:', diagnostics);
   
       return { scores, diagnostics }; 
     } catch (error) {
-      console.error(`Error fetching Lighthouse data: ${error.message}`);
-      throw new Error(`Error fetching Lighthouse data: ${error.message}`);
+      // console.error(`Error fetching Lighthouse data: ${error.message}`);
+      // throw new Error(`Error fetching Lighthouse data: ${error.message}`);
     }
   }
+  
+  
   
 }
