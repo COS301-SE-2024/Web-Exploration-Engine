@@ -28,7 +28,6 @@ export class SeoAnalysisService {
       XMLSitemapAnalysis,
       canonicalTagAnalysis,
       lighthouseAnalysis,
-      insightsAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -44,7 +43,6 @@ export class SeoAnalysisService {
       this.analyzeXmlSitemap(url),
       this.analyzeCanonicalTags(htmlContent),
       this.runLighthouse(url),
-      this.runPageSpeedInsights(url),
     ]);
 
     return {
@@ -61,7 +59,6 @@ export class SeoAnalysisService {
       XMLSitemapAnalysis,
       canonicalTagAnalysis,
       lighthouseAnalysis,
-      insightsAnalysis
     };
   }
 
@@ -468,18 +465,18 @@ export class SeoAnalysisService {
         const audits = data.lighthouseResult?.audits;
         const diagnostics = [];
         for (const auditKey in audits) {
-          if (audits[auditKey].score !== 1 && audits[auditKey].scoreDisplayMode !== 'notApplicable') {
+          const audit = audits[auditKey];
+          if (audit.score !== null && audit.score !== 1 && audit.scoreDisplayMode !== 'notApplicable') {
             diagnostics.push({
-              title: audits[auditKey].title,
-              description: audits[auditKey].description,
-              score: audits[auditKey].score,
-              displayValue: audits[auditKey].displayValue
+              title: audit.title,
+              description: audit.description,
+              score: audit.score,
+              displayValue: audit.displayValue
             });
           }
         }
         return diagnostics;
       };
-
   
       const scores = {
         performance: getCategoryScore('performance'),
@@ -498,32 +495,4 @@ export class SeoAnalysisService {
     }
   }
   
-  async runPageSpeedInsights(url: string) {
-    try {
-      const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&strategy=desktop`);
-      const data = response.data;
-  
-      const getCategoryScore = (category: string) => {
-        const categoryData = data.lighthouseResult?.categories?.[category];
-        if (categoryData?.score !== undefined) {
-          return categoryData.score * 100;
-        } else {
-          console.warn(`Category score for ${category} is not available.`);
-          return null;
-        }
-      };
-  
-      const scores = {
-        performance: getCategoryScore('performance'),
-        accessibility: getCategoryScore('accessibility'),
-        // bestPractices: getCategoryScore('best-practices'),
-        // seo: getCategoryScore('seo'),
-      };
-  
-      return { scores }; // Include raw JSON response for debugging or additional processing
-    } catch (error) {
-      console.error(`Error fetching PageSpeed Insights data: ${error.message}`);
-      throw new Error(`Error fetching PageSpeed Insights data: ${error.message}`);
-    }
-  }
 }
