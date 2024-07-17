@@ -60,6 +60,31 @@ describe('SeoAnalysisService', () => {
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
+    it('should handle an empty meta description', async () => {
+      const htmlContent = '<html><head><meta name="description" content=""></head></html>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: '',
+        length: 0,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
+  
+    it('should handle missing meta description', async () => {
+      const htmlContent = '<html><head></head></html>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: '',
+        length: 0,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
   });
 
   describe('fetchHtmlContent', () => {
@@ -72,6 +97,14 @@ describe('SeoAnalysisService', () => {
       const result = await service.fetchHtmlContent(url);
 
       expect(result).toBe(htmlContent);
+    });
+    it('should handle errors when fetching HTML content', async () => {
+      const url = 'http://nonexistenturl.com';
+  
+      // Mock axios to simulate a network error
+      (axios.get as jest.Mock).mockRejectedValue(new Error('Network error'));
+  
+      await expect(service.fetchHtmlContent(url)).rejects.toThrow('Error fetching HTML from http://nonexistenturl.com: Network error');
     });
   });
 
@@ -113,6 +146,23 @@ describe('SeoAnalysisService', () => {
       });
     });
   });
+  describe('isImageOptimized', () => {
+    it('should handle unsupported image formats', async () => {
+      const imageUrl = 'http://example.com/image.svg';
+
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'image/svg+xml',
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(true); 
+      expect(result.reasons).toEqual([]); 
+    });
+  });
+  
   describe('analyzeTitleTag', () => {
     it('should return title tag analysis', async () => {
       const htmlContent = '<html><head><title>Test Title</title></head></html>';
@@ -637,4 +687,35 @@ describe('runLighthouse', () => {
     });
   });
 });
+it('should handle missing category scores gracefully', async () => {
+  const url = 'http://example.com';
+  const lighthouseResponse = {
+    data: {
+      lighthouseResult: {
+        categories: {
+          performance: { score: 0.85 },
+          accessibility: { score: null },
+          'best-practices': { score: 0.8 },
+        },
+        audits: {},
+      },
+    },
+  };
+
+  (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+  const result = await service.runLighthouse(url);
+
+  expect(result).toEqual({
+    scores: {
+      performance: 85,
+      accessibility: 0, // Ensure it handles null scores correctly
+      bestPractices: 80,
+    },
+    diagnostics: {
+      recommendations: [],
+    },
+  });
+});
+
 });
