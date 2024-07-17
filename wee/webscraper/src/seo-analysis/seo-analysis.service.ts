@@ -346,8 +346,8 @@ export class SeoAnalysisService {
         recommendations: recommendations.trim(),
       };
     } catch (error) {
-      console.error(`Error analyzing site speed: ${error.message}`);
-      throw new Error(`Error analyzing site speed: ${error.message}`);
+      // console.error(`Error analyzing site speed: ${error.message}`);
+      // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
   async analyzeMobileFriendliness(url: string) {

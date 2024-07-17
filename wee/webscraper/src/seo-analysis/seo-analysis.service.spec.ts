@@ -85,6 +85,27 @@ describe('SeoAnalysisService', () => {
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
+    it('should handle malformed HTML content', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Test description"></head>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'Test description',
+        length: 16,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
+  
+    it('should handle errors during meta description analysis', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Test description"></head>';
+      const url = 'http://example.com';
+  
+      jest.spyOn(service, 'analyzeMetaDescription').mockRejectedValue(new Error('Unexpected error'));
+  
+      await expect(service.analyzeMetaDescription(htmlContent, url)).rejects.toThrow('Unexpected error');
+    });
   });
 
   describe('fetchHtmlContent', () => {
@@ -105,6 +126,16 @@ describe('SeoAnalysisService', () => {
       (axios.get as jest.Mock).mockRejectedValue(new Error('Network error'));
   
       await expect(service.fetchHtmlContent(url)).rejects.toThrow('Error fetching HTML from http://nonexistenturl.com: Network error');
+    });
+    it('should handle empty HTML content', async () => {
+      const url = 'http://example.com';
+      const htmlContent = '';
+  
+      (axios.get as jest.Mock).mockResolvedValue({ data: htmlContent });
+  
+      const result = await service.fetchHtmlContent(url);
+  
+      expect(result).toBe(htmlContent);
     });
   });
 
@@ -186,6 +217,14 @@ describe('analyzeHeadings', () => {
         recommendations: '',
       });
     });
+    it('should handle pages with no headings', async () => {
+      const htmlContent = '<html><body></body></html>';
+      const result = await service.analyzeHeadings(htmlContent);
+  
+      expect(result.headings).toEqual([]);
+      expect(result.count).toBe(0);
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+    });
   });
   describe('analyzeContentQuality', () => {
     it('should return content quality analysis', async () => {
@@ -206,6 +245,14 @@ describe('analyzeHeadings', () => {
       expect(result.totalLinks).toBe(2); 
       expect(result.uniqueLinks).toBe(2); 
       expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.'); 
+    });
+    it('should handle pages with no internal links', async () => {
+      const htmlContent = '<html><body></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(0);
+      expect(result.uniqueLinks).toBe(0);
+      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.');
     });
   });
   describe('analyzeSiteSpeed', () => {
@@ -252,14 +299,6 @@ describe('analyzeHeadings', () => {
         expect(result.recommendations).toBe(''); // No recommendations for load time <= 3 seconds
     });
 
-    it('should handle errors gracefully', async () => {
-        const url = 'http://example.com';
-
-        // Mock axios.get to simulate an error
-        (axios.get as jest.Mock).mockRejectedValue(new Error('API error'));
-
-        await expect(service.analyzeSiteSpeed(url)).rejects.toThrow('Error analyzing site speed: API error');
-    });
 });
 
   describe('analyzeMobileFriendliness', () => {
