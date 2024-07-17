@@ -467,9 +467,10 @@ export class SeoAnalysisService {
         for (const auditKey in audits) {
           const audit = audits[auditKey];
           if (audit.score !== null && audit.score !== 1 && audit.scoreDisplayMode !== 'notApplicable') {
+            const descriptionWithoutBrackets = audit.description.replace(/\[.*?\]|\(.*?\)/g, '');
             diagnostics.push({
               title: audit.title,
-              description: audit.description,
+              description: descriptionWithoutBrackets.trim(),
               score: audit.score,
               displayValue: audit.displayValue
             });
@@ -488,7 +489,7 @@ export class SeoAnalysisService {
         accessibility: getDiagnostics('accessibility'),
       };
   
-      return { scores, diagnostics }; // Include raw JSON response for debugging or additional processing
+      return { scores, diagnostics }; 
     } catch (error) {
       console.error(`Error fetching Lighthouse data: ${error.message}`);
       throw new Error(`Error fetching Lighthouse data: ${error.message}`);
