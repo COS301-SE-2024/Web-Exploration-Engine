@@ -507,4 +507,134 @@ describe('analyzeCanonicalTags', () => {
       });
   });
 });
+describe('runLighthouse', () => {
+  it('should return scores and diagnostics for a valid URL', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: 0.9 },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {
+            'first-contentful-paint': {
+              title: 'First Contentful Paint',
+              description: 'Time to first contentful paint',
+              score: 0.5,
+              scoreDisplayMode: 'numeric',
+              displayValue: '2.0s',
+            },
+            'interactive': {
+              title: 'Time to Interactive',
+              description: 'Time to interactive',
+              score: 0.8,
+              scoreDisplayMode: 'numeric',
+              displayValue: '4.0s',
+            },
+          },
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 90,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [
+          {
+            title: 'First Contentful Paint',
+            description: 'Time to first contentful paint',
+            score: 0.5,
+            displayValue: '2.0s',
+          },
+          {
+            title: 'Time to Interactive',
+            description: 'Time to interactive',
+            score: 0.8,
+            displayValue: '4.0s',
+          },
+        ],
+      },
+    });
+  });
+
+  it('should handle missing category scores gracefully', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: null },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {},
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 0,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [],
+      },
+    });
+  });
+
+  it('should handle missing audit scores gracefully', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: 0.9 },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {
+            'first-contentful-paint': {
+              title: 'First Contentful Paint',
+              description: 'Time to first contentful paint',
+              score: null,
+              scoreDisplayMode: 'numeric',
+              displayValue: '2.0s',
+            },
+          },
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 90,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [],
+      },
+    });
+  });
+});
 });
