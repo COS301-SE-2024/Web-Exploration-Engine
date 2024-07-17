@@ -258,6 +258,9 @@ describe('Results Component', () => {
             render(<Results />);
         });
 
+        const mediaTab = screen.getByRole('tab', { name: /Media/i });
+        fireEvent.click(mediaTab);
+
         await waitFor(() => {
             expect(screen.getByText('No images available.')).toBeDefined();
         });
@@ -277,6 +280,9 @@ describe('Results Component', () => {
             render(<Results />);
         });
 
+        const mediaTab = screen.getByRole('tab', { name: /Media/i });
+        fireEvent.click(mediaTab);
+
         await waitFor(() => {
             expect(screen.getByText('No homepage screenshot available.')).toBeDefined();
         });
@@ -290,6 +296,9 @@ describe('Results Component', () => {
         await act(async () => {
           render(<Results />);
         });
+
+        const mediaTab = screen.getByRole('tab', { name: /Media/i });
+        fireEvent.click(mediaTab);
     
         await waitFor(() => {
           expect(screen.getByAltText('HomePageScreenShot')).toBeInTheDocument();
@@ -370,6 +379,9 @@ describe('Results Component', () => {
         await act(async () => {
             render(<Results />);
         });
+
+        const mediaTab = screen.getByRole('tab', { name: /Media/i });
+        fireEvent.click(mediaTab);
 
         await waitFor(() => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
