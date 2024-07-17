@@ -328,14 +328,13 @@ export class SeoAnalysisService {
     };
   }
   async analyzeSiteSpeed(url: string) {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    const start = Date.now();
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}`;
   
     try {
-      await page.goto(url, { waitUntil: 'networkidle2' });
-      const loadTimeMs = Date.now() - start;
-      const loadTime = loadTimeMs / 1000; // Convert milliseconds to seconds
+      const response = await axios.get(apiUrl);
+      const data = response.data;
+  
+      const loadTime = data.lighthouseResult.audits['speed-index'].numericValue / 1000; // Convert milliseconds to seconds
   
       let recommendations = '';
       if (loadTime > 3) {
@@ -349,11 +348,8 @@ export class SeoAnalysisService {
     } catch (error) {
       console.error(`Error analyzing site speed: ${error.message}`);
       throw new Error(`Error analyzing site speed: ${error.message}`);
-    } finally {
-      await browser.close();
     }
   }
-  
   async analyzeMobileFriendliness(url: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
