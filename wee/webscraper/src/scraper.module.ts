@@ -29,7 +29,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
       imports: [ConfigModule],
       useFactory: async (config) => {
         const store = await redisStore({
-          ttl: 300 * 1000, // 5 minutes in cache
+          ttl: 60 * 60 * 1000, // 60 minutes in cache
           socket: {
             host: config.get('redis.host'),
             port: config.get('redis.port')

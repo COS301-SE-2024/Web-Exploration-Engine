@@ -48,7 +48,7 @@ export class ScraperService {
       const dataFromCache = JSON.parse(cachedData);
 
       // update the time field of the object being returned from cache
-      dataFromCache.time = parseFloat(times.toFixed(3));      
+      dataFromCache.time = parseFloat(times.toFixed(4));      
       return dataFromCache;
     }
     
@@ -183,7 +183,7 @@ export class ScraperService {
 
     const end = performance.now();
     const time = (end - start) / 1000;
-    data.time = parseFloat(time.toFixed(3));
+    data.time = parseFloat(time.toFixed(4));
 
     // set the data in the cache
     await this.cacheManager.set(url, JSON.stringify(data));
