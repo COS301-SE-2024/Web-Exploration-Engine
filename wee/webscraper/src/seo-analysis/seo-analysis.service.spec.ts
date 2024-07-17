@@ -159,14 +159,59 @@ describe('analyzeHeadings', () => {
     });
   });
   describe('analyzeSiteSpeed', () => {
-    it('should return site speed analysis', async () => {
-      const url = 'http://example.com';
-      const result = await service.analyzeSiteSpeed(url);
+    it('should return site speed analysis with recommendations if load time is above 3 seconds', async () => {
+        const url = 'http://example.com';
 
-      expect(result.loadTime).toBeLessThanOrEqual(3); 
-      expect(result.recommendations).toBe('');
+        const mockApiResponse = {
+            lighthouseResult: {
+                audits: {
+                    'speed-index': {
+                        numericValue: 4000 
+                    }
+                }
+            }
+        };
+
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+
+        const result = await service.analyzeSiteSpeed(url);
+
+        expect(result.loadTime).toBe(4); 
+        expect(result.recommendations).toBe('Page load time is above 3 seconds. Consider optimizing resources to improve site speed.');
     });
-  });
+
+    it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
+        const url = 'http://example.com';
+
+        const mockApiResponse = {
+            lighthouseResult: {
+                audits: {
+                    'speed-index': {
+                        numericValue: 3000 
+                    }
+                }
+            }
+        };
+
+
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+
+        const result = await service.analyzeSiteSpeed(url);
+
+        expect(result.loadTime).toBe(3); 
+        expect(result.recommendations).toBe(''); // No recommendations for load time <= 3 seconds
+    });
+
+    it('should handle errors gracefully', async () => {
+        const url = 'http://example.com';
+
+        // Mock axios.get to simulate an error
+        (axios.get as jest.Mock).mockRejectedValue(new Error('API error'));
+
+        await expect(service.analyzeSiteSpeed(url)).rejects.toThrow('Error analyzing site speed: API error');
+    });
+});
+
   describe('analyzeMobileFriendliness', () => {
     it('should return mobile friendliness analysis', async () => {
       const url = 'http://example.com';
