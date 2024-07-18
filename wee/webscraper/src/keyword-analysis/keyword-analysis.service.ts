@@ -60,5 +60,41 @@ export class KeywordAnalysisService {
         
         return keywordDensity;
     }
+    async getKeywordInAnchorTexts(url: string, keyword: string) {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        
+        // Navigate to the target URL
+        await page.goto(url);
+        
+        // Extract anchor texts and check keyword presence
+        const anchorTextAnalysis = await page.evaluate((keyword) => {
+            const anchors = document.querySelectorAll('a');
+            const anchorDetails = Array.from(anchors).map(anchor => {
+                const text = anchor.innerText;
+                const href = anchor.href;
+                const containsKeyword = text.includes(keyword) || href.includes(keyword);
+                
+                return {
+                    text,
+                    href,
+                    containsKeyword
+                };
+            });
+    
+            const keywordInAnchorsCount = anchorDetails.filter(anchor => anchor.containsKeyword).length;
+            const totalAnchors = anchorDetails.length;
+            const keywordInAnchorsPercentage = totalAnchors > 0 ? (keywordInAnchorsCount / totalAnchors) * 100 : 0;
+            
+            return { 
+                keywordInAnchorsPercentage: keywordInAnchorsPercentage.toFixed(2), 
+                anchorDetails 
+            };
+        }, keyword);
+      
+        await browser.close();
+        
+        return anchorTextAnalysis;
+    }
     
 }

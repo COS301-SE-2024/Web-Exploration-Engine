@@ -36,5 +36,14 @@ export class KeywordAnalysisController {
     const density = await this.keywordAnalysisService.getKeywordDensity(url, keyword);
     return { density };
   }
+  @Get('keyword-in-anchor-texts')
+  async getKeywordInAnchorTexts(
+    @Query('url') url: string,
+    @Query('keyword') keyword: string
+  ) {
+    const anchorTexts = await this.keywordAnalysisService.getKeywordInAnchorTexts(url, keyword);
+    return anchorTexts;
+  }
+  
     
 }
