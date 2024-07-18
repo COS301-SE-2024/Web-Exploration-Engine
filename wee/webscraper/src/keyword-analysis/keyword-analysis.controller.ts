@@ -20,7 +20,13 @@ import {
   KeywordInImageAltsQuery,
   KeywordInImageAltsResponse200,
   KeywordInImageAltsResponse400,
-  KeywordInImageAltsResponse500
+  KeywordInImageAltsResponse500,
+  AllKeywordAnalysisOperation,
+  AllKeywordAnalysisQuery,
+  AllKeywordAnalysisQueryKeywords,
+  AllKeywordAnalysisResponse200,
+  AllKeywordAnalysisResponse400,
+  AllKeywordAnalysisResponse500,
 } from './keyword-analysis.api';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -86,22 +92,35 @@ export class KeywordAnalysisController {
   }
 
   @Get()
+  @AllKeywordAnalysisOperation
+  @AllKeywordAnalysisQuery
+  @AllKeywordAnalysisQueryKeywords
+  @AllKeywordAnalysisResponse200
+  @AllKeywordAnalysisResponse400
+  @AllKeywordAnalysisResponse500
   async getAllKeywordAnalysis(
     @Query('url') url: string,
-    @Query('keyword') keyword: string
+    @Query('keywords') keywords: string
   ) {
-    const [rankings, density, anchorTexts, imageAlts] = await Promise.all([
-      this.keywordAnalysisService.getKeywordRanking(url, keyword),
-      this.keywordAnalysisService.getKeywordDensity(url, keyword),
-      this.keywordAnalysisService.getKeywordInAnchorTexts(url, keyword),
-      this.keywordAnalysisService.getKeywordInImageAlts(url, keyword)
-    ]);
+    const keywordList = keywords.split(',').map(keyword => keyword.trim());
 
-    return {
-      keywordRankings: rankings,
-      keywordDensity: density,
-      keywordInAnchorTexts: anchorTexts,
-      keywordInImageAlts: imageAlts
-    };
+    const results = await Promise.all(keywordList.map(async (keyword) => {
+      const [rankings, density, anchorTexts, imageAlts] = await Promise.all([
+        this.keywordAnalysisService.getKeywordRanking(url, keyword),
+        this.keywordAnalysisService.getKeywordDensity(url, keyword),
+        this.keywordAnalysisService.getKeywordInAnchorTexts(url, keyword),
+        this.keywordAnalysisService.getKeywordInImageAlts(url, keyword)
+      ]);
+
+      return {
+        keyword,
+        keywordRankings: rankings,
+        keywordDensity: density,
+        keywordInAnchorTexts: anchorTexts,
+        keywordInImageAlts: imageAlts
+      };
+    }));
+
+    return results;
   }
 }

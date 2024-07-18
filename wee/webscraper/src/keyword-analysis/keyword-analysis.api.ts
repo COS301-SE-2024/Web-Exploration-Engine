@@ -159,4 +159,45 @@ export const KeywordInImageAltsResponse500 = ApiResponse({
       errorMessage: { type: 'string' },
     },
   },
+  
 });
+// Combined Keyword Analysis endpoint
+export const AllKeywordAnalysisOperation = ApiOperation({ summary: 'Get all keyword analysis results for specified keywords' });
+export const AllKeywordAnalysisQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
+export const AllKeywordAnalysisQueryKeywords = ApiQuery({ name: 'keywords', required: true, description: 'Comma-separated list of keywords to analyze' });
+export const AllKeywordAnalysisResponse200 = ApiResponse({
+    status: 200,
+    description: 'All keyword analysis results successfully retrieved',
+    schema: {
+      type: 'array',
+      items: {
+            type: 'string',
+          },
+      },
+    });
+  
+export const AllKeywordAnalysisResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL or keywords parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+export const AllKeywordAnalysisResponse500 = ApiResponse({
+  status: 500,
+  description: 'Internal Server Error. An error occurred while retrieving all keyword analysis results',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+

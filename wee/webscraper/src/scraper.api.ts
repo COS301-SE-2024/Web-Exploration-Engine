@@ -312,11 +312,9 @@ export const SeoAnalysisResponse200 = ApiResponse({
   description: 'SEO analysis successfully performed',
   schema: {
     type: 'object',
-    properties: {
-      titleTags: { type: 'string' },
-      metaDescriptions: { type: 'string' },
-
-        },
+    items: {
+      type: 'string',
+    },
   },
 });
 export const SeoAnalysisResponse400 = ApiResponse({
