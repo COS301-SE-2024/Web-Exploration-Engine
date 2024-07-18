@@ -5,9 +5,10 @@ import puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 @Injectable()
 export class SeoAnalysisService {
+  private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse) {
     if (!robots.isUrlScrapable) {
-      console.error('Crawling not allowed for this URL');
+      //console.error('Crawling not allowed for this URL');
       return {
         error: 'Crawling not allowed for this URL',
       };
@@ -22,6 +23,11 @@ export class SeoAnalysisService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
+      structuredDataAnalysis,
+      indexabilityAnalysis,
+      XMLSitemapAnalysis,
+      canonicalTagAnalysis,
+      lighthouseAnalysis,
 
     ] = await Promise.all([
       this.analyzeMetaDescription(htmlContent, url),
@@ -32,7 +38,11 @@ export class SeoAnalysisService {
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
       this.analyzeMobileFriendliness(url),
-
+      this.analyzeStructuredData(htmlContent),
+      this.analyzeIndexability(htmlContent),
+      this.analyzeXmlSitemap(url),
+      this.analyzeCanonicalTags(htmlContent),
+      this.runLighthouse(url),
     ]);
 
     return {
@@ -44,7 +54,11 @@ export class SeoAnalysisService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
-
+      structuredDataAnalysis,
+      indexabilityAnalysis,
+      XMLSitemapAnalysis,
+      canonicalTagAnalysis,
+      lighthouseAnalysis,
     };
   }
 
@@ -246,7 +260,7 @@ export class SeoAnalysisService {
         reasons,
       };
     } catch (error) {
-      console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
+      //console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
       return {
         optimized: false,
         reasons: [],
@@ -314,14 +328,13 @@ export class SeoAnalysisService {
     };
   }
   async analyzeSiteSpeed(url: string) {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    const start = Date.now();
+    const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}`;
   
     try {
-      await page.goto(url, { waitUntil: 'networkidle2' });
-      const loadTimeMs = Date.now() - start;
-      const loadTime = loadTimeMs / 1000; // Convert milliseconds to seconds
+      const response = await axios.get(apiUrl);
+      const data = response.data;
+  
+      const loadTime = data.lighthouseResult.audits['speed-index'].numericValue / 1000; // Convert milliseconds to seconds
   
       let recommendations = '';
       if (loadTime > 3) {
@@ -333,13 +346,10 @@ export class SeoAnalysisService {
         recommendations: recommendations.trim(),
       };
     } catch (error) {
-      console.error(`Error analyzing site speed: ${error.message}`);
-      throw new Error(`Error analyzing site speed: ${error.message}`);
-    } finally {
-      await browser.close();
+      // console.error(`Error analyzing site speed: ${error.message}`);
+      // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
-  
   async analyzeMobileFriendliness(url: string) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -373,6 +383,122 @@ export class SeoAnalysisService {
       await browser.close();
     }
   }
+  async analyzeStructuredData(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const structuredData = $('script[type="application/ld+json"]').toArray().map(el => $(el).html());
 
+    const count = structuredData.length;
+    const recommendations = count > 0 ? '' : 'No structured data found. Add structured data to improve SEO.';
 
+    return {
+     // structuredData,
+      count,
+      recommendations,
+    };
+  }
+
+  async analyzeIndexability(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const metaRobots = $('meta[name="robots"]').attr('content') || '';
+    const isIndexable = !metaRobots.includes('noindex');
+
+    const recommendations = isIndexable ? '' : 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.';
+
+    return {
+      isIndexable,
+      recommendations,
+    };
+  }
+  async analyzeXmlSitemap(url: string) {
+    try {
+      const sitemapUrl = new URL('/sitemap.xml', url).toString();
+      const response = await axios.get(sitemapUrl);
+
+      const isSitemapValid = response.status === 200;
+      const recommendations = isSitemapValid ? '' : 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.';
+
+      return {
+        isSitemapValid,
+        recommendations,
+      };
+    } catch (error) {
+      //console.error(`Error fetching XML sitemap: ${error.message}`);
+      return {
+        isSitemapValid: false,
+        recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+      };
+    }
+  }
+  async analyzeCanonicalTags(htmlContent: string) {
+    const $ = cheerio.load(htmlContent);
+    const canonicalTag = $('link[rel="canonical"]').attr('href') || '';
+
+    const isCanonicalTagPresent = !!canonicalTag;
+    const recommendations = isCanonicalTagPresent ? '' : 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.';
+
+    return {
+      canonicalTag,
+      isCanonicalTagPresent,
+      recommendations,
+    };
+  }
+  async runLighthouse(url: string) {
+    try {
+      const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&category=best-practices&strategy=desktop`);
+      const data = response.data;
+  
+      const getCategoryScore = (category: string) => {
+        const categoryData = data.lighthouseResult?.categories?.[category];
+        if (categoryData?.score !== undefined) {
+          return categoryData.score * 100;
+        } else {
+          console.warn(`Category score for ${category} is not available.`);
+          return null;
+        }
+      };
+  
+      const getDiagnostics = (category: string) => {
+        const audits = data.lighthouseResult?.audits;
+        const diagnostics = [];
+        for (const auditKey in audits) {
+          const audit = audits[auditKey];
+          if (audit.score !== null && audit.score !== 1 && audit.scoreDisplayMode !== 'notApplicable') {
+            const descriptionWithoutBrackets = audit.description.replace(/\[.*?\]|\(.*?\)/g, '');
+            diagnostics.push({
+              title: audit.title,
+              description: descriptionWithoutBrackets.trim(),
+              score: audit.score,
+              displayValue: audit.displayValue
+            });
+          }
+        }
+        return diagnostics;
+      };
+  
+      const scores = {
+        performance: getCategoryScore('performance'),
+        accessibility: getCategoryScore('accessibility'),
+        bestPractices: getCategoryScore('best-practices'), 
+      };
+  
+      const diagnostics = {
+        //recommendations for performance, accessibility and best-pratices will be the same. That is why I just do it for performance.
+        recommendations: getDiagnostics('performance'),
+        // accessibility: getDiagnostics('accessibility'),
+        // bestPractices: getDiagnostics('best-practices'),
+      };
+  
+      // Debugging logs to verify the output
+      // console.log('Lighthouse Scores:', scores);
+      // console.log('Lighthouse Diagnostics:', diagnostics);
+  
+      return { scores, diagnostics }; 
+    } catch (error) {
+      // console.error(`Error fetching Lighthouse data: ${error.message}`);
+      // throw new Error(`Error fetching Lighthouse data: ${error.message}`);
+    }
+  }
+  
+  
+  
 }

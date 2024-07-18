@@ -274,7 +274,9 @@ export class ScraperService {
   }
   async seoAnalysis(url: string) {
     const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
-    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,
+    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis
+      ,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,structuredDataAnalysis,
+      indexabilityAnalysis,XMLSitemapAnalysis,canonicalTagAnalysis,lighthouseAnalysis,
     ] = await Promise.all([
       this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
       this.seoAnalysisService.analyzeTitleTag(htmlContent),
@@ -284,6 +286,11 @@ export class ScraperService {
       this.seoAnalysisService.analyzeInternalLinks(htmlContent),
       this.seoAnalysisService.analyzeSiteSpeed(url),
       this.seoAnalysisService.analyzeMobileFriendliness(url),
+      this.seoAnalysisService.analyzeStructuredData(htmlContent),
+      this.seoAnalysisService.analyzeIndexability(htmlContent),
+      this.seoAnalysisService.analyzeXmlSitemap(url),
+      this.seoAnalysisService.analyzeCanonicalTags(htmlContent),
+      this.seoAnalysisService.runLighthouse(url),
     ]);
   
     return {
@@ -295,8 +302,11 @@ export class ScraperService {
       internalLinksAnalysis,
       siteSpeedAnalysis,
       mobileFriendlinessAnalysis,
-
-      
+      structuredDataAnalysis,
+      indexabilityAnalysis,
+      XMLSitemapAnalysis,
+      canonicalTagAnalysis,
+      lighthouseAnalysis,      
    };
   }
 }

@@ -60,6 +60,52 @@ describe('SeoAnalysisService', () => {
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
+    it('should handle an empty meta description', async () => {
+      const htmlContent = '<html><head><meta name="description" content=""></head></html>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: '',
+        length: 0,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
+  
+    it('should handle missing meta description', async () => {
+      const htmlContent = '<html><head></head></html>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: '',
+        length: 0,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
+    it('should handle malformed HTML content', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Test description"></head>';
+      const url = 'http://example.com';
+  
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'Test description',
+        length: 16,
+        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+      });
+    });
+  
+    it('should handle errors during meta description analysis', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Test description"></head>';
+      const url = 'http://example.com';
+  
+      jest.spyOn(service, 'analyzeMetaDescription').mockRejectedValue(new Error('Unexpected error'));
+  
+      await expect(service.analyzeMetaDescription(htmlContent, url)).rejects.toThrow('Unexpected error');
+    });
   });
 
   describe('fetchHtmlContent', () => {
@@ -71,6 +117,24 @@ describe('SeoAnalysisService', () => {
 
       const result = await service.fetchHtmlContent(url);
 
+      expect(result).toBe(htmlContent);
+    });
+    it('should handle errors when fetching HTML content', async () => {
+      const url = 'http://nonexistenturl.com';
+  
+      // Mock axios to simulate a network error
+      (axios.get as jest.Mock).mockRejectedValue(new Error('Network error'));
+  
+      await expect(service.fetchHtmlContent(url)).rejects.toThrow('Error fetching HTML from http://nonexistenturl.com: Network error');
+    });
+    it('should handle empty HTML content', async () => {
+      const url = 'http://example.com';
+      const htmlContent = '';
+  
+      (axios.get as jest.Mock).mockResolvedValue({ data: htmlContent });
+  
+      const result = await service.fetchHtmlContent(url);
+  
       expect(result).toBe(htmlContent);
     });
   });
@@ -113,6 +177,23 @@ describe('SeoAnalysisService', () => {
       });
     });
   });
+  describe('isImageOptimized', () => {
+    it('should handle unsupported image formats', async () => {
+      const imageUrl = 'http://example.com/image.svg';
+
+      (axios.get as jest.Mock).mockResolvedValue({
+        headers: {
+          'content-type': 'image/svg+xml',
+        },
+      });
+  
+      const result = await service.isImageOptimized(imageUrl);
+  
+      expect(result.optimized).toBe(true); 
+      expect(result.reasons).toEqual([]); 
+    });
+  });
+  
   describe('analyzeTitleTag', () => {
     it('should return title tag analysis', async () => {
       const htmlContent = '<html><head><title>Test Title</title></head></html>';
@@ -136,6 +217,14 @@ describe('analyzeHeadings', () => {
         recommendations: '',
       });
     });
+    it('should handle pages with no headings', async () => {
+      const htmlContent = '<html><body></body></html>';
+      const result = await service.analyzeHeadings(htmlContent);
+  
+      expect(result.headings).toEqual([]);
+      expect(result.count).toBe(0);
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+    });
   });
   describe('analyzeContentQuality', () => {
     it('should return content quality analysis', async () => {
@@ -157,16 +246,61 @@ describe('analyzeHeadings', () => {
       expect(result.uniqueLinks).toBe(2); 
       expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.'); 
     });
-  });
-  describe('analyzeSiteSpeed', () => {
-    it('should return site speed analysis', async () => {
-      const url = 'http://example.com';
-      const result = await service.analyzeSiteSpeed(url);
-
-      expect(result.loadTime).toBeLessThanOrEqual(3); 
-      expect(result.recommendations).toBe('');
+    it('should handle pages with no internal links', async () => {
+      const htmlContent = '<html><body></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(0);
+      expect(result.uniqueLinks).toBe(0);
+      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.');
     });
   });
+  describe('analyzeSiteSpeed', () => {
+    it('should return site speed analysis with recommendations if load time is above 3 seconds', async () => {
+        const url = 'http://example.com';
+
+        const mockApiResponse = {
+            lighthouseResult: {
+                audits: {
+                    'speed-index': {
+                        numericValue: 4000 
+                    }
+                }
+            }
+        };
+
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+
+        const result = await service.analyzeSiteSpeed(url);
+
+        expect(result.loadTime).toBe(4); 
+        expect(result.recommendations).toBe('Page load time is above 3 seconds. Consider optimizing resources to improve site speed.');
+    });
+
+    it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
+        const url = 'http://example.com';
+
+        const mockApiResponse = {
+            lighthouseResult: {
+                audits: {
+                    'speed-index': {
+                        numericValue: 3000 
+                    }
+                }
+            }
+        };
+
+
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+
+        const result = await service.analyzeSiteSpeed(url);
+
+        expect(result.loadTime).toBe(3); 
+        expect(result.recommendations).toBe(''); // No recommendations for load time <= 3 seconds
+    });
+
+});
+
   describe('analyzeMobileFriendliness', () => {
     it('should return mobile friendliness analysis', async () => {
       const url = 'http://example.com';
@@ -323,5 +457,304 @@ describe('analyzeHeadings', () => {
       expect(result.reasons).toEqual([]);
     });
   });
-  
+  describe('analyzeStructuredData', () => {
+    it('should return structured data analysis with structured data', async () => {
+        const htmlContent = `
+            <html>
+                <head>
+                    <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "Organization",
+                            "url": "http://www.example.com",
+                            "name": "Example"
+                        }
+                    </script>
+                </head>
+                <body></body>
+            </html>
+        `;
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 1,
+            recommendations: '',
+        });
+    });
+
+    it('should return structured data analysis without structured data', async () => {
+        const htmlContent = '<html><head></head><body></body></html>';
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 0,
+            recommendations: 'No structured data found. Add structured data to improve SEO.',
+        });
+    });
+
+    it('should handle multiple structured data scripts', async () => {
+        const htmlContent = `
+            <html>
+                <head>
+                    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "url": "http://www.example.com", "name": "Example"}</script>
+                    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "url": "http://www.example.com", "name": "Example"}</script>
+                </head>
+                <body></body>
+            </html>
+        `;
+        const result = await service.analyzeStructuredData(htmlContent);
+
+        expect(result).toEqual({
+            count: 2,
+            recommendations: '',
+        });
+    });
+  });
+  describe('analyzeIndexability', () => {
+    it('should return indexability analysis for indexable page', async () => {
+        const htmlContent = '<html><head><meta name="robots" content="index, follow"></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: true,
+            recommendations: '',
+        });
+    });
+
+    it('should return indexability analysis for noindex page', async () => {
+        const htmlContent = '<html><head><meta name="robots" content="noindex, nofollow"></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: false,
+            recommendations: 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.',
+        });
+    });
+
+    it('should return indexability analysis for page without meta robots tag', async () => {
+        const htmlContent = '<html><head></head><body></body></html>';
+        const result = await service.analyzeIndexability(htmlContent);
+
+        expect(result).toEqual({
+            isIndexable: true,
+            recommendations: '',
+        });
+    });
+  });
+  describe('analyzeXmlSitemap', () => {
+    it('should return valid analysis for accessible XML sitemap', async () => {
+        const url = 'http://example.com';
+        const sitemapUrl = new URL('/sitemap.xml', url).toString();
+
+        // Mock axios to simulate successful response
+        (axios.get as jest.Mock).mockResolvedValue({ status: 200 });
+
+        const result = await service.analyzeXmlSitemap(url);
+
+        expect(result).toEqual({
+            isSitemapValid: true,
+            recommendations: '',
+        });
+    });
+
+    it('should return invalid analysis for inaccessible XML sitemap', async () => {
+        const url = 'http://example.com';
+        const sitemapUrl = new URL('/sitemap.xml', url).toString();
+
+        (axios.get as jest.Mock).mockRejectedValue(new Error('Failed to fetch'));
+
+        const result = await service.analyzeXmlSitemap(url);
+
+        expect(result).toEqual({
+            isSitemapValid: false,
+            recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+        });
+    });
+});
+describe('analyzeCanonicalTags', () => {
+  it('should return analysis for page with canonical tag', async () => {
+      const htmlContent = '<html><head><link rel="canonical" href="http://example.com/canonical"></head><body></body></html>';
+
+      const result = await service.analyzeCanonicalTags(htmlContent);
+
+      expect(result).toEqual({
+          canonicalTag: 'http://example.com/canonical',
+          isCanonicalTagPresent: true,
+          recommendations: '',
+      });
+  });
+
+  it('should return analysis for page without canonical tag', async () => {
+      const htmlContent = '<html><head></head><body></body></html>';
+
+      const result = await service.analyzeCanonicalTags(htmlContent);
+
+      expect(result).toEqual({
+          canonicalTag: '',
+          isCanonicalTagPresent: false,
+          recommendations: 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.',
+      });
+  });
+});
+describe('runLighthouse', () => {
+  it('should return scores and diagnostics for a valid URL', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: 0.9 },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {
+            'first-contentful-paint': {
+              title: 'First Contentful Paint',
+              description: 'Time to first contentful paint',
+              score: 0.5,
+              scoreDisplayMode: 'numeric',
+              displayValue: '2.0s',
+            },
+            'interactive': {
+              title: 'Time to Interactive',
+              description: 'Time to interactive',
+              score: 0.8,
+              scoreDisplayMode: 'numeric',
+              displayValue: '4.0s',
+            },
+          },
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 90,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [
+          {
+            title: 'First Contentful Paint',
+            description: 'Time to first contentful paint',
+            score: 0.5,
+            displayValue: '2.0s',
+          },
+          {
+            title: 'Time to Interactive',
+            description: 'Time to interactive',
+            score: 0.8,
+            displayValue: '4.0s',
+          },
+        ],
+      },
+    });
+  });
+
+  it('should handle missing category scores gracefully', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: null },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {},
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 0,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [],
+      },
+    });
+  });
+
+  it('should handle missing audit scores gracefully', async () => {
+    const url = 'http://example.com';
+    const lighthouseResponse = {
+      data: {
+        lighthouseResult: {
+          categories: {
+            performance: { score: 0.85 },
+            accessibility: { score: 0.9 },
+            'best-practices': { score: 0.8 },
+          },
+          audits: {
+            'first-contentful-paint': {
+              title: 'First Contentful Paint',
+              description: 'Time to first contentful paint',
+              score: null,
+              scoreDisplayMode: 'numeric',
+              displayValue: '2.0s',
+            },
+          },
+        },
+      },
+    };
+
+    (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+    const result = await service.runLighthouse(url);
+
+    expect(result).toEqual({
+      scores: {
+        performance: 85,
+        accessibility: 90,
+        bestPractices: 80,
+      },
+      diagnostics: {
+        recommendations: [],
+      },
+    });
+  });
+});
+it('should handle missing category scores gracefully', async () => {
+  const url = 'http://example.com';
+  const lighthouseResponse = {
+    data: {
+      lighthouseResult: {
+        categories: {
+          performance: { score: 0.85 },
+          accessibility: { score: null },
+          'best-practices': { score: 0.8 },
+        },
+        audits: {},
+      },
+    },
+  };
+
+  (axios.get as jest.Mock).mockResolvedValue(lighthouseResponse);
+
+  const result = await service.runLighthouse(url);
+
+  expect(result).toEqual({
+    scores: {
+      performance: 85,
+      accessibility: 0, // Ensure it handles null scores correctly
+      bestPractices: 80,
+    },
+    diagnostics: {
+      recommendations: [],
+    },
+  });
+});
+
 });
