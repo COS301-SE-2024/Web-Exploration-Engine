@@ -225,6 +225,7 @@ describe('KeywordAnalysisService', () => {
         density: '0.00',
       });
     });
+    
   });
 
   describe('getKeywordInAnchorTexts', () => {
@@ -300,6 +301,7 @@ describe('KeywordAnalysisService', () => {
         ],
       });
     });
+    
     it('should handle empty anchor texts gracefully', async () => {
   
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
@@ -322,6 +324,7 @@ describe('KeywordAnalysisService', () => {
         anchorDetails: [],
       });
     });
+    
   });
 
   describe('getKeywordInImageAlts', () => {
@@ -358,6 +361,153 @@ describe('KeywordAnalysisService', () => {
           { alt: 'Test Alt', src: 'http://example.com/image.jpg', containsKeywordInAlt: true, containsKeywordInSrc: false },
         ],
       });
+    });
+    it('should correctly count and calculate keyword presence in image alts and srcs', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 3,
+            keywordInAltsCount: 2,
+            keywordInSrcCount: 1,
+            percentageInAlts: '66.67',
+            percentageInSrcs: '33.33',
+            imageDetails: [
+              { alt: 'Keyword in alt', src: 'http://example.com/image1.jpg', containsKeywordInAlt: true, containsKeywordInSrc: false },
+              { alt: 'Another alt', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+              { alt: '', src: 'http://example.com/image3.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInImageAlts('http://example.com', 'Keyword');
+  
+      expect(result).toEqual({
+        totalImages: 3,
+        keywordInAltsCount: 2,
+        keywordInSrcCount: 1,
+        percentageInAlts: '66.67',
+        percentageInSrcs: '33.33',
+        imageDetails: [
+          { alt: 'Keyword in alt', src: 'http://example.com/image1.jpg', containsKeywordInAlt: true, containsKeywordInSrc: false },
+          { alt: 'Another alt', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+          { alt: '', src: 'http://example.com/image3.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+        ],
+      });
+    });
+  
+    it('should handle cases where image alts and srcs do not contain the keyword', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 2,
+            keywordInAltsCount: 0,
+            keywordInSrcCount: 0,
+            percentageInAlts: '0.00',
+            percentageInSrcs: '0.00',
+            imageDetails: [
+              { alt: 'Alt text', src: 'http://example.com/image1.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+              { alt: 'Another alt text', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInImageAlts('http://example.com', 'Keyword');
+  
+      expect(result).toEqual({
+        totalImages: 2,
+        keywordInAltsCount: 0,
+        keywordInSrcCount: 0,
+        percentageInAlts: '0.00',
+        percentageInSrcs: '0.00',
+        imageDetails: [
+          { alt: 'Alt text', src: 'http://example.com/image1.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+          { alt: 'Another alt text', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+        ],
+      });
+    });
+  
+    it('should handle images with empty alt and src attributes', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 3,
+            keywordInAltsCount: 0,
+            keywordInSrcCount: 0,
+            percentageInAlts: '0.00',
+            percentageInSrcs: '0.00',
+            imageDetails: [
+              { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+              { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+              { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInImageAlts('http://example.com', 'Keyword');
+  
+      expect(result).toEqual({
+        totalImages: 3,
+        keywordInAltsCount: 0,
+        keywordInSrcCount: 0,
+        percentageInAlts: '0.00',
+        percentageInSrcs: '0.00',
+        imageDetails: [
+          { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+          { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+          { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+        ],
+      });
+    });
+  
+    it('should return correct results when there are no images on the page', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 0,
+            keywordInAltsCount: 0,
+            keywordInSrcCount: 0,
+            percentageInAlts: '0.00',
+            percentageInSrcs: '0.00',
+            imageDetails: [],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInImageAlts('http://example.com', 'Keyword');
+  
+      expect(result).toEqual({
+        totalImages: 0,
+        keywordInAltsCount: 0,
+        keywordInSrcCount: 0,
+        percentageInAlts: '0.00',
+        percentageInSrcs: '0.00',
+        imageDetails: [],
+      });
+    });
+  
+    it('should handle errors during Puppeteer interactions gracefully', async () => {
+      (puppeteer.launch as jest.Mock).mockRejectedValueOnce(new Error('Puppeteer error'));
+  
+      try {
+        await service.getKeywordInImageAlts('http://example.com', 'Keyword');
+      } catch (e) {
+        expect(e).toEqual(new Error('Puppeteer error'));
+      }
     });
     it('should handle cases with missing image alt attributes', async () => {
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
