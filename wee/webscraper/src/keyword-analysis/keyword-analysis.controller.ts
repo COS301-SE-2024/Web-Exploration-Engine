@@ -1,10 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { KeywordAnalysisService } from './keyword-analysis.service';
 import {
-  TargetKeywordsOperation, TargetKeywordsQuery, TargetKeywordsResponse200, TargetKeywordsResponse400, TargetKeywordsResponse500,
-  KeywordRankingsOperation, KeywordRankingsQuery, KeywordRankingsResponse200, KeywordRankingsResponse400, KeywordRankingsResponse500,
-  KeywordVolumeOperation, KeywordVolumeQuery, KeywordVolumeResponse200, KeywordVolumeResponse400, KeywordVolumeResponse500,
-  KeywordDifficultyOperation, KeywordDifficultyQuery, KeywordDifficultyResponse200, KeywordDifficultyResponse400, KeywordDifficultyResponse500
+  KeywordRankingsOperation,
+  KeywordRankingsQuery,
+  KeywordRankingsResponse200,
+  KeywordRankingsResponse400,
+  KeywordRankingsResponse500,
+
 } from './keyword-analysis.api';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -12,5 +14,20 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('keyword-analysis')
 export class KeywordAnalysisController {
   constructor(private readonly keywordAnalysisService: KeywordAnalysisService) {}
+
+  @Get('keyword-rankings')
+  @KeywordRankingsOperation
+  @KeywordRankingsQuery
+  @KeywordRankingsResponse200
+  @KeywordRankingsResponse400
+  @KeywordRankingsResponse500
+  async getKeywordRankings(
+    @Query('url') url: string,
+    @Query('keyword') keyword: string
+  ) {
+    const rankings = await this.keywordAnalysisService.getKeywordRanking(url, keyword);
+    return { rankings };
+  }
+
 
 }
