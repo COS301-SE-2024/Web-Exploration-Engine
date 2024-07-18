@@ -44,6 +44,13 @@ export class KeywordAnalysisController {
     const anchorTexts = await this.keywordAnalysisService.getKeywordInAnchorTexts(url, keyword);
     return anchorTexts;
   }
-  
+  @Get('keyword-in-image-alts')
+  async getKeywordInImageAlts(
+    @Query('url') url: string,
+    @Query('keyword') keyword: string
+  ) {
+    const imageAlts = await this.keywordAnalysisService.getKeywordInImageAlts(url, keyword);
+    return imageAlts;
+  }
     
 }

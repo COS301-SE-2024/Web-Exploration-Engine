@@ -13,8 +13,7 @@ export class KeywordAnalysisService {
         
         // Perform a Google search for the keyword
         await page.goto(`https://www.google.com/search?q=${encodeURIComponent(keyword)}`);
-        
-        // Extract search results
+
         const results = await page.evaluate(() => {
             return Array.from(document.querySelectorAll('div.g')).map(result => ({
                 title: result.querySelector('h3')?.innerText,
@@ -40,10 +39,8 @@ export class KeywordAnalysisService {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         
-        // Navigate to the target URL
         await page.goto(url);
         
-        // Extract page content and calculate keyword density
         const keywordDensity = await page.evaluate((keyword) => {
             const bodyText = document.body.innerText;
             const keywordCount = (bodyText.match(new RegExp(keyword, 'gi')) || []).length;
@@ -64,10 +61,8 @@ export class KeywordAnalysisService {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
         
-        // Navigate to the target URL
         await page.goto(url);
-        
-        // Extract anchor texts and check keyword presence
+
         const anchorTextAnalysis = await page.evaluate((keyword) => {
             const anchors = document.querySelectorAll('a');
             const anchorDetails = Array.from(anchors).map(anchor => {
@@ -95,6 +90,53 @@ export class KeywordAnalysisService {
         await browser.close();
         
         return anchorTextAnalysis;
+    }
+    
+    async getKeywordInImageAlts(url: string, keyword: string) {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        await page.goto(url);
+        
+        const imageAltAnalysis = await page.evaluate((keyword) => {
+            const images = document.querySelectorAll('img');
+            const totalImages = images.length;
+            let keywordInAltsCount = 0;
+            let keywordInSrcCount = 0;
+    
+            const imageDetails = Array.from(images).map(img => {
+                const alt = img.alt;
+                const src = img.src;
+                const containsKeywordInAlt = alt.includes(keyword);
+                const containsKeywordInSrc = src.includes(keyword);
+    
+                if (containsKeywordInAlt) keywordInAltsCount++;
+                if (containsKeywordInSrc) keywordInSrcCount++;
+    
+                return {
+                    alt,
+                    src,
+                    containsKeywordInAlt,
+                    containsKeywordInSrc
+                };
+            });
+    
+            const percentageInAlts = ((keywordInAltsCount / totalImages) * 100).toFixed(2);
+            const percentageInSrcs = ((keywordInSrcCount / totalImages) * 100).toFixed(2);
+    
+            return { 
+                totalImages,
+                keywordInAltsCount,
+                keywordInSrcCount,
+                percentageInAlts,
+                percentageInSrcs,
+                imageDetails 
+            };
+        }, keyword);
+        
+        await browser.close();
+        
+        return imageAltAnalysis;
     }
     
 }
