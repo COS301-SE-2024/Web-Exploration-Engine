@@ -1,44 +1,5 @@
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 
-// Target Keywords endpoint
-export const TargetKeywordsOperation = ApiOperation({ summary: 'Identify primary and secondary keywords the site is targeting' });
-export const TargetKeywordsQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
-export const TargetKeywordsResponse200 = ApiResponse({
-  status: 200,
-  description: 'Keywords successfully identified',
-  schema: {
-    type: 'object',
-    properties: {
-      primaryKeywords: { type: 'array', items: { type: 'string' } },
-      secondaryKeywords: { type: 'array', items: { type: 'string' } },
-    },
-  },
-});
-export const TargetKeywordsResponse400 = ApiResponse({
-  status: 400,
-  description: 'Bad Request. URL parameter is required',
-  schema: {
-    type: 'object',
-    properties: {
-      errorStatus: { type: 'number' },
-      errorCode: { type: 'string' },
-      errorMessage: { type: 'string' },
-    },
-  },
-});
-export const TargetKeywordsResponse500 = ApiResponse({
-  status: 500,
-  description: 'Internal Server Error. An error occurred while identifying keywords',
-  schema: {
-    type: 'object',
-    properties: {
-      errorStatus: { type: 'number' },
-      errorCode: { type: 'string' },
-      errorMessage: { type: 'string' },
-    },
-  },
-});
-
 // Keyword Rankings endpoint
 export const KeywordRankingsOperation = ApiOperation({ summary: 'Track where the site ranks for these keywords on search engines' });
 export const KeywordRankingsQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
@@ -48,13 +9,14 @@ export const KeywordRankingsResponse200 = ApiResponse({
   schema: {
     type: 'object',
     properties: {
-      keywordRankings: { type: 'array', items: { type: 'string' } },
+      ranking: { type: 'number' },
+      results: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, link: { type: 'string' } } } },
     },
   },
 });
 export const KeywordRankingsResponse400 = ApiResponse({
   status: 400,
-  description: 'Bad Request. URL parameter is required',
+  description: 'Bad Request. URL or keyword parameter is required',
   schema: {
     type: 'object',
     properties: {
@@ -77,22 +39,24 @@ export const KeywordRankingsResponse500 = ApiResponse({
   },
 });
 
-// Keyword Volume endpoint
-export const KeywordVolumeOperation = ApiOperation({ summary: 'Measure the search volume for each keyword' });
-export const KeywordVolumeQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
-export const KeywordVolumeResponse200 = ApiResponse({
+// Keyword Density endpoint
+export const KeywordDensityOperation = ApiOperation({ summary: 'Measure the keyword density on the webpage' });
+export const KeywordDensityQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
+export const KeywordDensityResponse200 = ApiResponse({
   status: 200,
-  description: 'Keyword volume successfully measured',
+  description: 'Keyword density successfully measured',
   schema: {
     type: 'object',
     properties: {
-      keywordVolume: { type: 'array', items: { type: 'object', properties: { keyword: { type: 'string' }, volume: { type: 'number' } } } },
+      keywordCount: { type: 'number' },
+      totalWords: { type: 'number' },
+      density: { type: 'string' }, // Density as a percentage formatted to 2 decimal places
     },
   },
 });
-export const KeywordVolumeResponse400 = ApiResponse({
+export const KeywordDensityResponse400 = ApiResponse({
   status: 400,
-  description: 'Bad Request. URL parameter is required',
+  description: 'Bad Request. URL or keyword parameter is required',
   schema: {
     type: 'object',
     properties: {
@@ -102,9 +66,9 @@ export const KeywordVolumeResponse400 = ApiResponse({
     },
   },
 });
-export const KeywordVolumeResponse500 = ApiResponse({
+export const KeywordDensityResponse500 = ApiResponse({
   status: 500,
-  description: 'Internal Server Error. An error occurred while measuring keyword volume',
+  description: 'Internal Server Error. An error occurred while measuring keyword density',
   schema: {
     type: 'object',
     properties: {
@@ -115,22 +79,23 @@ export const KeywordVolumeResponse500 = ApiResponse({
   },
 });
 
-// Keyword Difficulty endpoint
-export const KeywordDifficultyOperation = ApiOperation({ summary: 'Assess the competition level for each keyword' });
-export const KeywordDifficultyQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
-export const KeywordDifficultyResponse200 = ApiResponse({
+// Keyword in Anchor Texts endpoint
+export const KeywordInAnchorTextsOperation = ApiOperation({ summary: 'Analyze keyword presence in anchor texts on the webpage' });
+export const KeywordInAnchorTextsQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
+export const KeywordInAnchorTextsResponse200 = ApiResponse({
   status: 200,
-  description: 'Keyword difficulty successfully assessed',
+  description: 'Keyword presence in anchor texts successfully analyzed',
   schema: {
     type: 'object',
     properties: {
-      keywordDifficulty: { type: 'array', items: { type: 'object', properties: { keyword: { type: 'string' }, difficulty: { type: 'number' } } } },
+      keywordInAnchorsPercentage: { type: 'string' }, // Percentage formatted to 2 decimal places
+      anchorDetails: { type: 'array', items: { type: 'object', properties: { text: { type: 'string' }, href: { type: 'string' }, containsKeyword: { type: 'boolean' } } } },
     },
   },
 });
-export const KeywordDifficultyResponse400 = ApiResponse({
+export const KeywordInAnchorTextsResponse400 = ApiResponse({
   status: 400,
-  description: 'Bad Request. URL parameter is required',
+  description: 'Bad Request. URL or keyword parameter is required',
   schema: {
     type: 'object',
     properties: {
@@ -140,9 +105,9 @@ export const KeywordDifficultyResponse400 = ApiResponse({
     },
   },
 });
-export const KeywordDifficultyResponse500 = ApiResponse({
+export const KeywordInAnchorTextsResponse500 = ApiResponse({
   status: 500,
-  description: 'Internal Server Error. An error occurred while assessing keyword difficulty',
+  description: 'Internal Server Error. An error occurred while analyzing keyword presence in anchor texts',
   schema: {
     type: 'object',
     properties: {
@@ -153,3 +118,45 @@ export const KeywordDifficultyResponse500 = ApiResponse({
   },
 });
 
+// Keyword in Image Alts endpoint
+export const KeywordInImageAltsOperation = ApiOperation({ summary: 'Analyze keyword presence in image alt texts on the webpage' });
+export const KeywordInImageAltsQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to analyze' });
+export const KeywordInImageAltsResponse200 = ApiResponse({
+  status: 200,
+  description: 'Keyword presence in image alt texts successfully analyzed',
+  schema: {
+    type: 'object',
+    properties: {
+      totalImages: { type: 'number' },
+      keywordInAltsCount: { type: 'number' },
+      keywordInSrcCount: { type: 'number' },
+      percentageInAlts: { type: 'string' }, // Percentage formatted to 2 decimal places
+      percentageInSrcs: { type: 'string' }, // Percentage formatted to 2 decimal places
+      imageDetails: { type: 'array', items: { type: 'object', properties: { alt: { type: 'string' }, src: { type: 'string' }, containsKeywordInAlt: { type: 'boolean' }, containsKeywordInSrc: { type: 'boolean' } } } },
+    },
+  },
+});
+export const KeywordInImageAltsResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL or keyword parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+export const KeywordInImageAltsResponse500 = ApiResponse({
+  status: 500,
+  description: 'Internal Server Error. An error occurred while analyzing keyword presence in image alt texts',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
