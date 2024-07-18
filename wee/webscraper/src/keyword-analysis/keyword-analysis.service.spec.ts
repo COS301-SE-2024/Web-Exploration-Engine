@@ -37,7 +37,28 @@ describe('KeywordAnalysisService', () => {
         results: mockResults,
       });
     });
-
+    it('should handle edge cases with different URL formats', async () => {
+      const mockResults = [
+        { title: 'Test Title 1', link: 'http://example.com' },
+        { title: 'Test Title 2', link: 'http://example.com/page' },
+      ];
+  
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
+  
+      expect(result).toEqual({
+        ranking: 1,
+        results: mockResults,
+      });
+    });
     it('should return empty ranking if URL not found', async () => {
 
       const mockResults = [
@@ -61,7 +82,6 @@ describe('KeywordAnalysisService', () => {
       });
     });
     it('should handle invalid URLs gracefully', async () => {
-      // Arrange
       const invalidUrl = 'invalid-url';
       try {
         await service.getKeywordRanking(invalidUrl, 'test keyword');
@@ -133,7 +153,53 @@ describe('KeywordAnalysisService', () => {
         density: '3.00',
       });
     });
-
+    it('should handle cases with empty content', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            keywordCount: 0,
+            totalWords: 0,
+            density: '0.00',
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordDensity('http://example.com', 'test keyword');
+  
+      expect(result).toEqual({
+        keywordCount: 0,
+        totalWords: 0,
+        density: '0.00',
+      });
+    });
+  
+    it('should handle large documents efficiently', async () => {
+      const largeText = 'keyword '.repeat(1000) + 'some more text';
+      
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            keywordCount: 1000,
+            totalWords: 10000,
+            density: '10.00',
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordDensity('http://example.com', 'keyword');
+  
+      expect(result).toEqual({
+        keywordCount: 1000,
+        totalWords: 10000,
+        density: '10.00',
+      });
+    });
     it('should return zero density if keyword is not present', async () => {
 
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
@@ -186,6 +252,51 @@ describe('KeywordAnalysisService', () => {
         keywordInAnchorsPercentage: '50.00',
         anchorDetails: [
           { text: 'Test Anchor', href: 'http://example.com', containsKeyword: true },
+        ],
+      });
+    });
+    it('should handle cases with no anchor tags', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            keywordInAnchorsPercentage: '0.00',
+            anchorDetails: [],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInAnchorTexts('http://example.com', 'test keyword');
+  
+      expect(result).toEqual({
+        keywordInAnchorsPercentage: '0.00',
+        anchorDetails: [],
+      });
+    });
+  
+    it('should handle cases with empty anchor text', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            keywordInAnchorsPercentage: '0.00',
+            anchorDetails: [
+              { text: '', href: 'http://example.com', containsKeyword: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInAnchorTexts('http://example.com', 'test keyword');
+  
+      expect(result).toEqual({
+        keywordInAnchorsPercentage: '0.00',
+        anchorDetails: [
+          { text: '', href: 'http://example.com', containsKeyword: false },
         ],
       });
     });
@@ -248,6 +359,42 @@ describe('KeywordAnalysisService', () => {
         ],
       });
     });
+    it('should handle cases with missing image alt attributes', async () => {
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 3,
+            keywordInAltsCount: 0,
+            keywordInSrcCount: 2,
+            percentageInAlts: '0.00',
+            percentageInSrcs: '66.67',
+            imageDetails: [
+              { alt: '', src: 'http://example.com/image1.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+              { alt: '', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+              { alt: '', src: 'http://example.com/image3.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInImageAlts('http://example.com', 'test keyword');
+  
+      expect(result).toEqual({
+        totalImages: 3,
+        keywordInAltsCount: 0,
+        keywordInSrcCount: 2,
+        percentageInAlts: '0.00',
+        percentageInSrcs: '66.67',
+        imageDetails: [
+          { alt: '', src: 'http://example.com/image1.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+          { alt: '', src: 'http://example.com/image2.jpg', containsKeywordInAlt: false, containsKeywordInSrc: true },
+          { alt: '', src: 'http://example.com/image3.jpg', containsKeywordInAlt: false, containsKeywordInSrc: false },
+        ],
+      });
+    });
     it('should handle cases where images have no alt text or src attributes', async () => {
       // Arrange
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
@@ -268,10 +415,8 @@ describe('KeywordAnalysisService', () => {
         close: jest.fn(),
       });
 
-      // Act
       const result = await service.getKeywordInImageAlts('http://example.com', 'test keyword');
 
-      // Assert
       expect(result).toEqual({
         totalImages: 5,
         keywordInAltsCount: 0,
