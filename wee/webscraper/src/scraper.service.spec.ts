@@ -11,9 +11,16 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import {
+    ErrorResponse,
+    RobotsResponse,
+    Metadata,
+    IndustryClassification,
+  } from './models/ServiceModels';
 
 describe('ScraperService', () => {
     let service: ScraperService;
+    let cacheManager: Cache;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -28,7 +35,9 @@ describe('ScraperService', () => {
                 },
                 {
                     provide: RobotsService,
-                    useValue: {},
+                    useValue: {
+                        readRobotsFile: jest.fn(),
+                    },
                 },
                 {
                     provide: ScrapeMetadataService,
@@ -36,7 +45,9 @@ describe('ScraperService', () => {
                 },
                 {
                     provide: ScrapeStatusService,
-                    useValue: {},
+                    useValue: {
+                        scrapeStatus: jest.fn(),
+                    },
                 },
                 {
                     provide: IndustryClassificationService,
@@ -70,9 +81,44 @@ describe('ScraperService', () => {
         }).compile();
 
         service = module.get<ScraperService>(ScraperService);
+        cacheManager = module.get<Cache>('CACHE_MANAGER');
     });
 
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
+
+    it('should return cached data on cache hit', async () => {
+        const url = 'http://example.com';
+        const cachedData = {
+            url,
+            time: 0,
+            domainStatus: '',
+            robots: null,
+            metadata: null,
+            industryClassification: null,
+            logo: '',
+            images: [],
+            slogan: '',
+            contactInfo: { emails: [], phones: [] },
+            addresses: [],
+            screenshot: '',
+            seoAnalysis: null,
+        };
+
+        jest.spyOn(cacheManager, 'get').mockResolvedValue(JSON.stringify(cachedData));
+        const result = await service.scrape(url);
+
+        expect(cacheManager.get).toHaveBeenCalledWith(url);
+        expect(result.url).toBe(url);
+
+        expect(result.time).toBeCloseTo(cachedData.time, 2);
+        
+        expect(result).toEqual(expect.objectContaining({
+            ...cachedData,
+            time: result.time
+        }));
+    });
+
+
 });
