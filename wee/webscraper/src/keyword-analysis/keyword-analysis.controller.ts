@@ -6,7 +6,6 @@ import {
   KeywordRankingsResponse200,
   KeywordRankingsResponse400,
   KeywordRankingsResponse500,
-
 } from './keyword-analysis.api';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -29,5 +28,13 @@ export class KeywordAnalysisController {
     return { rankings };
   }
 
-
+  @Get('keyword-density')
+  async getKeywordDensity(
+    @Query('url') url: string,
+    @Query('keyword') keyword: string
+  ) {
+    const density = await this.keywordAnalysisService.getKeywordDensity(url, keyword);
+    return { density };
+  }
+    
 }

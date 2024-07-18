@@ -4,7 +4,7 @@ import { URL } from 'url';
 
 @Injectable()
 export class KeywordAnalysisService {
-    async getKeywordRanking(url, keyword) {
+    async getKeywordRanking(url: string, keyword: string) {
         // Normalize the URL
         const normalizedUrl = new URL(url).hostname;
 
@@ -31,8 +31,34 @@ export class KeywordAnalysisService {
         await browser.close();
         
         return {
-            ranking: ranking > 0 ? ranking : 'Not found',
-            results: results//bring back results--> we can maybe give list of these if there is no ranking of the url found.
+            ranking: ranking > 0 ? ranking : '',
+            results: results // Bring back results; we can maybe give a list of these if there is no ranking of the URL found.
         };
     }
+
+    async getKeywordDensity(url: string, keyword: string) {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        
+        // Navigate to the target URL
+        await page.goto(url);
+        
+        // Extract page content and calculate keyword density
+        const keywordDensity = await page.evaluate((keyword) => {
+            const bodyText = document.body.innerText;
+            const keywordCount = (bodyText.match(new RegExp(keyword, 'gi')) || []).length;
+            const totalWords = bodyText.split(/\s+/).length;
+            const density = (keywordCount / totalWords) * 100;
+            return {
+                keywordCount,
+                totalWords,
+                density: density.toFixed(2)
+            };
+        }, keyword);
+      
+        await browser.close();
+        
+        return keywordDensity;
+    }
+    
 }
