@@ -60,7 +60,15 @@ describe('KeywordAnalysisService', () => {
         results: mockResults,
       });
     });
-
+    it('should handle invalid URLs gracefully', async () => {
+      // Arrange
+      const invalidUrl = 'invalid-url';
+      try {
+        await service.getKeywordRanking(invalidUrl, 'test keyword');
+      } catch (e) {
+        expect(e.message).toContain('Invalid URL');
+      }
+    });
     it('should handle errors during Puppeteer interactions', async () => {
  
       (puppeteer.launch as jest.Mock).mockRejectedValueOnce(new Error('Puppeteer error'));
@@ -181,7 +189,6 @@ describe('KeywordAnalysisService', () => {
         ],
       });
     });
-
     it('should handle empty anchor texts gracefully', async () => {
   
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
@@ -241,7 +248,41 @@ describe('KeywordAnalysisService', () => {
         ],
       });
     });
+    it('should handle cases where images have no alt text or src attributes', async () => {
+      // Arrange
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce({
+            totalImages: 5,
+            keywordInAltsCount: 0,
+            keywordInSrcCount: 0,
+            percentageInAlts: '0.00',
+            percentageInSrcs: '0.00',
+            imageDetails: [
+              { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+            ],
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
 
+      // Act
+      const result = await service.getKeywordInImageAlts('http://example.com', 'test keyword');
+
+      // Assert
+      expect(result).toEqual({
+        totalImages: 5,
+        keywordInAltsCount: 0,
+        keywordInSrcCount: 0,
+        percentageInAlts: '0.00',
+        percentageInSrcs: '0.00',
+        imageDetails: [
+          { alt: '', src: '', containsKeywordInAlt: false, containsKeywordInSrc: false },
+        ],
+      });
+    });
     it('should handle no images on the page', async () => {
 
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
