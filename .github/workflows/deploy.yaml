@@ -21,6 +21,9 @@ jobs:
           envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
           envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
           envkey_NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
+          envkey_REDIS_HOST : ${{secrets.REDIS_HOST}}
+          envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
+          envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
@@ -32,6 +35,9 @@ jobs:
           envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
           envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
           envkey_NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
+          envkey_REDIS_HOST : ${{secrets.REDIS_HOST}}
+          envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
+          envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
