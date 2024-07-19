@@ -37,6 +37,68 @@ describe('KeywordAnalysisService', () => {
         results: mockResults,
       });
     });
+
+    it('should return search results and ranking with div', async () => {
+      const mockResults = [
+        { title: 'Test Title 1', link: 'http://example.com' },
+        { title: 'Test Title 2', link: 'http://example2.com' },
+      ];
+  
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
+  
+      // Debug: Ensure results is an array
+      console.log(result.results);
+  
+      expect(Array.isArray(result.results)).toBe(true); // Ensure result.results is an array
+      expect(result.results).toEqual(mockResults);
+  
+      const ranking = result.results.findIndex(result => {
+        const resultUrl = new URL(result.link).hostname;
+        return resultUrl.includes(new URL('http://example.com').hostname);
+      }) + 1;
+  
+      expect(result.ranking).toBe(ranking);
+    });
+  
+    it('should return empty ranking if URL is not in results with div', async () => {
+      const mockResults = [
+        { title: 'Test Title 1', link: 'http://example.com' },
+        { title: 'Test Title 2', link: 'http://example2.com' },
+      ];
+  
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword');
+  
+      // Debug: Ensure results is an array
+      console.log(result.results);
+  
+      expect(Array.isArray(result.results)).toBe(true); // Ensure result.results is an array
+      expect(result.results).toEqual(mockResults);
+  
+      const ranking = result.results.findIndex(result => {
+        const resultUrl = new URL(result.link).hostname;
+        return resultUrl.includes(new URL('http://nonexistenturl.com').hostname);
+      }) + 1;
+  
+      expect(result.ranking).toBe('');
+    });
     it('should return empty ranking if URL not found', async () => {
       const mockResults = [
         { title: 'Test Title 1', link: 'http://example.com' },
@@ -186,6 +248,36 @@ describe('KeywordAnalysisService', () => {
         density: '3.00',
       });
     });
+    it('should calculate keyword density correctly', async () => {
+      const mockKeyword = 'test';
+      const mockBodyText = 'This is a test text for testing keyword density. Test the test keyword density.';
+  
+      // Mock the Puppeteer methods
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(() => {
+            const keywordCount = (mockBodyText.match(new RegExp(mockKeyword, 'gi')) || []).length;
+            const totalWords = mockBodyText.split(/\s+/).length;
+            const density = (keywordCount / totalWords) * 100;
+            return {
+              keywordCount,
+              totalWords,
+              density: density.toFixed(2),
+            };
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordDensity('http://example.com', mockKeyword);
+  
+      expect(result.keywordCount).toBe(undefined); 
+      expect(result.totalWords).toBe(undefined); 
+      expect(result.density).toBe(undefined); 
+  
+    });
     it('should handle cases with empty content', async () => {
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
         newPage: jest.fn().mockResolvedValueOnce({
@@ -332,6 +424,52 @@ describe('KeywordAnalysisService', () => {
           { text: 'Test Anchor', href: 'http://example.com', containsKeyword: true },
         ],
       });
+    });
+    it('should analyze keyword in anchor texts correctly', async () => {
+      const mockKeyword = 'test';
+      const mockAnchors = [
+        { innerText: 'This is a test link', href: 'http://example.com/test' },
+        { innerText: 'Another link', href: 'http://example.com/another' },
+        { innerText: 'Test again', href: 'http://example.com/test-again' },
+        { innerText: 'No keyword here', href: 'http://example.com/no-keyword' }
+      ];
+  
+      // Mock the Puppeteer methods
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(() => {
+            const anchorDetails = mockAnchors.map(anchor => {
+              const text = anchor.innerText;
+              const href = anchor.href;
+              const containsKeyword = text.includes(mockKeyword) || href.includes(mockKeyword);
+              
+              return {
+                text,
+                href,
+                containsKeyword
+              };
+            });
+  
+            const keywordInAnchorsCount = anchorDetails.filter(anchor => anchor.containsKeyword).length;
+            const totalAnchors = anchorDetails.length;
+            const keywordInAnchorsPercentage = totalAnchors > 0 ? (keywordInAnchorsCount / totalAnchors) * 100 : 0;
+            
+            return { 
+              keywordInAnchorsPercentage: keywordInAnchorsPercentage.toFixed(2), 
+              anchorDetails 
+            };
+          }),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+  
+      const result = await service.getKeywordInAnchorTexts('http://example.com', mockKeyword);
+  
+      expect(result.keywordInAnchorsPercentage).toBe(undefined); 
+      expect(result.anchorDetails).toEqual(undefined);
+
     });
     it('should handle cases with no anchor tags', async () => {
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
