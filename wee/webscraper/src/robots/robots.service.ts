@@ -11,6 +11,9 @@ export class RobotsService {
   async extractAllowedPaths(
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
+    logger.log("domain");
+
+   
     // Extract base URL
     const domain = this.extractDomain(baseUrl);
     // Construct the URL for the robots.txt file
@@ -42,10 +45,12 @@ export class RobotsService {
 
       // Parse the robots.txt file
       const robotstxt = await response.text();
+      console.warn(`obtained robot txt file ${robotstxtUrl}`);
+
 
       if (!robotstxt) {
         console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
-        logger.warn(`robots.txt content is empty for ${robotstxtUrl}`);
+        logger.warn(`robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
         return {
           allowedPaths: [],
           disallowedPaths: [],
