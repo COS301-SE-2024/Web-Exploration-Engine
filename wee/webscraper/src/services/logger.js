@@ -11,11 +11,11 @@ const getLogger = (fileName = 'application') => {
   });
 
   const consoleTransport = new transports.Console({
-    //level: process.env.LOG_LEVEL,
+   // level: process.env.LOG_LEVEL,
     handleExceptions: false,
     json: false,
     colorize: true,
-    format: format.printf((i) => `${i.message}`),
+    format: format.printf((i) => `${i.message} ${i.obj}`),
   });
 
   const logger = createLogger({
@@ -27,8 +27,8 @@ const getLogger = (fileName = 'application') => {
       format.errors({ stack: true }),
       format.splat(),
       format.printf(
-        ({ level, message, label = process.env.NODE_ENV, timestamp }) =>
-          `${timestamp} [${label}] ${level}: ${message}`
+        ({ level, message, label, obj = process.env.NODE_ENV, timestamp }) =>
+          `${timestamp} [${obj}] [${label}] ${level}: ${message}`
       )
     ),
     defaultMeta: { service: 'my-app' },
