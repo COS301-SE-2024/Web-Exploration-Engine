@@ -22,7 +22,7 @@ const getLogger = (fileName = 'application') => {
     level: 'info',
     format: format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss',
+        format: 'YYYY-MM-DD HH:mm:ss.SSS',
       }),
       format.errors({ stack: true }),
       format.splat(),
