@@ -30,6 +30,12 @@ interface SummaryInfo {
   description: string;
 }
 
+interface TitleTags {
+  length: number;
+  metaDescription: string;
+  recommendations: string;
+}
+
 export default function Results() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -67,6 +73,7 @@ function ResultsComponent() {
   const [emails, setEmails] = useState<string[]>([]);
   const [phones, setPhones] = useState<string[]>([]);
   const [socialLinks, setSocialLinks] = useState<string[]>([]);
+  const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTags>();
 
   useEffect(() => {
     if (url) {
@@ -102,6 +109,7 @@ function ResultsComponent() {
           setEmails(urlResults[0].contactInfo.emails);
           setPhones(urlResults[0].contactInfo.phones);
           setSocialLinks(urlResults[0].contactInfo.socialLinks);
+          setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
         }
       }
     }
@@ -702,7 +710,50 @@ function ResultsComponent() {
           <Tab key="seo" title="SEO Analysis">
             <Card>
               <CardBody>
-                seo
+                {/* Keyword Analysis */}
+                <div>
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                    Keyword Analysis
+                    <InfoPopOver 
+                      heading="Keyword Analysis" 
+                      content="Where does this data come from or what does it mean (insigth)" 
+                      placement="right-end" 
+                    />
+                  </h3>
+                </div>
+
+                {/* Onpage Analysis */}
+                <div>
+                  {/* Heading */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                    On-Page Analysis
+                    <InfoPopOver 
+                      heading="On-Page Analysis" 
+                      content="Where does this data come from or what does it mean (insigth)" 
+                      placement="right-end" 
+                    />
+                  </h3>
+
+                  {/* Title Tags */}
+                  <div className='bg-pink-200 p-2'>
+                    <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 py-2'>Title Tags</h4>
+                    <p>Metadata description: {titleTagsAnalysis?.metaDescription}</p>
+                    <p>Length: {titleTagsAnalysis?.length}</p>
+                    <p>Recommendations: {titleTagsAnalysis?.recommendations}</p>                    
+                  </div>
+                </div>
+
+                {/* Technical Analysis */}
+                <div>
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                    Technical Analysis
+                    <InfoPopOver 
+                      heading="Technical Analysis" 
+                      content="Where does this data come from or what does it mean (insigth)" 
+                      placement="right-end" 
+                    />
+                  </h3>
+                </div>
               </CardBody>
             </Card>
           </Tab>
