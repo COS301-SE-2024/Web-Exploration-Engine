@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 @Injectable()
 export class RobotsService {
   // Returns all the paths user agent can scrape in the form of an array
-
+  serviceName = RobotsService;
   async extractAllowedPaths(
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
@@ -21,8 +21,14 @@ export class RobotsService {
 
       // Check if website has a robots.txt file -- if not, return an empty set
       if (response.status === 404) {
-        console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
-        logger.warn(`robots.txt does not exist for ${robotstxtUrl}`);
+        console.warn(
+          `robots.txt does not exist for ${robotstxtUrl}`,
+          this.serviceName
+        );
+        logger.warn(
+          `robots.txt does not exist for ${robotstxtUrl}`,
+          this.serviceName
+        );
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -32,7 +38,8 @@ export class RobotsService {
       // Check if error occured
       if (!response.ok) {
         logger.error(
-          `An error occurred while fetching robots.txt from ${robotstxtUrl}`
+          `An error occurred while fetching robots.txt from ${robotstxtUrl}`,
+          this.serviceName
         );
 
         throw new Error(
@@ -44,8 +51,14 @@ export class RobotsService {
       const robotstxt = await response.text();
 
       if (!robotstxt) {
-        console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
-        logger.warn(`robots.txt content is empty for ${robotstxtUrl}`);
+        console.warn(
+          `robots.txt content is empty for ${robotstxtUrl}`,
+          RobotsService
+        );
+        logger.warn(
+          `robots.txt content is empty for ${robotstxtUrl}`,
+          this.serviceName
+        );
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -94,11 +107,11 @@ export class RobotsService {
   extractDomain(url: string): string {
     try {
       const parsedUrl = new URL(url);
-      logger.log(`Parse url ${parsedUrl}`);
+      logger.log(`Parsed url ${parsedUrl}`, this.serviceName);
 
       return parsedUrl.origin;
     } catch (error) {
-      logger.error(`Extracting Domain Error ${error}`);
+      logger.error(`Extracting Domain Error ${error}`, this.serviceName);
       throw new Error('Invalid URL');
     }
   }
