@@ -11,6 +11,7 @@ export interface ScraperResult {
   time:number;
   addresses: string[];
   screenshot: string;
+  seoAnalysis: SeoAnalysis;
 }
 
 export interface ErrorResponse {
@@ -21,7 +22,6 @@ export interface ErrorResponse {
     timestamp: string;
     path: string;
   }
-
 }
 
 export interface RobotsResponse {
@@ -56,6 +56,89 @@ export interface ContactInfo {
   emails: string[],
   phones: string[],
   socialLinks: string[]
+}
+
+export interface SeoAnalysis {
+  XMLSitemapAnalysis: XMLSitemapAnalysis;
+  canonicalTagAnalysis: CanonicalTagAnalysis;
+  headingAnalysis: HeadingAnalysis;
+  imageAnalysis: ImageAnalysis;
+  indexabilityAnalysis: IndexabilityAnalysis;
+  internalLinksAnalysis: InternalLinksAnalysis;
+  metaDescriptionAnalysis: MetaDescriptionAnalysis;
+  mobileFriendlinessAnalysis: MobileFriendlinessAnalysis;
+  structuredDataAnalysis: StructuredDataAnalysis;
+  titleTagsAnalysis: TitleTagsAnalysis;
+  uniqueContentAnalysis: UniqueContentAnalysis;
+}
+
+export interface XMLSitemapAnalysis {
+  isSitemapValid: boolean;
+  recommendations: string;
+}
+
+export interface CanonicalTagAnalysis {
+  canonicalTag: string;
+  isCanonicalTagPresent: boolean;
+  recommendations: string;
+}
+
+export interface HeadingAnalysis {
+  count: number;
+  headings: string[];
+  recommendations: string;
+}
+
+export interface ImageAnalysis {
+  errorUrls: string[];
+  missingAltTextCount: number;
+  nonOptimizedCount: number;
+  reasonsMap: ReasonsMap;
+  recommendations: string;
+  totalImages: number;
+}
+
+export interface ReasonsMap {
+  format: string[];
+  other: string[];
+  size: string[];
+}
+
+export interface IndexabilityAnalysis {
+  isIndexable: boolean;
+  recommendations: string;
+}
+
+export interface InternalLinksAnalysis {
+  recommendations: string;
+  totalLinks: number;
+  uniqueLinks: number;
+}
+
+export interface MetaDescriptionAnalysis {
+  length: number;
+  recommendations: string;
+  titleTag: string;
+}
+
+export interface MobileFriendlinessAnalysis {
+  isResponsive: boolean;
+  recommendations: string;
+}
+
+export interface StructuredDataAnalysis {
+  count: number;
+  recommendations: string;
+}
+
+export interface TitleTagsAnalysis {
+  length: number;
+  metaDescription: string;
+  recommendations: string;
+}
+
+export interface UniqueContentAnalysis {
+
 }
 
 export interface Summary {
