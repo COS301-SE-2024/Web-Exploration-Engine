@@ -5,3 +5,4 @@ node_modules/.bin/node-which
 /node_modules
 my.secrets
 /wee/logging/prometheus
+/wee/logs
