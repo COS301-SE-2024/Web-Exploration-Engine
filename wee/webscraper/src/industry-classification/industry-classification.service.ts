@@ -13,6 +13,19 @@ export class IndustryClassificationService {
 
   private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
 
+  private readonly CANDIDATE_LABELS = [
+    'Mining and Minerals', 'Agriculture', 'Manufacturing', 'Finance and Banking',
+    'Information Technology', 'Construction', 'Transportation and Logistics',
+    'Health Care', 'Education', 'Entertainment and Media', 'Forestry and Paper',
+    'Biotechnology', 'Aerospace', 'Marine and Shipping', 'Chemicals',
+    'Textiles and Apparel', 'Petroleum and Gas', 'Agribusiness', 'Sports and Recreation',
+    'Retail and Consumer Goods', 'Environmental Services', 'Real Estate and Property Development',
+    'Telecommunications', 'Utilities', 'Defense and Security', 'Automotive', 'Pharmaceuticals',
+    'Hospitality', 'Construction Materials', 'Renewable Energy', 'Marine Resources',
+    'Logistics and Supply Chain Management', 'Arts and Culture', 'Social Services', 'Travel and Tourism','Restaurants',
+    'Insurance','Legal Services','Fitness and Wellness','Jewelry'
+  ];
+
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     try {
       const metadataClass = await this.metadataClassify(metadata);
@@ -117,39 +130,49 @@ export class IndustryClassificationService {
     }
     
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
-    const labels = ['Finance', 'Health', 'Retail', 'Education']; 
-  
+    const batches = this.createLabelBatches(this.CANDIDATE_LABELS, 10);
+
     try {
-      const response = await axios.post(
-        this.HUGGING_FACE_ZERO_SHOT_API_URL,
-        {
-          inputs: inputText,
-          parameters: { candidate_labels: labels }
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+      const allResults = [];
+
+      for (const batch of batches) {
+        const response = await axios.post(
+          this.HUGGING_FACE_ZERO_SHOT_API_URL,
+          {
+            inputs: inputText,
+            parameters: { candidate_labels: batch }
           },
+          {
+            headers: {
+              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            },
+          }
+        );
+
+        if (response.data && response.data.labels && response.data.scores) {
+          const results = response.data.labels.map((label: string, index: number) => ({
+            label,
+            score: response.data.scores[index]
+          }));
+          allResults.push(...results);
         }
-      );
-  
-      if (response.data && response.data.labels && response.data.scores) {
-        const results = response.data.labels.map((label: string, index: number) => ({
-          label,
-          score: response.data.scores[index]
-        }));
-  
-        const topResults = results
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 3);
-  
-        return topResults;
-      } else {
-        throw new Error('Failed to classify industry using zero-shot classification');
       }
+
+      const topResults = allResults
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      return topResults;
     } catch (error) {
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
-  
+
+  private createLabelBatches(labels: string[], batchSize: number): string[][] {
+    const batches = [];
+    for (let i = 0; i < labels.length; i += batchSize) {
+      batches.push(labels.slice(i, i + batchSize));
+    }
+    return batches;
+  }
 }
