@@ -61,15 +61,15 @@ export interface ContactInfo {
 export interface SeoAnalysis {
   XMLSitemapAnalysis: XMLSitemapAnalysis | SEOError; // tech
   canonicalTagAnalysis: CanonicalTagAnalysis | SEOError; // tech
-  headingAnalysis: HeadingAnalysis | SEOError; // on page
-  imageAnalysis: ImageAnalysis | SEOError; // on page
+  headingAnalysis: HeadingAnalysis | SEOError; // on page (1)
+  imageAnalysis: ImageAnalysis | SEOError; // on page (2)
   indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
-  internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page
-  metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page
+  internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page (3)
+  metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page (4)
   mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
   structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
-  titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page
-  uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page
+  titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page (5)
+  uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page (6)
 }
 
 export interface XMLSitemapAnalysis {

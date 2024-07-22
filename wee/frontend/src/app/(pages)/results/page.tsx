@@ -19,6 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock } from "react-icons/fi";
 
 interface Classifications {
   label: string;
@@ -712,7 +713,7 @@ function ResultsComponent() {
               <CardBody>
                 {/* Keyword Analysis */}
                 <div>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
                     Keyword Analysis
                     <InfoPopOver 
                       heading="Keyword Analysis" 
@@ -725,7 +726,7 @@ function ResultsComponent() {
                 {/* Onpage Analysis */}
                 <div>
                   {/* Heading */}
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
                     On-Page Analysis
                     <InfoPopOver 
                       heading="On-Page Analysis" 
@@ -735,17 +736,49 @@ function ResultsComponent() {
                   </h3>
 
                   {/* Title Tags */}
-                  <div className='bg-pink-200 p-2'>
-                    <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 py-2'>Title Tags</h4>
-                    <p>Metadata description: {titleTagsAnalysis?.metaDescription}</p>
-                    <p>Length: {titleTagsAnalysis?.length}</p>
-                    <p>Recommendations: {titleTagsAnalysis?.recommendations}</p>                    
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiSearch />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Title Tags
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Metadata Description
+                        </h5>
+                        <p>{titleTagsAnalysis?.metaDescription}</p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Length
+                        </h5>
+                        <p>{titleTagsAnalysis?.length}</p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Recommendations:
+                        </h5>
+                        <p>{titleTagsAnalysis?.recommendations}</p>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
 
                 {/* Technical Analysis */}
                 <div>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
                     Technical Analysis
                     <InfoPopOver 
                       heading="Technical Analysis" 
