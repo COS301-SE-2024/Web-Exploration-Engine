@@ -33,5 +33,9 @@ export interface IndustryClassification {
   domainClass: {
     label: string;
     score: number;
+  },
+  zeroShotClass: {
+    label: string;
+    score: number;
   }
 }
