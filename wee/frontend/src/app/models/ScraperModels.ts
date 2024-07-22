@@ -59,17 +59,17 @@ export interface ContactInfo {
 }
 
 export interface SeoAnalysis {
-  XMLSitemapAnalysis: XMLSitemapAnalysis;
-  canonicalTagAnalysis: CanonicalTagAnalysis;
-  headingAnalysis: HeadingAnalysis;
-  imageAnalysis: ImageAnalysis;
-  indexabilityAnalysis: IndexabilityAnalysis;
-  internalLinksAnalysis: InternalLinksAnalysis;
-  metaDescriptionAnalysis: MetaDescriptionAnalysis;
-  mobileFriendlinessAnalysis: MobileFriendlinessAnalysis;
-  structuredDataAnalysis: StructuredDataAnalysis;
-  titleTagsAnalysis: TitleTagsAnalysis;
-  uniqueContentAnalysis: UniqueContentAnalysis;
+  XMLSitemapAnalysis: XMLSitemapAnalysis | SEOError; // tech
+  canonicalTagAnalysis: CanonicalTagAnalysis | SEOError; // tech
+  headingAnalysis: HeadingAnalysis | SEOError; // on page
+  imageAnalysis: ImageAnalysis | SEOError; // on page
+  indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
+  internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page
+  metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page
+  mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
+  structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
+  titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page
+  uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page
 }
 
 export interface XMLSitemapAnalysis {
@@ -138,7 +138,19 @@ export interface TitleTagsAnalysis {
 }
 
 export interface UniqueContentAnalysis {
+  recommendations: string;
+  textLength: number;
+  uniqueWordsPercentage: number;
+  repeatedWords: RepeatedWords[]
+}
 
+export interface RepeatedWords {
+  word: string;
+  count: number;
+}
+
+export interface SEOError {
+  error: string;
 }
 
 export interface Summary {
