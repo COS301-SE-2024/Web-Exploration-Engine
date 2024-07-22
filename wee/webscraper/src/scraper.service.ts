@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 
 // Services
+import { PubSubService } from './pub-sub/pub_sub.service';
 import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
 import { ScrapeStatusService } from './scrape-status/scrape-status.service';
@@ -12,7 +13,6 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 
-
 // Models
 import {
   ErrorResponse,
@@ -22,8 +22,9 @@ import {
 } from './models/ServiceModels';
 
 @Injectable()
-export class ScraperService {
+export class ScraperService implements OnModuleInit {
   constructor(
+    private readonly pubsubService: PubSubService,
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
@@ -34,10 +35,14 @@ export class ScraperService {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService 
-
   ) {}
 
+  onModuleInit() {
+    this.pubsubService.subscribe('projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub', this.scrape);
+  }
+
   async scrape(url: string) {
+    console.log("Started scaping")
     const start = performance.now();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

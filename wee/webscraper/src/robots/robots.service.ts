@@ -1,9 +1,8 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
 
 import fetch from 'node-fetch';
-
 
 @Injectable()
 export class RobotsService {
