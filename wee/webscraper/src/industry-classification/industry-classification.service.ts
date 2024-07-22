@@ -24,7 +24,7 @@ export class IndustryClassificationService {
     'Hospitality', 'Construction Materials', 'Renewable Energy', 'Marine Resources',
     'Logistics and Supply Chain Management', 'Arts and Culture', 'Social Services', 'Travel and Tourism','Restaurants',
     'Insurance','Legal Services','Fitness and Wellness','Jewelry'
-  ];
+   ];
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     try {
@@ -135,6 +135,7 @@ export class IndustryClassificationService {
     try {
       const allResults = [];
 
+      // First pass
       for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
@@ -156,13 +157,53 @@ export class IndustryClassificationService {
           }));
           allResults.push(...results);
         }
+
+        console.log('Batch results:', allResults);
       }
 
+      // Determine the top 10 
       const topResults = allResults
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 10);
+
+      console.log('Top 10 results:', topResults);
+
+      // Second pass
+      const secondPassResults = [];
+      const secondPassBatches = this.createLabelBatches(topResults.map(r => r.label), 10);
+
+      for (const batch of secondPassBatches) {
+        const response = await axios.post(
+          this.HUGGING_FACE_ZERO_SHOT_API_URL,
+          {
+            inputs: inputText,
+            parameters: { candidate_labels: batch }
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            },
+          }
+        );
+
+        if (response.data && response.data.labels && response.data.scores) {
+          const results = response.data.labels.map((label: string, index: number) => ({
+            label,
+            score: response.data.scores[index]
+          }));
+          secondPassResults.push(...results);
+        }
+
+        console.log('Second pass batch results:', secondPassResults);
+      }
+
+      const topSecondPassResults = secondPassResults
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
 
-      return topResults;
+      console.log('Top results after second pass:', topSecondPassResults);
+
+      return topSecondPassResults;
     } catch (error) {
       throw new Error(`Error classifying industry: ${error.message}`);
     }
