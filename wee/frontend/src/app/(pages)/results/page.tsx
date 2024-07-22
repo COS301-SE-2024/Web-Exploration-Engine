@@ -5,7 +5,7 @@ import {
   Button, Tabs, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter,
+  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link
 } from '@nextui-org/react';
 import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
@@ -815,65 +815,76 @@ function ResultsComponent() {
 
                     {/* Content */}
                     <div>
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Total images
-                        </h5>
-                        <p>
-                          {imagesAnalysis?.totalImages}
-                        </p>
+                      {/* Count */}
+                      <div className='gap-6 grid sm:grid-cols-3'>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {imagesAnalysis?.totalImages}
+                          </div>
+                          <div className='font-poppins-semibold text-lg'>
+                            Total Images
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {imagesAnalysis?.missingAltTextCount}
+                          </div>
+                          <div className='font-poppins-semibold text-lg'>
+                            Missing Alt. Text
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {imagesAnalysis?.nonOptimizedCount}
+                          </div>
+                          <div className='font-poppins-semibold text-lg'>
+                            Non-Optimized Images
+                          </div>
+                        </div>
                       </div>
 
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Missing alternative text count
-                        </h5>
-                        <p>
-                          {imagesAnalysis?.missingAltTextCount}
-                        </p>
-                      </div>
-
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Non-optimized images
-                        </h5>
-                        <p>{imagesAnalysis?.nonOptimizedCount}</p>
-                      </div>
-
-                      <div className='py-1'>
+                      <div className='py-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           The format of the following URLs are incorrect
                         </h5>
-                        <p>
-                          {imagesAnalysis?.reasonsMap.format.map((formatUrl) => (
-                            <p>{formatUrl}</p>
+                        <div>
+                          {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                            <p key={index}>
+                              <Link href={formatUrl}>{formatUrl}</Link> 
+                            </p>                           
                           ))}
-                        </p>
+                        </div>
                       </div>
 
-                      <div className='py-1'>
+                      <div className='py-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           The size of the following URLs are to big
                         </h5>
-                        <p>
-                          {imagesAnalysis?.reasonsMap.size.map((reasonUrl) => (
-                            <p>{reasonUrl}</p>
+                        <div>
+                          {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
+                            <p key={index}>
+                              <Link href={reasonUrl}>{reasonUrl}</Link> 
+                            </p>
                           ))}
-                        </p>
+                        </div>
                       </div>
 
-                      <div className='py-1'>
+                      <div className='py-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          The following images have some problems:
+                          The following images have some other problems
                         </h5>
-                        <p>
-                          {imagesAnalysis?.reasonsMap.other.map((otherUrl) => (
-                            <p>{otherUrl}</p>
+                        <div>
+                          {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
+                            <p key={index}>
+                              <Link href={otherUrl}>{otherUrl}</Link> 
+                            </p>
                           ))}
-                        </p>
+                        </div>
                       </div>
 
-                      <div className='py-1'>
+                      <div className='py-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           Recommendations
                         </h5>
