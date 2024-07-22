@@ -17,8 +17,8 @@ export class IndustryClassificationService {
     try {
       const metadataClass = await this.metadataClassify(metadata);
       const domainClass = await this.domainClassify(url);
-      const zeroShotClass = await this.zeroShotClassify(metadata);
-      return { metadataClass, domainClass, zeroShotClass };
+      const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
+      return { metadataClass, domainClass, zeroShotMetaDataClassify };
     } 
     catch (error) {
       return {
@@ -30,10 +30,11 @@ export class IndustryClassificationService {
           label: 'Unknown',
           score: 0,
         },
-        zeroShotClass: {
-          label: 'Unknown',
-          score: 0,
-        },
+        zeroShotMetaDataClassify: [
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+        ],
       };
     }
   }
@@ -106,16 +107,18 @@ export class IndustryClassificationService {
     }
   }
 
-  async zeroShotClassify(metadata: Metadata): Promise<{label: string, score: number}> {
+  async zeroShotMetaDataClassify(metadata: Metadata): Promise<{label: string, score: number}[]> {
     if (!metadata.title && !metadata.description && !metadata.keywords) {
-      return {
-        label: 'Unknown',
-        score: 0,
-      };
+      return [
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+      ];
     }
+    
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
     const labels = ['Finance', 'Health', 'Retail', 'Education']; 
-
+  
     try {
       const response = await axios.post(
         this.HUGGING_FACE_ZERO_SHOT_API_URL,
@@ -129,13 +132,18 @@ export class IndustryClassificationService {
           },
         }
       );
-
+  
       if (response.data && response.data.labels && response.data.scores) {
-        const res = {
-          label: response.data.labels[0],
-          score: response.data.scores[0],
-        };
-        return res;
+        const results = response.data.labels.map((label: string, index: number) => ({
+          label,
+          score: response.data.scores[index]
+        }));
+  
+        const topResults = results
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3);
+  
+        return topResults;
       } else {
         throw new Error('Failed to classify industry using zero-shot classification');
       }
@@ -143,4 +151,5 @@ export class IndustryClassificationService {
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
+  
 }
