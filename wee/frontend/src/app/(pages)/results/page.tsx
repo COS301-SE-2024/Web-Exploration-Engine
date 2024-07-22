@@ -19,7 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor } from "react-icons/fi";
 
 interface Classifications {
   label: string;
@@ -35,6 +35,26 @@ interface TitleTags {
   length: number;
   metaDescription: string;
   recommendations: string;
+}
+interface Headings {
+  count: number;
+  headings: string[];
+  recommendations: string;
+}
+
+interface Images {
+  errorUrls: string[];
+  missingAltTextCount: number;
+  nonOptimizedCount: number;
+  reasonsMap: ReasonsMap;
+  recommendations: string;
+  totalImages: number;
+}
+
+interface ReasonsMap {
+  format: string[];
+  other: string[];
+  size: string[];
 }
 
 export default function Results() {
@@ -75,6 +95,8 @@ function ResultsComponent() {
   const [phones, setPhones] = useState<string[]>([]);
   const [socialLinks, setSocialLinks] = useState<string[]>([]);
   const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTags>();
+  const [headingAnalysis, setHeadingAnalysis] = useState<Headings>();
+  const [imagesAnalysis, setImageAnalysis] = useState<Images>();
 
   useEffect(() => {
     if (url) {
@@ -111,6 +133,8 @@ function ResultsComponent() {
           setPhones(urlResults[0].contactInfo.phones);
           setSocialLinks(urlResults[0].contactInfo.socialLinks);
           setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
+          setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
+          setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
         }
       }
     }
@@ -234,10 +258,7 @@ function ResultsComponent() {
     const filename = cleanFilename(url);
     doc.save(`${filename}.pdf`);
   };
-  
  
- 
-  
   // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
@@ -726,7 +747,7 @@ function ResultsComponent() {
                 {/* Onpage Analysis */}
                 <div>
                   {/* Heading */}
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     On-Page Analysis
                     <InfoPopOver 
                       heading="On-Page Analysis" 
@@ -735,8 +756,134 @@ function ResultsComponent() {
                     />
                   </h3>
 
+                  {/* Heading Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiSearch />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Headings
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          List of Headings
+                        </h5>
+                        <ul>
+                          {headingAnalysis?.headings.map((heading) => (
+                            <li>{heading}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Count
+                        </h5>
+                        <p>{headingAnalysis?.count}</p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Recommendations
+                        </h5>
+                        <p>{headingAnalysis?.recommendations}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Image Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiImage />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Images
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Total images
+                        </h5>
+                        <p>
+                          {imagesAnalysis?.totalImages}
+                        </p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Missing alternative text count
+                        </h5>
+                        <p>
+                          {imagesAnalysis?.missingAltTextCount}
+                        </p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Non-optimized images
+                        </h5>
+                        <p>{imagesAnalysis?.nonOptimizedCount}</p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          The format of the following URLs are incorrect
+                        </h5>
+                        <p>
+                          {imagesAnalysis?.reasonsMap.format.map((formatUrl) => (
+                            <p>{formatUrl}</p>
+                          ))}
+                        </p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          The size of the following URLs are to big
+                        </h5>
+                        <p>
+                          {imagesAnalysis?.reasonsMap.size.map((reasonUrl) => (
+                            <p>{reasonUrl}</p>
+                          ))}
+                        </p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          The following images have some problems:
+                        </h5>
+                        <p>
+                          {imagesAnalysis?.reasonsMap.other.map((otherUrl) => (
+                            <p>{otherUrl}</p>
+                          ))}
+                        </p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Recommendations
+                        </h5>
+                        <p>{imagesAnalysis?.recommendations}</p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Title Tags */}
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3'>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
                       <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
@@ -767,7 +914,7 @@ function ResultsComponent() {
 
                       <div className='py-1'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations:
+                          Recommendations
                         </h5>
                         <p>{titleTagsAnalysis?.recommendations}</p>
                       </div>
