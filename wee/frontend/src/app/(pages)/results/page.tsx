@@ -949,44 +949,53 @@ function ResultsComponent() {
                             </div>
                           </div>
 
-                          <div className='py-2'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              The format of the following URLs are incorrect
-                            </h5>
-                            <div className='overflow-x-scroll'>
-                              {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
-                                <p key={index}>
-                                  <Link href={formatUrl}>{formatUrl}</Link> 
-                                </p>                           
-                              ))}
-                            </div>
-                          </div>
+                          {
+                            imagesAnalysis?.reasonsMap.format.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The format of the following URLs are incorrect
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={formatUrl}>{formatUrl}</Link> 
+                                    </p>                           
+                                  ))}
+                                </div>
+                              </div>
+                          }
 
-                          <div className='py-2'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              The size of the following URLs are to big
-                            </h5>
-                            <div className='overflow-x-scroll'>
-                              {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
-                                <p key={index}>
-                                  <Link href={reasonUrl}>{reasonUrl}</Link> 
-                                </p>
-                              ))}
-                            </div>
-                          </div>
+                          {
+                            imagesAnalysis?.reasonsMap.size.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The size of the following URLs are to big
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={reasonUrl}>{reasonUrl}</Link> 
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                          }
 
-                          <div className='py-2'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              The following images have some other problems
-                            </h5>
-                            <div className='overflow-x-scroll'>
-                              {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
-                                <p key={index}>
-                                  <Link href={otherUrl}>{otherUrl}</Link> 
-                                </p>
-                              ))}
-                            </div>
-                          </div>
+                          {
+                            imagesAnalysis?.reasonsMap.other.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The following images have some other problems
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={otherUrl}>{otherUrl}</Link> 
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                          }
 
                           {
                             imagesAnalysis?.recommendations != '' &&
