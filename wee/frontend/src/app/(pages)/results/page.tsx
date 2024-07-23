@@ -19,7 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor, FiLink } from "react-icons/fi";
 
 interface Classifications {
   label: string;
@@ -55,6 +55,12 @@ interface ReasonsMap {
   format: string[];
   other: string[];
   size: string[];
+}
+
+interface InternalLinking {
+  recommendations: string;
+  totalLinks: number;
+  uniqueLinks: number;
 }
 
 export default function Results() {
@@ -97,6 +103,7 @@ function ResultsComponent() {
   const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTags>();
   const [headingAnalysis, setHeadingAnalysis] = useState<Headings>();
   const [imagesAnalysis, setImageAnalysis] = useState<Images>();
+  const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinking>();
 
   useEffect(() => {
     if (url) {
@@ -135,6 +142,7 @@ function ResultsComponent() {
           setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
           setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
           setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
+          setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
         }
       }
     }
@@ -733,7 +741,7 @@ function ResultsComponent() {
             <Card>
               <CardBody>
                 {/* Keyword Analysis */}
-                <div>
+                {/* <div>
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
                     Keyword Analysis
                     <InfoPopOver 
@@ -742,11 +750,12 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3>
-                </div>
+                </div> */}
 
                 {/* Onpage Analysis */}
                 <div>
-                  {/* Heading */}
+
+                  {/* Onpage Analysis Heading */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     On-Page Analysis
                     <InfoPopOver 
@@ -795,6 +804,52 @@ function ResultsComponent() {
                           Recommendations
                         </h5>
                         <p>{headingAnalysis?.recommendations}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Internal Linking Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiLink />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Internal Linking
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      {/* Count */}
+                      <div className='gap-6 grid sm:grid-cols-2'>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                            {internalLinkingAnalysis?.totalLinks}
+                          </div>
+                          <div className='font-poppins-semibold text-lg'>
+                            Total Links
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                            {internalLinkingAnalysis?.uniqueLinks}
+                          </div>
+                          <div className='font-poppins-semibold text-lg'>
+                            Unique Links
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Recommendations
+                        </h5>
+                        <p>{internalLinkingAnalysis?.recommendations}</p>
                       </div>
                     </div>
                   </div>
@@ -935,7 +990,7 @@ function ResultsComponent() {
                 </div>
 
                 {/* Technical Analysis */}
-                <div>
+                {/* <div>
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
                     Technical Analysis
                     <InfoPopOver 
@@ -944,7 +999,7 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3>
-                </div>
+                </div> */}
               </CardBody>
             </Card>
           </Tab>
