@@ -731,21 +731,8 @@ function ResultsComponent() {
           <Tab key="seo" title="SEO Analysis">
             <Card>
               <CardBody>
-                {/* Keyword Analysis */}
-                {/* <div>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
-                    Keyword Analysis
-                    <InfoPopOver 
-                      heading="Keyword Analysis" 
-                      content="Where does this data come from or what does it mean (insigth)" 
-                      placement="right-end" 
-                    />
-                  </h3>
-                </div> */}
-
                 {/* Onpage Analysis */}
                 <div>
-
                   {/* Onpage Analysis Heading */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     On-Page Analysis
@@ -779,8 +766,8 @@ function ResultsComponent() {
                             List of Headings
                           </h5>
                           <ul>
-                            {headingAnalysis?.headings.map((heading) => (
-                              <li>{heading}</li>
+                            {headingAnalysis?.headings.map((heading, index) => (
+                              <li key={index}>{heading}</li>
                             ))}
                           </ul>
                         </div>
@@ -1068,18 +1055,6 @@ function ResultsComponent() {
                   </div> {/* EO title tag */}
 
                 </div> {/* EO on page SEO analysis */}
-
-                {/* Technical Analysis */}
-                {/* <div>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0">
-                    Technical Analysis
-                    <InfoPopOver 
-                      heading="Technical Analysis" 
-                      content="Where does this data come from or what does it mean (insigth)" 
-                      placement="right-end" 
-                    />
-                  </h3>
-                </div> */}
               </CardBody>
             </Card>
           </Tab>
