@@ -790,7 +790,7 @@ function ResultsComponent() {
                         <p>{headingAnalysis?.count}</p>
                       </div>
 
-                      <div className='py-1'>
+                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           Recommendations
                         </h5>
@@ -818,7 +818,7 @@ function ResultsComponent() {
                       {/* Count */}
                       <div className='gap-6 grid sm:grid-cols-3'>
                         <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                             {imagesAnalysis?.totalImages}
                           </div>
                           <div className='font-poppins-semibold text-lg'>
@@ -827,7 +827,7 @@ function ResultsComponent() {
                         </div>
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                             {imagesAnalysis?.missingAltTextCount}
                           </div>
                           <div className='font-poppins-semibold text-lg'>
@@ -836,7 +836,7 @@ function ResultsComponent() {
                         </div>
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                             {imagesAnalysis?.nonOptimizedCount}
                           </div>
                           <div className='font-poppins-semibold text-lg'>
@@ -849,7 +849,7 @@ function ResultsComponent() {
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           The format of the following URLs are incorrect
                         </h5>
-                        <div>
+                        <div className='overflow-x-scroll'>
                           {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
                             <p key={index}>
                               <Link href={formatUrl}>{formatUrl}</Link> 
@@ -862,7 +862,7 @@ function ResultsComponent() {
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           The size of the following URLs are to big
                         </h5>
-                        <div>
+                        <div className='overflow-x-scroll'>
                           {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
                             <p key={index}>
                               <Link href={reasonUrl}>{reasonUrl}</Link> 
@@ -875,7 +875,7 @@ function ResultsComponent() {
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           The following images have some other problems
                         </h5>
-                        <div>
+                        <div className='overflow-x-scroll'>
                           {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
                             <p key={index}>
                               <Link href={otherUrl}>{otherUrl}</Link> 
@@ -884,7 +884,7 @@ function ResultsComponent() {
                         </div>
                       </div>
 
-                      <div className='py-2'>
+                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           Recommendations
                         </h5>
@@ -923,7 +923,7 @@ function ResultsComponent() {
                         <p>{titleTagsAnalysis?.length}</p>
                       </div>
 
-                      <div className='py-1'>
+                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                         <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                           Recommendations
                         </h5>
