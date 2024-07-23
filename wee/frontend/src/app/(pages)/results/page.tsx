@@ -19,7 +19,8 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor, FiLink, FiCode } from "react-icons/fi";
+import { FiSearch, FiImage, FiAnchor, FiLink, FiCode } from "react-icons/fi";
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, SEOError } from '../../models/ScraperModels';
 
 interface Classifications {
   label: string;
@@ -29,44 +30,6 @@ interface Classifications {
 interface SummaryInfo {
   title: string;
   description: string;
-}
-
-interface TitleTags {
-  length: number;
-  metaDescription: string;
-  recommendations: string;
-}
-interface Headings {
-  count: number;
-  headings: string[];
-  recommendations: string;
-}
-
-interface Images {
-  errorUrls: string[];
-  missingAltTextCount: number;
-  nonOptimizedCount: number;
-  reasonsMap: ReasonsMap;
-  recommendations: string;
-  totalImages: number;
-}
-
-interface ReasonsMap {
-  format: string[];
-  other: string[];
-  size: string[];
-}
-
-interface InternalLinking {
-  recommendations: string;
-  totalLinks: number;
-  uniqueLinks: number;
-}
-
-interface MetaDescription {
-  length: number;
-  recommendations: string;
-  titleTag: string;
 }
 
 export default function Results() {
@@ -79,6 +42,26 @@ export default function Results() {
 
 function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
+}
+
+function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
+  return 'length' in data || 'metaDescription' in data || 'recommendations' in data;
+}
+
+function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
+  return 'count' in data || 'headings' in data || 'recommendations' in data;
+}
+
+function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
+  return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+}
+
+function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is InternalLinksAnalysis {
+  return 'recommendations' in data || 'totalLinks' in data || 'uniqueLinks' in data;  
+}
+
+function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
+  return 'length' in data || 'recommendations' in data || 'titleTag' in data;  
 }
 
 function ResultsComponent() {
@@ -106,11 +89,11 @@ function ResultsComponent() {
   const [emails, setEmails] = useState<string[]>([]);
   const [phones, setPhones] = useState<string[]>([]);
   const [socialLinks, setSocialLinks] = useState<string[]>([]);
-  const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTags>();
-  const [headingAnalysis, setHeadingAnalysis] = useState<Headings>();
-  const [imagesAnalysis, setImageAnalysis] = useState<Images>();
-  const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinking>();
-  const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescription>();
+  const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTagsAnalysis | SEOError>();
+  const [headingAnalysis, setHeadingAnalysis] = useState<HeadingAnalysis | SEOError>();
+  const [imagesAnalysis, setImageAnalysis] = useState<ImageAnalysis | SEOError>();
+  const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinksAnalysis | SEOError>();
+  const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
@@ -788,33 +771,43 @@ function ResultsComponent() {
                     </div>
 
                     {/* Content */}
-                    <div>
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          List of Headings
-                        </h5>
-                        <ul>
-                          {headingAnalysis?.headings.map((heading) => (
-                            <li>{heading}</li>
-                          ))}
-                        </ul>
-                      </div>
+                    {
+                      headingAnalysis && isHeadingAnalysis(headingAnalysis) ?
+                      <div>
+                        <div className='py-1'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            List of Headings
+                          </h5>
+                          <ul>
+                            {headingAnalysis?.headings.map((heading) => (
+                              <li>{heading}</li>
+                            ))}
+                          </ul>
+                        </div>
 
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Count
-                        </h5>
-                        <p>{headingAnalysis?.count}</p>
-                      </div>
+                        <div className='py-1'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Count
+                          </h5>
+                          <p>{headingAnalysis?.count}</p>
+                        </div>
 
-                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations
-                        </h5>
-                        <p>{headingAnalysis?.recommendations}</p>
+                        {
+                          headingAnalysis?.recommendations != '' &&
+                            <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{headingAnalysis?.recommendations}</p>
+                            </div>
+                        }
                       </div>
-                    </div>
-                  </div>
+                      :
+                      <>
+                        {headingAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Heading Analysis */}
 
                   {/* Internal Linking Analysis */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
@@ -831,36 +824,46 @@ function ResultsComponent() {
                     </div>
 
                     {/* Content */}
-                    <div>
-                      {/* Count */}
-                      <div className='gap-6 grid sm:grid-cols-2'>
-                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                            {internalLinkingAnalysis?.totalLinks}
-                          </div>
-                          <div className='font-poppins-semibold text-lg'>
-                            Total Links
-                          </div>
-                        </div>
+                    {
+                      internalLinkingAnalysis && isInternalLinkAnalysis(internalLinkingAnalysis) ?
+                        <div>
+                          {/* Count */}
+                          <div className='gap-6 grid sm:grid-cols-2'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {internalLinkingAnalysis?.totalLinks}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Total Links
+                              </div>
+                            </div>
 
-                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                            {internalLinkingAnalysis?.uniqueLinks}
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {internalLinkingAnalysis?.uniqueLinks}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Unique Links
+                              </div>
+                            </div>
                           </div>
-                          <div className='font-poppins-semibold text-lg'>
-                            Unique Links
-                          </div>
-                        </div>
-                      </div>
 
-                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations
-                        </h5>
-                        <p>{internalLinkingAnalysis?.recommendations}</p>
-                      </div>
-                    </div>
-                  </div>
+                          {
+                            internalLinkingAnalysis?.recommendations != '' &&
+                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{internalLinkingAnalysis?.recommendations}</p>
+                              </div>
+                          }
+                        </div>
+                      :
+                      <>
+                        {internalLinkingAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Internal Linking Analysis */}
 
                   {/* MetaDescription Analysis */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
@@ -877,29 +880,39 @@ function ResultsComponent() {
                     </div>
 
                     {/* Content */}
-                    <div>
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Title Tag
-                        </h5>
-                        <p>{metaDescriptionAnalysis?.titleTag}</p>
-                      </div>
+                    {
+                      metaDescriptionAnalysis && isMetaDescriptionAnalysis(metaDescriptionAnalysis) ?
+                        <div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Title Tag
+                            </h5>
+                            <p>{metaDescriptionAnalysis?.titleTag}</p>
+                          </div>
 
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Length
-                        </h5>
-                        <p>{metaDescriptionAnalysis?.length}</p>
-                      </div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Length
+                            </h5>
+                            <p>{metaDescriptionAnalysis?.length}</p>
+                          </div>
 
-                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations
-                        </h5>
-                        <p>{metaDescriptionAnalysis?.recommendations}</p>
-                      </div>
-                    </div>
-                  </div>
+                          {
+                            metaDescriptionAnalysis?.recommendations != '' &&
+                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{metaDescriptionAnalysis?.recommendations}</p>
+                              </div>
+                          }
+                        </div>
+                      :
+                      <>
+                        {metaDescriptionAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO MetaDescription Analysis */}
 
                   {/* Image Analysis */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
@@ -916,84 +929,94 @@ function ResultsComponent() {
                     </div>
 
                     {/* Content */}
-                    <div>
-                      {/* Count */}
-                      <div className='gap-6 grid sm:grid-cols-3'>
-                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                            {imagesAnalysis?.totalImages}
-                          </div>
-                          <div className='font-poppins-semibold text-lg'>
-                            Total Images
-                          </div>
-                        </div>
+                    {
+                      imagesAnalysis && isImageAnalysis(imagesAnalysis) ? 
+                        <div>
+                          {/* Count */}
+                          <div className='gap-6 grid sm:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {imagesAnalysis?.totalImages}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Total Images
+                              </div>
+                            </div>
 
-                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                            {imagesAnalysis?.missingAltTextCount}
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {imagesAnalysis?.missingAltTextCount}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Missing Alt. Text
+                              </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {imagesAnalysis?.nonOptimizedCount}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Non-Optimized Images
+                              </div>
+                            </div>
                           </div>
-                          <div className='font-poppins-semibold text-lg'>
-                            Missing Alt. Text
+
+                          <div className='py-2'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              The format of the following URLs are incorrect
+                            </h5>
+                            <div className='overflow-x-scroll'>
+                              {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                <p key={index}>
+                                  <Link href={formatUrl}>{formatUrl}</Link> 
+                                </p>                           
+                              ))}
+                            </div>
                           </div>
-                        </div>
 
-                        <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                          <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                            {imagesAnalysis?.nonOptimizedCount}
+                          <div className='py-2'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              The size of the following URLs are to big
+                            </h5>
+                            <div className='overflow-x-scroll'>
+                              {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
+                                <p key={index}>
+                                  <Link href={reasonUrl}>{reasonUrl}</Link> 
+                                </p>
+                              ))}
+                            </div>
                           </div>
-                          <div className='font-poppins-semibold text-lg'>
-                            Non-Optimized Images
+
+                          <div className='py-2'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              The following images have some other problems
+                            </h5>
+                            <div className='overflow-x-scroll'>
+                              {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
+                                <p key={index}>
+                                  <Link href={otherUrl}>{otherUrl}</Link> 
+                                </p>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      </div>
 
-                      <div className='py-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          The format of the following URLs are incorrect
-                        </h5>
-                        <div className='overflow-x-scroll'>
-                          {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
-                            <p key={index}>
-                              <Link href={formatUrl}>{formatUrl}</Link> 
-                            </p>                           
-                          ))}
+                          {
+                            imagesAnalysis?.recommendations != '' &&
+                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{imagesAnalysis?.recommendations}</p>
+                              </div>
+                          }
                         </div>
-                      </div>
-
-                      <div className='py-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          The size of the following URLs are to big
-                        </h5>
-                        <div className='overflow-x-scroll'>
-                          {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
-                            <p key={index}>
-                              <Link href={reasonUrl}>{reasonUrl}</Link> 
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className='py-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          The following images have some other problems
-                        </h5>
-                        <div className='overflow-x-scroll'>
-                          {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
-                            <p key={index}>
-                              <Link href={otherUrl}>{otherUrl}</Link> 
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations
-                        </h5>
-                        <p>{imagesAnalysis?.recommendations}</p>
-                      </div>
-                    </div>
-                  </div>
+                      :
+                      <>
+                        {imagesAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Image Analysis */}
 
                   {/* Title Tags */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
@@ -1008,33 +1031,43 @@ function ResultsComponent() {
                         </h4>
                       </div>
                     </div>
-
+                        
                     {/* Content */}
-                    <div>
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Metadata Description
-                        </h5>
-                        <p>{titleTagsAnalysis?.metaDescription}</p>
-                      </div>
+                    {
+                      titleTagsAnalysis && isTitleTagAnalysis(titleTagsAnalysis) ?                                             
+                        <div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Metadata Description
+                            </h5>
+                            <p>{titleTagsAnalysis?.metaDescription}</p>
+                          </div>
 
-                      <div className='py-1'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Length
-                        </h5>
-                        <p>{titleTagsAnalysis?.length}</p>
-                      </div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Length
+                            </h5>
+                            <p>{titleTagsAnalysis?.length}</p>
+                          </div>
 
-                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                          Recommendations
-                        </h5>
-                        <p>{titleTagsAnalysis?.recommendations}</p>
-                      </div>
-                    </div>
-                  </div>
+                          {
+                            titleTagsAnalysis?.recommendations != '' && 
+                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{titleTagsAnalysis?.recommendations}</p>
+                              </div>
+                          }
+                        </div>                      
+                      :
+                      <>
+                        {titleTagsAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO title tag */}
 
-                </div>
+                </div> {/* EO on page SEO analysis */}
 
                 {/* Technical Analysis */}
                 {/* <div>
