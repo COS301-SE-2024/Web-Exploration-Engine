@@ -19,7 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor, FiLink } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiImage, FiAnchor, FiLink, FiCode } from "react-icons/fi";
 
 interface Classifications {
   label: string;
@@ -63,6 +63,12 @@ interface InternalLinking {
   uniqueLinks: number;
 }
 
+interface MetaDescription {
+  length: number;
+  recommendations: string;
+  titleTag: string;
+}
+
 export default function Results() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -104,6 +110,7 @@ function ResultsComponent() {
   const [headingAnalysis, setHeadingAnalysis] = useState<Headings>();
   const [imagesAnalysis, setImageAnalysis] = useState<Images>();
   const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinking>();
+  const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescription>();
 
   useEffect(() => {
     if (url) {
@@ -143,6 +150,7 @@ function ResultsComponent() {
           setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
           setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
           setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
+          setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
         }
       }
     }
@@ -850,6 +858,45 @@ function ResultsComponent() {
                           Recommendations
                         </h5>
                         <p>{internalLinkingAnalysis?.recommendations}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MetaDescription Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiCode />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Meta Description
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Title Tag
+                        </h5>
+                        <p>{metaDescriptionAnalysis?.titleTag}</p>
+                      </div>
+
+                      <div className='py-1'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Length
+                        </h5>
+                        <p>{metaDescriptionAnalysis?.length}</p>
+                      </div>
+
+                      <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                        <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                          Recommendations
+                        </h5>
+                        <p>{metaDescriptionAnalysis?.recommendations}</p>
                       </div>
                     </div>
                   </div>
