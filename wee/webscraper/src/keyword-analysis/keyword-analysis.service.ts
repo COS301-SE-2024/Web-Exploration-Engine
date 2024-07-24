@@ -15,10 +15,14 @@ export class KeywordAnalysisService {
         await page.goto(`https://www.google.com/search?q=${encodeURIComponent(keyword)}`);
 
         const results = await page.evaluate(() => {
-            return Array.from(document.querySelectorAll('div.g')).map(result => ({
-                title: result.querySelector('h3')?.innerText,
-                link: result.querySelector('a')?.href,
-            }));
+            return Array.from(document.querySelectorAll('div.g')).map(result => {
+                const titleElement = result.querySelector('h3');
+                const linkElement = result.querySelector('a');
+                return {
+                    title: titleElement ? titleElement.innerText : '',
+                    link: linkElement ? linkElement.href : ''
+                };
+            });
         });
       
         // Find the ranking of the target URL
@@ -31,7 +35,7 @@ export class KeywordAnalysisService {
         
         return {
             ranking: ranking > 0 ? ranking : '',
-            results: results // Bring back results; we can maybe give a list of these if there is no ranking of the URL found.
+            results: results
         };
     }
 
@@ -121,8 +125,8 @@ export class KeywordAnalysisService {
                 };
             });
     
-            const percentageInAlts = ((keywordInAltsCount / totalImages) * 100).toFixed(2);
-            const percentageInSrcs = ((keywordInSrcCount / totalImages) * 100).toFixed(2);
+            const percentageInAlts = totalImages > 0 ? ((keywordInAltsCount / totalImages) * 100).toFixed(2) : '0.00';
+            const percentageInSrcs = totalImages > 0 ? ((keywordInSrcCount / totalImages) * 100).toFixed(2) : '0.00';
     
             return { 
                 totalImages,
@@ -138,5 +142,5 @@ export class KeywordAnalysisService {
         
         return imageAltAnalysis;
     }
-    
+
 }
