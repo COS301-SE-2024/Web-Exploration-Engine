@@ -135,18 +135,69 @@ function ResultsComponent() {
     }
   }, [results]);
 
-  const getScrapingResults = async (url: string) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
-      );
-      const data = (await response.json()) as ScraperResult;
-      console.log('Response', data);
-      setResults((prevResults: ScraperResult[]) => [...prevResults, data]);
-    } catch (error) {
-      console.error('Error when scraping website:', error);
+  // Function to check the status of the job
+async function checkJobStatus(url: string) {
+  try {
+    // CHANGE TO DEPLOYED VERSION
+    const response = await fetch(`httP://localhost:3000/api/scraper/status/${encodeURIComponent(url)}`);
+    if (!response.ok) {
+      throw new Error(`Error fetching job status: ${response.statusText}`);
     }
-  };
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error in checkJobStatus:', error);
+    throw error;
+  }
+}
+
+// Function to poll for the result of the scraping job
+async function pollForResult(url: string) {
+  return new Promise((resolve, reject) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const jobData = await checkJobStatus(url);
+        if (jobData.status === 'completed') {
+          clearInterval(intervalId); // Stop polling once the job is completed
+          resolve(jobData.result);
+        } else if (jobData.status === 'failed') {
+          clearInterval(intervalId); // Stop polling if the job failed
+          reject(new Error('Job failed'));
+        } else {
+          console.log('Job status:', jobData.status);
+        }
+      } catch (error) {
+        clearInterval(intervalId); // Stop polling on error
+        reject(error);
+      }
+    }, 5000); // Poll every 5 seconds
+  });
+}
+
+// Function to initiate scraping and handle results
+const getScrapingResults = async (url: string) => {
+  try {
+    // CHANGE TO DEPLOYED VERSION
+    const response = await fetch(
+      `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error initiating scrape: ${response.statusText}`);
+    }
+    const initData = await response.json();
+    console.log('Scrape initiation response:', initData);
+
+    // Poll the API until the scraping is done
+    const result = await pollForResult(url);
+    console.log('Scraping result:', result);
+    
+    // Assuming setResults is a function to update the state or handle results
+    setResults((prevResults: ScraperResult[]) => [...prevResults, result]);
+  } catch (error) {
+    console.error('Error when scraping website:', error);
+  }
+};
+
 
   const onSearchChange = (value: string) => {
     if (value) {

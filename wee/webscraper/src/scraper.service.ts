@@ -1,7 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 
-
 // Services
 import { PubSubService } from './pub-sub/pub_sub.service';
 import { RobotsService } from './robots/robots.service';
@@ -58,20 +57,6 @@ export class ScraperService implements OnModuleInit {
   async scrape(url: string) {
     console.log("Started scaping")
     const start = performance.now();
-
-    const cachedData:string = await this.cacheManager.get(url);
-    if (cachedData) {
-      const end = performance.now();
-      const times = (end - start) / 1000;
-      console.log('CACHE HIT', times);
-      const dataFromCache = JSON.parse(cachedData);
-
-      // update the time field of the object being returned from cache
-      dataFromCache.time = parseFloat(times.toFixed(4));      
-      return dataFromCache;
-    }
-    
-    console.log('CACHE MISS - SCRAPE');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = {
@@ -273,6 +258,7 @@ export class ScraperService implements OnModuleInit {
     }
     return this.scrapeImagesService.scrapeImages(url, robotsResponse);
   }
+
   //get screenshot of the homepage
   async getScreenshot(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
@@ -281,6 +267,7 @@ export class ScraperService implements OnModuleInit {
     }
     return this.screenshotService.captureScreenshot(url, robotsResponse);
   }
+
   async scrapeContactInfo(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
@@ -292,6 +279,7 @@ export class ScraperService implements OnModuleInit {
       robotsResponse as RobotsResponse
     );
   }
+
   async scrapeAddress(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
@@ -302,6 +290,7 @@ export class ScraperService implements OnModuleInit {
       robotsResponse as RobotsResponse
     );
   }
+
   async seoAnalysis(url: string) {
     const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
     const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis
@@ -344,14 +333,53 @@ export class ScraperService implements OnModuleInit {
     const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
 
     const messageHandler = async (message) => {
+      const start = performance.now();
       const { url, type } = JSON.parse(message.data.toString());
+
+      // perform all cache checks here
+      
+      // if in cache, check if completed\
+      const cachedData:string = await this.cacheManager.get(url);
+      if (cachedData) {
+        const dataFromCache = JSON.parse(cachedData);
+        if (dataFromCache.status === 'completed') {
+          const end = performance.now();
+          const times = (end - start) / 1000;
+          console.log('CACHE HIT', times);
+
+          // update the time field of the object being returned from cache
+          dataFromCache.time = parseFloat(times.toFixed(4));      
+          return dataFromCache;
+        }
+
+        // if not completed, check if processing
+        if (dataFromCache.status === 'processing') {
+          console.log(`Already processing URL: ${url}, Type: ${type}`);
+          message.ack();
+          return;
+        }
+      }
+      
+      console.log('CACHE MISS - SCRAPE');
+
       try {
+        // add to cache as processing
+        this.cacheManager.set(url, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
         const result = await this.scrapeWebsite(url, type);
+        
+        const completeData = {
+          status: 'completed',
+          result,
+        }
+        this.cacheManager.set(url, JSON.stringify(completeData));
         message.ack();
         console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
         console.log(`Result: ${result}`);
       } catch (error) {
         console.error(`Error scraping URL: ${url}`, error);
+        // retry mechanism?
+        // remove entry from cache
+        this.cacheManager.del(url);
       }
     };
 

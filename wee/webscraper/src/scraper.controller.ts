@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Inject, Param } from '@nestjs/common';
 import { PubSubService } from './pub-sub/pub_sub.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Cache } from 'cache-manager';
 import {
   ScrapeOperation, ScrapeQuery, ScrapeResponse200, ScrapeResponse400, ScrapeResponse500,
   ReadRobotsOperation, ReadRobotsQuery, ReadRobotsResponse200, ReadRobotsResponse400, ReadRobotsResponse500,
@@ -19,8 +20,11 @@ import {
 @Controller('scraper')
 export class ScraperController {
   constructor(
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsubService : PubSubService,
   ) {}
+
+  topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
 
   @ScrapeOperation
   @ScrapeQuery
@@ -29,13 +33,57 @@ export class ScraperController {
   @ScrapeResponse500
   @Get()
   async scrape(@Query('url') url: string) {
-    const topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
+    // Check if URL in cache
+    const cacheKey = url;
+    let output;
+
+    // Check if URL in cache
+    const cachedData:string = await this.cacheManager.get(cacheKey);
+    if (cachedData) {
+      if (JSON.parse(cachedData).status === 'completed') {
+        output = {
+          message: 'Job found in cache',
+          status: 'completed',
+          pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+        }
+      } else {
+        output = {
+          message: 'Job found in cache',
+          status: 'processing',
+          pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+        }
+      
+      }
+    } else {
+      output = {
+        message: 'Scraping task published',
+        status: 'processing',
+        pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+      }
+    }
+
     console.log("Publishing scraping task for url: ", url);
     const message = {
       type: 'scrape',
       url,
     }
-    await this.pubsubService.publishMessage(topicName, message);
+    await this.pubsubService.publishMessage(this.topicName, message);
+    return output;
+  }
+
+  @Get('status/:url')
+  async getJobStatus(@Param('url') url: string) {
+    const cacheKey = url;
+    const jobData:string = await this.cacheManager.get(cacheKey);
+    if (!jobData) {
+      return {
+        url,
+        message: 'Job not found',
+        data: null,
+      
+      }
+    }
+    return JSON.parse(jobData);
   }
 
   // @ReadRobotsOperation
