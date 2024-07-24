@@ -1,4 +1,5 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 
 
 // Services
@@ -26,6 +27,7 @@ import {
 export class ScraperService implements OnModuleInit {
   
   constructor(
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsub: PubSubService,
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
@@ -36,8 +38,7 @@ export class ScraperService implements OnModuleInit {
     private readonly screenshotService: ScreenshotService,
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
-    private readonly seoAnalysisService: SeoAnalysisService, 
-    
+    private readonly seoAnalysisService: SeoAnalysisService,
   ) {}
 
   onModuleInit() {
@@ -57,6 +58,20 @@ export class ScraperService implements OnModuleInit {
   async scrape(url: string) {
     console.log("Started scaping")
     const start = performance.now();
+
+    const cachedData:string = await this.cacheManager.get(url);
+    if (cachedData) {
+      const end = performance.now();
+      const times = (end - start) / 1000;
+      console.log('CACHE HIT', times);
+      const dataFromCache = JSON.parse(cachedData);
+
+      // update the time field of the object being returned from cache
+      dataFromCache.time = parseFloat(times.toFixed(4));      
+      return dataFromCache;
+    }
+    
+    console.log('CACHE MISS - SCRAPE');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = {
@@ -187,8 +202,10 @@ export class ScraperService implements OnModuleInit {
 
     const end = performance.now();
     const time = (end - start) / 1000;
-    data.time = parseFloat(time.toFixed(2));
+    data.time = parseFloat(time.toFixed(4));
 
+    // set the data in the cache
+    await this.cacheManager.set(url, JSON.stringify(data));
     return data;
   }
 

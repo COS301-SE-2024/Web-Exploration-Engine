@@ -2,6 +2,10 @@
 import { Module } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { ScraperController } from './scraper.controller';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import config from './config';
 
 // Modules
 import { PubSubModule } from './pub-sub/pub_sub.module';
@@ -19,7 +23,29 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
 
 @Module({
-  imports: [PubSubModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [config],
+      isGlobal: true,
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true, 
+      imports: [ConfigModule],
+      useFactory: async (config) => {
+        const store = await redisStore({
+          ttl: 60 * 60 * 1000, // 60 minutes in cache
+          socket: {
+            host: config.get('redis.host'),
+            port: config.get('redis.port')
+          },
+          password: config.get('redis.password'),
+        })
+        return { store }
+      },
+      inject: [ConfigService]
+    }),
+    PubSubModule,
+  ],
   controllers: [ScraperController],
   providers: [
     ScraperService,
