@@ -132,6 +132,7 @@ export interface StructuredDataAnalysis {
 }
 
 export interface TitleTagsAnalysis {
+  isUrlWordsInDescription: boolean;
   length: number;
   metaDescription: string;
   recommendations: string;

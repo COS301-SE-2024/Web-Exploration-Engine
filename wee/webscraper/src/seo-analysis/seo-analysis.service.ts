@@ -83,7 +83,7 @@ export class SeoAnalysisService {
       metaDescription,
       length,
       // isOptimized,
-      // isUrlWordsInDescription,
+      isUrlWordsInDescription,
       recommendations: recommendations.trim(),
     };
   }

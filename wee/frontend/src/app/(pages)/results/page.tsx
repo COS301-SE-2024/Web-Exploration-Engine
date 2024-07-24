@@ -45,7 +45,7 @@ function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
 }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
-  return 'length' in data || 'metaDescription' in data || 'recommendations' in data;
+  return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
 }
 
 function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
@@ -79,7 +79,7 @@ function ResultsComponent() {
 
   const router = useRouter();
 
-  const excludedUniqueRepeatedWords = ['for', 'in', 'to', 'a', 'to', 'the', 'with', 'on', 'and', 'you', 'your'];
+  const excludedUniqueRepeatedWords = ['for', 'in', 'to', 'a', 'the', 'with', 'on', 'and', 'you', 'your', 'of', 'is', 'r'];
 
   const [websiteStatus, setWebsiteStatus] = useState('');
   const [isCrawlable, setIsCrawlable] = useState(false);
@@ -1054,6 +1054,13 @@ function ResultsComponent() {
                             <p>{titleTagsAnalysis?.length}</p>
                           </div>
 
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Is URL in description?
+                            </h5>
+                            <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
+                          </div>
+
                           {
                             titleTagsAnalysis?.recommendations != '' && 
                               <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
@@ -1118,10 +1125,9 @@ function ResultsComponent() {
                             {uniqContentAnalysis?.repeatedWords
                             .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
                             .map((wordObj, index) => (
-                              <span className='px-1'>
+                              <span className='mr-2' key={index}>
                                 <Chip
-                                  radius="sm"
-                                  key={index}
+                                  radius="sm"                                  
                                   // color={'primary'}
                                   variant="flat"                                  
                                 >
