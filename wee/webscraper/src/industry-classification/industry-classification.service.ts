@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
 import axios from 'axios';
 
-
 @Injectable()
 export class IndustryClassificationService {
   private readonly HUGGING_FACE_API_URL =
@@ -23,15 +22,20 @@ export class IndustryClassificationService {
     'Telecommunications', 'Utilities', 'Defense and Security', 'Automotive', 'Pharmaceuticals',
     'Hospitality', 'Construction Materials', 'Renewable Energy', 'Marine Resources',
     'Logistics and Supply Chain Management', 'Arts and Culture', 'Social Services', 'Travel and Tourism','Restaurants',
-    'Insurance','Legal Services','Fitness and Wellness','Jewelry'
-   ];
+    'Insurance','Legal Services','Fitness and Wellness','Jewelry','Entertainment and Recreation'
+  ];
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     try {
       const metadataClass = await this.metadataClassify(metadata);
-      const domainClass = await this.domainClassify(url);
-      const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
-      return { metadataClass, domainClass, zeroShotMetaDataClassify };
+    //console.log('Metadata Classification:', metadataClass);
+    const domainClass = await this.domainClassify(url);
+    //console.log('Domain Classification:', domainClass);
+    const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
+    //console.log('Zero-Shot Metadata Classification:', zeroShotMetaDataClassify);
+    const zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
+    //console.log('Zero-Shot Domain Classification:', zeroShotDomainClassify);
+    return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
     } 
     catch (error) {
       return {
@@ -44,6 +48,11 @@ export class IndustryClassificationService {
           score: 0,
         },
         zeroShotMetaDataClassify: [
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+        ],
+        zeroShotDomainClassify: [
           { label: 'Unknown', score: 0 },
           { label: 'Unknown', score: 0 },
           { label: 'Unknown', score: 0 },
@@ -128,14 +137,13 @@ export class IndustryClassificationService {
         { label: 'Unknown', score: 0 },
       ];
     }
-    
+  
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
     const batches = this.createLabelBatches(this.CANDIDATE_LABELS, 10);
-
+  
     try {
       const allResults = [];
-
-      // First pass
+  
       for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
@@ -149,7 +157,7 @@ export class IndustryClassificationService {
             },
           }
         );
-
+  
         if (response.data && response.data.labels && response.data.scores) {
           const results = response.data.labels.map((label: string, index: number) => ({
             label,
@@ -157,27 +165,44 @@ export class IndustryClassificationService {
           }));
           allResults.push(...results);
         }
-
-        console.log('Batch results:', allResults);
+  
+        //console.log('Batch results:', allResults);
       }
-
-      // Determine the top 10 
+  
+      // Determine the top 3 
       const topResults = allResults
         .sort((a, b) => b.score - a.score)
-        .slice(0, 10);
+        .slice(0, 3);
+  
+      //console.log('Top 3 results:', topResults);
+  
+      return topResults;
+    } catch (error) {
+      throw new Error(`Error classifying industry: ${error.message}`);
+    }
+  }
 
-      console.log('Top 10 results:', topResults);
-
-      // Second pass
-      const secondPassResults = [];
-      const secondPassBatches = this.createLabelBatches(topResults.map(r => r.label), 10);
-
-      for (const batch of secondPassBatches) {
+  async zeroShotDomainClassify(url: string): Promise<{ label: string, score: number }[]> {
+    if (!url) {
+      return [
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+      ];
+    }
+  
+    const inputText = `${url}`;
+    const batches = this.createLabelBatches(this.CANDIDATE_LABELS, 10);
+  
+    try {
+      const allResults = [];
+  
+      for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
           {
             inputs: inputText,
-            parameters: { candidate_labels: batch }
+            parameters: { candidate_labels: batch },
           },
           {
             headers: {
@@ -185,30 +210,27 @@ export class IndustryClassificationService {
             },
           }
         );
-
+  
         if (response.data && response.data.labels && response.data.scores) {
           const results = response.data.labels.map((label: string, index: number) => ({
             label,
-            score: response.data.scores[index]
+            score: response.data.scores[index],
           }));
-          secondPassResults.push(...results);
+          allResults.push(...results);
         }
-
-        console.log('Second pass batch results:', secondPassResults);
       }
-
-      const topSecondPassResults = secondPassResults
+  
+      // Determine the top 3 
+      const topResults = allResults
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
-
-      console.log('Top results after second pass:', topSecondPassResults);
-
-      return topSecondPassResults;
+  
+      return topResults;
     } catch (error) {
-      throw new Error(`Error classifying industry: ${error.message}`);
+      throw new Error(`Error classifying domain: ${error.message}`);
     }
   }
-
+  
   private createLabelBatches(labels: string[], batchSize: number): string[][] {
     const batches = [];
     for (let i = 0; i < labels.length; i += batchSize) {

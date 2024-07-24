@@ -37,5 +37,9 @@ export interface IndustryClassification {
   zeroShotMetaDataClassify: {
     label: string;
     score: number;
+  }[],
+  zeroShotDomainClassify: {
+    label: string;
+    score: number;
   }[]
 }
