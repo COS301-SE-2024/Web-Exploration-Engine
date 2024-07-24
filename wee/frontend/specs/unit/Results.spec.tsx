@@ -83,6 +83,57 @@ describe('Results Component', () => {
                     "https://twitter.com/AbsaSouthAfrica",
                     "https://www.linkedin.com/company/absa/"
                 ]
+            },
+            seoAnalysis: {
+                // XMLSitemapAnalysis: {},
+                // canonicalTagAnalysis: {},
+                headingAnalysis: {
+                    count: 2,
+                    headings: ['HeadingOne', 'HeadingTwo'],
+                    recommendations: '',
+                },
+                imageAnalysis: {
+                    errorUrls: [],
+                    missingAltTextCount: 2,
+                    nonOptimizedCount: 8,
+                    reasonsMap: {
+                        format: [],
+                        other: [],
+                        size: [],
+                    },
+                    recommendations: '',
+                    totalImages: 20,
+                },
+                // indexabilityAnalysis: {},
+                internalLinksAnalysis: {
+                    recommendations: '',
+                    totalLinks: 0,
+                    uniqueLinks: 0,
+                },
+                metaDescriptionAnalysis: {
+                    length: 2,
+                    recommendations: '',
+                    titleTag: 'myTitleTag',
+                },
+                // mobileFriendlinessAnalysis: {},
+                // structuredDataAnalysis: {},
+                titleTagsAnalysis: {
+                    isUrlWordsInDescription: false,
+                    length: 183,
+                    metaDescription: '',
+                    recommendations: '',
+                },
+                uniqueContentAnalysis: {
+                    recommendations: '',
+                    textLength: 12,
+                    uniqueWordsPercentage: 16,
+                    repeatedWords: [
+                        {
+                            word: 'and',
+                            count: 12,
+                        }
+                    ]
+                }, 
             }
         },
     ];
