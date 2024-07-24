@@ -94,15 +94,15 @@ describe('Results Component', () => {
                 },
                 imageAnalysis: {
                     errorUrls: [],
-                    missingAltTextCount: 2,
-                    nonOptimizedCount: 8,
+                    missingAltTextCount: 11,
+                    nonOptimizedCount: 3,
                     reasonsMap: {
-                        format: [],
+                        format: ['https://www.exampleOne.com/coast.png','https://www.exampleTwo.com/lion.svg','https://www.exampleThree.com/ocean.jpg'],
                         other: [],
                         size: [],
                     },
-                    recommendations: '',
-                    totalImages: 20,
+                    recommendations: '11 images are missing alt text. 3 images are not optimized.',
+                    totalImages: 27,
                 },
                 // indexabilityAnalysis: {},
                 internalLinksAnalysis: {
@@ -119,9 +119,9 @@ describe('Results Component', () => {
                 // structuredDataAnalysis: {},
                 titleTagsAnalysis: {
                     isUrlWordsInDescription: false,
-                    length: 183,
-                    metaDescription: '',
-                    recommendations: '',
+                    length: 88,
+                    metaDescription: "Buy computers, hardware, software, laptops & more from South Africa's best online store.",
+                    recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: wootware.',
                 },
                 uniqueContentAnalysis: {
                     recommendations: '',
@@ -530,6 +530,111 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText('55')).toBeDefined();
             expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();        
+        });
+    });
+
+    it('Onpage SEO: Images - display total images, missing alt text, non-optimised images, list of urls which format is incorrent and recommendation', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.totalImages)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.missingAltTextCount)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.nonOptimizedCount)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[0])).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[2])).toBeDefined();
+            expect(screen.queryByTestId('images_recommendations')).toBeInTheDocument();  
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Images - display total images, missing alt text, non-optimised images and NO recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        imageAnalysis: {
+                            errorUrls: [],
+                            missingAltTextCount: 6,
+                            nonOptimizedCount: 0,
+                            reasonsMap: {
+                                format: [],
+                                other: [],
+                                size: [],
+                            },
+                            recommendations: '',
+                            totalImages: 34,
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();  
+        });
+    });
+
+    it('Onpage SEO: Title Tags - metadata description, length, is url in description and recommendation', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.metaDescription)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.length)).toBeDefined();
+            expect(screen.getByText('No')).toBeDefined();
+            expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();  
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Title Tags - metadata description, length, is url in description and NO recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        titleTagsAnalysis: {
+                            isUrlWordsInDescription: true,
+                            length: 121,
+                            metaDescription: "Meta description for title tag analysis",
+                            recommendations: '',
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
+            expect(screen.getByText("121")).toBeDefined();
+            expect(screen.getByText('Yes')).toBeDefined();
+            expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();  
         });
     });
 
