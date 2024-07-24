@@ -2,7 +2,7 @@ describe('results', () => {
   it('should be on right page', () => {
     cy.visit('/results?url=');
     cy.contains(/domain tags/i).should('exist');
-    cy.contains(/No images available/i).should('exist');
+    cy.contains(/No images available./i).should('exist');
   });
 
   it('help should be available', () => {
