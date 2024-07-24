@@ -79,6 +79,8 @@ function ResultsComponent() {
 
   const router = useRouter();
 
+  const excludedUniqueRepeatedWords = ['for', 'in', 'to', 'a', 'to', 'the', 'with', 'on', 'and', 'you', 'your'];
+
   const [websiteStatus, setWebsiteStatus] = useState('');
   const [isCrawlable, setIsCrawlable] = useState(false);
   const [industryClassification, setIndustryClassification] =
@@ -1105,6 +1107,28 @@ function ResultsComponent() {
                             <div className='font-poppins-semibold text-lg'>
                               Unique words
                             </div>
+                          </div>
+                        </div>
+
+                        <div className='pt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Repeated words
+                          </h5>
+                          <div>
+                            {uniqContentAnalysis?.repeatedWords
+                            .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
+                            .map((wordObj, index) => (
+                              <span className='px-1'>
+                                <Chip
+                                  radius="sm"
+                                  key={index}
+                                  // color={'primary'}
+                                  variant="flat"                                  
+                                >
+                                  {wordObj.word}: {wordObj.count}
+                                </Chip>
+                              </span>
+                            ))}
                           </div>
                         </div>
 
