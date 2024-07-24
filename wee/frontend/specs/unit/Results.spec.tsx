@@ -106,14 +106,14 @@ describe('Results Component', () => {
                 },
                 // indexabilityAnalysis: {},
                 internalLinksAnalysis: {
-                    recommendations: '',
-                    totalLinks: 0,
-                    uniqueLinks: 0,
+                    recommendations: 'This is the internal linking recommendation',
+                    totalLinks: 17,
+                    uniqueLinks: 9,
                 },
                 metaDescriptionAnalysis: {
-                    length: 2,
-                    recommendations: '',
-                    titleTag: 'myTitleTag',
+                    length: 80,
+                    recommendations: "Title tag length should be between 50 and 60 characters.",
+                    titleTag: "South African Online Computer Store",
                 },
                 // mobileFriendlinessAnalysis: {},
                 // structuredDataAnalysis: {},
@@ -436,6 +436,100 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getAllByAltText('Image').length).toBe(mockResults[0].images.length);
+        });
+    });
+
+    it('Onpage SEO: Internal Linking - display total, unique links and recommendation', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
+            expect(screen.queryByTestId('internalLinking_recommendations')).toBeInTheDocument();  
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Internal Linking - display total, unique links and NO recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        internalLinksAnalysis: {
+                            recommendations: '',
+                            totalLinks: 17,
+                            uniqueLinks: 9,
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
+            expect(screen.queryByTestId('internalLinking_recommendations')).not.toBeInTheDocument();  
+        });
+    });
+
+    it('Onpage SEO: Meta Description - display title tag, length and recommendation', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.length)).toBeDefined();
+            expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();  
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Meta Description - display title tag, length and NO recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        metaDescriptionAnalysis: {
+                            length: 55,
+                            recommendations: '',
+                            titleTag: "South African Online Computer Store",
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
+            expect(screen.getByText('55')).toBeDefined();
+            expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();        
         });
     });
 

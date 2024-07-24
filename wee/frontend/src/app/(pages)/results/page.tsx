@@ -845,7 +845,7 @@ function ResultsComponent() {
 
                           {
                             internalLinkingAnalysis?.recommendations != '' &&
-                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                   Recommendations
                                 </h5>
@@ -893,14 +893,14 @@ function ResultsComponent() {
                           </div>
 
                           {
-                            metaDescriptionAnalysis?.recommendations != '' &&
-                              <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                            metaDescriptionAnalysis?.recommendations !== '' && (
+                              <div data-testid='meta_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                   Recommendations
                                 </h5>
                                 <p>{metaDescriptionAnalysis?.recommendations}</p>
                               </div>
-                          }
+                          )}
                         </div>
                       :
                       <>
