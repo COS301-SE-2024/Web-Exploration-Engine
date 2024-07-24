@@ -3,8 +3,10 @@ import { Module } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { ScraperController } from './scraper.controller';
 
+// Modules
+import { PubSubModule } from './pub-sub/pub_sub.module';
+
 // Services
-import { PubSubService } from './pub-sub/pub_sub.service';
 import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
 import { ScrapeStatusService } from './scrape-status/scrape-status.service';
@@ -17,9 +19,9 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
 
 @Module({
+  imports: [PubSubModule],
   controllers: [ScraperController],
   providers: [
-    PubSubService,
     ScraperService,
     RobotsService,
     ScrapeMetadataService,
@@ -30,7 +32,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
     ScrapeContactInfoService,
     ScrapeAddressService,
     ScreenshotService,
-    SeoAnalysisService  
+    SeoAnalysisService ,
   ],
 })
 export class ScraperModule {}

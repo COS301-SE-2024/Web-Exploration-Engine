@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
+
 // Services
 import { PubSubService } from './pub-sub/pub_sub.service';
 import { RobotsService } from './robots/robots.service';
@@ -23,8 +24,9 @@ import {
 
 @Injectable()
 export class ScraperService implements OnModuleInit {
+  
   constructor(
-    private readonly pubsubService: PubSubService,
+    private readonly pubsub: PubSubService,
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
@@ -34,11 +36,22 @@ export class ScraperService implements OnModuleInit {
     private readonly screenshotService: ScreenshotService,
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
-    private readonly seoAnalysisService: SeoAnalysisService 
+    private readonly seoAnalysisService: SeoAnalysisService, 
+    
   ) {}
 
   onModuleInit() {
-    this.pubsubService.subscribe('projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub', this.scrape);
+    this.listenForScrapingTasks();
+  }
+
+  async scrapeWebsite(url: string, type: string) {
+    switch (type) {
+      case 'scrape':
+        return this.scrape(url);
+      // add more cases for different types of scraping
+      default:
+        throw new Error(`Unknown scraping type: ${type}`);
+    }
   }
 
   async scrape(url: string) {
@@ -179,11 +192,6 @@ export class ScraperService implements OnModuleInit {
     return data;
   }
 
-  scrapeUrls(urls: string[]) {
-    // scrape multiple urls in parallel
-    // return data
-  }
-
   async readRobotsFile(url: string) {
     return this.robotsService.readRobotsFile(url);
   }
@@ -313,6 +321,24 @@ export class ScraperService implements OnModuleInit {
       canonicalTagAnalysis,
       lighthouseAnalysis,      
    };
+  }
+
+  async listenForScrapingTasks() {
+    const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
+
+    const messageHandler = async (message) => {
+      const { url, type } = JSON.parse(message.data.toString());
+      try {
+        const result = await this.scrapeWebsite(url, type);
+        message.ack();
+        console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+        console.log(`Result: ${result}`);
+      } catch (error) {
+        console.error(`Error scraping URL: ${url}`, error);
+      }
+    };
+
+    this.pubsub.subscribe(subscriptionName, messageHandler);
   }
 }
 

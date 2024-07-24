@@ -12,18 +12,21 @@ export class PubSubService {
     });
   }
 
-  async publishMessage(topicName: string, data: any): Promise<string> {
+  async publishMessage(topicName: string, data: any) {
+    // Convert the data to a Buffer
     const dataBuffer = Buffer.from(JSON.stringify(data));
-    const messageId = await (this.pubsub.topic(topicName)).publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
-    return messageId;
+    try {
+      const messageId = await this.pubsub
+        .topic(topicName).publishMessage({ data: dataBuffer });
+      console.log(`Message ${messageId} published.`);
+    } catch (error) {
+      console.error(`Error publishing message: ${error}`);
+    }
   }
 
-  async subscribe(subscriptionName: string, messageHandler: (message: any) => void): Promise<void> {
+  async subscribe(subscriptionName: string, messageHandler: (message: any) => void) {
+    console.log(`Subscribing to topic: ${subscriptionName}`);
     const subscription = this.pubsub.subscription(subscriptionName);
     subscription.on('message', messageHandler);
-    subscription.on('error', (error) => {
-      console.error(`Received error:`, error);
-    });
   }
 }

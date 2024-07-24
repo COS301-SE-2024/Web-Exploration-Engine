@@ -19,14 +19,9 @@ import {
 @Controller('scraper')
 export class ScraperController {
   constructor(
-    private readonly pubsubService : PubSubService
+    private readonly pubsubService : PubSubService,
   ) {}
 
-  /*
-    This is the endpoint that will be used through the frontend to scrape the website
-    Right now it only takes in a URL through a get request - but in future it will take
-    in the URL and the customised scraping options
-  */
   @ScrapeOperation
   @ScrapeQuery
   @ScrapeResponse200
@@ -34,9 +29,13 @@ export class ScraperController {
   @ScrapeResponse500
   @Get()
   async scrape(@Query('url') url: string) {
-    console.log("Publish event")
-    const messageId = await this.pubsubService.publishMessage('projects/alien-grove-429815-s9/topics/scraping-tasks', url );
-    return { messageId };
+    const topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
+    console.log("Publishing scraping task for url: ", url);
+    const message = {
+      type: 'scrape',
+      url,
+    }
+    await this.pubsubService.publishMessage(topicName, message);
   }
 
   // @ReadRobotsOperation
