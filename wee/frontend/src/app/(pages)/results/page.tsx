@@ -19,8 +19,8 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiSearch, FiImage, FiAnchor, FiLink, FiCode } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, SEOError } from '../../models/ScraperModels';
+import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook } from "react-icons/fi";
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError } from '../../models/ScraperModels';
 
 interface Classifications {
   label: string;
@@ -64,6 +64,10 @@ function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): da
   return 'length' in data || 'recommendations' in data || 'titleTag' in data;  
 }
 
+function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
+  return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
+}
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -94,6 +98,7 @@ function ResultsComponent() {
   const [imagesAnalysis, setImageAnalysis] = useState<ImageAnalysis | SEOError>();
   const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinksAnalysis | SEOError>();
   const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
+  const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
@@ -134,6 +139,7 @@ function ResultsComponent() {
           setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
           setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
+          setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
         }
       }
     }
@@ -748,7 +754,7 @@ function ResultsComponent() {
                     {/* Heading */}
                     <div className='flex mb-2'>
                       <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
-                        <FiSearch />
+                        <FiUmbrella />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
@@ -1062,6 +1068,62 @@ function ResultsComponent() {
                       </>
                     }
                   </div> {/* EO title tag */}
+
+                  {/* Unique Content Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiBook />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Unique Content
+                        </h4>
+                      </div>
+                    </div>     
+
+                    {/* Content */}
+                    {
+                      uniqContentAnalysis && isUniqueContentAnalysis(uniqContentAnalysis) ?
+                      <div>
+                        {/* Count */}
+                        <div className='gap-6 grid sm:grid-cols-2'>
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                            <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              {uniqContentAnalysis?.textLength}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Text Length
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
+                            <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              {(uniqContentAnalysis?.uniqueWordsPercentage).toFixed(2)}%
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Unique words
+                            </div>
+                          </div>
+                        </div>
+
+                        {
+                          uniqContentAnalysis?.recommendations != '' &&
+                            <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{uniqContentAnalysis?.recommendations}</p>
+                            </div>
+                        }
+                      </div>
+                      :
+                      <>
+                        {uniqContentAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Unique Content Analysis */}
 
                 </div> {/* EO on page SEO analysis */}
               </CardBody>
