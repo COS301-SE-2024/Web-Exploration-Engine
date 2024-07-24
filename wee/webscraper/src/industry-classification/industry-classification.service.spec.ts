@@ -30,17 +30,36 @@ describe('IndustryClassificationService', () => {
       const url = 'http://test.com';
 
       // Mocking axios response for both metadata and domain classification
-      mockedAxios.post.mockResolvedValueOnce({
-        data: [[{ label: 'Technology', score: 0.9 }]],
-      }).mockResolvedValueOnce({
-        data: [[{ label: 'Web', score: 0.8 }]],
-      });
+      mockedAxios.post
+        .mockResolvedValueOnce({
+          data: [[{ label: 'Technology', score: 0.9 }]], // metadata classification
+        })
+        .mockResolvedValueOnce({
+          data: [[{ label: 'Web', score: 0.8 }]], // domain classification
+        })
+        .mockResolvedValueOnce({
+          data: { labels: ['Technology', 'Finance', 'Healthcare'], scores: [0.9, 0.8, 0.7] } // zero-shot metadata classification
+        })
+        .mockResolvedValueOnce({
+          data: { labels: ['Web', 'Retail', 'Health'], scores: [0.8, 0.7, 0.6] } // zero-shot domain classification
+        });
+      
 
       const result = await service.classifyIndustry(url, metadata);
 
       expect(result).toEqual({
         metadataClass: { label: 'Technology', score: 0.9 },
         domainClass: { label: 'Web', score: 0.8 },
+        zeroShotMetaDataClassify: [
+          { label: 'Technology', score: 0.9 },
+          { label: 'Finance', score: 0.8 },
+          { label: 'Healthcare', score: 0.7 }
+        ],
+        zeroShotDomainClassify: [
+          { label: 'Web', score: 0.8 },
+          { label: 'Retail', score: 0.7 },
+          { label: 'Health', score: 0.6 }
+        ]
       });
     });
 
@@ -63,6 +82,16 @@ describe('IndustryClassificationService', () => {
       expect(result).toEqual({
         metadataClass: { label: 'Unknown', score: 0 },
         domainClass: { label: 'Unknown', score: 0 },
+        zeroShotMetaDataClassify: [
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 }
+        ],
+        zeroShotDomainClassify: [
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 },
+          { label: 'Unknown', score: 0 }
+        ]
       });
     });
   });
@@ -126,6 +155,83 @@ describe('IndustryClassificationService', () => {
       mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
       await expect(service.domainClassify(url)).rejects.toThrow('Error classifying industry: Network error');
+    });
+  });
+
+  describe('zeroShotMetaDataClassify', () => {
+    it('should return zero-shot classified metadata', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title',
+        description: 'Test Description',
+        keywords: 'Test Keywords',
+        ogTitle: 'Test OG Title',
+        ogDescription: 'Test OG Description',
+        ogImage: 'http://test.com/image.png',
+      };
+  
+      // Mocking axios response
+      mockedAxios.post.mockResolvedValue({
+        data: {
+          labels: ['Technology', 'Finance', 'Education'],
+          scores: [0.9, 0.8, 0.7],
+        },
+      });
+  
+      const result = await service.zeroShotMetaDataClassify(metadata);
+  
+      expect(result).toEqual([
+        { label: 'Technology', score: 0.9 },
+        { label: 'Finance', score: 0.8 },
+        { label: 'Education', score: 0.7 },
+      ]);
+    });
+  
+
+    it('should handle errors gracefully', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title',
+        description: 'Test Description',
+        keywords: 'Test Keywords',
+        ogTitle: 'Test OG Title',
+        ogDescription: 'Test OG Description',
+        ogImage: 'http://test.com/image.png',
+      };
+
+      // Mocking axios to throw an error
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
+
+      await expect(service.zeroShotMetaDataClassify(metadata)).rejects.toThrow('Error classifying industry: Network error');
+    });
+  });
+
+  describe('zeroShotDomainClassify', () => {
+    it('should return zero-shot classified domain', async () => {
+      const url = 'http://test.com';
+
+      // Mocking axios response
+      mockedAxios.post.mockResolvedValue({
+        data: {
+          labels: ['Web', 'Retail', 'Health'],
+          scores: [0.8, 0.7, 0.6],
+        },
+      });
+
+      const result = await service.zeroShotDomainClassify(url);
+
+      expect(result).toEqual([
+        { label: 'Web', score: 0.8 },
+        { label: 'Retail', score: 0.7 },
+        { label: 'Health', score: 0.6 }
+      ]);
+    });
+
+    it('should handle errors gracefully', async () => {
+      const url = 'http://test.com';
+
+      // Mocking axios to throw an error
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
+
+      await expect(service.zeroShotDomainClassify(url)).rejects.toThrow('Error classifying domain: Network error');
     });
   });
 });
