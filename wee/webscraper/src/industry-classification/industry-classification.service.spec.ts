@@ -254,4 +254,38 @@ describe('IndustryClassificationService', () => {
       await expect(service.zeroShotDomainClassify(url)).rejects.toThrow('Error classifying domain: Network error');
     });
   });
+  describe('createLabelBatches', () => {
+    it('should create batches of labels with the specified batch size', () => {
+      const labels = ['label1', 'label2', 'label3', 'label4', 'label5', 'label6', 'label7'];
+      const batchSize = 3;
+
+      const result = service.createLabelBatches(labels, batchSize);
+
+      expect(result).toEqual([
+        ['label1', 'label2', 'label3'],
+        ['label4', 'label5', 'label6'],
+        ['label7']
+      ]);
+    });
+
+    it('should handle an empty array of labels', () => {
+      const labels: string[] = [];
+      const batchSize = 3;
+
+      const result = service.createLabelBatches(labels, batchSize);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle a batch size larger than the number of labels', () => {
+      const labels = ['label1', 'label2'];
+      const batchSize = 5;
+
+      const result = service.createLabelBatches(labels, batchSize);
+
+      expect(result).toEqual([
+        ['label1', 'label2']
+      ]);
+    });
+  });
 });
