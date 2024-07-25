@@ -1109,7 +1109,12 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
                             <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                              {(uniqContentAnalysis?.uniqueWordsPercentage).toFixed(2)}%
+                              {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
+                                ?
+                                (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
+                                :
+                                '0%'
+                              }
                             </div>
                             <div className='font-poppins-semibold text-lg'>
                               Unique words
