@@ -333,57 +333,68 @@ export class ScraperService implements OnModuleInit {
     const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
 
     const messageHandler = async (message) => {
-      const start = performance.now();
-      const { url, type } = JSON.parse(message.data.toString());
-
-      // perform all cache checks here
-      
-      // if in cache, check if completed\
-      const cachedData:string = await this.cacheManager.get(url);
-      if (cachedData) {
-        const dataFromCache = JSON.parse(cachedData);
-        if (dataFromCache.status === 'completed') {
-          const end = performance.now();
-          const times = (end - start) / 1000;
-          console.log('CACHE HIT', times);
-
-          // update the time field of the object being returned from cache
-          dataFromCache.time = parseFloat(times.toFixed(4));      
-          return dataFromCache;
-        }
-
-        // if not completed, check if processing
-        if (dataFromCache.status === 'processing') {
-          console.log(`Already processing URL: ${url}, Type: ${type}`);
-          message.ack();
-          return;
-        }
-      }
-      
-      console.log('CACHE MISS - SCRAPE');
-
       try {
-        // add to cache as processing
-        this.cacheManager.set(url, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
-        const result = await this.scrapeWebsite(url, type);
-        
-        const completeData = {
-          status: 'completed',
-          result,
-        }
-        this.cacheManager.set(url, JSON.stringify(completeData));
-        message.ack();
-        console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
-        console.log(`Result: ${result}`);
+        await this.handleMessage(message);
       } catch (error) {
-        console.error(`Error scraping URL: ${url}`, error);
-        // retry mechanism?
-        // remove entry from cache
-        this.cacheManager.del(url);
+        console.error('Error handling message', error);
       }
     };
 
     this.pubsub.subscribe(subscriptionName, messageHandler);
   }
+
+  async handleMessage(message) {
+    const start = performance.now();
+    const { url, type } = JSON.parse(message.data.toString());
+  
+    // Cache check and update logic
+    const cachedData = await this.getCachedData(url);
+    if (cachedData) {
+      const end = performance.now();
+      const times = (end - start) / 1000;
+      console.log('CACHE HIT', times);
+  
+      // Update time field
+      cachedData.time = parseFloat(times.toFixed(4));
+      return cachedData;
+    }
+  
+    console.log('CACHE MISS - SCRAPE');
+  
+    // Add to cache as processing
+    await this.cacheManager.set(url, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+    message.ack();
+  
+    try {
+      const result = await this.scrapeWebsite(url, type);
+      const completeData = {
+        status: 'completed',
+        result,
+      };
+      await this.cacheManager.set(url, JSON.stringify(completeData));
+      console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+      console.log(`Result: ${result}`);
+    } catch (error) {
+      console.error(`Error scraping URL: ${url}`, error);
+      // Retry mechanism? Remove entry from cache
+      await this.cacheManager.del(url);
+    }
+  }
+
+  async getCachedData(url) {
+    const cachedDataString:string = await this.cacheManager.get(url);
+    if (cachedDataString) {
+      const data = JSON.parse(cachedDataString);
+      if (data.status === 'completed') {
+        return data;
+      } else if (data.status === 'processing') {
+        console.log(`Already processing URL: ${url}`);
+        return null;
+      }
+    }
+    return null;
+  }
+
+
 }
 

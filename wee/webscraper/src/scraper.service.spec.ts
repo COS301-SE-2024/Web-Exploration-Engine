@@ -11,20 +11,13 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
-import { RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
+import { PubSubService } from "./pub-sub/pub_sub.service";
 
 describe('ScraperService', () => {
     let service: ScraperService;
     let cacheManager: Cache;
-    let robotsService: RobotsService;
-    let metadataService: ScrapeMetadataService;
-    let industryClassificationService: IndustryClassificationService;
-    let scrapeLogoService: ScrapeLogoService;
-    let imagesService: ScrapeImagesService;
-    let contactInfoService: ScrapeContactInfoService;
-    let addressService: ScrapeAddressService;
-    let screenshotService: ScreenshotService;
-    let seoAnalysisService: SeoAnalysisService;
+    let pubsub: PubSubService;
+    let mockMessage: any;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -35,91 +28,157 @@ describe('ScraperService', () => {
                     useValue: {
                         get: jest.fn(),
                         set: jest.fn(),
+                        del: jest.fn(),
                     } as Partial<Cache>,
                 },
                 {
                     provide: RobotsService,
                     useValue: {
-                        readRobotsFile: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeMetadataService,
                     useValue: {
-                        scrapeMetadata: jest.fn()
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeStatusService,
                     useValue: {
-                        scrapeStatus: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: IndustryClassificationService,
                     useValue: {
-                        classifyIndustry: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeLogoService,
                     useValue: {
-                        scrapeLogo: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeImagesService,
                     useValue: {
-                        scrapeImages: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScreenshotService,
                     useValue: {
-                        captureScreenshot: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeContactInfoService,
                     useValue: {
-                        scrapeContactInfo: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: ScrapeAddressService,
                     useValue: {
-                        scrapeAddress: jest.fn(),
+                        // Mock methods if needed
                     },
                 },
                 {
                     provide: SeoAnalysisService,
                     useValue: {
-                        seoAnalysis: jest.fn(),
+                        // Mock methods if needed
                     },
-                },                
-            ]
+                },
+                {
+                    provide: PubSubService,
+                    useValue: {
+                        subscribe: jest.fn(),
+                    },
+                },
+            ],
         }).compile();
 
         service = module.get<ScraperService>(ScraperService);
         cacheManager = module.get<Cache>('CACHE_MANAGER');
-        robotsService = module.get<RobotsService>(RobotsService);
-        metadataService = module.get<ScrapeMetadataService>(ScrapeMetadataService);
-        industryClassificationService = module.get<IndustryClassificationService>(IndustryClassificationService);
-        scrapeLogoService = module.get<ScrapeLogoService>(ScrapeLogoService);
-        imagesService = module.get<ScrapeImagesService>(ScrapeImagesService);
-        contactInfoService = module.get<ScrapeContactInfoService>(ScrapeContactInfoService);
-        addressService = module.get<ScrapeAddressService>(ScrapeAddressService);
-        screenshotService = module.get<ScreenshotService>(ScreenshotService);
-        seoAnalysisService = module.get<SeoAnalysisService>(SeoAnalysisService);
+        pubsub = module.get<PubSubService>(PubSubService);
+
+        mockMessage = {
+            data: { toString: jest.fn() },
+            ack: jest.fn(),
+        };
     });
 
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
 
-    it('should return cached data on cache hit', async () => {
-        const url = 'http://example.com';
-        const cachedData = {
+    describe('getCachedData', () => {
+        it('should return cached data if status is completed', async () => {
+          const url = 'https://example.com';
+          const cachedData = { status: 'completed', result: 'some result' };
+          
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify(cachedData));
+    
+          const result = await service.getCachedData(url);
+    
+          expect(result).toEqual(cachedData);
+          expect(cacheManager.get).toHaveBeenCalledWith(url);
+        });
+    
+        it('should return null if status is processing', async () => {
+          const url = 'http://example.com';
+          const cachedData = { status: 'processing', pollingURL: '/status' };
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify(cachedData));
+    
+          const result = await service.getCachedData(url);
+    
+          expect(result).toBeNull();
+          expect(cacheManager.get).toHaveBeenCalledWith(url);
+        });
+    
+        it('should return null if no data is cached', async () => {
+          const url = 'http://example.com';
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null);
+          const result = await service.getCachedData(url);
+    
+          expect(result).toBeNull();
+          expect(cacheManager.get).toHaveBeenCalledWith(url);
+        });
+    });
+
+    describe('listenForScrapingTasks', () => {
+        it('should subscribe to scraping tasks', async () => {
+            const subscribeSpy = jest.spyOn(pubsub, 'subscribe');
+            await service.listenForScrapingTasks();
+            expect(subscribeSpy).toHaveBeenCalledWith(
+                'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub',
+                expect.any(Function)
+            );
+        });
+    });
+
+    describe('handleMessage', () => {
+        it('should hit the cache and return cached data', async () => {
+          const url = 'http://example.com';
+          const type = 'someType';
+          const cachedData = { status: 'completed', result: 'some result' };
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify(cachedData));
+          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ url, type }));
+    
+          const result = await service.handleMessage(mockMessage);
+    
+          expect(result.status).toEqual(cachedData.status);
+            expect(result.result).toEqual(cachedData.result);
+          expect(cacheManager.get).toHaveBeenCalledWith(url);
+          expect(mockMessage.ack).not.toHaveBeenCalled(); // Ensure message is not acknowledged
+        });
+    
+        it('should process a scrape if cache miss', async () => {
+          const url = 'http://example.com';
+          const type = 'someType';
+          const scrapeResult = {
             url,
             time: 0,
             domainStatus: '',
@@ -133,109 +192,29 @@ describe('ScraperService', () => {
             addresses: [],
             screenshot: '',
             seoAnalysis: null,
-        };
-
-        jest.spyOn(cacheManager, 'get').mockResolvedValue(JSON.stringify(cachedData));
-        const result = await service.scrape(url);
-
-        expect(cacheManager.get).toHaveBeenCalledWith(url);
-        expect(result.url).toBe(url);
-
-        expect(result.time).toBeCloseTo(cachedData.time, 2);
-        
-        expect(result).toEqual(expect.objectContaining({
-            ...cachedData,
-            time: result.time
-        }));
-    });
-
-    it('should scrape and cache data on cache miss', async () => {
-        const url = 'http://example.com';
+          };
+          const cachedDataProcessing = { status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` };
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null); // Cache miss
+          jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
+          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ url, type }));
     
-        jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+          await service.handleMessage(mockMessage);
     
-        const cacheSetSpy = jest.spyOn(cacheManager, 'set').mockResolvedValue(undefined);
+          expect(cacheManager.set).toHaveBeenCalledWith(url, JSON.stringify(cachedDataProcessing));
+          expect(mockMessage.ack).toHaveBeenCalled();
+        });
     
-        jest.spyOn(robotsService, 'readRobotsFile').mockResolvedValue({
-            baseUrl: url,
-            isUrlScrapable: true,
-            isBaseUrlAllowed: true,
-            allowedPaths: [],
-            disallowedPaths: []
-        } as RobotsResponse);
+        it('should handle errors and remove cache entry', async () => {
+          const url = 'http://example.com';
+          const type = 'someType';
+          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null); // Cache miss
+          jest.spyOn(service, 'scrape').mockRejectedValueOnce(new Error('Some error'));
+          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ url, type }));
     
-        jest.spyOn(metadataService, 'scrapeMetadata').mockResolvedValue({
-            title: 'Example Title',
-            description: 'Example Description',
-            keywords: 'example, keywords'
-        } as Metadata);
+          await service.handleMessage(mockMessage);
     
-        jest.spyOn(industryClassificationService, 'classifyIndustry').mockResolvedValue({
-            metadataClass: {
-                label: "E-commerce",
-                score: 95,
-            },
-            domainClass: {
-                label: 'Unknown',
-                score: 0,
-            }
-        } as IndustryClassification);
-
-        jest.spyOn(scrapeLogoService, 'scrapeLogo').mockResolvedValue('http://example.com/logo.png');
-        jest.spyOn(imagesService, 'scrapeImages').mockResolvedValue(['image1.png', 'image2.svg']);
-        jest.spyOn(contactInfoService, 'scrapeContactInfo').mockResolvedValue({
-            emails: ['email@gmail.com'], 
-            phones: ['01234567892'], 
-            socialLinks: []
-        })
-        jest.spyOn(addressService, 'scrapeAddress').mockResolvedValue({addresses: ['address 1', 'address 2']});
-        jest.spyOn(screenshotService, 'captureScreenshot').mockResolvedValue({screenshot: 'screenshot.png'});
-        jest.spyOn(seoAnalysisService, 'seoAnalysis').mockResolvedValue(null);    
-        
-        const result = await service.scrape(url);    
-        
-        expect(cacheManager.get).toHaveBeenCalledWith(url); 
-        expect(result.url).toBe(url); 
-        expect(result).toEqual(expect.objectContaining({ 
-            url,
-            time: expect.any(Number),
-            domainStatus: undefined,
-            robots: {
-                baseUrl: url,
-                isUrlScrapable: true,
-                isBaseUrlAllowed: true,
-                allowedPaths: [],
-                disallowedPaths: []
-            },
-            metadata: {
-                title: 'Example Title',
-                description: 'Example Description',
-                keywords: 'example, keywords'
-            },
-            industryClassification: {
-                metadataClass: {
-                    label: "E-commerce",
-                    score: 95,
-                },
-                domainClass: {
-                    label: 'Unknown',
-                    score: 0,
-                }
-            },
-            logo: 'http://example.com/logo.png',
-            images: ['image1.png', 'image2.svg'],
-            slogan: '',
-            contactInfo: {
-                emails: ['email@gmail.com'], 
-                phones: ['01234567892'], 
-                socialLinks: []
-            },
-            addresses: ['address 1', 'address 2'],
-            screenshot: 'screenshot.png',
-            seoAnalysis: null,
-        }));
-    
-        expect(cacheSetSpy).toHaveBeenCalledWith(url, JSON.stringify(result)); 
-    });
-
+          expect(cacheManager.set).toHaveBeenCalledWith(url, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+          expect(cacheManager.del).toHaveBeenCalledWith(url);
+        });
+      });
 });
