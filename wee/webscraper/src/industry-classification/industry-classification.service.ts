@@ -28,16 +28,17 @@ export class IndustryClassificationService {
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     try {
       const metadataClass = await this.metadataClassify(metadata);
-    //console.log('Metadata Classification:', metadataClass);
-    const domainClass = await this.domainClassify(url);
-    //console.log('Domain Classification:', domainClass);
-    const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
-    //console.log('Zero-Shot Metadata Classification:', zeroShotMetaDataClassify);
-    const zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
-    //console.log('Zero-Shot Domain Classification:', zeroShotDomainClassify);
-    return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
+      //console.log('Metadata Classification:', metadataClass);
+      const domainClass = await this.domainClassify(url);
+      //console.log('Domain Classification:', domainClass);
+      const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
+      //console.log('Zero-Shot Metadata Classification:', zeroShotMetaDataClassify);
+      const zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
+      //console.log('Zero-Shot Domain Classification:', zeroShotDomainClassify);
+      return { metadataClass, domainClass, zeroShotMetaDataClassify , zeroShotDomainClassify };
     } 
     catch (error) {
+      console.log(error.message);
       return {
         metadataClass: {
           label: 'Unknown',
@@ -157,6 +158,8 @@ export class IndustryClassificationService {
             },
           }
         );
+
+        console.log('Response:', response);
   
         if (response.data && response.data.labels && response.data.scores) {
           const results = response.data.labels.map((label: string, index: number) => ({
@@ -210,6 +213,8 @@ export class IndustryClassificationService {
             },
           }
         );
+
+        // console.log('Response:', response);
   
         if (response.data && response.data.labels && response.data.scores) {
           const results = response.data.labels.map((label: string, index: number) => ({
@@ -231,7 +236,7 @@ export class IndustryClassificationService {
     }
   }
   
-  private createLabelBatches(labels: string[], batchSize: number): string[][] {
+  createLabelBatches(labels: string[], batchSize: number): string[][] {
     const batches = [];
     for (let i = 0; i < labels.length; i += batchSize) {
       batches.push(labels.slice(i, i + batchSize));

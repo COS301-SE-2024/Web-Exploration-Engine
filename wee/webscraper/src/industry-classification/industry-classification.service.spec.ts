@@ -29,6 +29,12 @@ describe('IndustryClassificationService', () => {
       };
       const url = 'http://test.com';
 
+
+      // mock number of batches
+      jest.spyOn(service, 'createLabelBatches').mockReturnValue([
+        ['Technology', 'Finance', 'Healthcare', 'Web', 'Retail', 'Health']
+      ]);
+
       // Mocking axios response for both metadata and domain classification
       mockedAxios.post
         .mockResolvedValueOnce({
@@ -38,14 +44,20 @@ describe('IndustryClassificationService', () => {
           data: [[{ label: 'Web', score: 0.8 }]], // domain classification
         })
         .mockResolvedValueOnce({
-          data: { labels: ['Technology', 'Finance', 'Healthcare'], scores: [0.9, 0.8, 0.7] } // zero-shot metadata classification
+          data: {
+            labels: ["Technology", "Finance", "Healthcare"],
+            scores: [0.9, 0.8, 0.7]
+          }
         })
         .mockResolvedValueOnce({
-          data: { labels: ['Web', 'Retail', 'Health'], scores: [0.8, 0.7, 0.6] } // zero-shot domain classification
+          data: {
+            labels: ["Web", "Retail", "Health"],
+            scores: [0.8, 0.7, 0.6]
+          }
         });
       
-
       const result = await service.classifyIndustry(url, metadata);
+      console.log('Result:', result);
 
       expect(result).toEqual({
         metadataClass: { label: 'Technology', score: 0.9 },
@@ -168,6 +180,10 @@ describe('IndustryClassificationService', () => {
         ogDescription: 'Test OG Description',
         ogImage: 'http://test.com/image.png',
       };
+
+      jest.spyOn(service, 'createLabelBatches').mockReturnValue([
+        ['Technology', 'Finance', 'Education'],
+      ]);
   
       // Mocking axios response
       mockedAxios.post.mockResolvedValue({
@@ -207,6 +223,10 @@ describe('IndustryClassificationService', () => {
   describe('zeroShotDomainClassify', () => {
     it('should return zero-shot classified domain', async () => {
       const url = 'http://test.com';
+
+      jest.spyOn(service, 'createLabelBatches').mockReturnValue([
+        ['Web', 'Retail', 'Health'],
+      ]);
 
       // Mocking axios response
       mockedAxios.post.mockResolvedValue({
