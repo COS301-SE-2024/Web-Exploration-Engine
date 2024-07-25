@@ -90,7 +90,7 @@ describe('Results Component', () => {
                 headingAnalysis: {
                     count: 2,
                     headings: ['HeadingOne', 'HeadingTwo'],
-                    recommendations: '',
+                    recommendations: 'This is a heading recommendation',
                 },
                 imageAnalysis: {
                     errorUrls: [],
@@ -725,6 +725,88 @@ describe('Results Component', () => {
             expect(screen.queryByText('repeatedWordsOne: 19')).not.toBeInTheDocument();
             expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
             expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Headings - display list of headings, heading count and recommendation', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
+            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Headings - display list of headings, heading count and NO recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        headingAnalysis: {
+                            count: 2,
+                            headings: ['HeadingOne', 'HeadingTwo'],
+                            recommendations: '',
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
+            expect(screen.queryByTestId('headings_recommendations')).not.toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
+        });
+    });
+
+    it('Onpage SEO: Headings - display NO list of headings, heading count and recommendation', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        headingAnalysis: {
+                            count: 0,
+                            headings: [],
+                            recommendations: 'This is a heading recommendation',
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.getByText('0')).toBeDefined();
+            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).not.toBeInTheDocument();
+            expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).not.toBeInTheDocument();
         });
     });
 
