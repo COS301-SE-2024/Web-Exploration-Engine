@@ -1063,7 +1063,7 @@ function ResultsComponent() {
 
                           {
                             titleTagsAnalysis?.recommendations != '' && 
-                              <div data-testid='titleTag_recommendations'className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                   Recommendations
                                 </h5>
@@ -1140,7 +1140,7 @@ function ResultsComponent() {
 
                         {
                           uniqContentAnalysis?.recommendations != '' &&
-                            <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                            <div data-testid='uniqueContent_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                 Recommendations
                               </h5>
