@@ -16,6 +16,13 @@ const WEETabs = extendVariants(Tabs, {
               "dark:group-data-[selected=true]:dark:text-primaryTextColor",
               "dark:group-data-[selected=true]:font-medium"
 						],
+            base: [
+              "flex"
+            ],
+            tabList: [
+              "flex-wrap",
+              "sm:flex-nowrap"
+            ]
 				}
 			}
     },
