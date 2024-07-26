@@ -3,12 +3,19 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import logger from '../../../services/webscraperlogger';
+const serviceName = "SeoAnalysisService";
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse) {
+
+  
+    logger.log(serviceName);
+
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
+      logger.warn(`${serviceName} Crawling not allowed for this URL`);
       return {
         error: 'Crawling not allowed for this URL',
       };
@@ -63,6 +70,7 @@ export class SeoAnalysisService {
   }
 
   async analyzeMetaDescription(htmlContent: string, url: string) {
+    
     const $ = cheerio.load(htmlContent);
     const metaDescription = $('meta[name="description"]').attr('content') || '';
     const length = metaDescription.length;
@@ -103,6 +111,7 @@ export class SeoAnalysisService {
       const response = await axios.get(url);
       return response.data;
     } catch (error) {
+
       throw new Error(`Error fetching HTML from ${url}: ${error.message}`);
     }
   }
@@ -139,6 +148,7 @@ export class SeoAnalysisService {
     };
   }
   async analyzeImageOptimization(url: string) {
+    
     const browser = await puppeteer.launch();
     
   
@@ -191,6 +201,7 @@ export class SeoAnalysisService {
           }
         } catch (error) {
           console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
+          logger.error(`${serviceName} Error checking optimization for image ${img.src}: ${error.message}`);
           nonOptimizedCount++;
           reasonsMap.other.push(imageUrl);  // Categorize as "other"
           errorUrls.push(`Error checking optimization for image: ${img.src}. ${error.message}`);
@@ -214,6 +225,7 @@ export class SeoAnalysisService {
         errorUrls,
       };
     } catch (error) {
+      logger.error(`${serviceName} Error analyzing images using Puppeteer: ${error.message}`);
       console.error(`Error analyzing images using Puppeteer: ${error.message}`);
       return {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
@@ -261,6 +273,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
+      logger.error(`${serviceName} Error checking optimization for image ${imageUrl}: ${error.message}`);
       return {
         optimized: false,
         reasons: [],
@@ -347,6 +360,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       // console.error(`Error analyzing site speed: ${error.message}`);
+      logger.error(`${serviceName} Error analyzing site speed: ${error.message}`);
       // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
@@ -379,6 +393,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       console.error(`Error analyzing mobile-friendliness: ${error.message}`);
+      logger.error(`${serviceName} Error analyzing mobile-friendliness: ${error.message}`);
     } finally {
       await browser.close();
     }
@@ -423,6 +438,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error fetching XML sitemap: ${error.message}`);
+      logger.error(`${serviceName} Error fetching XML sitemap: ${error.message}`);
       return {
         isSitemapValid: false,
         recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
@@ -453,6 +469,7 @@ export class SeoAnalysisService {
           return categoryData.score * 100;
         } else {
           console.warn(`Category score for ${category} is not available.`);
+          logger.warn(`${serviceName} Category score for ${category} is not available.`);
           return null;
         }
       };
@@ -495,6 +512,7 @@ export class SeoAnalysisService {
       return { scores, diagnostics }; 
     } catch (error) {
       // console.error(`Error fetching Lighthouse data: ${error.message}`);
+      logger.error(`${serviceName} Error fetching Lighthouse data: ${error.message}`);
       // throw new Error(`Error fetching Lighthouse data: ${error.message}`);
     }
   }
