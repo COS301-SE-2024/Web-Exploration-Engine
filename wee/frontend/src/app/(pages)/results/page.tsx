@@ -21,6 +21,7 @@ import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook } from "react-icons/fi";
 import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError } from '../../models/ScraperModels';
+import WEETabs from '../../components/Util/Tabs';
 
 interface Classifications {
   label: string;
@@ -410,7 +411,7 @@ function ResultsComponent() {
         </div>
 
         {/* Tabs */}
-        <Tabs aria-label="Options" size="lg">
+        <WEETabs aria-label="Options">
           <Tab key="general" title="General Overview">
             <Card>
               <CardBody>
@@ -1175,7 +1176,8 @@ function ResultsComponent() {
                                 <Chip
                                   radius="sm"                                  
                                   // color={'primary'}
-                                  variant="flat"                                  
+                                  variant="flat"     
+                                  className='mt-2'                             
                                 >
                                   {wordObj.word}: {wordObj.count}
                                 </Chip>
@@ -1212,7 +1214,7 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>              
-        </Tabs>
+        </WEETabs>
       </div>   
 
       {/* Confirm save */}
