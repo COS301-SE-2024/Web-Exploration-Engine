@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import puppeteer from 'puppeteer';
+import logger from '../../../services/webscraperlogger';
+const serviceName = "[ScrapeMetadataService]";
 
 @Injectable()
 export class ScrapeMetadataService {
   async scrapeMetadata(
     url: string, data: RobotsResponse
   ): Promise<Metadata | ErrorResponse> {
+
+    logger.log(serviceName);
+
     // Possible improvement: first scrape given URL, if no metadata found, scrape root URL
 
     const allowed = data.isBaseUrlAllowed;
 
     if (!allowed) {
+      logger.warn(`${serviceName} Not allowed to scrape root URL for metadata`)
       return {
         errorStatus: 403,
         errorCode: '403 Forbidden',
@@ -63,6 +69,7 @@ export class ScrapeMetadataService {
       return { ...metadata };
 
     } catch (error) {
+      logger.error(`${serviceName} Error scraping metadata: ${error.message}`)
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
