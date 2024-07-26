@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import logger from '../../services/webscraperlogger';
 
 // Services
 import { RobotsService } from './robots/robots.service';
@@ -21,6 +22,8 @@ import {
   IndustryClassification,
 } from './models/ServiceModels';
 
+const serviceName = "[ScraperService]";
+logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService {
   constructor(

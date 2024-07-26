@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
 import axios from 'axios';
+import logger from '../../../services/webscraperlogger';
 
+const serviceName = "[IndustryClassificationService]";
 
 @Injectable()
 export class IndustryClassificationService {
@@ -11,13 +13,17 @@ export class IndustryClassificationService {
   private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
+
+    logger.log(serviceName);
+
     try {
       const metadataClass = await this.metadataClassify(metadata);
       const domainClass = await this.domainClassify(url);
       return { metadataClass, domainClass };
-    } 
+    }
     catch (error) {
-      return {
+      logger.error(`${serviceName}, Error with metadata class ${error.message}`)
+      return { 
         metadataClass: {
           label: 'Unknown',
           score: 0,
@@ -57,10 +63,13 @@ export class IndustryClassificationService {
         };
         return res;
       } else {
+        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
       throw new Error(`Error classifying industry: ${error.message}`);
+
     }
   }
 
@@ -91,9 +100,12 @@ export class IndustryClassificationService {
         };
         return res;
       } else {
+        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
+
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
