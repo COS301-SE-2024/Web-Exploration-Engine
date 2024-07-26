@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import logger from '../../../services/webscraperlogger';
 
+const serviceName = "[ScrapeAddressService]";
 @Injectable()
 export class ScrapeAddressService {
   /**
@@ -11,8 +13,12 @@ export class ScrapeAddressService {
    * @returns {Promise<{ addresses: string[] }>} 
    */
   async scrapeAddress(url: string, robots: RobotsResponse): Promise<{ addresses: string[] }> {
+
+    logger.log(serviceName);
+
     try {
       if (!robots.isBaseUrlAllowed) {
+        logger.warn(`${serviceName} Crawling not allowed for this URL`);
         console.error('Crawling not allowed for this URL');
         return { addresses: [] };
       }
@@ -44,6 +50,7 @@ export class ScrapeAddressService {
 
       return { addresses: validAddresses };
     } catch (error) {
+      logger.error(`${serviceName} Failed to scrape addresses: ${error.message}`);
       console.error(`Failed to scrape addresses: ${error.message}`);
       return { addresses: [] };
     }
