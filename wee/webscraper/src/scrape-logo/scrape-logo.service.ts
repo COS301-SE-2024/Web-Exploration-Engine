@@ -27,6 +27,7 @@ export class ScrapeLogoService {
         // look for more keywords or patterns - e.g. 'brand', 'icon', 'logo'
         // return multiple images - order based on relevance
         if (!robots.isUrlScrapable) {
+            logger.error('${serviceName} Crawling not allowed for this URL');
             console.error('Crawling not allowed for this URL');
             return '';
         }
