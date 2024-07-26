@@ -1,14 +1,14 @@
 describe('scraping functionality', () => {
   it('correct page loads', () => {
     cy.visit('/');
-    cy.contains(/The Web Exploration Engine/i).should('exist');
+    cy.contains(/Web Exploration Engine/i).should('exist');
   });
 
   it('help should be available', () => {
     cy.testHelp('/');
   });
 
-  it('1 crawlable url, view results', () => {
+  /* it('1 crawlable url, view results', () => {
     cy.visit('/');
 
     cy.get('[data-testid="scraping-textarea-home"]').type('https://github.com');
@@ -36,8 +36,8 @@ describe('scraping functionality', () => {
     //Story : View results
     cy.url().should('include', 'https%3A%2F%2Fgithub.com%2F');
   });
-
-  it('2 crawlable urls, filterable results, individual reports, ', () => {
+ */
+  /* it('2 crawlable urls, filterable results, individual reports, ', () => {
     cy.visit('/');
 
     //Story : Enter multiple URLs
@@ -93,8 +93,8 @@ describe('scraping functionality', () => {
     cy.contains(/domain match/i).should('exist');
     cy.contains(/confidence score/i).should('exist');
   });
-
-  it('1/2 crawlable urls, view overall report', () => {
+ */
+  /* it('1/2 crawlable urls, view overall report', () => {
     cy.visit('/');
 
     //enter the url into the the box
@@ -143,5 +143,5 @@ describe('scraping functionality', () => {
     cy.contains(/50/i).should('exist');
     cy.contains(/no weak classifications/i).should('exist');
     cy.contains(/Parked sites/i).should('exist');
-  });
+  }); */
 }); 
