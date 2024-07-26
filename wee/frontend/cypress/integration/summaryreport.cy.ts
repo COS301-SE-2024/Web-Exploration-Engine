@@ -1,7 +1,7 @@
 describe('summaryreport', () => {
   it('should be on right page', () => {
     cy.visit('/summaryreport');
-    cy.contains(/Scraping Dashboard/i).should('exist');
+    cy.contains(/Summary Report/i).should('exist');
   });
 
   it('help should be available', () => {

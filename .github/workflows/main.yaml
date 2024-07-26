@@ -8,11 +8,12 @@ on:
 
 jobs:
   lint-build-test-deploy:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
 
     env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
 
     steps:
       - name: Code Checkout
@@ -20,14 +21,14 @@ jobs:
 
       - name: Change to repository root
         run: cd $GITHUB_WORKSPACE
-        
+
       - name: Print new build number
         run: echo "Build number is $BUILD_NUMBER"
 
       - name: Install dependencies
-        run:  |
+        run: |
           cd wee && npm install
-          
+
       - name: Lint
         run: |
           cd wee
@@ -43,20 +44,17 @@ jobs:
           npx nx build webscraper
           npx nx build frontend
           echo "================== build complete =================="
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
-          
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+
         #continue-on-error: true
 
-      - name: Test
+      - name: Jest Tests
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
           npx nx test frontend --coverage=true
 
-          echo "================== test complete =================="
-
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
-        #continue-on-error: true
+          echo "================== jest tests complete =================="
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
@@ -65,6 +63,6 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "================== test complete =================="
+          echo "================== deployment complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
         #continue-on-error: true
