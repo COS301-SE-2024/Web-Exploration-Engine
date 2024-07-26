@@ -5,7 +5,7 @@ import {
   Button, Tabs, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link
+  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
 import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
@@ -352,7 +352,7 @@ function ResultsComponent() {
         </Button>
 
         <div className="mb-8 text-center">
-            <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
               Results of {url}
             </h1>
             <div className="mt-4 mr-4 flex justify-end">
@@ -965,11 +965,12 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             List of Headings
                           </h5>
-                          <ul>
+                          <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
+                            {/* <Content /> */}                            
                             {headingAnalysis?.headings.map((heading, index) => (
-                              <li key={index}>{heading}</li>
+                              <p key={index}>{heading}</p>
                             ))}
-                          </ul>
+                          </ScrollShadow>
                         </div>
 
                         <div className='py-1'>
