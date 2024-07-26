@@ -4,7 +4,7 @@ import axios from 'axios';
 import puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 import logger from '../../../services/webscraperlogger';
-const serviceName = "SeoAnalysisService";
+const serviceName = "[SeoAnalysisService]";
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.api_key;
