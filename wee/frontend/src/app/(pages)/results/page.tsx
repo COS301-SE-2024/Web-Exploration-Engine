@@ -153,7 +153,7 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification,addresses,emails,phones,socialLinks,titleTagsAnalysis);
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification,addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis);
   };
  
   // Pagination Logic
