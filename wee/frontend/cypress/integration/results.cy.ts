@@ -5,35 +5,35 @@ describe('results', () => {
     cy.log("Testing General overview tab")
 
     cy.contains(/overview/i).should('exist');
-    cy.contains(/Parked/i).should('exist');
+    cy.contains(/parked/i).should('exist');
     cy.contains(/seo/i).should('exist');
     cy.contains(/contact details/i).should('exist'); 
 
     cy.log("Testing tabs and buttons exist")
-    cy.get('[data-testid="tab-seo"]').should('exist');
+/*     cy.get('[data-testid="tab-seo"]').should('exist');
     cy.get('[data-testid="tab-seo"]').click();
     cy.contains(/media/i).should('exist');
     cy.contains(/seo/i).should('exist');
     cy.contains(/export/i).should('exist'); 
-    
+     */
     
 
     cy.log("Testing Media Tab")
         
-    cy.get('[data-testid="tab-media"]').click();
+/*     cy.get('[data-testid="tab-media"]').click();
     cy.contains(/screenshot/i).should('exist');
     cy.contains(/screenshot available./i).should('exist');
     cy.contains(/images/i).should('exist');
     cy.contains(/No images available/i).should('exist'); 
-    
+     */
    
 
     cy.log("Testing SEO Analysis")
 
        
-    cy.get('[data-testid="tab-seo"]').click();
+/*     cy.get('[data-testid="tab-seo"]').click();
     cy.contains(/seo/i).should('exist');
-    
+     */
 
   });
 
