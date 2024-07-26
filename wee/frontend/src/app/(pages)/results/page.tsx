@@ -322,6 +322,7 @@ function ResultsComponent() {
                 <DropdownTrigger>
                   <Button 
                     variant="flat" 
+                    data-testid="btn-export-save-report"
                     startContent={<FiShare className={iconClasses}/>}
                   >
                     Export/Save
@@ -374,7 +375,7 @@ function ResultsComponent() {
 
         {/* Tabs */}
         <Tabs aria-label="Options" size="lg">
-          <Tab key="general" title="General Overview">
+          <Tab key="general" data-testid="tab-general" title="General Overview">
             <Card>
               <CardBody>
 
@@ -598,7 +599,7 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="media" title="Media">
+          <Tab key="media" data-testid="tab-media" title="Media">
             <Card>
               <CardBody>
 
@@ -699,14 +700,14 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="seo" title="SEO Analysis">
+          <Tab key="seo" data-testid="tab-seo" title="SEO Analysis">
             <Card>
               <CardBody>
                 seo
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="wow" title="WOW factors">
+          <Tab key="wow" data-testid="tab-wow" title="WOW factors">
             <Card>
               <CardBody>
                 wow
