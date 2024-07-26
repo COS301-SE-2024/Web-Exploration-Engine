@@ -771,32 +771,40 @@ function ResultsComponent() {
                         <div>
                           {/* Count */}
                           <div className='gap-6 grid sm:grid-cols-3'>
-                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {imagesAnalysis?.totalImages}
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Total Images
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.totalImages}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Total Images
+                                </div>
                               </div>
                             </div>
 
-                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {imagesAnalysis?.missingAltTextCount}
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Missing Alt. Text
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.missingAltTextCount}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Missing Alt. Text
+                                </div>
                               </div>
                             </div>
 
-                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {imagesAnalysis?.nonOptimizedCount}
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Non-Optimized Images
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>                             
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.nonOptimizedCount}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Non-Optimized Images
+                                </div>
                               </div>
                             </div>
+
                           </div>
 
                           {
@@ -889,21 +897,25 @@ function ResultsComponent() {
                         <div>
                           {/* Count */}
                           <div className='gap-6 grid sm:grid-cols-2'>
-                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {internalLinkingAnalysis?.totalLinks}
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Total Links
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {internalLinkingAnalysis?.totalLinks}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Total Links
+                                </div>
                               </div>
                             </div>
 
-                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {internalLinkingAnalysis?.uniqueLinks}
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Unique Links
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {internalLinkingAnalysis?.uniqueLinks}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Unique Links
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1123,26 +1135,30 @@ function ResultsComponent() {
                       <div>
                         {/* Count */}
                         <div className='gap-6 grid sm:grid-cols-2'>
-                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                            <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                              {uniqContentAnalysis?.textLength}
-                            </div>
-                            <div className='font-poppins-semibold text-lg'>
-                              Text Length
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                            <div>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {uniqContentAnalysis?.textLength}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Text Length
+                              </div>
                             </div>
                           </div>
 
-                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center'>
-                            <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                              {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
-                                ?
-                                (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
-                                :
-                                '0%'
-                              }
-                            </div>
-                            <div className='font-poppins-semibold text-lg'>
-                              Unique words
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                            <div>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
+                                  ?
+                                  (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
+                                  :
+                                  '0%'
+                                }
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Unique words
+                              </div>
                             </div>
                           </div>
                         </div>
