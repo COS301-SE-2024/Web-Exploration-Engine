@@ -63,7 +63,7 @@ For local development (you need the redis docker container running BEFORE starti
 docker pull redis
 ``` 
 ```powershell
-docker run -d -p 6379:6379 --name myRedisContainer redis redis-server --requirepass your_redis_password
+docker run -d -p 6379:6379 --name myRedisContainer redis redis-server --requirepass <your_redis_password>
 ``` 
 
 Redis Notes:
