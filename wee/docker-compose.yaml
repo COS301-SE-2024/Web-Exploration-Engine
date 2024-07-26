@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  redis-cache:
+    image: redis
+    ports:
+      - "6379:6379"
+    env_file:
+      - webscraper/.env
+    command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
+
   webscraper:
     build: 
       context: .
@@ -15,6 +23,8 @@ services:
     command: >
       sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
     user: webscraper
+    depends_on:
+      - redis-cache
 
   frontend:
     build:

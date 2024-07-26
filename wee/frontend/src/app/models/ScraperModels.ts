@@ -11,6 +11,7 @@ export interface ScraperResult {
   time:number;
   addresses: string[];
   screenshot: string;
+  seoAnalysis: SeoAnalysis;
 }
 
 export interface ErrorResponse {
@@ -21,7 +22,6 @@ export interface ErrorResponse {
     timestamp: string;
     path: string;
   }
-
 }
 
 export interface RobotsResponse {
@@ -56,6 +56,102 @@ export interface ContactInfo {
   emails: string[],
   phones: string[],
   socialLinks: string[]
+}
+
+export interface SeoAnalysis {
+  XMLSitemapAnalysis: XMLSitemapAnalysis | SEOError; // tech
+  canonicalTagAnalysis: CanonicalTagAnalysis | SEOError; // tech
+  headingAnalysis: HeadingAnalysis | SEOError; // on page (1)
+  imageAnalysis: ImageAnalysis | SEOError; // on page (2)
+  indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
+  internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page (3)
+  metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page (4)
+  mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
+  structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
+  titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page (5)
+  uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page (6)
+}
+
+export interface XMLSitemapAnalysis {
+  isSitemapValid: boolean;
+  recommendations: string;
+}
+
+export interface CanonicalTagAnalysis {
+  canonicalTag: string;
+  isCanonicalTagPresent: boolean;
+  recommendations: string;
+}
+
+export interface HeadingAnalysis {
+  count: number;
+  headings: string[];
+  recommendations: string;
+}
+
+export interface ImageAnalysis {
+  errorUrls: string[];
+  missingAltTextCount: number;
+  nonOptimizedCount: number;
+  reasonsMap: ReasonsMap;
+  recommendations: string;
+  totalImages: number;
+}
+
+export interface ReasonsMap {
+  format: string[];
+  other: string[];
+  size: string[];
+}
+
+export interface IndexabilityAnalysis {
+  isIndexable: boolean;
+  recommendations: string;
+}
+
+export interface InternalLinksAnalysis {
+  recommendations: string;
+  totalLinks: number;
+  uniqueLinks: number;
+}
+
+export interface MetaDescriptionAnalysis {
+  length: number;
+  recommendations: string;
+  titleTag: string;
+}
+
+export interface MobileFriendlinessAnalysis {
+  isResponsive: boolean;
+  recommendations: string;
+}
+
+export interface StructuredDataAnalysis {
+  count: number;
+  recommendations: string;
+}
+
+export interface TitleTagsAnalysis {
+  isUrlWordsInDescription: boolean;
+  length: number;
+  metaDescription: string;
+  recommendations: string;
+}
+
+export interface UniqueContentAnalysis {
+  recommendations: string;
+  textLength: number;
+  uniqueWordsPercentage: number;
+  repeatedWords: RepeatedWords[]
+}
+
+export interface RepeatedWords {
+  word: string;
+  count: number;
+}
+
+export interface SEOError {
+  error: string;
 }
 
 export interface Summary {
