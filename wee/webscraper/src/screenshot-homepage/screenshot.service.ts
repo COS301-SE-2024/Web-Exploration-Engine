@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import logger from '../../../services/webscraperlogger';
 
 import * as fs from 'fs/promises';
-
-
+const serviceName = "[ScreenshotService]";
 @Injectable()
 export class ScreenshotService {
   async captureScreenshot(url: string, robots: RobotsResponse): Promise<{ screenshot: string }> {
+    logger.log(serviceName);
+
     if (!robots.isUrlScrapable) {
+      logger.warn('${serviceName} Crawling not allowed for this URL');
       throw new Error('Crawling not allowed for this URL');
     }
 
