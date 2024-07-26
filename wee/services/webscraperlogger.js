@@ -1,6 +1,5 @@
 import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-const { combine, timestamp, json } = winston.format;
 
 const getLogger = (fileName = 'application') => {
   const fileLogTransport = new transports.DailyRotateFile({
