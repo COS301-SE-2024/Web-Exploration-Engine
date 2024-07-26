@@ -16,7 +16,11 @@ export const handleDownloadReport = (
   websiteStatus: string,
   isCrawlable: boolean,
   industryClassification: Classifications | undefined,
-  domainClassification: Classifications | undefined
+  domainClassification: Classifications | undefined,
+  addresses: string[],
+  emails: string[],
+  phones: string[],
+  socialLinks: string[]
 ) => {
   const doc = new jsPDF();
 
@@ -52,7 +56,7 @@ export const handleDownloadReport = (
   doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
 
   // Function to split text into lines that fit within a max width
-  const splitText =(text: string, maxWidth: number): string[] => {
+  const splitText = (text: string, maxWidth: number): string[] => {
     const lines = [];
     let line = '';
     const words = text.split(' ');
@@ -86,6 +90,10 @@ export const handleDownloadReport = (
     ['Confidence Score', isCrawlable ? `${(industryClassification?.score ? (industryClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
     ['Domain Match', domainClassification?.label || 'N/A'],
     ['Confidence Score', isCrawlable ? `${(domainClassification?.score ? (domainClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
+    ['Addresses', addresses.length > 0 ? addresses.join(', ') : 'No addresses available'],
+    ['Emails', emails.length > 0 ? emails.join(', ') : 'No emails available'],
+    ['Phones', phones.length > 0 ? phones.join(', ') : 'No phone numbers available'],
+    ['Social Links', socialLinks.length > 0 ? socialLinks.join(', ') : 'No social links available']
   ];
 
   let y = startY + headerHeight;
