@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { TitleTagsAnalysis, SEOError } from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -20,7 +21,8 @@ export const handleDownloadReport = (
   addresses: string[],
   emails: string[],
   phones: string[],
-  socialLinks: string[]
+  socialLinks: string[],
+  titleTagAnalysis: TitleTagsAnalysis | SEOError | undefined 
 ) => {
   const doc = new jsPDF();
 
@@ -93,7 +95,12 @@ export const handleDownloadReport = (
     ['Addresses', addresses.length > 0 ? addresses.join(', ') : 'No addresses available'],
     ['Emails', emails.length > 0 ? emails.join(', ') : 'No emails available'],
     ['Phones', phones.length > 0 ? phones.join(', ') : 'No phone numbers available'],
-    ['Social Links', socialLinks.length > 0 ? socialLinks.join(', ') : 'No social links available']
+    ['Social Links', socialLinks.length > 0 ? socialLinks.join(', ') : 'No social links available'],
+    // Title Tag Analysis - Check if the data is of type TitleTagsAnalysis before accessing its properties
+    ['Title Tag Analysis - Meta Description', titleTagAnalysis && 'metaDescription' in titleTagAnalysis ? titleTagAnalysis.metaDescription : 'N/A'],
+    ['Title Tag Analysis - URL Words in Description', titleTagAnalysis && 'isUrlWordsInDescription' in titleTagAnalysis ? (titleTagAnalysis.isUrlWordsInDescription ? 'Yes' : 'No') : 'N/A'],
+    ['Title Tag Analysis - Length', titleTagAnalysis && 'length' in titleTagAnalysis ? `${titleTagAnalysis.length}` : 'N/A'],
+    ['Title Tag Analysis - Recommendations', titleTagAnalysis && 'recommendations' in titleTagAnalysis ? titleTagAnalysis.recommendations : 'N/A']
   ];
 
   let y = startY + headerHeight;
