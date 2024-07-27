@@ -19,7 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook } from "react-icons/fi";
+import { FiImage, FiType, FiLink, FiCode, FiUmbrella, FiBook } from "react-icons/fi";
 import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 
@@ -964,6 +964,13 @@ function ResultsComponent() {
                       <div>
                         <div className='py-1'>
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Count
+                          </h5>
+                          <p>{headingAnalysis?.count}</p>
+                        </div>
+
+                        <div className='py-1'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             List of Headings
                           </h5>
                           <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
@@ -972,13 +979,6 @@ function ResultsComponent() {
                               <p key={index}>{heading}</p>
                             ))}
                           </ScrollShadow>
-                        </div>
-
-                        <div className='py-1'>
-                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                            Count
-                          </h5>
-                          <p>{headingAnalysis?.count}</p>
                         </div>
 
                         {/* {
@@ -1057,7 +1057,7 @@ function ResultsComponent() {
                     {/* Heading */}
                     <div className='flex mb-2'>
                       <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
-                        <FiSearch />
+                        <FiType />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
