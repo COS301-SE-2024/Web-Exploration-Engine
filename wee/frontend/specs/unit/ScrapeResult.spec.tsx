@@ -97,4 +97,16 @@ describe('Scrape Results Component', () => {
         expect(fetch).toHaveBeenCalledTimes(1); // Assuming 2 URLs were processed
         expect(fetch).toHaveBeenCalledWith('http://localhost:3000/api/scraper?url=https%3A%2F%2Fwww.example3.com');
     });
+
+    it('should poll for new messages from Pub/Sub', async () => {
+        render(<ScrapeResults />);
+
+        // Wait for the polling to trigger
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+        });
+
+        // Check if the mock message was received and processed
+        expect(screen.getByText('mock message')).toBeDefined();
+    });
 });
