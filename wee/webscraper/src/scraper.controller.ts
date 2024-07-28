@@ -15,6 +15,7 @@ import {
   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
   SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
 } from './scraper.api';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @ApiTags('Scraping')
 @Controller('scraper')
@@ -33,42 +34,53 @@ export class ScraperController {
   @ScrapeResponse500
   @Get()
   async scrape(@Query('url') url: string) {
-    // Check if URL in cache
-    const cacheKey = url;
-    let output;
-
-    // Check if URL in cache
-    const cachedData:string = await this.cacheManager.get(cacheKey);
-    if (cachedData) {
-      if (JSON.parse(cachedData).status === 'completed') {
-        output = {
-          message: 'Job found in cache',
-          status: 'completed',
-          pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+  
+      const cacheKey = url;
+      let output;
+  
+      // Check if URL in cache
+      const cachedData: string = await this.cacheManager.get(cacheKey);
+  
+      if (cachedData) {
+        const parsedData = JSON.parse(cachedData);
+        if (parsedData.status === 'completed') {
+          output = {
+            message: 'Job found in cache',
+            status: 'completed',
+            pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+          };
+        } else {
+          output = {
+            message: 'Job found in cache',
+            status: 'processing',
+            pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
+          };
         }
       } else {
         output = {
-          message: 'Job found in cache',
+          message: 'Scraping task published',
           status: 'processing',
           pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
-        }
-      
+        };
       }
-    } else {
-      output = {
-        message: 'Scraping task published',
-        status: 'processing',
-        pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
-      }
+  
+      console.log("Publishing scraping task for url: ", url);
+      const message = {
+        type: 'scrape',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+  
+      // Return a 200 OK response with the output
+      return output;
+    } catch (error) {
+      console.error('Error in scrape method:', error);
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    console.log("Publishing scraping task for url: ", url);
-    const message = {
-      type: 'scrape',
-      url,
-    }
-    await this.pubsubService.publishMessage(this.topicName, message);
-    return output;
   }
 
   @Get('status/:url')

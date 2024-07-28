@@ -147,7 +147,7 @@ export class ScraperService implements OnModuleInit {
     );
 
     // get screenshot
-    const screenshotPromise = this.getScreenshot(data.url);
+    const screenshotPromise = this.screenshotService.captureScreenshot(url, robotsResponse);
     const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url,data.robots);
     const [
       industryClassification,
