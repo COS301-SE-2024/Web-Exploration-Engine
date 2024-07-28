@@ -7,10 +7,19 @@ import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
 import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity } from "react-icons/fi";
 import CircularProgressComparison from "../../components/CircularProgressComparison";
-import { LightHouseAnalysis, SEOError } from "../../models/ScraperModels";
+import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis } from "../../models/ScraperModels";
+import { ColumnChart } from "../../components/Graphs/ColumnChart";
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
     return 'scores' in data || 'diagnostics' in data;
+}
+
+function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+    return 'loadTime' in data || 'recommendations' in data;
+}
+
+function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+    return 'isResponsive' in data || 'recommendations' in data;
 }
 
 export default function Comparison() {
@@ -119,6 +128,9 @@ export default function Comparison() {
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
                         </div>
+                        {
+                            !websiteOne ? '' : <ColumnChart dataLabel={['Banking', 'Entertainment', 'Real Estate']} dataSeries={[92,78,57]}/> 
+                        }                        
                     </div>
 
                     <div className="text-center m-auto">
@@ -137,6 +149,9 @@ export default function Comparison() {
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.label ? websiteTwo.industryClassification.metadataClass.label : 'N/A')}
                         </div>
+                        {
+                            !websiteTwo ? '' : <ColumnChart dataLabel={['Retail', 'Mining', 'Real Estate']} dataSeries={[87,55,18]}/> 
+                        }  
                     </div>
                 </div>
             </div>
@@ -154,6 +169,9 @@ export default function Comparison() {
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.label ? websiteOne.industryClassification.domainClass.label : 'N/A')}
                         </div>
+                        {
+                            !websiteOne ? '' : <ColumnChart dataLabel={['Banking', 'Entertainment', 'Real Estate']} dataSeries={[92,78,57]}/> 
+                        }    
                     </div>
 
                     <div className="text-center m-auto">
@@ -172,6 +190,9 @@ export default function Comparison() {
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
                         </div>
+                        {
+                            !websiteTwo ? '' : <ColumnChart dataLabel={['Retail', 'Mining', 'Real Estate']} dataSeries={[87,55,18]}/> 
+                        }  
                     </div>
                 </div>
             </div>
@@ -184,7 +205,10 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            9.54
+                            {websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
+                                websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
+                                : '0'                            
+                            }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds
@@ -202,7 +226,10 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            2.87
+                            {websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
+                                websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
+                                : '0'                            
+                            }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds
@@ -218,7 +245,10 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        Yes
+                        {websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
+                            websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                            : '-'
+                        }
                     </div>
 
                     <div className="text-center m-auto">
@@ -231,7 +261,10 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        No
+                        {websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
+                            websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                            : '-'
+                        }
                     </div>
                 </div>
             </div>
