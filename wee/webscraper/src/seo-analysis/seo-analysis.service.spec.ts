@@ -57,6 +57,7 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         metaDescription: 'Test description',
         length: 16,
+        isUrlWordsInDescription: false,
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
@@ -69,6 +70,7 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         metaDescription: '',
         length: 0,
+        isUrlWordsInDescription: false,
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
@@ -82,6 +84,7 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         metaDescription: '',
         length: 0,
+        isUrlWordsInDescription: false,
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
@@ -94,6 +97,7 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         metaDescription: 'Test description',
         length: 16,
+        isUrlWordsInDescription: false,
         recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
       });
     });
