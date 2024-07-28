@@ -330,6 +330,7 @@ describe('ScraperService', () => {
                 titleTagsAnalysis: { 
                     metaDescription: "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
                     length: 236,
+                    isUrlWordsInDescription: true,
                     recommendations: "Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: takealot."
                 },
                 metaDescriptionAnalysis: {
@@ -346,7 +347,13 @@ describe('ScraperService', () => {
                     error: "Error analyzing images using Puppeteer: Navigation timeout of 30000 ms exceeded"
                 },
                 uniqueContentAnalysis: {
-                    error: "Error analyzing images using Puppeteer: Protocol error (Page.navigate): Cannot navigate to invalid URL"
+                    textLength: 0, 
+                    uniqueWordsPercentage: 0,
+                    repeatedWords: [{ 
+                        word: 'example',
+                        count: 7,
+                    }], 
+                    recommendations: "Add more unique content to improve SEO."
                 },
                 internalLinksAnalysis: {
                     totalLinks: 0,
