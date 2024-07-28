@@ -1,11 +1,17 @@
 'use client';
 import React from "react";
 import WEESelect from "../../components/Util/Select";
-import { Button, SelectItem, CircularProgress } from '@nextui-org/react';
+import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
 import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity } from "react-icons/fi";
+import CircularProgressComparison from "../../components/CircularProgressComparison";
+import { LightHouseAnalysis, SEOError } from "../../models/ScraperModels";
+
+function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+    return 'scores' in data || 'diagnostics' in data;
+}
 
 export default function Comparison() {
     const { results } = useScrapingContext();
@@ -108,7 +114,7 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                        {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
@@ -239,46 +245,25 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div className="flex justify-center">
-                                <CircularProgress
-                                    classNames={{
-                                        svg: "w-[5rem] h-[5rem] md:w-[5.5rem] md:h-[5.5rem] lg:w-[7rem] lg:h-[7rem]",
-                                        indicator: "stroke-jungleGreen-800 dark:stroke-jungleGreen-400",
-                                        track: "stroke-primaryTextColor/10 dark:stroke-dark-primaryTextColor/10",
-                                        value: "text-lg md:text-xl lg:text-3xl font-semibold text-primaryTextColor dark:text-dark-primaryTextColor",
-                                    }}
-                                    label="Performance"
-                                    // size="lg"
-                                    value={12}
-                                    showValueLabel={true}
-                                />
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    :
+                                    <CircularProgressComparison label="Performance" value={0}/>
+                                }
                             </div>
                             <div className="flex justify-center">
-                                <CircularProgress
-                                    classNames={{
-                                        svg: "w-[5rem] h-[5rem] md:w-[5.5rem] md:h-[5.5rem] lg:w-[7rem] lg:h-[7rem]",
-                                        indicator: "stroke-jungleGreen-800 dark:stroke-jungleGreen-400",
-                                        track: "stroke-primaryTextColor/10 dark:stroke-dark-primaryTextColor/10",
-                                        value: "text-lg md:text-xl lg:text-3xl font-semibold text-primaryTextColor dark:text-dark-primaryTextColor",
-                                    }}
-                                    label="Accessibility"
-                                    // size="lg"
-                                    value={78}
-                                    showValueLabel={true}
-                                />
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    :
+                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                }
                             </div>
                             <div className="flex justify-center">
-                                <CircularProgress
-                                    classNames={{
-                                        svg: "w-[5rem] h-[5rem] md:w-[5.5rem] md:h-[5.5rem] lg:w-[7rem] lg:h-[7rem]",
-                                        indicator: "stroke-jungleGreen-800 dark:stroke-jungleGreen-400",
-                                        track: "stroke-primaryTextColor/10 dark:stroke-dark-primaryTextColor/10",
-                                        value: "text-lg md:text-xl lg:text-3xl font-semibold text-primaryTextColor dark:text-dark-primaryTextColor",
-                                    }}
-                                    label="Best Practices"
-                                    // size="lg"
-                                    value={63}
-                                    showValueLabel={true}
-                                />
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    :
+                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                }
                             </div>
                         </div>
                     </div>
@@ -293,7 +278,29 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        No
+                    <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    :
+                                    <CircularProgressComparison label="Performance" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    :
+                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    :
+                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
