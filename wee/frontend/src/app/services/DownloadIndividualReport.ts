@@ -206,7 +206,7 @@ export const handleDownloadReport = (
 
     const headingAnalysisRows = [
       ['Count', headingAnalysis && 'count' in headingAnalysis ? `${headingAnalysis.count}` : 'N/A'],
-     // ['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
+      ['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
       //['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
     ];
 
@@ -260,8 +260,8 @@ export const handleDownloadReport = (
       ['Total Images', imageAnalysis && 'totalImages' in imageAnalysis ? `${imageAnalysis.totalImages}` : 'N/A'],
       ['Missing Alt Text Count', imageAnalysis && 'missingAltTextCount' in imageAnalysis ? `${imageAnalysis.missingAltTextCount}` : 'N/A'],
       ['Non-Optimized Count', imageAnalysis && 'nonOptimizedCount' in imageAnalysis ? `${imageAnalysis.nonOptimizedCount}` : 'N/A'],
-      //['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
-      ['Reasons Map', imageAnalysis && 'reasonsMap' in imageAnalysis ? JSON.stringify(imageAnalysis.reasonsMap) : 'N/A'],
+      ['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
+      //['Reasons Map', imageAnalysis && 'reasonsMap' in imageAnalysis ? JSON.stringify(imageAnalysis.reasonsMap) : 'N/A'],
       //['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
     ];
 
@@ -422,10 +422,11 @@ export const handleDownloadReport = (
     doc.text('Category', margin + 2, startY + 7);
     doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
     const uniqueContentAnalysisRows = [
-      ['Text Length', uniqueContentAnalysis && 'textLength' in uniqueContentAnalysis ? `${uniqueContentAnalysis.textLength}` : 'N/A'],
-      ['Unique Words Percentage', uniqueContentAnalysis && 'uniqueWordsPercentage' in uniqueContentAnalysis ? `${uniqueContentAnalysis.uniqueWordsPercentage}` : 'N/A'],
+        ['Text Length', uniqueContentAnalysis && 'textLength' in uniqueContentAnalysis ? `${uniqueContentAnalysis.textLength}` : 'N/A'],
+        ['Unique Words Percentage', uniqueContentAnalysis && 'uniqueWordsPercentage' in uniqueContentAnalysis ? `${uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2)}%` : 'N/A'],
+        ['Repeated Words', uniqueContentAnalysis && 'repeatedWords' in uniqueContentAnalysis ? uniqueContentAnalysis.repeatedWords.map(word => `${word.word}: ${word.count}`).join(', ') : 'N/A'],
       //['Recommendations', uniqueContentAnalysis && 'recommendations' in uniqueContentAnalysis ? uniqueContentAnalysis.recommendations : 'N/A'],
-      ['Repeated Words', uniqueContentAnalysis && 'repeatedWords' in uniqueContentAnalysis ? uniqueContentAnalysis.repeatedWords.map(word => `${word.word}: ${word.count}`).join(', ') : 'N/A']
+
     ];
     
 
