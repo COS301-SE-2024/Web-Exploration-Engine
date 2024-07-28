@@ -12,9 +12,6 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { PubSubService } from "./pub-sub/pub_sub.service";
-import { read } from "fs";
-import { mock } from "node:test";
-import { add } from "cheerio/lib/api/traversing";
 
 describe('ScraperService', () => {
     let service: ScraperService;
