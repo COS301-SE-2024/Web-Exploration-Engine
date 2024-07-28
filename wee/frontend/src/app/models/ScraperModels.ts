@@ -65,8 +65,10 @@ export interface SeoAnalysis {
   imageAnalysis: ImageAnalysis | SEOError; // on page (2)
   indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
   internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page (3)
+  lighthouseAnalysis: LightHouseAnalysis | SEOError;
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page (4)
   mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError;
   structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
   titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page (5)
   uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page (6)
@@ -115,6 +117,26 @@ export interface InternalLinksAnalysis {
   uniqueLinks: number;
 }
 
+export interface LightHouseAnalysis {
+  scores: LightHouseScore;
+  diagnostics: {
+    recommendations: LightHouseRecommendations[];
+  }
+}
+
+export interface LightHouseScore {
+  accessibility: number;
+  bestPractices: number;
+  performance: number;
+}
+
+export interface LightHouseRecommendations {
+  title: string;
+  description: string;
+  score: number;
+  displayValue?: number;
+}
+
 export interface MetaDescriptionAnalysis {
   length: number;
   recommendations: string;
@@ -123,6 +145,11 @@ export interface MetaDescriptionAnalysis {
 
 export interface MobileFriendlinessAnalysis {
   isResponsive: boolean;
+  recommendations: string;
+}
+
+export interface SiteSpeedAnalysis {
+  loadTime: number;
   recommendations: string;
 }
 
