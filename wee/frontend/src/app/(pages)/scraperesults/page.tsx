@@ -188,11 +188,16 @@ const getScrapingResults = async (url: string) => {
     console.log('Scrape initiation response:', initData);
 
     // Poll the API until the scraping is done
-    const result = await pollForResult(url);
-    console.log('Scraping result:', result);
+    try {
+      const result = await pollForResult(url);
+      console.log('Scraping result:', result);
+      
+      // Assuming setResults is a function to update the state or handle results
+      setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
+    } catch (error) {
+      console.error('Error when scraping website:', error);
+    }
     
-    // Assuming setResults is a function to update the state or handle results
-    setResults((prevResults: ScraperResult[]) => [...prevResults, result]);
   } catch (error) {
     console.error('Error when scraping website:', error);
   }
