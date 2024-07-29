@@ -15,7 +15,7 @@ import {
   ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
   SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
-from './scraper.api';
+} from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
 import { StringDecoder } from 'string_decoder';
