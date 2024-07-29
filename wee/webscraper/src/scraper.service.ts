@@ -48,7 +48,26 @@ export class ScraperService implements OnModuleInit {
     switch (type) {
       case 'scrape':
         return this.scrape(url);
-      // add more cases for different types of scraping
+      case 'read-robots':
+        return this.readRobotsFile(url);
+      case 'scrape-metadata':
+        return this.scrapeMetadata(url);
+      case 'scrape-status':
+        return this.scrapeStatus(url);
+      case 'classify-industry':
+        return this.classifyIndustry(url);
+      case 'scrape-logo':
+        return this.scrapeLogo(url);
+      case 'scrape-images':
+        return this.scrapeImages(url);
+      case 'screenshot':
+        return this.getScreenshot(url);
+      case 'scrape-contact-info':
+        return this.scrapeContactInfo(url);
+      case 'scrape-address':
+        return this.scrapeAddress(url);
+      case 'seo-analysis':
+        return this.seoAnalysis(url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -346,9 +365,10 @@ export class ScraperService implements OnModuleInit {
   async handleMessage(message) {
     const start = performance.now();
     const { url, type } = JSON.parse(message.data.toString());
-  
+    const cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape  
+
     // Cache check and update logic
-    const cachedData = await this.getCachedData(url);
+    const cachedData = await this.getCachedData(cacheKey);
     if (cachedData) {
       const end = performance.now();
       const times = (end - start) / 1000;
@@ -362,7 +382,7 @@ export class ScraperService implements OnModuleInit {
     console.log('CACHE MISS - SCRAPE');
   
     // Add to cache as processing
-    await this.cacheManager.set(url, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+    await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
     message.ack();
   
     try {
@@ -371,13 +391,13 @@ export class ScraperService implements OnModuleInit {
         status: 'completed',
         result,
       };
-      await this.cacheManager.set(url, JSON.stringify(completeData));
+      await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
       console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
-      console.log(`Result: ${result}`);
+      // console.log(`Result: ${result}`);
     } catch (error) {
       console.error(`Error scraping URL: ${url}`, error);
       // Retry mechanism? Remove entry from cache
-      await this.cacheManager.del(url);
+      await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error'  }));
     }
   }
 
@@ -390,11 +410,12 @@ export class ScraperService implements OnModuleInit {
       } else if (data.status === 'processing') {
         console.log(`Already processing URL: ${url}`);
         return null;
+      } else if (data.status === 'error') {
+        console.error(`Error scraping URL: ${url}`, data.error);
+        return null;
       }
     }
     return null;
   }
-
-
 }
 

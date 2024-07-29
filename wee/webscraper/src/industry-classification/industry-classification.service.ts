@@ -159,7 +159,7 @@ export class IndustryClassificationService {
           }
         );
 
-        console.log('Response:', response);
+        // console.log('Response:', response);
   
         if (response.data && response.data.labels && response.data.scores) {
           const results = response.data.labels.map((label: string, index: number) => ({
@@ -169,7 +169,7 @@ export class IndustryClassificationService {
           allResults.push(...results);
         }
   
-        //console.log('Batch results:', allResults);
+        // console.log('Batch results:', allResults);
       }
   
       // Determine the top 3 
@@ -177,7 +177,7 @@ export class IndustryClassificationService {
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
   
-      //console.log('Top 3 results:', topResults);
+      // console.log('Top 3 results:', topResults);
   
       return topResults;
     } catch (error) {

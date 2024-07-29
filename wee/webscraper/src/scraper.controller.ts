@@ -1,24 +1,14 @@
 import { Controller, Get, Query, Inject, Param, UseInterceptors } from '@nestjs/common';
 import { PubSubService } from './pub-sub/pub_sub.service';
-import { ScraperService } from './scraper.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
-  ScrapeOperation, ScrapeQuery, ScrapeResponse200, ScrapeResponse400, ScrapeResponse500,
-  ReadRobotsOperation, ReadRobotsQuery, ReadRobotsResponse200, ReadRobotsResponse400, ReadRobotsResponse500,
-  ScrapeMetadataOperation, ScrapeMetadataQuery, ScrapeMetadataResponse200, ScrapeMetadataResponse400, ScrapeMetadataResponse500,
-  ScrapeStatusOperation, ScrapeStatusQuery, ScrapeStatusResponse200,
-  ClassifyIndustryOperation, ClassifyIndustryQuery, ClassifyIndustryResponse200,
-  ScrapeImagesOperation, ScrapeImagesQuery, ScrapeImagesResponse200, ScrapeImagesResponse400,
-  ScrapeLogoOperation, ScrapeLogoQuery, ScrapeLogoResponse200, ScrapeLogoResponse400,
-  ScreenshotOperation, ScreenshotQuery, ScreenshotResponse200, ScreenshotResponse400, ScreenshotResponse500,
-  ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
-  ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
-  SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
+  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
+  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
+  GetJobStatusTypeParam, GetJobStatusUrlParam, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
-import { StringDecoder } from 'string_decoder';
 
 @ApiTags('Scraping')
 @Controller('scraper')
@@ -32,172 +22,480 @@ export class ScraperController {
   topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
 
   @ScrapeOperation
-  @ScrapeQuery
-  @ScrapeResponse200
-  @ScrapeResponse400
-  @ScrapeResponse500
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
   @Get()
   async scrape(@Query('url') url: string) {
     try {
       if (!url) {
         throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
       }
-  
-      const cacheKey = url;
-      let output;
-  
-      // Check if URL in cache
-      const cachedData: string = await this.cacheManager.get(cacheKey);
-  
-      if (cachedData) {
-        const parsedData = JSON.parse(cachedData);
-        if (parsedData.status === 'completed') {
-          output = {
-            message: 'Job found in cache',
-            status: 'completed',
-            pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
-          };
-        } else {
-          output = {
-            message: 'Job found in cache',
-            status: 'processing',
-            pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
-          };
-        }
-      } else {
-        output = {
-          message: 'Scraping task published',
-          status: 'processing',
-          pollingUrl: `/scraper/status/${encodeURIComponent(url)}`,
-        };
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
-  
+
       console.log("Publishing scraping task for url: ", url);
       const message = {
         type: 'scrape',
         url,
       };
       await this.pubsubService.publishMessage(this.topicName, message);
-  
-      // Return a 200 OK response with the output
-      return output;
-    } catch (error) {
-      console.error('Error in scrape method:', error);
-      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
-  @Get('status/:url')
-  async getJobStatus(@Param('url') url: string) {
-    const cacheKey = url;
-    const jobData:string = await this.cacheManager.get(cacheKey);
-    if (!jobData) {
       return {
-        url,
-        message: 'Job not found',
-        data: null,
-      
+        message: 'Scraping task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrape method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrape method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
-    return JSON.parse(jobData);
   }
 
-  // @ReadRobotsOperation
-  // @ReadRobotsQuery
-  // @ReadRobotsResponse200
-  // @ReadRobotsResponse400
-  // @ReadRobotsResponse500
-  // @Get('read-robots')
-  // async readRobotsFile(@Query('url') url: string) {
-  //   return this.scraperService.readRobotsFile(url);
-  // }
+  @RobotsOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('read-robots')
+  async readRobotsFile(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
 
-  // @ScrapeMetadataOperation
-  // @ScrapeMetadataQuery
-  // @ScrapeMetadataResponse200
-  // @ScrapeMetadataResponse400
-  // @ScrapeMetadataResponse500
-  // @Get('scrape-metadata')
-  // async scrapeMetadata(@Query('url') url: string) {
-  //   return this.scraperService.scrapeMetadata(url);
-  // }
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
 
-  // @ScrapeStatusOperation
-  // @ScrapeStatusQuery
-  // @ScrapeStatusResponse200
-  // @Get('scrape-status')
-  // async scrapeStatus(@Query('url') url: string) {
-  //   return this.scraperService.scrapeStatus(url);
-  // }
+      console.log("Publishing read-robots task for url: ", url);
+      const message = {
+        type: 'read-robots',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
 
-  // @ClassifyIndustryOperation
-  // @ClassifyIndustryQuery
-  // @ClassifyIndustryResponse200
-  // @Get('classify-industry')
-  // async classifyIndustry(@Query('url') url: string) {
-  //   return this.scraperService.classifyIndustry(url);
-  // }
+      return {
+        message: 'Read robots task published',
+        status: 'processing',
+        pollingUrl: `/status/read-robots/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in readRobotsFile method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in readRobotsFile method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
 
-  // @ScrapeImagesOperation
-  // @ScrapeImagesQuery
-  // @ScrapeImagesResponse200
-  // @ScrapeImagesResponse400
-  // @Get('scrape-images')
-  // async scrapeImages(@Query('url') url: string) {
-  //   return this.scraperService.scrapeImages(url);
-  // }
+  @MetadataOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-metadata')
+  async scrapeMetadata(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
 
-  // @ScrapeLogoOperation
-  // @ScrapeLogoQuery
-  // @ScrapeLogoResponse200
-  // @ScrapeLogoResponse400
-  // @Get('scrape-logo')
-  // async scrapeLogo(@Query('url') url: string) {
-  //   return this.scraperService.scrapeLogo(url);
-  // }
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
 
-  // @ScreenshotOperation
-  // @ScreenshotQuery
-  // @ScreenshotResponse200
-  // @ScreenshotResponse400
-  // @ScreenshotResponse500
-  // @Get('screenshot')
-  // async getScreenshot(@Query('url') url: string) {
-  //   return this.scraperService.getScreenshot(url);
-  // }
+      console.log("Publishing scrape-metadata task for url: ", url);
+      const message = {
+        type: 'scrape-metadata',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape metadata task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-metadata/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeMetadata method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeMetadata method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @StatusOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-status')
+  async scrapeStatus(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing scrape-metadata task for url: ", url);
+      const message = {
+        type: 'scrape-status',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape metadata task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-status/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeStatus method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeStatus method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @ClassifyIndustryOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('classify-industry')
+  async classifyIndustry(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing classify-industry task for url: ", url);
+      const message = {
+        type: 'classify-industry',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Classify industry task published',
+        status: 'processing',
+        pollingUrl: `/status/classify-industry/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in classifyIndustry method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in classifyIndustry method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @ImagesOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-images')
+  async scrapeImages(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing scrape-images task for url: ", url);
+      const message = {
+        type: 'scrape-images',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape images task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-images/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeImages method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeImages method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @LogoOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-logo')
+  async scrapeLogo(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing scrape-logo task for url: ", url);
+      const message = {
+        type: 'scrape-logo',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape logo task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-logo/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeLogo method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeLogo method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @ScreenshotOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('screenshot')
+  async getScreenshot(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing screenshot task for url: ", url);
+      const message = {
+        type: 'screenshot',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Screenshot task published',
+        status: 'processing',
+        pollingUrl: `/status/screenshot/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in getScreenshot method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in getScreenshot method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
 
 
-  // @ScrapeContactInfoOperation
-  // @ScrapeContactInfoQuery
-  // @ScrapeContactInfoResponse200
-  // @ScrapeContactInfoResponse400
-  // @ScrapeContactInfoResponse500
-  // @Get('scrape-contact-info')
-  // async scrapeContactInfo(@Query('url') url: string) {
-  //   return this.scraperService.scrapeContactInfo(url);
-  // }
+  @ContactInfoOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-contact-info')
+  async scrapeContactInfo(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
 
-  // @ScrapeAddressesOperation
-  // @ScrapeAddressesQuery
-  // @ScrapeAddressesResponse200
-  // @ScrapeAddressesResponse400
-  // @ScrapeAddressesResponse500
-  // @Get('scrape-addresses')
-  // async scrapeAddresses(@Query('url') url: string) {
-  //   return this.scraperService.scrapeAddress(url);
-  // }
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
 
-  // @SeoAnalysisOperation
-  // @SeoAnalysisQuery
-  // @SeoAnalysisResponse200
-  // @SeoAnalysisResponse400
-  // @SeoAnalysisResponse500
-  // @Get('seo-analysis')
-  // async seoAnalysis(@Query('url') url: string) {
-  //   return this.scraperService.seoAnalysis(url);
-  // }
+      console.log("Publishing scrape-contact-info task for url: ", url);
+      const message = {
+        type: 'scrape-contact-info',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape contact info task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-contact-info/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeContactInfo method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeContactInfo method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @AddressesOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-addresses')
+  async scrapeAddresses(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing scrape-addresses task for url: ", url);
+      const message = {
+        type: 'scrape-addresses',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape addresses task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-addresses/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeAddresses method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeAddresses method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @SeoAnalysisOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('seo-analysis')
+  async seoAnalysis(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing seo-analysis task for url: ", url);
+      const message = {
+        type: 'seo-analysis',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'SEO analysis task published',
+        status: 'processing',
+        pollingUrl: `/status/seo-analysis/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in seoAnalysis method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in seoAnalysis method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @Get('status/:type/:url')
+  @GetJobStatusOperation
+  @GetJobStatusResponse200
+  @GetJobStatusResponse400
+  @GetJobStatusTypeParam
+  @GetJobStatusUrlParam
+  async getJobStatus(@Param('type') type: string, @Param('url') url: string ) {
+    try {
+      const acceptedTypes = ['scrape', 'read-robots'];
+      if (!acceptedTypes.includes(type)) {
+        throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
+      }
+
+      const cacheKey = `${url}-${type}`;
+      const jobData:string = await this.cacheManager.get(cacheKey);
+      if (!jobData) {
+        return {
+          url,
+          message: 'Job not found',
+          data: null,
+        }
+      }
+      return JSON.parse(jobData);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in getJobStatus method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in getJobStatus method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
 }
-
 // import { Controller, Get, Query } from '@nestjs/common';
 // import { ScraperService } from './scraper.service';
 // import { ApiTags } from '@nestjs/swagger';
