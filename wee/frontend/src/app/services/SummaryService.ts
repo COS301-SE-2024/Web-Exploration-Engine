@@ -15,7 +15,63 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const industries: string[] = [];
   const industryPercentages: number[] = [];
   const weakClassification: { url: string; metadataClass: string; score: number }[] = [];
+
+  const metaRadarCategories: string[] = [];
+  const metaRadarSeries: { name: string; data: number[] }[] = [];
   
+  const domainRadarCategories: string[] = [];
+  const domainRadarSeries: { name: string; data: number[] }[] = [];
+
+  // META RADAR
+  // get all the categories in the scrape result page
+  for (const result of scraperResults) {
+    for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+      if (!metaRadarCategories.includes(metaIndustry.label)) {
+        metaRadarCategories.push(metaIndustry.label);
+      }
+    }
+  }
+
+  // update scores for each corresponding category saved for each url
+  for (const result of scraperResults) {
+    metaRadarSeries.push({ name: result.url, data: new Array(metaRadarCategories.length).fill(0) });
+  }
+
+  for (const result of scraperResults) {
+    for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+      const categoryIndex = metaRadarCategories.indexOf(metaIndustry.label);
+      if (categoryIndex !== -1) {
+        const seriesIndex = scraperResults.indexOf(result);
+        metaRadarSeries[seriesIndex].data[categoryIndex] = (metaIndustry.score * 100);
+      }
+    }
+  }
+
+  // DOMAIN RADAR
+  // get all the categories in the scrape result page
+  for (const result of scraperResults) {
+    for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+      if (!domainRadarCategories.includes(domainIndustry.label)) {
+        domainRadarCategories.push(domainIndustry.label);
+      }
+    }
+  }
+
+  // update scores for each corresponding category saved for each url
+  for (const result of scraperResults) {
+    domainRadarSeries.push({ name: result.url, data: new Array(domainRadarCategories.length).fill(0) });
+  }
+
+  for (const result of scraperResults) {
+    for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+      const categoryIndex = domainRadarCategories.indexOf(domainIndustry.label);
+      if (categoryIndex !== -1) {
+        const seriesIndex = scraperResults.indexOf(result);
+        domainRadarSeries[seriesIndex].data[categoryIndex] = (domainIndustry.score * 100);
+      }
+    }
+  }  
+
   // domain match classification
   let numMatched = 0;
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
@@ -121,5 +177,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     parkedUrls,
     scrapableUrls: numScrapableUrls,
     avgTime:avgTime,
+    metaRadar: {
+      categories: metaRadarCategories,
+      series: metaRadarSeries,
+    },
+    domainRadar: {
+      categories: domainRadarCategories,
+      series: domainRadarSeries,
+    }
   }
 }

@@ -19,7 +19,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
-
+import { RadarChart } from '../../components/Graphs/RadarChart';
 
 interface weakClassification {
     url: string;
@@ -31,6 +31,16 @@ interface mismatchedUrls {
     url: string;
     metadataClass: string;
     domainClass: string;
+}
+
+interface RadarInterface {
+    categories: string[],
+    series: RadarSeries[]
+}
+
+export interface RadarSeries {
+    name: string,
+    data: number[]
 }
 
 export default function SummaryReport() {
@@ -53,6 +63,8 @@ export default function SummaryReport() {
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     const [avgTime, setAvgTime] = useState<number>(0);
+    const [metaRadar, setMetaRadar] = useState<RadarInterface>();
+    const [domainRadar, setDomainRadar] = useState<RadarInterface>();
    
     useEffect(() => {
         
@@ -70,6 +82,8 @@ export default function SummaryReport() {
             setParkedUrls(summaryReport.parkedUrls ?? []); 
             setscrapableUrls(summaryReport.scrapableUrls ?? 0); 
             setAvgTime(summaryReport.avgTime ?? 0);
+            setMetaRadar(summaryReport.metaRadar ?? {categories: [], series: []});
+            setDomainRadar(summaryReport.domainRadar ?? {categories: [], series: []});
         }
 
     }, [summaryReport]);
@@ -337,6 +351,14 @@ export default function SummaryReport() {
     return (
         <>
             <div className='min-h-screen p-4'>
+                {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
+                    <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                ) : (<></>)}
+
+                {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
+                    <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                ) : (<></>)}
+
                 <Button
                     className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={backToScrapeResults}

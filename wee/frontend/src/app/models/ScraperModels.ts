@@ -209,4 +209,17 @@ export interface Summary {
   parkedUrls: string[];
   scrapableUrls: number;
   avgTime:number;
+  metaRadar: {
+    categories: string[],
+    series: RadarGraph[]
+  },
+  domainRadar: {
+    categories: string[],
+    series: RadarGraph[]
+  }
+}
+
+export interface RadarGraph {
+  name: string,
+  data: number[]
 }
