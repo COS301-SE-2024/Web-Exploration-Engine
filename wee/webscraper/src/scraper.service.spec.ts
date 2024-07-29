@@ -320,6 +320,8 @@ describe('ScraperService', () => {
             jest.spyOn(mockIndustryClassificationService, 'classifyIndustry').mockResolvedValue({
                 metadataClass: { label: 'Technology', score: 0.9 },
                 domainClass: { label: 'Technology', score: 0.9 },
+                zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
+                zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             });
             jest.spyOn(mockScrapeLogoService, 'scrapeLogo').mockResolvedValue('http://example.com/logo.jpg');
             jest.spyOn(mockScrapeImagesService, 'scrapeImages').mockResolvedValue(['http://example.com/image.jpg']);
@@ -517,6 +519,8 @@ describe('ScraperService', () => {
             const industryResult = {
                 metadataClass: { label: 'Technology', score: 0.9 },
                 domainClass: { label: 'Technology', score: 0.9 },
+                zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
+                zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             };
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
             jest.spyOn(mockMetadataService, 'scrapeMetadata').mockResolvedValue(metadataResult);
