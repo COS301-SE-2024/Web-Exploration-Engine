@@ -42,14 +42,15 @@ export interface Metadata {
 }
 
 export interface IndustryClassification {
-  metadataClass: {
-    label: string;
-    score: number;
-  },
-  domainClass: {
-    label: string;
-    score: number;
-  }
+  metadataClass: IndustryClassificationCriteria;
+  domainClass: IndustryClassificationCriteria;
+  zeroShotMetaDataClassify: IndustryClassificationCriteria[];
+  zeroShotDomainClassify: IndustryClassificationCriteria[];
+}
+
+export interface IndustryClassificationCriteria {
+  label: string;
+  score: number;
 }
 
 export interface ContactInfo {

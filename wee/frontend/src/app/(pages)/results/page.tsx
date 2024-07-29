@@ -125,8 +125,8 @@ function ResultsComponent() {
 
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
-          setIndustryClassification(urlResults[0].industryClassification.metadataClass);
-          setDomainClassification(urlResults[0].industryClassification.domainClass);
+          setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify[0]);
+          setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify[0]);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;

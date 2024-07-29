@@ -127,13 +127,25 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.score ? (websiteOne.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.metadataClass.label ? websiteOne.industryClassification.metadataClass.label : 'N/A')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotMetaDataClassify[0].label ? websiteOne.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : <ColumnChart dataLabel={['Banking', 'Entertainment', 'Real Estate']} dataSeries={[92,78,57]}/> 
+                            !websiteOne ? '' : 
+                                <ColumnChart 
+                                    dataLabel={[
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[0].label, 
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[1].label, 
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[2].label
+                                    ]} 
+                                    dataSeries={[
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
+                                    ]}
+                                /> 
                         }                        
                     </div>
 
@@ -148,13 +160,25 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.score ? (websiteTwo.industryClassification.metadataClass.score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.metadataClass.label ? websiteTwo.industryClassification.metadataClass.label : 'N/A')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label ? websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteTwo ? '' : <ColumnChart dataLabel={['Retail', 'Mining', 'Real Estate']} dataSeries={[87,55,18]}/> 
+                            !websiteTwo ? '' : 
+                            <ColumnChart 
+                                dataLabel={[
+                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
+                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label, 
+                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[2].label
+                                ]} 
+                                dataSeries={[
+                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
+                                ]}
+                            /> 
                         }  
                     </div>
                 </div>
@@ -168,13 +192,25 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.score ? (websiteOne.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotDomainClassify[0].score ? (websiteOne.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.domainClass.label ? websiteOne.industryClassification.domainClass.label : 'N/A')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotDomainClassify[0].label ? websiteOne.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : <ColumnChart dataLabel={['Banking', 'Entertainment', 'Real Estate']} dataSeries={[92,78,57]}/> 
+                            !websiteOne ? '' : 
+                            <ColumnChart 
+                                dataLabel={[
+                                    websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
+                                    websiteOne.industryClassification.zeroShotDomainClassify[1].label, 
+                                    websiteOne.industryClassification.zeroShotDomainClassify[2].label
+                                ]} 
+                                dataSeries={[
+                                    (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
+                                    (websiteOne.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                    (websiteOne.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
+                                ]}
+                            /> 
                         }    
                     </div>
 
@@ -189,13 +225,25 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.score ? (websiteTwo.industryClassification.domainClass.score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotDomainClassify[0].score ? (websiteTwo.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.domainClass.label ? websiteTwo.industryClassification.domainClass.label : 'N/A')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotDomainClassify[0].label ? websiteTwo.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteTwo ? '' : <ColumnChart dataLabel={['Retail', 'Mining', 'Real Estate']} dataSeries={[87,55,18]}/> 
+                            !websiteTwo ? '' : 
+                            <ColumnChart 
+                                dataLabel={[
+                                    websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
+                                    websiteTwo.industryClassification.zeroShotDomainClassify[1].label, 
+                                    websiteTwo.industryClassification.zeroShotDomainClassify[2].label
+                                ]} 
+                                dataSeries={[
+                                    (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
+                                ]}
+                            /> 
                         }  
                     </div>
                 </div>
