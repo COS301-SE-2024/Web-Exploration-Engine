@@ -1,5 +1,6 @@
-import { Controller, Get, Query, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Query, Inject, Param, UseInterceptors } from '@nestjs/common';
 import { PubSubService } from './pub-sub/pub_sub.service';
+import { ScraperService } from './scraper.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
@@ -14,11 +15,14 @@ import {
   ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
   SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
-} from './scraper.api';
+from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { PerformanceInterceptor } from './performance.interceptor';
+import { StringDecoder } from 'string_decoder';
 
 @ApiTags('Scraping')
 @Controller('scraper')
+@UseInterceptors(PerformanceInterceptor)
 export class ScraperController {
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
