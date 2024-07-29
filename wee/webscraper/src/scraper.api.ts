@@ -343,3 +343,29 @@ export const SeoAnalysisResponse500 = ApiResponse({
     },
   },
 });
+
+export const SentimentOperation = ApiOperation({ summary: 'Classify sentiment analysis' });
+export const SentimentQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to classify' });
+export const SentimentResponse200 = ApiResponse({
+  status: 200,
+  description: 'Sentiment Analysis successful',
+  schema: {
+    type: 'object',
+    properties: {
+      metadataClass: {
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          score: { type: 'number' },
+        },
+      },
+      domainClass: {
+        type: 'object',
+        properties: {
+          label: { type: 'string' },
+          score: { type: 'number' },
+        },
+      },
+    },
+  },
+});

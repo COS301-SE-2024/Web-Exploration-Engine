@@ -29,17 +29,24 @@ export interface IndustryClassification {
   metadataClass: {
     label: string;
     score: number;
-  },
+  };
   domainClass: {
     label: string;
     score: number;
-  },
+  };
   zeroShotMetaDataClassify: {
     label: string;
     score: number;
-  }[],
+  }[];
   zeroShotDomainClassify: {
     label: string;
     score: number;
-  }[]
+  }[];
+}
+export interface SentimentClassification {
+  sentimentAnalysis: {
+    positive: number;
+    negative: number;
+    neutral: number;
+  };
 }
