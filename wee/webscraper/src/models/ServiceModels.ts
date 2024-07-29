@@ -33,5 +33,13 @@ export interface IndustryClassification {
   domainClass: {
     label: string;
     score: number;
-  }
+  },
+  zeroShotMetaDataClassify: {
+    label: string;
+    score: number;
+  }[],
+  zeroShotDomainClassify: {
+    label: string;
+    score: number;
+  }[]
 }
