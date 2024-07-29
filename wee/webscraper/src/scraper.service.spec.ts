@@ -286,6 +286,224 @@ describe('ScraperService', () => {
             expect(result).toEqual(scrapeResult);
             expect(service.scrape).toHaveBeenCalledWith(url);
         });
+
+        it('should call scrape method with type "read-robots"', async () => {
+            const url = 'http://example.com';
+            const type = 'read-robots';
+            const robotsResult = {
+                baseUrl: url,
+                allowedPaths: [],
+                disallowedPaths: [],
+                isUrlScrapable: true,
+                isBaseUrlAllowed: true,
+            };
+
+            jest.spyOn(service, 'readRobotsFile').mockResolvedValueOnce(robotsResult);
+            jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(robotsResult);
+            expect(service.readRobotsFile).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-metadata"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-metadata';
+            const metadataResult = {
+                title: 'Example',
+                description: 'Example description',
+                keywords: 'example',
+                ogTitle: 'Example OG Title',
+                ogDescription: 'Example OG Description',
+                ogImage: 'http://example.com/image.jpg',
+            };
+    
+            jest.spyOn(service, 'scrapeMetadata').mockResolvedValue(metadataResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(metadataResult);
+            expect(service.scrapeMetadata).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-status"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-status';
+            const statusResult = 'live';
+    
+            jest.spyOn(service, 'scrapeStatus').mockResolvedValue(statusResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(statusResult);
+            expect(service.scrapeStatus).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "classify-industry"', async () => {
+            const url = 'http://example.com';
+            const type = 'classify-industry';
+            const industryResult = {
+                metadataClass: { label: 'Technology', score: 0.9 },
+                domainClass: { label: 'Technology', score: 0.9 },
+                zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
+                zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
+            };
+    
+            jest.spyOn(service, 'classifyIndustry').mockResolvedValue(industryResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(industryResult);
+            expect(service.classifyIndustry).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-logo"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-logo';
+            const logoResult = 'http://example.com/logo.jpg';
+    
+            jest.spyOn(service, 'scrapeLogo').mockResolvedValue(logoResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(logoResult);
+            expect(service.scrapeLogo).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-images"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-images';
+            const imagesResult = ['http://example.com/image.jpg'];
+    
+            jest.spyOn(service, 'scrapeImages').mockResolvedValue(imagesResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(imagesResult);
+            expect(service.scrapeImages).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "screenshot"', async () => {
+            const url = 'http://example.com';
+            const type = 'screenshot';
+            const screenshotResult = 'screenshot';
+    
+            jest.spyOn(service, 'getScreenshot').mockResolvedValue({ screenshot: screenshotResult });
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual({ screenshot: screenshotResult });
+            expect(service.getScreenshot).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-contact-info"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-contact-info';
+            const contactInfoResult = { emails: [], phones: [], socialLinks: [] };
+    
+            jest.spyOn(service, 'scrapeContactInfo').mockResolvedValue(contactInfoResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(contactInfoResult);
+            expect(service.scrapeContactInfo).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "scrape-address"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-address';
+            const addressResult = { addresses: [] };
+    
+            jest.spyOn(service, 'scrapeAddress').mockResolvedValue(addressResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(addressResult);
+            expect(service.scrapeAddress).toHaveBeenCalledWith(url);
+        });
+
+        it('should call scrape method with type "seo-analysis"', async () => {
+            const url = 'http://example.com';
+            const type = 'seo-analysis';
+            jest.spyOn(service, 'seoAnalysis').mockResolvedValue({
+                titleTagsAnalysis: {
+                    titleTag: "Takealot.com: Online Shopping | SA's leading online store",
+                    length: 57,
+                    recommendations: ""
+                },
+                metaDescriptionAnalysis: {
+                    metaDescription: "South Africa's leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.",
+                    length: 236,
+                    isUrlWordsInDescription: true,
+                    recommendations: "Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: takealot."
+                },
+                headingAnalysis: {
+                    headings: [],
+                    count: 0,
+                    recommendations: "No headings (H1-H6) found. Add headings to improve structure."
+                },
+                imageAnalysis: {
+                    error: "Error analyzing images using Puppeteer: Navigation timeout of 30000 ms exceeded"
+                },
+                uniqueContentAnalysis: {
+                    textLength: 0, 
+                    uniqueWordsPercentage: 0,
+                    repeatedWords: [{ 
+                        word: 'example',
+                        count: 7,
+                    }], 
+                    recommendations: "Add more unique content to improve SEO."
+                },
+                internalLinksAnalysis: {
+                    totalLinks: 0,
+                    uniqueLinks: 0,
+                    recommendations: "Internal linking is sparse. Consider adding more internal links to aid navigation and SEO."
+                },
+                siteSpeedAnalysis: {
+                    loadTime: 0,
+                    recommendations: "Consider reducing the impact of third-party code. Third-party code can significantly impact load performance. Consider delivering critical third-party code with a different async or deferred pattern to ensure the main thread is never blocked."
+                },
+                mobileFriendlinessAnalysis: {
+                    isResponsive: true,
+                    recommendations: ""
+                },
+                structuredDataAnalysis: {
+                    count: 0,
+                    recommendations: "No structured data found. Add structured data to improve SEO."
+                },
+                indexabilityAnalysis: {
+                    isIndexable: true,
+                    recommendations: ""
+                },
+                XMLSitemapAnalysis: {
+                    isSitemapValid: true,
+                    recommendations: ""
+                },
+                canonicalTagAnalysis: {
+                    canonicalTag: "https://www.takealot.com/",
+                    isCanonicalTagPresent: true,
+                    recommendations: ""
+                },
+                lighthouseAnalysis: { 
+                    scores: { 
+                        performance: 0.9,
+                        accessibility: 0.9,
+                        bestPractices: 0.9,
+                    },
+                    diagnostics: { 
+                        recommendations: ["Consider reducing the impact of third-party code. Third-party code can significantly impact load performance. Consider delivering critical third-party code with a different async or deferred pattern to ensure the main thread is never blocked."]
+                    },
+                }
+                
+            });
+    
+            const result = await service.scrapeWebsite(url, type);
+
+            expect(service.seoAnalysis).toHaveBeenCalledWith(url);
+
+
+        });
     
         it('should throw an error for unknown scraping type', async () => {
             const url = 'http://example.com';
@@ -655,5 +873,7 @@ describe('ScraperService', () => {
             expect(mockScrapeAddressService.scrapeAddress).toHaveBeenCalledWith(url, robotsResult);
         });
     });
+
+
 
 });
