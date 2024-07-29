@@ -39,6 +39,31 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
         theme: {
             mode: theme === 'dark' ? 'dark' : 'light'
         },
+        xaxis: {
+            labels: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            axisBorder: {
+                show: false
+            }
+        },
+        yaxis: {
+            labels: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            axisBorder: {
+                show: false
+            }
+        },
+        grid: {
+            borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        }
     });
 
     const series = [{
@@ -51,6 +76,9 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
             colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
+            },
+            grid: {
+                borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         }));
     }, [theme]);

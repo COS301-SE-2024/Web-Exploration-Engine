@@ -41,8 +41,12 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
         },
         colors: theme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
-            heatmap: {
-                distributed: true
+            radar: {
+                polygons: {
+                    
+                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                }
             }
         },
         theme: {
@@ -53,7 +57,7 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
         },
         xaxis: {
             categories: radarCategories
-        }
+        },       
     });
 
     const series = radarSeries;      
@@ -64,7 +68,15 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
             colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
-            }
+            },
+            plotOptions: {
+                radar: {
+                    polygons: {                        
+                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                    }
+                }
+            },
         }));
     }, [theme]);
 
