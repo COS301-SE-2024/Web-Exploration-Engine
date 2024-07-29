@@ -44,15 +44,15 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     
     // calculate industry classification percentages
     if (result.industryClassification && 
-      result.industryClassification.metadataClass.label && 
-      result.industryClassification.metadataClass.label !== 'Unknown') {
-      const industry = result.industryClassification.metadataClass.label;
+      result.industryClassification.zeroShotMetaDataClassify[0].label && 
+      result.industryClassification.zeroShotMetaDataClassify[0].label !== 'Unknown') {
+      const industry = result.industryClassification.zeroShotMetaDataClassify[0].label;
       industryCounts[industry] = (industryCounts[industry] || 0) + 1;
-      if (result.industryClassification.metadataClass.score < 0.5) {
+      if (result.industryClassification.zeroShotMetaDataClassify[0].score < 0.5) {
         weakClassification.push({
           url: result.url,
-          metadataClass: result.industryClassification.metadataClass.label,
-          score: result.industryClassification.metadataClass.score,
+          metadataClass: result.industryClassification.zeroShotMetaDataClassify[0].label,
+          score: result.industryClassification.zeroShotMetaDataClassify[0].score,
         });
       }
     } else {
@@ -62,10 +62,10 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
  
     // domain match classification
     if (result.industryClassification && 
-      result.industryClassification.domainClass.label && 
-      result.industryClassification.metadataClass.label) {
-      const domainClass = result.industryClassification.domainClass.label;
-      const metadataClass = result.industryClassification.metadataClass.label;
+      result.industryClassification.zeroShotDomainClassify[0].label && 
+      result.industryClassification.zeroShotMetaDataClassify[0].label) {
+      const domainClass = result.industryClassification.zeroShotDomainClassify[0].label;
+      const metadataClass = result.industryClassification.zeroShotMetaDataClassify[0].label;
       if (domainClass === metadataClass) {
         numMatched++;
       } else {
