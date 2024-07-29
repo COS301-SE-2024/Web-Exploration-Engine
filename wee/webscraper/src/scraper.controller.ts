@@ -470,7 +470,19 @@ export class ScraperController {
   @GetJobStatusUrlParam
   async getJobStatus(@Param('type') type: string, @Param('url') url: string ) {
     try {
-      const acceptedTypes = ['scrape', 'read-robots'];
+      const acceptedTypes = [
+        'scrape', 
+        'read-robots', 
+        'scrape-metadata',
+        'scrape-status',
+        'classify-industry',
+        'scrape-logo',
+        'scrape-images',
+        'screenshot',
+        'scrape-contact-info',
+        'scrape-addresses',
+        'seo-analysis',
+      ];
       if (!acceptedTypes.includes(type)) {
         throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
       }
