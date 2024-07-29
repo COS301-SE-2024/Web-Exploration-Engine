@@ -351,14 +351,6 @@ export default function SummaryReport() {
     return (
         <>
             <div className='min-h-screen p-4'>
-                {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
-                    <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
-                ) : (<></>)}
-
-                {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
-                    <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
-                ) : (<></>)}
-
                 <Button
                     className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={backToScrapeResults}
@@ -593,6 +585,34 @@ export default function SummaryReport() {
                         </WEETable>
                     </div>
                 </div> {/* Grid */}
+
+            {/* Classification Distribution */}
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                Industry Classification Distribution
+                <InfoPopOver 
+                    heading="Industry Classification Distribution" 
+                    content="Our Industry Classification Distribution relies on a zeroshot machine learning model. WEE cannot guarantee the accuracy of the classifications." 
+                    placement="right-end" 
+                />
+            </h3>
+            <div className='gap-4 grid md:grid-cols-2'>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Metadata
+                    </h3>
+                    {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
+                        <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                    ) : (<></>)}
+                </div>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Domain
+                    </h3>
+                    {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
+                        <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                    ) : (<></>)}
+                </div>
+            </div>
 
             {/* Website status */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
