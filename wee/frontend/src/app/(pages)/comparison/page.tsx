@@ -5,10 +5,11 @@ import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook } from "react-icons/fi";
 import CircularProgressComparison from "../../components/CircularProgressComparison";
-import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis } from "../../models/ScraperModels";
+import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis, UniqueContentAnalysis } from "../../models/ScraperModels";
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
+import { InfoPopOver } from "../../components/InfoPopOver";
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
     return 'scores' in data || 'diagnostics' in data;
@@ -24,6 +25,10 @@ function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOErro
 
 function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
     return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+}
+
+function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
+    return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 
 export default function Comparison() {
@@ -93,6 +98,20 @@ export default function Comparison() {
                     {websiteTwo ? websiteTwo.url : 'Website 2'}
                 </div>
             </div>
+
+            <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center mt-3'>
+                Domain Overview
+                <InfoPopOver 
+                    heading="Domain Overview" 
+                    content="This section provides important tags to classify the website based on the extracted information. </br></br>
+                        <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
+                        <i>*Industry Classification</i>: This field provides the industry classification of the website based on its metadata. </br>
+                        <i>*Domain match</i>: This field provides the domain classification of the website based on the url of the website. </br>
+                        <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br></br>
+                        <i>Note</i>: The fields marked with an asterisk (*) are generated using zero-shot machine learning models. These models provide a confidence score for each classification." 
+                    placement="bottom" 
+                />
+            </h4>
 
             {/* Website Status */}
             <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
@@ -249,147 +268,58 @@ export default function Comparison() {
                 </div>
             </div>
 
-            {/* Site Speed */}
+            <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
+                Onpage SEO Analysis
+                <InfoPopOver 
+                    heading="On-page SEO Analysis" 
+                    content="On-page SEO analysis involves fine-tuning webpages to improve their search engine visibility and enhance the user experience. By optimizing content directly on the page, we aim to achieve higher rankings on platforms like Google, ultimately driving more organic traffic to the site. </br></br>
+                        <i>Unique Content</i>: Text from body tag is extracted and processed. The calculated percentage of unique words can be used to avoid keyword stuffing which enhances SEO. </br>
+                        <i>Images</i>: All image elemenets are extracted and checked for alt text, image optimization and formats like PNG, JPEG, WebP, and SVG. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO. </br></br>" 
+                    placement="bottom" 
+                />
+            </h4>
+
+            {/* Unique Content */}
             <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
-                    Site Speed
+                    Unique Content
                 </div>
-                <div className="flex justify-between ">
+                <div className="flex justify-between">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
-                                websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
-                                : '0'                            
+                            {websiteOne?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteOne?.seoAnalysis.uniqueContentAnalysis) ?
+                                websiteOne?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
+                                : '0%'                            
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            seconds
+                            Unique Words
                         </div>
                     </div>
 
                     <div className="text-center m-auto">
                         <div className='flex text-5xl justify-center sm:pb-1'>
-                            <FiClock />
+                            <FiBook />
                         </div>
                         <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
-                            Site Speed
+                            Unique Content
                         </div>
                     </div>
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
-                                websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
-                                : '0'                            
+                            {websiteTwo?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteTwo?.seoAnalysis.uniqueContentAnalysis) ?
+                                websiteTwo?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
+                                : '0%'                            
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            seconds
+                            Unique Words
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Mobile Friendly */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
-                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
-                    Mobile Friendly
-                </div>
-                <div className="flex justify-between ">
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
-                            websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
-                            : '-'
-                        }
-                    </div>
-
-                    <div className="text-center m-auto">
-                        <div className='flex text-5xl justify-center sm:pb-1'>
-                            <FiSmartphone />
-                        </div>
-                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
-                            Mobile Friendly
-                        </div>
-                    </div>
-
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
-                            websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
-                            : '-'
-                        }
-                    </div>
-                </div>
-            </div>
-
-            {/* LightHouseAnalysis */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
-                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
-                    Light House
-                </div>
-                <div className="flex justify-between ">
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
-                            <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
-                                    :
-                                    <CircularProgressComparison label="Performance" value={0}/>
-                                }
-                            </div>
-                            <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
-                                    :
-                                    <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
-                            </div>
-                            <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
-                                    :
-                                    <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-center m-auto">
-                        <div className='flex text-5xl justify-center sm:pb-1'>
-                            <FiActivity />
-                        </div>
-                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
-                            Light House
-                        </div>
-                    </div>
-
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                    <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
-                            <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
-                                    :
-                                    <CircularProgressComparison label="Performance" value={0}/>
-                                }
-                            </div>
-                            <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
-                                    :
-                                    <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
-                            </div>
-                            <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
-                                    :
-                                    <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             {/* Image on page */}
             <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
@@ -470,6 +400,159 @@ export default function Comparison() {
                     </div>
                 </div>
             </div>
+
+            <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
+                Technical SEO Analysis
+                <InfoPopOver 
+                    heading="Technical SEO Analysis" 
+                    content="Technical SEO analysis refers to anything that makes your site easier for search engines to crawl, index and render. </br></br>
+                        <i>Light House</i>: The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices </br>
+                        <i>Mobile Friendliness</i>: The viewport is configured to simulate a mobile device (375x667 pixels), sets mobile and touch capabilities, and checks if the page is fully loaded and responsive at the specified width. Mobile-friendly sites improve user experience, enhance SEO due to Google&apos;s mobile-first indexing, and can boost conversion rates by ensuring ease of use on mobile devices. </br>
+                        <i>Site Speed</i>: The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and engagement, and can boost SEO by enhancing search rankings and driving more traffic. </br>"                
+                        placement="bottom" 
+                />
+            </h4>
+
+            {/* LightHouseAnalysis */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Light House
+                </div>
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
+                            <div className="flex justify-center">
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    :
+                                    <CircularProgressComparison label="Performance" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    :
+                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    :
+                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiActivity />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Light House
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                    <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    :
+                                    <CircularProgressComparison label="Performance" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    :
+                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                }
+                            </div>
+                            <div className="flex justify-center">
+                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    :
+                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Friendly */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Mobile Friendly
+                </div>
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        {websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
+                            websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                            : '-'
+                        }
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiSmartphone />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Mobile Friendly
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        {websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
+                            websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                            : '-'
+                        }
+                    </div>
+                </div>
+            </div>
+
+            {/* Site Speed */}
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Site Speed
+                </div>
+                <div className="flex justify-between ">
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
+                                websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
+                                : '0'                            
+                            }
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            seconds
+                        </div>
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiClock />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Site Speed
+                        </div>
+                    </div>
+
+                    <div className="text-center w-1/3">
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
+                                websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
+                                : '0'                            
+                            }
+                        </div>
+                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            seconds
+                        </div>
+                    </div>
+                </div>
+            </div>                     
         </div>
     );
 }

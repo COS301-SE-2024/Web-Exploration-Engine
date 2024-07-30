@@ -88,7 +88,7 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
                         options={options}
                         series={series}
                         type="radar"
-                        height={550}
+                        height={650}
                         width="100%"
                     />
                 </div>
