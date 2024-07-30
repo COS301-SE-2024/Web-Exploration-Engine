@@ -56,7 +56,12 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
             stepSize: 20
         },
         xaxis: {
-            categories: radarCategories
+            categories: radarCategories,
+            labels: {
+                style: {
+                    colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
+                },                
+            },
         },       
     });
 
@@ -77,6 +82,14 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
                     }
                 }
             },
+            xaxis: {
+                categories: radarCategories,
+                labels: {
+                    style: {
+                        colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
+                    },                    
+                },
+            },   
         }));
     }, [theme]);
 
