@@ -105,38 +105,49 @@ export class SentimentAnalysisService {
     }
 
     try {
-      const response = await axios.post(
-        this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
-        { inputs: inputText },
-        {
-          headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-          },
-        }
-      );
+      // Split the input text into words or tokens
+      const tokens = inputText.split(/\s+/); // Simple whitespace tokenization
 
-      console.log('Response from Hugging Face token classification API:', response.data);
+      const positiveWords: string[] = [];
+      const negativeWords: string[] = [];
 
-      if (response.data && Array.isArray(response.data)) {
-        const positiveWords: string[] = [];
-        const negativeWords: string[] = [];
-
-        response.data[0].forEach((result: any) => {
-          const label = result.label;
-          const score = result.score;
-          if (label && score) {
-            if (label === '5 stars' || label === '4 stars') {
-              positiveWords.push(`${label} (Score: ${score})`);
-            } else if (label === '1 star' || label === '2 stars') {
-              negativeWords.push(`${label} (Score: ${score})`);
-            }
+      // Analyze each token
+      for (const token of tokens) {
+        const response = await axios.post(
+          this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
+          { inputs: token },
+          {
+            headers: {
+              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            },
           }
-        });
+        );
 
-        return { positiveWords, negativeWords };
-      } else {
-        throw new Error('Unexpected response format from token classification API');
+        console.log(`Response for token "${token}":`, response.data);
+
+        if (response.data && Array.isArray(response.data)) {
+          response.data.forEach((result: any) => {
+            if (result.label && result.score) {
+              switch (result.label) {
+                case '5 stars':
+                case '4 stars':
+                  positiveWords.push(token);
+                  break;
+                case '1 star':
+                case '2 stars':
+                  negativeWords.push(token);
+                  break;
+                default:
+                  console.log(`Token with neutral/unknown sentiment: ${token}`);
+              }
+            }
+          });
+        } else {
+          throw new Error('Unexpected response format from token classification API');
+        }
       }
+
+      return { positiveWords, negativeWords };
     } catch (error) {
       console.error('Error during word-level sentiment analysis:', error.message);
       return { positiveWords: [], negativeWords: [] };
