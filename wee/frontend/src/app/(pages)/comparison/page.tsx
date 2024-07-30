@@ -146,13 +146,13 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotMetaDataClassify[0].label ? websiteOne.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotMetaDataClassify[0].label ? websiteOne.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : 
+                            !websiteOne ? '' : (websiteOne.industryClassification ? 
                                 <ColumnChart 
                                     dataLabel={[
                                         websiteOne.industryClassification.zeroShotMetaDataClassify[1].label, 
@@ -165,6 +165,8 @@ export default function Comparison() {
                                         (websiteOne.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
                                     ]}
                                 /> 
+                                : ''
+                            )
                         }                        
                     </div>
 
@@ -179,25 +181,28 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label ? websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label ? websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteTwo ? '' : 
-                            <ColumnChart 
-                                dataLabel={[
-                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label, 
-                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
-                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[2].label
-                                ]} 
-                                dataSeries={[
-                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
-                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
-                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
-                                ]}
-                            /> 
+                            !websiteTwo ? '' : (websiteTwo.industryClassification ? 
+
+                                <ColumnChart 
+                                    dataLabel={[
+                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label, 
+                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
+                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[2].label
+                                    ]} 
+                                    dataSeries={[
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
+                                    ]}
+                                /> 
+                                : ''
+                            )
                         }  
                     </div>
                 </div>
@@ -211,25 +216,27 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotDomainClassify[0].score ? (websiteOne.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotDomainClassify[0].score ? (websiteOne.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteOne ? '-' : (websiteOne.industryClassification.zeroShotDomainClassify[0].label ? websiteOne.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
+                            {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotDomainClassify[0].label ? websiteOne.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : 
-                            <ColumnChart 
-                                dataLabel={[
-                                    websiteOne.industryClassification.zeroShotDomainClassify[1].label, 
-                                    websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
-                                    websiteOne.industryClassification.zeroShotDomainClassify[2].label
-                                ]} 
-                                dataSeries={[
-                                    (websiteOne.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
-                                    (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
-                                    (websiteOne.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
-                                ]}
-                            /> 
+                            !websiteOne ? '' : (websiteOne.industryClassification ? 
+                                <ColumnChart 
+                                    dataLabel={[
+                                        websiteOne.industryClassification.zeroShotDomainClassify[1].label, 
+                                        websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
+                                        websiteOne.industryClassification.zeroShotDomainClassify[2].label
+                                    ]} 
+                                    dataSeries={[
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
+                                    ]}
+                                /> 
+                                : ''
+                            )
                         }    
                     </div>
 
@@ -244,25 +251,27 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotDomainClassify[0].score ? (websiteTwo.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotDomainClassify[0].score ? (websiteTwo.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {!websiteTwo ? '-' : (websiteTwo.industryClassification.zeroShotDomainClassify[0].label ? websiteTwo.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
+                            {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotDomainClassify[0].label ? websiteTwo.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteTwo ? '' : 
-                            <ColumnChart 
-                                dataLabel={[
-                                    websiteTwo.industryClassification.zeroShotDomainClassify[1].label, 
-                                    websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
-                                    websiteTwo.industryClassification.zeroShotDomainClassify[2].label
-                                ]} 
-                                dataSeries={[
-                                    (websiteTwo.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
-                                    (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
-                                    (websiteTwo.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
-                                ]}
-                            /> 
+                            !websiteTwo ? '' : (websiteTwo.industryClassification ?
+                                <ColumnChart 
+                                    dataLabel={[
+                                        websiteTwo.industryClassification.zeroShotDomainClassify[1].label, 
+                                        websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
+                                        websiteTwo.industryClassification.zeroShotDomainClassify[2].label
+                                    ]} 
+                                    dataSeries={[
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
+                                    ]}
+                                /> 
+                                : ''
+                            )
                         }  
                     </div>
                 </div>
@@ -287,7 +296,7 @@ export default function Comparison() {
                 <div className="flex justify-between">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteOne?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteOne?.seoAnalysis.uniqueContentAnalysis) ?
+                            {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteOne?.seoAnalysis.uniqueContentAnalysis) ?
                                 websiteOne?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
                                 : '0%'                            
                             }
@@ -308,7 +317,7 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteTwo?.seoAnalysis.uniqueContentAnalysis) ?
+                            {websiteTwo?.seoAnalysis &&  websiteTwo?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteTwo?.seoAnalysis.uniqueContentAnalysis) ?
                                 websiteTwo?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
                                 : '0%'                            
                             }
@@ -331,7 +340,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
+                                        {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
                                             websiteOne.seoAnalysis.imageAnalysis.missingAltTextCount
                                             : '-'
                                         }                                        
@@ -345,7 +354,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
+                                        {websiteOne?.seoAnalysis &&  websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
                                             websiteOne.seoAnalysis.imageAnalysis.nonOptimizedCount
                                             : '-'
                                         }       
@@ -372,7 +381,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
+                                        {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
                                             websiteTwo.seoAnalysis.imageAnalysis.missingAltTextCount
                                             : '-'
                                         }       
@@ -386,7 +395,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
+                                        {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
                                             websiteTwo.seoAnalysis.imageAnalysis.nonOptimizedCount
                                             : '-'
                                         }      
@@ -422,21 +431,21 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
                                 }
                             </div>
                             <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
                                 }
                             </div>
                             <div className="flex justify-center">
-                                {websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
@@ -457,21 +466,21 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                     <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
                                 }
                             </div>
                             <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
                                 }
                             </div>
                             <div className="flex justify-center">
-                                {websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
@@ -489,7 +498,7 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
                         }
@@ -505,7 +514,7 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
                         }
@@ -521,7 +530,7 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
+                            {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
                             }
@@ -542,7 +551,7 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
+                            {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
                             }

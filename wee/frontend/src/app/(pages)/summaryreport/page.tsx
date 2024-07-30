@@ -591,7 +591,11 @@ export default function SummaryReport() {
                 Industry Classification Distribution
                 <InfoPopOver 
                     heading="Industry Classification Distribution" 
-                    content="Our Industry Classification Distribution relies on a zeroshot machine learning model. WEE cannot guarantee the accuracy of the classifications." 
+                    content="
+                        The radar graphs illustrate the top three industries associated with each of the scraped domains, based on their metadata or domain names. 
+                        Through these radar graphs, users can visually explore the distribution of industry classifications and observe how they intersect, which offers an insightful perspective.<br/><br/>
+                        Our Industry Classification Distribution relies on a zero-shot machine learning model. However, WEE cannot provide an absolute guarantee of the accuracy of these classifications. <br/><br/>
+                        Note: Feel free to click on a URL in the graph&apos;s legend. Doing so allows you to toggle visibility, especially if things start to appear busy." 
                     placement="right-end" 
                 />
             </h3>

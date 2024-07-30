@@ -25,9 +25,11 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   // META RADAR
   // get all the categories in the scrape result page
   for (const result of scraperResults) {
-    for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
-      if (!metaRadarCategories.includes(metaIndustry.label)) {
-        metaRadarCategories.push(metaIndustry.label);
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify) {
+      for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+        if (!metaRadarCategories.includes(metaIndustry.label)) {
+          metaRadarCategories.push(metaIndustry.label);
+        }
       }
     }
   }
@@ -38,11 +40,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   }
 
   for (const result of scraperResults) {
-    for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
-      const categoryIndex = metaRadarCategories.indexOf(metaIndustry.label);
-      if (categoryIndex !== -1) {
-        const seriesIndex = scraperResults.indexOf(result);
-        metaRadarSeries[seriesIndex].data[categoryIndex] = (metaIndustry.score * 100);
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify) {
+      for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+        const categoryIndex = metaRadarCategories.indexOf(metaIndustry.label);
+        if (categoryIndex !== -1) {
+          const seriesIndex = scraperResults.indexOf(result);
+          metaRadarSeries[seriesIndex].data[categoryIndex] = (metaIndustry.score * 100);
+        }
       }
     }
   }
@@ -50,9 +54,11 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   // DOMAIN RADAR
   // get all the categories in the scrape result page
   for (const result of scraperResults) {
-    for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
-      if (!domainRadarCategories.includes(domainIndustry.label)) {
-        domainRadarCategories.push(domainIndustry.label);
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify) {
+      for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+        if (!domainRadarCategories.includes(domainIndustry.label)) {
+          domainRadarCategories.push(domainIndustry.label);
+        }
       }
     }
   }
@@ -63,11 +69,13 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   }
 
   for (const result of scraperResults) {
-    for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
-      const categoryIndex = domainRadarCategories.indexOf(domainIndustry.label);
-      if (categoryIndex !== -1) {
-        const seriesIndex = scraperResults.indexOf(result);
-        domainRadarSeries[seriesIndex].data[categoryIndex] = (domainIndustry.score * 100);
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify) {
+      for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+        const categoryIndex = domainRadarCategories.indexOf(domainIndustry.label);
+        if (categoryIndex !== -1) {
+          const seriesIndex = scraperResults.indexOf(result);
+          domainRadarSeries[seriesIndex].data[categoryIndex] = (domainIndustry.score * 100);
+        }
       }
     }
   }  
