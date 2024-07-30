@@ -136,13 +136,13 @@ export default function Comparison() {
                             !websiteOne ? '' : 
                                 <ColumnChart 
                                     dataLabel={[
-                                        websiteOne.industryClassification.zeroShotMetaDataClassify[0].label, 
                                         websiteOne.industryClassification.zeroShotMetaDataClassify[1].label, 
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[0].label, 
                                         websiteOne.industryClassification.zeroShotMetaDataClassify[2].label
                                     ]} 
                                     dataSeries={[
-                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
                                         (websiteOne.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
                                         (websiteOne.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
                                     ]}
                                 /> 
@@ -169,13 +169,13 @@ export default function Comparison() {
                             !websiteTwo ? '' : 
                             <ColumnChart 
                                 dataLabel={[
-                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
                                     websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label, 
+                                    websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
                                     websiteTwo.industryClassification.zeroShotMetaDataClassify[2].label
                                 ]} 
                                 dataSeries={[
-                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
                                     (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
                                     (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
                                 ]}
                             /> 
@@ -201,13 +201,13 @@ export default function Comparison() {
                             !websiteOne ? '' : 
                             <ColumnChart 
                                 dataLabel={[
-                                    websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
                                     websiteOne.industryClassification.zeroShotDomainClassify[1].label, 
+                                    websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
                                     websiteOne.industryClassification.zeroShotDomainClassify[2].label
                                 ]} 
                                 dataSeries={[
-                                    (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
                                     (websiteOne.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                    (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
                                     (websiteOne.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
                                 ]}
                             /> 
@@ -234,13 +234,13 @@ export default function Comparison() {
                             !websiteTwo ? '' : 
                             <ColumnChart 
                                 dataLabel={[
-                                    websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
                                     websiteTwo.industryClassification.zeroShotDomainClassify[1].label, 
+                                    websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
                                     websiteTwo.industryClassification.zeroShotDomainClassify[2].label
                                 ]} 
                                 dataSeries={[
-                                    (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
                                     (websiteTwo.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
+                                    (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
                                     (websiteTwo.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
                                 ]}
                             /> 
