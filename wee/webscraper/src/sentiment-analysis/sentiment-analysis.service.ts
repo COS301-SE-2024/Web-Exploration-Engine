@@ -109,13 +109,20 @@ export class SentimentAnalysisService {
   
       const positiveWords: string[] = [];
       const negativeWords: string[] = [];
+      const analyzedWords: Set<string> = new Set(); // Track analyzed words
   
       // Analyze each token with a delay to avoid rate limiting
       for (const [index, token] of tokens.entries()) {
         if (index > 0 && index % 10 === 0) { 
           await this.delay(1000); // Delay for 1 second
         }
-
+  
+        if (analyzedWords.has(token)) {
+          continue;
+        }
+  
+        analyzedWords.add(token); 
+  
         const response = await axios.post(
           this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
           { inputs: token },
