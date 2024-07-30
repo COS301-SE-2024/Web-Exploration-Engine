@@ -49,4 +49,6 @@ export interface SentimentClassification {
     negative: number;
     neutral: number;
   };
+  positiveWords: string[];
+  negativeWords: string[];
 }
