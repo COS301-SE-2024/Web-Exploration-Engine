@@ -8,7 +8,7 @@ export class SentimentAnalysisService {
     'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';
   private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL =
     'https://api-inference.huggingface.co/models/nlptown/bert-base-multilingual-uncased-sentiment';
-
+  private readonly SCORE_THRESHOLD = 0.4;
   private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
 
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
@@ -22,7 +22,7 @@ export class SentimentAnalysisService {
         negativeWords,
       };
     } catch (error) {
-      console.log(error.message);
+      console.log('Error during sentiment classification:', error.message);
       return {
         sentimentAnalysis: {
           positive: 0,
@@ -96,23 +96,26 @@ export class SentimentAnalysisService {
 
   async getPositiveNegativeWords(metadata: Metadata): Promise<{ positiveWords: string[], negativeWords: string[] }> {
     const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
-
+  
     console.log(`Input text for word-level sentiment analysis: "${inputText}"`);
-
+  
     if (!inputText) {
       console.log('Input text is empty, returning empty word lists.');
       return { positiveWords: [], negativeWords: [] };
     }
-
+  
     try {
-      // Split the input text into words or tokens
-      const tokens = inputText.split(/\s+/); // Simple whitespace tokenization
-
+      const tokens = inputText.split(/\s+/).filter(token => token.length >= 4); // Filter words with 4 or more letters
+  
       const positiveWords: string[] = [];
       const negativeWords: string[] = [];
+  
+      // Analyze each token with a delay to avoid rate limiting
+      for (const [index, token] of tokens.entries()) {
+        if (index > 0 && index % 10 === 0) { 
+          await this.delay(1000); // Delay for 1 second
+        }
 
-      // Analyze each token
-      for (const token of tokens) {
         const response = await axios.post(
           this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
           { inputs: token },
@@ -122,35 +125,47 @@ export class SentimentAnalysisService {
             },
           }
         );
-
+  
         console.log(`Response for token "${token}":`, response.data);
-
+  
         if (response.data && Array.isArray(response.data)) {
-          response.data.forEach((result: any) => {
-            if (result.label && result.score) {
-              switch (result.label) {
-                case '5 stars':
-                case '4 stars':
-                  positiveWords.push(token);
-                  break;
-                case '1 star':
-                case '2 stars':
-                  negativeWords.push(token);
-                  break;
-                default:
-                  console.log(`Token with neutral/unknown sentiment: ${token}`);
-              }
+          let maxScore = -1;
+          let sentimentLabel = '';
+  
+          response.data[0].forEach((result: any) => {
+            if (result.score > maxScore) {
+              maxScore = result.score;
+              sentimentLabel = result.label;
             }
           });
+  
+          if (maxScore > this.SCORE_THRESHOLD) {
+            switch (sentimentLabel) {
+              case '5 stars':
+              case '4 stars':
+                positiveWords.push(token);
+                break;
+              case '1 star':
+              case '2 stars':
+                negativeWords.push(token);
+                break;
+              default:
+                console.log(`Token with neutral/unknown sentiment: ${token}`);
+            }
+          }
         } else {
           throw new Error('Unexpected response format from token classification API');
         }
       }
-
+  
       return { positiveWords, negativeWords };
     } catch (error) {
       console.error('Error during word-level sentiment analysis:', error.message);
       return { positiveWords: [], negativeWords: [] };
     }
+  }
+
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
