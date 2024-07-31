@@ -370,15 +370,23 @@ export class ScraperService implements OnModuleInit {
     // Cache check and update logic
     const cachedData = await this.getCachedData(cacheKey);
     if (cachedData) {
-      const end = performance.now();
-      const times = (end - start) / 1000;
-      console.log('CACHE HIT', times);
-  
-      // Update time field
-      cachedData.time = parseFloat(times.toFixed(4));
-      return cachedData;
+      // check if error status
+      if (cachedData.status !== 'error') {
+        // update time if cache proccessing is completed
+        if (cachedData.status === 'completed') {
+          const end = performance.now();
+          const times = (end - start) / 1000;
+          console.log('CACHE HIT', times);
+      
+          // Update time field
+          cachedData.time = parseFloat(times.toFixed(4));
+        }
+
+        return cachedData;
+      }
     }
   
+    // Scrape if not in cache/already processing (CACHE MISS or error status)
     console.log('CACHE MISS - SCRAPE');
   
     // Add to cache as processing
@@ -396,8 +404,7 @@ export class ScraperService implements OnModuleInit {
       // console.log(`Result: ${result}`);
     } catch (error) {
       console.error(`Error scraping URL: ${url}`, error);
-      // Retry mechanism? Remove entry from cache
-      await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error'  }));
+      await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
     }
   }
 

@@ -2,7 +2,7 @@
 export async function checkJobStatus(url: string) {
   try {
     // CHANGE TO DEPLOYED VERSION
-    const response = await fetch(`http://localhost:3000/api/scraper/status/${encodeURIComponent(url)}`);
+    const response = await fetch(`http://localhost:3000/api/scraper/status/scrape/${encodeURIComponent(url)}`);
     if (!response.ok) {
       throw new Error(`Error fetching job status: ${response.statusText}`);
     }

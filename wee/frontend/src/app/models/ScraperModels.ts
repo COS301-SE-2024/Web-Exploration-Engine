@@ -182,3 +182,8 @@ export interface Summary {
   scrapableUrls: number;
   avgTime:number;
 }
+
+export interface Result {
+  status: string;
+  result?: ScraperResult;
+}
