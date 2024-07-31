@@ -101,36 +101,36 @@ export class SentimentAnalysisService {
 
   async getPositiveNegativeWords(metadata: Metadata): Promise<{ positiveWords: string[], negativeWords: string[] }> {
     const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
-  
+    
     console.log(`Input text for word-level sentiment analysis: "${inputText}"`);
-  
+    
     if (!inputText) {
       console.log('Input text is empty, returning empty word lists.');
       return { positiveWords: [], negativeWords: [] };
     }
-  
+    
     try {
-      const tokens = inputText.split(/\s+/).filter(token => token.length >= 4); // Filter words with 4 or more letters
+      const tokens: string[] = inputText.split(/\s+/).filter(token => token.length >= 4);
+      const uniqueTokens: string[] = Array.from(new Set(tokens));
+  
+      if (uniqueTokens.length === 0) {
+        //console.log('No tokens to analyze, returning empty word lists.');
+        return { positiveWords: [], negativeWords: [] };
+      }
+  
+      const BATCH_SIZE = 50;
+      const batches: string[][] = [];
+      for (let i = 0; i < uniqueTokens.length; i += BATCH_SIZE) {
+        batches.push(uniqueTokens.slice(i, i + BATCH_SIZE));
+      }
   
       const positiveWords: string[] = [];
       const negativeWords: string[] = [];
-      const analyzedWords: Set<string> = new Set(); // Track analyzed words
   
-      // Analyze each token with a delay to avoid rate limiting
-      for (const [index, token] of tokens.entries()) {
-        if (index > 0 && index % 10 === 0) { 
-          await this.delay(1000); // Delay for 1 second
-        }
-  
-        if (analyzedWords.has(token)) {
-          continue;
-        }
-  
-        analyzedWords.add(token); 
-  
+      for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
-          { inputs: token },
+          { inputs: batch },
           {
             headers: {
               Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
@@ -138,31 +138,38 @@ export class SentimentAnalysisService {
           }
         );
   
-        console.log(`Response for token "${token}":`, response.data);
+        console.log(`Response for batch ${batch}:`, response.data);
   
         if (response.data && Array.isArray(response.data)) {
-          let maxScore = -1;
-          let sentimentLabel = '';
+          for (const [index, tokenResponse] of response.data.entries()) {
+            const token = batch[index];
+            if (Array.isArray(tokenResponse)) {
+              let maxScore = -1;
+              let sentimentLabel = '';
+              
+              tokenResponse.forEach((result: any) => {
+                if (result.score > maxScore) {
+                  maxScore = result.score;
+                  sentimentLabel = result.label;
+                }
+              });
   
-          response.data[0].forEach((result: any) => {
-            if (result.score > maxScore) {
-              maxScore = result.score;
-              sentimentLabel = result.label;
-            }
-          });
-  
-          if (maxScore > this.SCORE_THRESHOLD) {
-            switch (sentimentLabel) {
-              case '5 stars':
-              case '4 stars':
-                positiveWords.push(token);
-                break;
-              case '1 star':
-              case '2 stars':
-                negativeWords.push(token);
-                break;
-              default:
-                console.log(`Token with neutral/unknown sentiment: ${token}`);
+              if (maxScore > this.SCORE_THRESHOLD) {
+                switch (sentimentLabel) {
+                  case '5 stars':
+                  case '4 stars':
+                    positiveWords.push(token);
+                    break;
+                  case '1 star':
+                  case '2 stars':
+                    negativeWords.push(token);
+                    break;
+                  default:
+                    console.log(`Token with neutral/unknown sentiment: ${token}`);
+                }
+              }
+            } else {
+              console.log(`Unexpected response format for token: ${token}`);
             }
           }
         } else {
@@ -176,6 +183,7 @@ export class SentimentAnalysisService {
       return { positiveWords: [], negativeWords: [] };
     }
   }
+  
 
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
