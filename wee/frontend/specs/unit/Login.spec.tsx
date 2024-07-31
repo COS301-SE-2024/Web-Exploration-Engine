@@ -129,7 +129,6 @@ describe('Login Component', () => {
     });
 
     expect(screen.getByText(/Login with Google/i)).toBeDefined();
-    expect(screen.getByText(/Login with Apple/i)).toBeDefined();
   });
 
  

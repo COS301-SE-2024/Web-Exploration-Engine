@@ -25,12 +25,12 @@ describe('Auth functions', () => {
       const mockResponse = {
         data: {
           session: { access_token: 'mockAccessToken' },
-          user: { id: 'mockUuid', email_confirmed_at: '2021-01-01T00:00:00.000000'},
+          user: { id: 'mockUuid', email_confirmed_at: '2021-01-01T00:00:00.000000', user_metadata: { name: 'John Doe' } },
         },
         error: null,
       };
 
-      (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue(mockResponse);
+      (supabase?.auth.signInWithPassword as jest.Mock).mockResolvedValue(mockResponse);
 
       const req = { email: 'test@example.com', password: 'password123' };
       const result = await login(req);
@@ -38,6 +38,7 @@ describe('Auth functions', () => {
       expect(result).toEqual({
         uuid: 'mockUuid',
         emailVerified: true,
+        name: 'John Doe',
       });
     });
 
@@ -47,7 +48,7 @@ describe('Auth functions', () => {
         error: { code: 'mockCode', message: 'mockMessage' },
       };
 
-      (supabase.auth.signInWithPassword as jest.Mock).mockResolvedValue(mockError);
+      (supabase?.auth.signInWithPassword as jest.Mock).mockResolvedValue(mockError);
 
 
       const req = { email: 'test@example.com', password: 'wrongpassword' };
@@ -70,7 +71,7 @@ describe('Auth functions', () => {
         error: null,
       };
 
-      (supabase.auth.signUp as jest.Mock).mockResolvedValue(mockResponse);
+      (supabase?.auth.signUp as jest.Mock).mockResolvedValue(mockResponse);
 
       const req = {
         email: 'test@example.com',
@@ -92,7 +93,7 @@ describe('Auth functions', () => {
         error: { code: 'mockCode', message: 'mockMessage' },
       };
 
-      (supabase.auth.signUp as jest.Mock).mockResolvedValue(mockError);
+      (supabase?.auth.signUp as jest.Mock).mockResolvedValue(mockError);
 
       const req = {
         email: 'test@example.com',
@@ -116,7 +117,7 @@ describe('Auth functions', () => {
     };
 
     // Mock response for Supabase signUp function
-    (supabase.from as jest.Mock).mockReturnValue({
+    (supabase?.from as jest.Mock).mockReturnValue({
       select: jest.fn().mockReturnValue({
         eq: jest.fn().mockResolvedValue(mockUsersResponse),
       }),
