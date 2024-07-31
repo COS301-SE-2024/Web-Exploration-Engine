@@ -101,6 +101,47 @@ describe('SentimentAnalysisService', () => {
     });
   });
 
+  describe('getPositiveNegativeWords', () => {
+    it('should return positive and negative words successfully', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+
+      const positiveWords = ['Test', 'Title', 'Description', 'test', 'keywords'];
+      const negativeWords = [];
+
+      // Mock the API response
+      jest.spyOn(axios, 'post').mockResolvedValue({
+        data: [[
+          { label: '5 stars', score: 0.9 },
+          { label: '1 star', score: 0.8 }
+        ]]
+      });
+
+      
+      const result = await service.getPositiveNegativeWords(metadata);
+      expect(result).toEqual({ positiveWords, negativeWords });
+    });
+
+
+    it('should handle errors and return empty word lists', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+
+      const result = await service.getPositiveNegativeWords(metadata);
+      expect(result).toEqual({ positiveWords: [], negativeWords: [] });
+    });
+  });
 
 
 });
