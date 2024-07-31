@@ -14,6 +14,7 @@ import WEETable from '../../components/Util/Table';
 import { getReports } from '../../services/SaveReportService';
 import { useUserContext } from '../../context/UserContext';
 import { deleteReport } from "../../services/SaveReportService";
+import WEETabs from "../../components/Util/Tabs";
 
 
 function ResultsComponent() {
@@ -121,7 +122,7 @@ function ResultsComponent() {
           </h1>
         </div>
         <div className="flex flex-col">
-          <Tabs aria-label="Options" size="lg">
+          <WEETabs aria-label="Options" size="lg">
             <Tab key="individual" title="Reports">
               <Card>
                 <CardBody>
@@ -331,7 +332,7 @@ function ResultsComponent() {
                 </CardBody>
               </Card>  
             </Tab>
-          </Tabs>
+          </WEETabs>
         </div>  
       </div>
 
