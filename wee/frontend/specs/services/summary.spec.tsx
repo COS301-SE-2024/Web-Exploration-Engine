@@ -605,5 +605,88 @@ describe('SummaryService', () => {
     ]));
   });
 
+  it('manipulate zero shot metadata data for radar grapgh', () => {
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[0].label = 'Tech';
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[0].score = 0.9;
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[1].label = 'Telecomms';
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[1].score = 0.8;
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[2].label = 'E-commerce';
+    scraperResults[0].industryClassification.zeroShotMetaDataClassify[2].score = 0.8;
+
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[0].label = 'Restuarants';
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[0].score = 0.6;
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[1].label = 'Hospitality';
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[1].score = 0.5;
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[2].label = 'Retail';
+    scraperResults[1].industryClassification.zeroShotMetaDataClassify[2].score = 0.3;
+
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[0].label = 'Retail';
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[0].score = 0.7;
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[1].label = 'Tech';
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[1].score = 0.5;
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[2].label = 'Hospitality';
+    scraperResults[2].industryClassification.zeroShotMetaDataClassify[2].score = 0.2;
+
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[0].label = 'Retail';
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[0].score = 0.9;
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[1].label = 'Telecomms';
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[1].score = 0.5;
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[2].label = 'Hospitality';
+    scraperResults[3].industryClassification.zeroShotMetaDataClassify[2].score = 0.1;
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.metaRadar.categories).toEqual(expect.arrayContaining([
+      'Tech', 'Telecomms', 'E-commerce', 'Restuarants', 'Hospitality', 'Retail'
+    ]));
+
+    expect(summary.metaRadar.series).toEqual(expect.arrayContaining([
+      {name: 'http://example1.com', data:[90, 80, 80, 0, 0, 0]},
+      {name: 'http://example2.com', data:[0, 0, 0, 60, 50, 30]},
+      {name: 'http://example3.com', data:[50, 0, 0, 0, 20, 70]},
+      {name: 'http://example4.com', data:[0, 50, 0, 0, 10, 90]},
+    ]));
+  });
+
+  it('manipulate zero shot domain data for radar grapgh', () => {
+    scraperResults[0].industryClassification.zeroShotDomainClassify[0].label = 'Tech';
+    scraperResults[0].industryClassification.zeroShotDomainClassify[0].score = 0.9;
+    scraperResults[0].industryClassification.zeroShotDomainClassify[1].label = 'Telecomms';
+    scraperResults[0].industryClassification.zeroShotDomainClassify[1].score = 0.8;
+    scraperResults[0].industryClassification.zeroShotDomainClassify[2].label = 'E-commerce';
+    scraperResults[0].industryClassification.zeroShotDomainClassify[2].score = 0.8;
+
+    scraperResults[1].industryClassification.zeroShotDomainClassify[0].label = 'Restuarants';
+    scraperResults[1].industryClassification.zeroShotDomainClassify[0].score = 0.6;
+    scraperResults[1].industryClassification.zeroShotDomainClassify[1].label = 'Hospitality';
+    scraperResults[1].industryClassification.zeroShotDomainClassify[1].score = 0.5;
+    scraperResults[1].industryClassification.zeroShotDomainClassify[2].label = 'Retail';
+    scraperResults[1].industryClassification.zeroShotDomainClassify[2].score = 0.3;
+
+    scraperResults[2].industryClassification.zeroShotDomainClassify[0].label = 'Retail';
+    scraperResults[2].industryClassification.zeroShotDomainClassify[0].score = 0.7;
+    scraperResults[2].industryClassification.zeroShotDomainClassify[1].label = 'Tech';
+    scraperResults[2].industryClassification.zeroShotDomainClassify[1].score = 0.5;
+    scraperResults[2].industryClassification.zeroShotDomainClassify[2].label = 'Hospitality';
+    scraperResults[2].industryClassification.zeroShotDomainClassify[2].score = 0.2;
+
+    scraperResults[3].industryClassification.zeroShotDomainClassify[0].label = 'Retail';
+    scraperResults[3].industryClassification.zeroShotDomainClassify[0].score = 0.9;
+    scraperResults[3].industryClassification.zeroShotDomainClassify[1].label = 'Telecomms';
+    scraperResults[3].industryClassification.zeroShotDomainClassify[1].score = 0.5;
+    scraperResults[3].industryClassification.zeroShotDomainClassify[2].label = 'Hospitality';
+    scraperResults[3].industryClassification.zeroShotDomainClassify[2].score = 0.1;
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.domainRadar.categories).toEqual(expect.arrayContaining([
+      'Tech', 'Telecomms', 'E-commerce', 'Restuarants', 'Hospitality', 'Retail'
+    ]));
+
+    expect(summary.domainRadar.series).toEqual(expect.arrayContaining([
+      {name: 'http://example1.com', data:[90, 80, 80, 0, 0, 0]},
+      {name: 'http://example2.com', data:[0, 0, 0, 60, 50, 30]},
+      {name: 'http://example3.com', data:[50, 0, 0, 0, 20, 70]},
+      {name: 'http://example4.com', data:[0, 50, 0, 0, 10, 90]},
+    ]));
+  });
 
 });
