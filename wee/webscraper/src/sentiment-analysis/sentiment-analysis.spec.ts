@@ -59,6 +59,27 @@ describe('SentimentAnalysisService', () => {
 
       expect(result).toEqual({});
     });
+
+    it('should handle unexpected API response format', async () => {
+      const metadata: Metadata = {
+        title: 'Sample Title',
+        description: 'Sample Description',
+        keywords: 'Sample Keywords',
+        ogTitle: 'Open Graph Title',
+        ogDescription: 'Open Graph Description',
+        ogImage: 'https://example.com/image.jpg',
+      };
+
+      // Mocking an unexpected API response format
+      mockedAxios.post.mockResolvedValueOnce({
+        data: [{ label: 'joy', score: 0.8 }, { label: 'anger', score: 0.2 }],
+      });
+
+      const result = await service.analyzeEmotions(metadata);
+
+      // Expecting empty object due to unexpected format
+      expect(result).toEqual({});
+    });
   });
 
 });
