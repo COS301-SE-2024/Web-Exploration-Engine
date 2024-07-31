@@ -183,12 +183,6 @@ export class SentimentAnalysisService {
       return { positiveWords: [], negativeWords: [] };
     }
   }
-  
-
-  private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async analyzeEmotions(metadata: Metadata): Promise<{ [emotion: string]: number }> {
     const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
   
