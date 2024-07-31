@@ -22,5 +22,29 @@ describe('SentimentAnalysisService', () => {
   });
 
 
+  describe('analyzeEmotions', () => {
+    it('should return emotions', async () => {
+      const metadata: Metadata = {
+        title: 'Sample Title',
+        description: 'Sample Description',
+        keywords: 'Sample Keywords',
+        ogTitle: 'Open Graph Title',
+        ogDescription: 'Open Graph Description',
+        ogImage: 'https://example.com/image.jpg',
+      };
+
+      mockedAxios.post.mockResolvedValueOnce({
+        data: [
+          [{ label: 'joy', score: 0.8 }, { label: 'anger', score: 0.2 }],
+        ],
+      });
+
+      const result = await service.analyzeEmotions(metadata);
+
+      expect(result).toEqual({ joy: 0.8, anger: 0.2 });
+    });
+
+
+  });
 
 });
