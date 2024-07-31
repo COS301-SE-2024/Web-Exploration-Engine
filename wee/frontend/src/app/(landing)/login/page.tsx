@@ -110,7 +110,6 @@ export default function Login() {
       <div className="flex flex-col justify-center items-center">
       {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
         <WEEInput 
-          data-testid="input-email"
           type="email"
           label="Email"
           value={email}
@@ -118,7 +117,6 @@ export default function Login() {
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
         <WEEInput 
-        data-testid="input-password"
           type="password"
           label="Password"
           value={password}
@@ -126,7 +124,7 @@ export default function Login() {
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
         <Button
-          data-testid="btn-login"
+          data-testid="login-button"
           onClick={handleLogin}
           className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
         >
@@ -180,7 +178,7 @@ export default function Login() {
       <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
         <span>Don&apos;t have an account?</span>
         <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
-            <Link href={'/signup'} data-testid="link-signup">Sign up</Link>
+            <Link href={'/signup'}>Sign up</Link>
         </span>
       </div>
   </div>

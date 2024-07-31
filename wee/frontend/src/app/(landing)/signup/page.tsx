@@ -107,7 +107,6 @@ export default function SignUp() {
                 <form onSubmit={handleSignUp} className="flex flex-col justify-center items-center">
                     {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
                     <WEEInput 
-                        data-testid="input-first-name"
                         type="text" 
                         label="First name" 
                         className="my-3 w-full sm:w-4/5 md:w-full lg:w-4/5"
@@ -115,7 +114,6 @@ export default function SignUp() {
                         onChange={(e) => setFirstName(e.target.value)} 
                     />
                     <WEEInput 
-                    data-testid="input-last-name"
                         type="text" 
                         label="Last name" 
                         className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
@@ -123,7 +121,6 @@ export default function SignUp() {
                         onChange={(e) => setLastName(e.target.value)} 
                     />
                     <WEEInput 
-                        data-testid="input-email"
                         type="email" 
                         label="Email" 
                         className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
@@ -131,21 +128,20 @@ export default function SignUp() {
                         onChange={(e) => setEmail(e.target.value)} 
                     />
                     <WEEInput 
-                        data-testid="input-password"
                         type="password" 
                         label="Password" 
                         className="my-3 mb-6 sm:w-4/5 md:w-full lg:w-4/5"
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)} 
                     />
-                    <Button type="submit" data-testid="btn-create-account" className="font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
+                    <Button type="submit" className="font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
                         Create Account
                     </Button>
                 </form>
                 <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
                     <span>Already have an account?</span>
                     <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
-                        <Link href={'/login'} data-testid="link-login">Log in</Link>
+                        <Link href={'/login'}>Log in</Link>
                     </span>
                 </div>
             </div>
