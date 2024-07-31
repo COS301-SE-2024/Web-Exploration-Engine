@@ -7,7 +7,7 @@ import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
-import { login } from '../../services/AuthService';
+import { login, googleLogin } from '../../services/AuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
@@ -79,6 +79,23 @@ export default function Login() {
     router.push(`/?uuid=${authResponse.uuid}`);
     
   };
+
+  const handleGoogleLogin = async () => {
+    const response = await googleLogin();
+    if ('code' in response) {
+      setError('An error occurred. Please try again later');
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+
+    const authResponse = response as AuthResponse;
+
+    // Redirect to home page
+    // router.push(`/?uuid=${authResponse.uuid}`);
+  }
   
 
   return (
@@ -125,6 +142,7 @@ export default function Login() {
         <Button 
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
           variant="bordered" 
+          onClick={handleGoogleLogin}
           startContent={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -152,14 +170,14 @@ export default function Login() {
           }>
             Login with Google
         </Button>
-        <Button 
+        {/* <Button 
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
           variant="bordered" 
           startContent={
             <BsApple />
           }>
             Login with Apple
-        </Button>
+        </Button> */}
       </div>
 
       <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
