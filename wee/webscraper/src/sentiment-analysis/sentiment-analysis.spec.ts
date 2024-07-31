@@ -132,7 +132,7 @@ describe('SentimentAnalysisService', () => {
       };
 
 
-      const positiveWords = ['Test', 'Title', 'Description', 'test', 'keywords'];
+      const positiveWords = ['Test'];
       const negativeWords = [];
 
       jest.spyOn(axios, 'post').mockResolvedValue({
