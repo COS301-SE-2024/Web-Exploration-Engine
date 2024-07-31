@@ -33,7 +33,60 @@ describe('Comparison Component', () => {
             industryClassification: {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Finance and Banking",
+                        "score": 0.6868
+                    },
+                    {
+                        "label": "Marine and Shipping",
+                        "score": 0.1616
+                    },
+                    {
+                        "label": "Logistics and Supply Chain Management",
+                        "score": 0.1515
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Tech",
+                        "score": 0.6969
+                    },
+                    {
+                        "label": "Restuarant",
+                        "score": 0.1919
+                    },
+                    {
+                        "label": "Marine Resources",
+                        "score": 0.1818
+                    }                    
+                ]
             },
+            seoAnalysis: {
+                imageAnalysis: {
+                    errorUrls: [],
+                    missingAltTextCount: 11,
+                    nonOptimizedCount: 3,
+                    reasonsMap: {
+                        format: ['https://www.exampleOne.com/coast.png', 'https://www.exampleTwo.com/lion.svg', 'https://www.exampleThree.com/ocean.jpg'],
+                        other: [],
+                        size: [],
+                    },
+                    recommendations: '11 images are missing alt text. 3 images are not optimized.',
+                    totalImages: 27,
+                },
+                uniqueContentAnalysis: {
+                    recommendations: '',
+                    textLength: 743,
+                    uniqueWordsPercentage: 41.72,
+                    repeatedWords: [
+                        {
+                            word: 'repeatedWordsOne',
+                            count: 19,
+                        }
+                    ]
+                },
+            }
         },
         {
             url: 'https://www.example2.com',
@@ -52,7 +105,60 @@ describe('Comparison Component', () => {
             industryClassification: {
                 metadataClass: { label: 'Regional Banks', score: 62 },
                 domainClass: { label: 'Application Software', score: 78 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Hospitality",
+                        "score": 0.7070
+                    },
+                    {
+                        "label": "Telecommunications",
+                        "score": 0.8338
+                    },
+                    {
+                        "label": "Arts and Culture",
+                        "score": 0.2772
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Retail and Consumer Goods",
+                        "score": 0.9696
+                    },
+                    {
+                        "label": "Entertainment and Media",
+                        "score": 0.8118
+                    },
+                    {
+                        "label": "Fitness and Wellness",
+                        "score": 0.1001
+                    }                    
+                ]
             },
+            seoAnalysis: {
+                imageAnalysis: {
+                    errorUrls: [],
+                    missingAltTextCount: 14,
+                    nonOptimizedCount: 13,
+                    reasonsMap: {
+                        format: ['https://www.exampleOne.com/coast.png', 'https://www.exampleTwo.com/lion.svg', 'https://www.exampleThree.com/ocean.jpg'],
+                        other: [],
+                        size: [],
+                    },
+                    recommendations: '14 images are missing alt text. 13 images are not optimized.',
+                    totalImages: 27,
+                },
+                uniqueContentAnalysis: {
+                    recommendations: '',
+                    textLength: 813,
+                    uniqueWordsPercentage: 71.42,
+                    repeatedWords: [
+                        {
+                            word: 'repeatedWordsOne',
+                            count: 19,
+                        }
+                    ]
+                },
+            }
         }
     ];
 
@@ -103,18 +209,18 @@ describe('Comparison Component', () => {
             expect(screen.queryByText('Live')).toBeDefined();
 
             // industry classification
-            expect(screen.queryByText('E-commerce')).toBeDefined();
-            expect(screen.queryByText('95%')).toBeDefined();
+            expect(screen.queryByText('Finance and Banking')).toBeDefined();
+            expect(screen.queryByText('68.68%')).toBeDefined();
 
-            expect(screen.queryByText('Regional Banks')).toBeDefined();
-            expect(screen.queryByText('62%')).toBeDefined();
+            expect(screen.queryByText('Hospitality')).toBeDefined();
+            expect(screen.queryByText('70.70%')).toBeDefined();
 
             // domain match
-            expect(screen.queryByText('Retail')).toBeDefined();
-            expect(screen.queryByText('90%')).toBeDefined();
+            expect(screen.queryByText('Tech')).toBeDefined();
+            expect(screen.queryByText('69.69%')).toBeDefined();
 
-            expect(screen.queryByText('Application Software')).toBeDefined();
-            expect(screen.queryByText('78%')).toBeDefined();
+            expect(screen.queryByText('Retail and Consumer Goods')).toBeDefined();
+            expect(screen.queryByText('96.96%')).toBeDefined();
         });
     });
 
@@ -128,10 +234,13 @@ describe('Comparison Component', () => {
 
         await waitFor(() => {
             expect(screen.queryByText('Parked')).toBeDefined();
-            expect(screen.queryByText('E-commerce')).toBeDefined();
-            expect(screen.queryByText('95%')).toBeDefined();
-            expect(screen.queryByText('Retail')).toBeDefined();
-            expect(screen.queryByText('90%')).toBeDefined();
+            expect(screen.queryByText('Finance and Banking')).toBeDefined();
+            expect(screen.queryByText('68.68%')).toBeDefined();
+            expect(screen.queryByText('Tech')).toBeDefined();
+            expect(screen.queryByText('69.69%')).toBeDefined();
+            expect(screen.queryByText('41.72%')).toBeDefined();
+            expect(screen.queryByText('11')).toBeDefined();
+            expect(screen.queryByText('3')).toBeDefined();
         });
 
         const websiteOneState = mockResults[0];
@@ -152,7 +261,61 @@ describe('Comparison Component', () => {
             industryClassification: {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Finance and Banking",
+                        "score": 0.6868
+                    },
+                    {
+                        "label": "Marine and Shipping",
+                        "score": 0.1616
+                    },
+                    {
+                        "label": "Logistics and Supply Chain Management",
+                        "score": 0.1515
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Tech",
+                        "score": 0.6969
+                    },
+                    {
+                        "label": "Restuarant",
+                        "score": 0.1919
+                    },
+                    {
+                        "label": "Marine Resources",
+                        "score": 0.1818
+                    }                    
+                ]
             },
+            seoAnalysis: {
+                imageAnalysis: {
+                    errorUrls: [],
+                    missingAltTextCount: 11,
+                    nonOptimizedCount: 3,
+                    reasonsMap: {
+                        format: ['https://www.exampleOne.com/coast.png', 'https://www.exampleTwo.com/lion.svg', 'https://www.exampleThree.com/ocean.jpg'],
+                        other: [],
+                        size: [],
+                    },
+                    recommendations: '11 images are missing alt text. 3 images are not optimized.',
+                    totalImages: 27,
+                },
+                uniqueContentAnalysis: {
+                    recommendations: '',
+                    textLength: 743,
+                    uniqueWordsPercentage: 41.72,
+                    repeatedWords: [
+                        {
+                            word: 'repeatedWordsOne',
+                            count: 19,
+                        }
+                    ]
+                },
+            }
+
         });
     });
 
@@ -166,10 +329,13 @@ describe('Comparison Component', () => {
 
         await waitFor(() => {
             expect(screen.queryByText('Live')).toBeDefined();
-            expect(screen.queryByText('Regional Banks')).toBeDefined();
-            expect(screen.queryByText('62%')).toBeDefined();
-            expect(screen.queryByText('Application Software')).toBeDefined();
-            expect(screen.queryByText('78%')).toBeDefined();
+            expect(screen.queryByText('Hospitality')).toBeDefined();
+            expect(screen.queryByText('70.70%')).toBeDefined();
+            expect(screen.queryByText('Retail and Consumer Goods')).toBeDefined();
+            expect(screen.queryByText('96.96%')).toBeDefined();
+            expect(screen.queryByText('71.42%')).toBeDefined();
+            expect(screen.queryByText('14')).toBeDefined();
+            expect(screen.queryByText('13')).toBeDefined();
         });
 
         const websiteTwoState = mockResults[1];
@@ -190,7 +356,60 @@ describe('Comparison Component', () => {
             industryClassification: {
                 metadataClass: { label: 'Regional Banks', score: 62 },
                 domainClass: { label: 'Application Software', score: 78 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Hospitality",
+                        "score": 0.7070
+                    },
+                    {
+                        "label": "Telecommunications",
+                        "score": 0.8338
+                    },
+                    {
+                        "label": "Arts and Culture",
+                        "score": 0.2772
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Retail and Consumer Goods",
+                        "score": 0.9696
+                    },
+                    {
+                        "label": "Entertainment and Media",
+                        "score": 0.8118
+                    },
+                    {
+                        "label": "Fitness and Wellness",
+                        "score": 0.1001
+                    }                    
+                ]
             },
+            seoAnalysis: {
+                imageAnalysis: {
+                    errorUrls: [],
+                    missingAltTextCount: 14,
+                    nonOptimizedCount: 13,
+                    reasonsMap: {
+                        format: ['https://www.exampleOne.com/coast.png', 'https://www.exampleTwo.com/lion.svg', 'https://www.exampleThree.com/ocean.jpg'],
+                        other: [],
+                        size: [],
+                    },
+                    recommendations: '14 images are missing alt text. 13 images are not optimized.',
+                    totalImages: 27,
+                },
+                uniqueContentAnalysis: {
+                    recommendations: '',
+                    textLength: 813,
+                    uniqueWordsPercentage: 71.42,
+                    repeatedWords: [
+                        {
+                            word: 'repeatedWordsOne',
+                            count: 19,
+                        }
+                    ]
+                },
+            }
         });
     });
 })
