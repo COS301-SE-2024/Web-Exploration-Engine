@@ -70,5 +70,37 @@ describe('SentimentAnalysisService', () => {
     });
   });
 
- 
+  describe('sentimentAnalysis', () => {
+    it('should analyze sentiment successfully', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+      const sentimentScores = { positive: 0.8, negative: 0.1, neutral: 0.1 };
+
+      jest.spyOn(axios, 'post').mockResolvedValue({ data: [[{ label: 'POS', score: 0.8 }, { label: 'NEG', score: 0.1 }, { label: 'NEU', score: 0.1 }]] });
+
+      const result = await service.sentimentAnalysis(metadata);
+      expect(result).toEqual(sentimentScores);
+    });
+
+    it('should handle errors and return default sentiment scores', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+
+      const result = await service.sentimentAnalysis(metadata);
+      expect(result).toEqual({ positive: 0, negative: 0, neutral: 0 });
+    });
+  });
+
+
+
 });
