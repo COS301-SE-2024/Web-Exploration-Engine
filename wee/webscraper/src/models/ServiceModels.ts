@@ -51,4 +51,5 @@ export interface SentimentClassification {
   };
   positiveWords: string[];
   negativeWords: string[];
+  emotions: { [emotion: string]: number };
 }

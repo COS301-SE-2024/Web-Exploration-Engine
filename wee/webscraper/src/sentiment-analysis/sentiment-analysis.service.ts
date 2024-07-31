@@ -9,17 +9,22 @@ export class SentimentAnalysisService {
   private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL =
     'https://api-inference.huggingface.co/models/nlptown/bert-base-multilingual-uncased-sentiment';
   private readonly SCORE_THRESHOLD = 0.4;
+  private readonly HUGGING_FACE_EMOTION_API_URL =
+    'https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base';
+
   private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
 
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
     try {
       const sentimentAnalysis = await this.sentimentAnalysis(metadata);
       const { positiveWords, negativeWords } = await this.getPositiveNegativeWords(metadata);
+      const emotions = await this.analyzeEmotions(metadata);
 
       return {
         sentimentAnalysis,
         positiveWords,
         negativeWords,
+        emotions,
       };
     } catch (error) {
       console.log('Error during sentiment classification:', error.message);
@@ -31,10 +36,10 @@ export class SentimentAnalysisService {
         },
         positiveWords: [],
         negativeWords: [],
+        emotions: {},
       };
     }
   }
-
   async sentimentAnalysis(metadata: Metadata): Promise<{ positive: number, negative: number, neutral: number }> {
     const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
 
@@ -175,4 +180,49 @@ export class SentimentAnalysisService {
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  async analyzeEmotions(metadata: Metadata): Promise<{ [emotion: string]: number }> {
+    const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
+  
+    console.log(`Input text for emotion analysis: "${inputText}"`);
+  
+    if (!inputText) {
+      console.log('Input text is empty, returning empty emotions.');
+      return {};
+    }
+  
+    try {
+      const response = await axios.post(
+        this.HUGGING_FACE_EMOTION_API_URL,
+        { inputs: inputText },
+        {
+          headers: {
+            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+          },
+        }
+      );
+  
+      console.log('Response from Hugging Face emotion analysis API:', response.data);
+  
+      if (response.data && Array.isArray(response.data)) {
+        const emotions: { [emotion: string]: number } = {};
+  
+        response.data[0].forEach((result: any) => {
+          if (result.label && result.score) {
+            console.log(`Emotion: ${result.label}, Score: ${result.score}`);
+            emotions[result.label] = result.score;
+          }
+        });
+  
+        return emotions;
+      } else {
+        throw new Error('Unexpected response format from emotion analysis API');
+      }
+    } catch (error) {
+      console.error('Error during emotion analysis:', error.message);
+      return {};
+    }
+  }
+
+
 }
