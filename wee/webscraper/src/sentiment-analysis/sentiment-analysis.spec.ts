@@ -122,7 +122,7 @@ describe('SentimentAnalysisService', () => {
         ]]
       });
 
-      
+
       const result = await service.getPositiveNegativeWords(metadata);
       expect(result).toEqual({ positiveWords, negativeWords });
     });
@@ -143,5 +143,34 @@ describe('SentimentAnalysisService', () => {
     });
   });
 
+  describe('analyzeEmotions', () => {
+    it('should analyze emotions successfully', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+      const emotions = { happy: 0.9, sad: 0.1 };
 
+      jest.spyOn(axios, 'post').mockResolvedValue({ data: [[{ label: 'happy', score: 0.9 }, { label: 'sad', score: 0.1 }]] });
+
+      const result = await service.analyzeEmotions(metadata);
+      expect(result).toEqual(emotions);
+    });
+
+    it('should handle errors and return empty emotions', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+
+      const result = await service.analyzeEmotions(metadata);
+      expect(result).toEqual({});
+    });
+  });
 });
