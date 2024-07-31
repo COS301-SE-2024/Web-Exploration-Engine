@@ -26,7 +26,6 @@ describe('Login Component', () => {
     expect(screen.getByLabelText(/Password/i)).toBeDefined();
   });
 
-
   it('should display error if required fields are empty', async () => {
     render(<Login />);
 
@@ -35,7 +34,10 @@ describe('Login Component', () => {
 
     expect(screen.queryByText(/All fields are required/i)).toBeDefined();
     // error should disappear after 3 seconds
-    await waitFor(() => expect(screen.queryByText(/All fields are required/i)).toBeNull());
+    await waitFor(() => expect(
+      screen.queryByText(/All fields are required/i)).toBeNull(),
+      { timeout: 3200, }
+    );
 
   });
 
@@ -49,7 +51,10 @@ describe('Login Component', () => {
 
     expect(screen.queryByText(/Please enter a valid email address/i)).toBeDefined();
     // error should disappear after 3 seconds
-    await waitFor(() => expect(screen.queryByText(/Please enter a valid email address/i)).toBeNull());
+    await waitFor(() => expect(
+      screen.queryByText(/Please enter a valid email address/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should call login function on valid submission', async () => {
@@ -105,7 +110,10 @@ describe('Login Component', () => {
     await waitFor(() => expect(screen.queryByText(/Invalid email or password/i)).toBeDefined());
 
     // error should disappear after 3 seconds
-    await waitFor(() => expect(screen.queryByText(/Invalid email or password/i)).toBeNull());
+    await waitFor(() => expect(
+      screen.queryByText(/Invalid email or password/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should display error if a general error occurs', async () => {
@@ -121,7 +129,10 @@ describe('Login Component', () => {
 
     await waitFor(() => expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeDefined());
     // error should disappear after 3 seconds
-    await waitFor(() => expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeNull());
+    await waitFor(() => expect(
+      screen.queryByText(/An error occurred. Please try again later/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should render the ThemeSwitch component', async () => {
@@ -175,5 +186,11 @@ describe('Login Component - Google OAuth', () => {
 
     await waitFor(() => expect(googleLogin).toHaveBeenCalled());
     await waitFor(() => expect(screen.queryByText(/Error logging in with Google/i)).toBeDefined());
+
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/Error logging in with Google/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 });

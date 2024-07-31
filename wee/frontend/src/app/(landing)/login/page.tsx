@@ -3,7 +3,7 @@ import React from 'react';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
-import { BsApple } from "react-icons/bs";
+// import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
@@ -90,11 +90,6 @@ export default function Login() {
 
       return () => clearTimeout(timer);
     }
-
-    const authResponse = response as AuthResponse;
-
-    // Redirect to home page
-    // router.push(`/?uuid=${authResponse.uuid}`);
   }
   
 

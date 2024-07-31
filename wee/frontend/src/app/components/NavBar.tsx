@@ -86,7 +86,7 @@ export default function NavBar() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>            
-          <p className="font-bold text-inherit">WEE</p>
+          <p className="font-bold text-inherit" data-testid='navTitle'>WEE</p>
         </NavbarBrand>
       </NavbarContent>
 
