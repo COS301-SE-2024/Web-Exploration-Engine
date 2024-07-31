@@ -135,7 +135,6 @@ describe('SentimentAnalysisService', () => {
       const positiveWords = ['Test', 'Title', 'Description', 'test', 'keywords'];
       const negativeWords = [];
 
-      // Mock the API response
       jest.spyOn(axios, 'post').mockResolvedValue({
         data: [[
           { label: '5 stars', score: 0.9 },
