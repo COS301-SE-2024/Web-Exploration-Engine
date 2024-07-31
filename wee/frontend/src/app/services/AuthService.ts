@@ -1,5 +1,5 @@
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
-import { getSupabase } from '../utils/supabase_service_client';
+import { getSupabase } from '../utils/supabase_anon_client';
 
 const supabase = getSupabase();
 
