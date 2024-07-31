@@ -21,7 +21,6 @@ describe('SentimentAnalysisService', () => {
     jest.clearAllMocks();
   });
 
-
   describe('analyzeEmotions', () => {
     it('should return emotions', async () => {
       const metadata: Metadata = {
@@ -44,7 +43,22 @@ describe('SentimentAnalysisService', () => {
       expect(result).toEqual({ joy: 0.8, anger: 0.2 });
     });
 
+    it('should handle errors and return empty emotions', async () => {
+      const metadata: Metadata = {
+        title: '',
+        description: '',
+        keywords: '',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: '',
+      };
 
+      mockedAxios.post.mockRejectedValueOnce(new Error('API error'));
+
+      const result = await service.analyzeEmotions(metadata);
+
+      expect(result).toEqual({});
+    });
   });
 
 });
