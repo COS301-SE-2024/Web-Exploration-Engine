@@ -185,11 +185,11 @@ describe('Login Component - Google OAuth', () => {
     fireEvent.click(screen.getByText(/Login with Google/i));
 
     await waitFor(() => expect(googleLogin).toHaveBeenCalled());
-    await waitFor(() => expect(screen.queryByText(/Error logging in with Google/i)).toBeDefined());
+    await waitFor(() => expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeDefined());
 
     // error should disappear after 3 seconds
     await waitFor(() => expect(
-      screen.queryByText(/Error logging in with Google/i)).toBeNull(),
+      screen.queryByText(/An error occurred. Please try again later/i)).toBeNull(),
       { timeout: 3200, }
     );
   });
