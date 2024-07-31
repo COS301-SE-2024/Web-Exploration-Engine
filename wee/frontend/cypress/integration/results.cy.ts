@@ -31,9 +31,9 @@ describe('results', () => {
     cy.log("Testing SEO Analysis")
 
        
-/*     cy.get('[data-testid="tab-seo"]').click();
+   /*  cy.get('[data-testid="tab-seo"]').click();
     cy.contains(/seo/i).should('exist');
-     */
+  */
 
   });
 
