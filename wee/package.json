@@ -27,6 +27,7 @@
     "@nextui-org/pagination": "^2.0.32",
     "@nextui-org/progress": "^2.0.33",
     "@nextui-org/react": "^2.4.0",
+    "@nextui-org/scroll-shadow": "^2.1.19",
     "@nextui-org/system": "^2.2.0",
     "@nextui-org/table": "^2.0.34",
     "@nextui-org/theme": "^2.2.4",

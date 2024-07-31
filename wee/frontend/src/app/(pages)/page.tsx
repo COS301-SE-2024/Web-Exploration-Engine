@@ -112,7 +112,7 @@ export default function Home() {
           <p className="mt-4 p-2 min-h-[3.5rem]"></p>
         )}
 
-        <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
+        {/* <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
             Scraping criteria
           </h3>
@@ -146,7 +146,7 @@ export default function Home() {
               Website status
             </Checkbox>
           </div>
-        </div>
+        </div> */}
       </div>
     );
 }
