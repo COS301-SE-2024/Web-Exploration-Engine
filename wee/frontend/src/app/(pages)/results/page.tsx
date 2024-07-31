@@ -154,7 +154,7 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification[0], domainClassification[0],addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
   };
  
   // Pagination Logic
@@ -409,7 +409,7 @@ function ResultsComponent() {
                         <TableCell>
                           {industryClassification && industryClassification.length > 0 && !industryClassification.every(industryLabel => industryLabel.label == 'Unknown') ? (
                             industryClassification.map((classification, index) => (
-                              <div className='my-2'>
+                              <div className='my-2' key={index}>
                                 <Chip radius="sm" color="secondary" variant="flat">
                                   {isCrawlable ? `${classification.label}` : 'N/A'}
                                 </Chip>
@@ -443,7 +443,7 @@ function ResultsComponent() {
                         <TableCell>
                           {domainClassification && domainClassification.length > 0 && !domainClassification.every(domainLabel => domainLabel.label == 'Unknown') ? (
                             domainClassification.map((domain, index) => (
-                              <div className='my-2'>
+                              <div className='my-2' key={index}>
                                 <Chip radius="sm" color="secondary" variant="flat">
                                   {isCrawlable ? `${domain.label}` : 'N/A'}
                                 </Chip>

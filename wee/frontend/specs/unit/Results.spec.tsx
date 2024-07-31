@@ -72,6 +72,35 @@ describe('Results Component', () => {
             industryClassification: {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Finance and Banking",
+                        "score": 68
+                    },
+                    {
+                        "label": "Marine and Shipping",
+                        "score": 16
+                    },
+                    {
+                        "label": "Logistics and Supply Chain Management",
+                        "score": 15
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Finance and Banking",
+                        "score": 69
+                    },
+                    {
+                        "label": "Utilities",
+                        "score": 19
+                    },
+                    {
+                        "label": "Marine Resources",
+                        "score": 18
+                    }                    
+                ]
+
             },
             screenshot: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
             addresses: ['15 Troye Street, Johannesburg, Gauteng'],

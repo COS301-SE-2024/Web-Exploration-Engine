@@ -278,12 +278,12 @@ export default function Comparison() {
             </div>
 
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
-                Onpage SEO Analysis
+                On-Page SEO Analysis
                 <InfoPopOver 
                     heading="On-page SEO Analysis" 
                     content="On-page SEO analysis involves fine-tuning webpages to improve their search engine visibility and enhance the user experience. By optimizing content directly on the page, we aim to achieve higher rankings on platforms like Google, ultimately driving more organic traffic to the site. </br></br>
                         <i>Unique Content</i>: Text from body tag is extracted and processed. The calculated percentage of unique words can be used to avoid keyword stuffing which enhances SEO. </br>
-                        <i>Images</i>: All image elemenets are extracted and checked for alt text, image optimization and formats like PNG, JPEG, WebP, and SVG. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO. </br></br>" 
+                        <i>Images</i>: All image elemenets are extracted and checked for alt text, image optimization and formats like PNG, JPEG, WebP, and SVG. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO. </br>" 
                     placement="bottom" 
                 />
             </h4>
