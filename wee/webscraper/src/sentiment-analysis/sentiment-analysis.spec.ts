@@ -99,6 +99,27 @@ describe('SentimentAnalysisService', () => {
       const result = await service.sentimentAnalysis(metadata);
       expect(result).toEqual({ positive: 0, negative: 0, neutral: 0 });
     });
+
+    it('should handle unexpected response format from sentiment analysis API', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+      jest.spyOn(axios, 'post').mockResolvedValue({
+        data: {}
+      });
+
+
+      const expectedSentimentScores = { positive: 0, negative: 0, neutral: 0 };
+
+
+      const result = await service.sentimentAnalysis(metadata);
+      expect(result).toEqual(expectedSentimentScores);
+    });
+
   });
 
   describe('getPositiveNegativeWords', () => {
@@ -172,5 +193,22 @@ describe('SentimentAnalysisService', () => {
       const result = await service.analyzeEmotions(metadata);
       expect(result).toEqual({});
     });
+    it('should handle unexpected response format from emotion analysis API', async () => {
+      const metadata: Metadata = {
+        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+
+
+      jest.spyOn(axios, 'post').mockResolvedValue({
+        data: {}
+      });
+      const expectedEmotions = {};
+      const result = await service.analyzeEmotions(metadata);
+      expect(result).toEqual(expectedEmotions);
+    });
+
   });
 });
