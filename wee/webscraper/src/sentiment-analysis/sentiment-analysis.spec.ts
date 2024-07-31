@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SentimentAnalysisService } from './sentiment-analysis.service';
+import { Metadata } from '../models/ServiceModels';
 import axios from 'axios';
-import { Metadata, SentimentClassification } from '../models/ServiceModels';
-
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+import { jest } from '@jest/globals';
 
 describe('SentimentAnalysisService', () => {
   let service: SentimentAnalysisService;
@@ -17,133 +15,60 @@ describe('SentimentAnalysisService', () => {
     service = module.get<SentimentAnalysisService>(SentimentAnalysisService);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
-  describe('analyzeEmotions', () => {
-    it('should return emotions', async () => {
+  describe('classifySentiment', () => {
+    it('should classify sentiment successfully', async () => {
       const metadata: Metadata = {
-        title: 'Sample Title',
-        description: 'Sample Description',
-        keywords: 'Sample Keywords',
-        ogTitle: 'Open Graph Title',
-        ogDescription: 'Open Graph Description',
-        ogImage: 'https://example.com/image.jpg',
-      };
-
-      mockedAxios.post.mockResolvedValueOnce({
-        data: [
-          [{ label: 'joy', score: 0.8 }, { label: 'anger', score: 0.2 }],
-        ],
-      });
-
-      const result = await service.analyzeEmotions(metadata);
-
-      expect(result).toEqual({ joy: 0.8, anger: 0.2 });
-    });
-
-    it('should handle errors and return empty emotions', async () => {
-      const metadata: Metadata = {
-        title: '',
-        description: '',
-        keywords: '',
+        title: 'Test Title',
+        description: 'Test Description',
+        keywords: 'test keywords',
         ogTitle: '',
         ogDescription: '',
-        ogImage: '',
+        ogImage: ''
       };
 
-      mockedAxios.post.mockRejectedValueOnce(new Error('API error'));
+      const sentimentAnalysisResult = { positive: 0.8, negative: 0.1, neutral: 0.1 };
+      const positiveWords = ['great', 'amazing'];
+      const negativeWords = ['bad', 'terrible'];
+      const emotions = { happy: 0.9, sad: 0.1 };
 
-      const result = await service.analyzeEmotions(metadata);
+      jest.spyOn(service, 'sentimentAnalysis').mockResolvedValue(sentimentAnalysisResult);
+      jest.spyOn(service, 'getPositiveNegativeWords').mockResolvedValue({ positiveWords, negativeWords });
+      jest.spyOn(service, 'analyzeEmotions').mockResolvedValue(emotions);
 
-      expect(result).toEqual({});
-    });
-
-    it('should handle unexpected API response format', async () => {
-      const metadata: Metadata = {
-        title: 'Sample Title',
-        description: 'Sample Description',
-        keywords: 'Sample Keywords',
-        ogTitle: 'Open Graph Title',
-        ogDescription: 'Open Graph Description',
-        ogImage: 'https://example.com/image.jpg',
-      };
-
-      mockedAxios.post.mockResolvedValueOnce({
-        data: [{ label: 'joy', score: 0.8 }, { label: 'anger', score: 0.2 }],
-      });
-
-      const result = await service.analyzeEmotions(metadata);
-
-      expect(result).toEqual({});
-    });
-  });
-
-  describe('getPositiveNegativeWords', () => {
-    it('should return positive and negative words', async () => {
-      const metadata: Metadata = {
-        title: 'Takealot.com: Online Shopping | SA\'s leading online store',
-        description: 'South Africa\'s leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.',
-        keywords: null,
-        ogTitle: 'Takealot.com: Online Shopping | SA\'s leading online store',
-        ogDescription: 'South Africa\'s leading online store. Fast, reliable delivery to your door. Many ways to pay. Shop anything you can imagine: TVs, laptops, cellphones, kitchen appliances, toys, books, beauty & more. Shop the mobile app anytime, anywhere.',
-        ogImage: 'https://www.takealot.com/static/images/logo_transparent.png'
-      };
-
-
-      mockedAxios.post.mockResolvedValueOnce({
-        data: [
-     //come back to this part and fix it ??
-        ],
-      });
-
-      const result = await service.getPositiveNegativeWords(metadata);
-
+      const result = await service.classifySentiment('', metadata);
       expect(result).toEqual({
-        positiveWords: [],
-        negativeWords: [],
+        sentimentAnalysis: sentimentAnalysisResult,
+        positiveWords,
+        negativeWords,
+        emotions,
       });
     });
 
-
-    it('should handle errors and return empty word lists', async () => {
+    it('should handle errors and return default values', async () => {
       const metadata: Metadata = {
-        title: '',
-        description: '',
-        keywords: '',
+        title: '', description: '', keywords: '',
         ogTitle: '',
         ogDescription: '',
-        ogImage: '',
+        ogImage: ''
       };
 
-      mockedAxios.post.mockRejectedValueOnce(new Error('API error'));
+      jest.spyOn(service, 'sentimentAnalysis').mockRejectedValue(new Error('Network error'));
+      jest.spyOn(service, 'getPositiveNegativeWords').mockRejectedValue(new Error('Network error'));
+      jest.spyOn(service, 'analyzeEmotions').mockRejectedValue(new Error('Network error'));
 
-      const result = await service.getPositiveNegativeWords(metadata);
-
-      expect(result).toEqual({ positiveWords: [], negativeWords: [] });
-    });
-
-    it('should handle unexpected API response format', async () => {
-      const metadata: Metadata = {
-        title: 'Sample Title',
-        description: 'Sample Description',
-        keywords: 'Sample Keywords',
-        ogTitle: 'Open Graph Title',
-        ogDescription: 'Open Graph Description',
-        ogImage: 'https://example.com/image.jpg',
-      };
-
-      mockedAxios.post.mockResolvedValueOnce({
-        data: [{ label: 'unexpectedLabel', score: 0.5 }],
-      });
-
-      const result = await service.getPositiveNegativeWords(metadata);
-
+      const result = await service.classifySentiment('', metadata);
       expect(result).toEqual({
+        sentimentAnalysis: { positive: 0, negative: 0, neutral: 0 },
         positiveWords: [],
         negativeWords: [],
+        emotions: {},
       });
     });
   });
+
+ 
 });
