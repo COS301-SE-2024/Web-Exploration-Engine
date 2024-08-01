@@ -221,6 +221,23 @@ describe('Comparison Component', () => {
 
             expect(screen.queryByText('Retail and Consumer Goods')).toBeDefined();
             expect(screen.queryByText('96.96%')).toBeDefined();
+
+            // lighthouse 
+            expect(screen.queryByText('24%')).toBeDefined();
+            expect(screen.queryByText('85%')).toBeDefined();
+            expect(screen.queryByText('93%')).toBeDefined();
+
+            expect(screen.queryByText('60%')).toBeDefined();
+            expect(screen.queryByText('84%')).toBeDefined();
+            expect(screen.queryByText('78%')).toBeDefined();
+
+            // mobile friendliness
+            expect(screen.queryByText('No')).toBeDefined();
+            expect(screen.queryByText('Yes')).toBeDefined();
+
+            // Site Speed
+            expect(screen.queryByText('2.88')).toBeDefined();
+            expect(screen.queryByText('6.60')).toBeDefined();
         });
     });
 
