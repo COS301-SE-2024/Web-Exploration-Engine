@@ -4,7 +4,6 @@ import Comparison from '../../src/app/(pages)/comparison/page';
 import '@testing-library/jest-dom';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext';
 import { useRouter } from 'next/navigation';
-import { isLightHouse, isSiteSpeedAnalysis, isMobileFriendlinessAnalysis, isImageAnalysis, isUniqueContentAnalysis } from '../../src/app/(pages)/comparison/page';
 import { LightHouseAnalysis, LightHouseRecommendations, LightHouseScore, MetaDescriptionAnalysis, MobileFriendlinessAnalysis, SiteSpeedAnalysis, UniqueContentAnalysis, ImageAnalysis, RepeatedWords, ReasonsMap, SEOError } from '../../src/app/models/ScraperModels';
 
 jest.mock('next/navigation', () => ({
@@ -14,6 +13,26 @@ jest.mock('next/navigation', () => ({
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
 }));
+
+function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+    return 'scores' in data || 'diagnostics' in data;
+}
+
+function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+    return 'loadTime' in data || 'recommendations' in data;
+}
+
+function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+    return 'isResponsive' in data || 'recommendations' in data;
+}
+
+function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
+    return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+}
+
+function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
+    return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
+}
 
 const lightHouseData: LightHouseAnalysis = {
     scores: {
