@@ -4,6 +4,10 @@ import { Metadata } from '../models/ServiceModels';
 import axios from 'axios';
 import { jest } from '@jest/globals';
 
+
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
 describe('SentimentAnalysisService', () => {
   let service: SentimentAnalysisService;
 
@@ -13,12 +17,11 @@ describe('SentimentAnalysisService', () => {
     }).compile();
 
     service = module.get<SentimentAnalysisService>(SentimentAnalysisService);
-    jest.resetAllMocks();
   });
 
   afterEach(() => {
+    jest.clearAllMocks();
     jest.clearAllTimers();
-    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
@@ -86,7 +89,13 @@ describe('SentimentAnalysisService', () => {
       };
       const sentimentScores = { positive: 0.8, negative: 0.1, neutral: 0.1 };
 
-      jest.spyOn(axios, 'post').mockResolvedValue({ data: [[{ label: 'POS', score: 0.8 }, { label: 'NEG', score: 0.1 }, { label: 'NEU', score: 0.1 }]] });
+      mockedAxios.post.mockResolvedValue({
+        data: [[
+          { label: 'POS', score: 0.8 },
+          { label: 'NEG', score: 0.1 },
+          { label: 'NEU', score: 0.1 }
+        ]]
+      });
 
       const result = await service.sentimentAnalysis(metadata);
       expect(result).toEqual(sentimentScores);
@@ -100,7 +109,7 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
       const result = await service.sentimentAnalysis(metadata);
       expect(result).toEqual({ positive: 0, negative: 0, neutral: 0 });
@@ -114,7 +123,7 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-      jest.spyOn(axios, 'post').mockResolvedValue({
+      mockedAxios.post.mockResolvedValue({
         data: {}
       });
 
@@ -137,7 +146,7 @@ describe('SentimentAnalysisService', () => {
       const positiveWords = ['Test'];
       const negativeWords = [];
 
-      jest.spyOn(axios, 'post').mockResolvedValue({
+      mockedAxios.post.mockResolvedValue({
         data: [[
           { label: '5 stars', score: 0.9 },
           { label: '1 star', score: 0.8 }
@@ -156,7 +165,7 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
       const result = await service.getPositiveNegativeWords(metadata);
       expect(result).toEqual({ positiveWords: [], negativeWords: [] });
@@ -173,7 +182,12 @@ describe('SentimentAnalysisService', () => {
       };
       const emotions = { happy: 0.9, sad: 0.1 };
 
-      jest.spyOn(axios, 'post').mockResolvedValue({ data: [[{ label: 'happy', score: 0.9 }, { label: 'sad', score: 0.1 }]] });
+      mockedAxios.post.mockResolvedValue({
+        data: [[
+          { label: 'happy', score: 0.9 },
+          { label: 'sad', score: 0.1 }
+        ]]
+      });
 
       const result = await service.analyzeEmotions(metadata);
       expect(result).toEqual(emotions);
@@ -187,7 +201,7 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-      jest.spyOn(axios, 'post').mockRejectedValue(new Error('Network error'));
+      mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
       const result = await service.analyzeEmotions(metadata);
       expect(result).toEqual({});
@@ -201,7 +215,7 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-      jest.spyOn(axios, 'post').mockResolvedValue({
+      mockedAxios.post.mockResolvedValue({
         data: {}
       });
 
