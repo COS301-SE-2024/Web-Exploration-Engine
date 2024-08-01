@@ -13,6 +13,7 @@ describe('SentimentAnalysisService', () => {
     }).compile();
 
     service = module.get<SentimentAnalysisService>(SentimentAnalysisService);
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
