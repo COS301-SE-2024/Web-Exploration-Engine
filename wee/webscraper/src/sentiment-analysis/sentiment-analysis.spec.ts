@@ -16,6 +16,11 @@ describe('SentimentAnalysisService', () => {
     jest.resetAllMocks();
   });
 
+  afterEach(() => {
+    jest.clearAllTimers();
+    jest.resetAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -113,14 +118,11 @@ describe('SentimentAnalysisService', () => {
         data: {}
       });
 
-
       const expectedSentimentScores = { positive: 0, negative: 0, neutral: 0 };
-
 
       const result = await service.sentimentAnalysis(metadata);
       expect(result).toEqual(expectedSentimentScores);
     });
-
   });
 
   describe('getPositiveNegativeWords', () => {
@@ -132,7 +134,6 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-
       const positiveWords = ['Test'];
       const negativeWords = [];
 
@@ -143,11 +144,9 @@ describe('SentimentAnalysisService', () => {
         ]]
       });
 
-
       const result = await service.getPositiveNegativeWords(metadata);
       expect(result).toEqual({ positiveWords, negativeWords });
     });
-
 
     it('should handle errors and return empty word lists', async () => {
       const metadata: Metadata = {
@@ -193,6 +192,7 @@ describe('SentimentAnalysisService', () => {
       const result = await service.analyzeEmotions(metadata);
       expect(result).toEqual({});
     });
+
     it('should handle unexpected response format from emotion analysis API', async () => {
       const metadata: Metadata = {
         title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
@@ -201,14 +201,13 @@ describe('SentimentAnalysisService', () => {
         ogImage: ''
       };
 
-
       jest.spyOn(axios, 'post').mockResolvedValue({
         data: {}
       });
+
       const expectedEmotions = {};
       const result = await service.analyzeEmotions(metadata);
       expect(result).toEqual(expectedEmotions);
     });
-
   });
 });
