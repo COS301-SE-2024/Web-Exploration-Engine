@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { useTheme } from 'next-themes';
-import { RadarChart } from "frontend/src/app/components/Graphs/RadarChart";
+import { RadarChart } from "../../src/app/components/Graphs/RadarChart";
 import '@testing-library/jest-dom';
 
 jest.mock('next-themes', () => ({
@@ -9,7 +9,8 @@ jest.mock('next-themes', () => ({
 }));
 
 jest.mock('next/dynamic', () => {
-    return jest.fn().mockImplementation(() => (props) => <div role="presentation" {...props} />);
+    const MockChart = (props) => <div role="presentation" {...props} />;
+    return jest.fn().mockImplementation(() => MockChart);
 });
 
 const mockUseTheme = useTheme as jest.Mock;
