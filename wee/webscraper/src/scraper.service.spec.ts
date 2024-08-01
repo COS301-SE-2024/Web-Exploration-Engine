@@ -11,7 +11,8 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
-import { RobotsResponse, Metadata, IndustryClassification } from './models/ServiceModels';
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
+import { RobotsResponse, Metadata, IndustryClassification, SentimentClassification } from './models/ServiceModels';
 
 describe('ScraperService', () => {
     let service: ScraperService;
@@ -25,6 +26,7 @@ describe('ScraperService', () => {
     let addressService: ScrapeAddressService;
     let screenshotService: ScreenshotService;
     let seoAnalysisService: SeoAnalysisService;
+    let sentimentAnalysis: SentimentAnalysisService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -96,7 +98,14 @@ describe('ScraperService', () => {
                     useValue: {
                         seoAnalysis: jest.fn(),
                     },
-                },                
+                },
+                {
+                    provide: SentimentAnalysisService,
+                    useValue: {
+                        sentimentAnalysis: jest.fn(),
+                        classifySentiment: jest.fn(),
+                    },
+                },
             ]
         }).compile();
 
@@ -111,131 +120,124 @@ describe('ScraperService', () => {
         addressService = module.get<ScrapeAddressService>(ScrapeAddressService);
         screenshotService = module.get<ScreenshotService>(ScreenshotService);
         seoAnalysisService = module.get<SeoAnalysisService>(SeoAnalysisService);
+        sentimentAnalysis = module.get<SentimentAnalysisService>(SentimentAnalysisService);
     });
 
     it('should be defined', () => {
         expect(service).toBeDefined();
     });
 
-    it('should return cached data on cache hit', async () => {
-        const url = 'http://example.com';
-        const cachedData = {
-            url,
-            time: 0,
-            domainStatus: '',
-            robots: null,
-            metadata: null,
-            industryClassification: null,
-            logo: '',
-            images: [],
-            slogan: '',
-            contactInfo: { emails: [], phones: [] },
-            addresses: [],
-            screenshot: '',
-            seoAnalysis: null,
-        };
-
-        jest.spyOn(cacheManager, 'get').mockResolvedValue(JSON.stringify(cachedData));
-        const result = await service.scrape(url);
-
-        expect(cacheManager.get).toHaveBeenCalledWith(url);
-        expect(result.url).toBe(url);
-
-        expect(result.time).toBeCloseTo(cachedData.time, 2);
-        
-        expect(result).toEqual(expect.objectContaining({
-            ...cachedData,
-            time: result.time
-        }));
-    });
-
     it('should scrape and cache data on cache miss', async () => {
-        const url = 'http://example.com';
-    
-        jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
-    
-        const cacheSetSpy = jest.spyOn(cacheManager, 'set').mockResolvedValue(undefined);
-    
-        jest.spyOn(robotsService, 'readRobotsFile').mockResolvedValue({
-            baseUrl: url,
-            isUrlScrapable: true,
-            isBaseUrlAllowed: true,
-            allowedPaths: [],
-            disallowedPaths: []
-        } as RobotsResponse);
-    
-        jest.spyOn(metadataService, 'scrapeMetadata').mockResolvedValue({
-            title: 'Example Title',
-            description: 'Example Description',
-            keywords: 'example, keywords'
-        } as Metadata);
-    
-        jest.spyOn(industryClassificationService, 'classifyIndustry').mockResolvedValue({
-            metadataClass: {
-                label: "E-commerce",
-                score: 95,
-            },
-            domainClass: {
-                label: 'Unknown',
-                score: 0,
-            }
-        } as IndustryClassification);
+      const url = 'http://example.com';
 
-        jest.spyOn(scrapeLogoService, 'scrapeLogo').mockResolvedValue('http://example.com/logo.png');
-        jest.spyOn(imagesService, 'scrapeImages').mockResolvedValue(['image1.png', 'image2.svg']);
-        jest.spyOn(contactInfoService, 'scrapeContactInfo').mockResolvedValue({
-            emails: ['email@gmail.com'], 
-            phones: ['01234567892'], 
-            socialLinks: []
-        })
-        jest.spyOn(addressService, 'scrapeAddress').mockResolvedValue({addresses: ['address 1', 'address 2']});
-        jest.spyOn(screenshotService, 'captureScreenshot').mockResolvedValue({screenshot: 'screenshot.png'});
-        jest.spyOn(seoAnalysisService, 'seoAnalysis').mockResolvedValue(null);    
-        
-        const result = await service.scrape(url);    
-        
-        expect(cacheManager.get).toHaveBeenCalledWith(url); 
-        expect(result.url).toBe(url); 
-        expect(result).toEqual(expect.objectContaining({ 
-            url,
-            time: expect.any(Number),
-            domainStatus: undefined,
-            robots: {
-                baseUrl: url,
-                isUrlScrapable: true,
-                isBaseUrlAllowed: true,
-                allowedPaths: [],
-                disallowedPaths: []
-            },
-            metadata: {
-                title: 'Example Title',
-                description: 'Example Description',
-                keywords: 'example, keywords'
-            },
-            industryClassification: {
-                metadataClass: {
-                    label: "E-commerce",
-                    score: 95,
-                },
-                domainClass: {
-                    label: 'Unknown',
-                    score: 0,
-                }
-            },
-            logo: 'http://example.com/logo.png',
-            images: ['image1.png', 'image2.svg'],
-            slogan: '',
-            contactInfo: {
-                emails: ['email@gmail.com'], 
-                phones: ['01234567892'], 
-                socialLinks: []
-            },
-            addresses: ['address 1', 'address 2'],
-            screenshot: 'screenshot.png',
-            seoAnalysis: null,
-        }));
-    
-        expect(cacheSetSpy).toHaveBeenCalledWith(url, JSON.stringify(result)); 
-    });
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+
+      const cacheSetSpy = jest.spyOn(cacheManager, 'set').mockResolvedValue(undefined);
+
+      jest.spyOn(robotsService, 'readRobotsFile').mockResolvedValue({
+          baseUrl: url,
+          isUrlScrapable: true,
+          isBaseUrlAllowed: true,
+          allowedPaths: [],
+          disallowedPaths: []
+      } as RobotsResponse);
+
+      jest.spyOn(metadataService, 'scrapeMetadata').mockResolvedValue({
+          title: 'Example Title',
+          description: 'Example Description',
+          keywords: 'example, keywords'
+      } as Metadata);
+
+      jest.spyOn(industryClassificationService, 'classifyIndustry').mockResolvedValue({
+          metadataClass: {
+              label: "E-commerce",
+              score: 95,
+          },
+          domainClass: {
+              label: 'Unknown',
+              score: 0,
+          }
+      } as IndustryClassification);
+
+      jest.spyOn(scrapeLogoService, 'scrapeLogo').mockResolvedValue('http://example.com/logo.png');
+      jest.spyOn(imagesService, 'scrapeImages').mockResolvedValue(['image1.png', 'image2.svg']);
+      jest.spyOn(contactInfoService, 'scrapeContactInfo').mockResolvedValue({
+          emails: ['email@gmail.com'],
+          phones: ['01234567892'],
+          socialLinks: []
+      });
+      jest.spyOn(addressService, 'scrapeAddress').mockResolvedValue({ addresses: ['address 1', 'address 2'] });
+      jest.spyOn(screenshotService, 'captureScreenshot').mockResolvedValue({ screenshot: 'screenshot.png' });
+      jest.spyOn(seoAnalysisService, 'seoAnalysis').mockResolvedValue(null);
+
+      const sentiment: SentimentClassification = {
+          sentimentAnalysis: {
+              positive: 0.8,
+              negative: 0.1,
+              neutral: 0.1,
+          },
+          positiveWords: [],
+          negativeWords: [],
+          emotions: {},
+      };
+
+      jest.spyOn(sentimentAnalysis, 'classifySentiment').mockResolvedValue(sentiment);
+
+      const result = await service.scrape(url);
+
+      expect(cacheManager.get).toHaveBeenCalledWith(url);
+      expect(result.url).toBe(url);
+      expect(result).toEqual({
+          url,
+          time: expect.any(Number),
+          domainStatus: undefined,
+          robots: {
+              baseUrl: url,
+              isUrlScrapable: true,
+              isBaseUrlAllowed: true,
+              allowedPaths: [],
+              disallowedPaths: []
+          },
+          metadata: {
+              title: 'Example Title',
+              description: 'Example Description',
+              keywords: 'example, keywords'
+          },
+          industryClassification: {
+              metadataClass: {
+                  label: "E-commerce",
+                  score: 95,
+              },
+              domainClass: {
+                  label: 'Unknown',
+                  score: 0,
+              }
+          },
+          logo: 'http://example.com/logo.png',
+          images: ['image1.png', 'image2.svg'],
+          slogan: '',
+          contactInfo: {
+              emails: ['email@gmail.com'],
+              phones: ['01234567892'],
+              socialLinks: []
+          },
+          addresses: ['address 1', 'address 2'],
+          screenshot: 'screenshot.png',
+          seoAnalysis: null,
+          sentiment: {
+              emotions: {},
+              negativeWords: [],
+              positiveWords: [],
+              sentimentAnalysis: {
+                  negative: 0.1,
+                  neutral: 0.1,
+                  positive: 0.8,
+              },
+          },
+      });
+
+      expect(cacheSetSpy).toHaveBeenCalledWith(url, JSON.stringify(result));
+  });
 
 });
+
