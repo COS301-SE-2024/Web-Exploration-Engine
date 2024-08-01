@@ -11,23 +11,23 @@ import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnal
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
 import { InfoPopOver } from "../../components/InfoPopOver";
 
-function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+export function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
     return 'scores' in data || 'diagnostics' in data;
 }
 
-function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+export function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
     return 'loadTime' in data || 'recommendations' in data;
 }
 
-function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+export function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
     return 'isResponsive' in data || 'recommendations' in data;
 }
 
-function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
+export function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
     return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
 }
 
-function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
+export function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
     return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 

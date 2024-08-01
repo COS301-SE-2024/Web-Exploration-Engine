@@ -4,6 +4,8 @@ import Comparison from '../../src/app/(pages)/comparison/page';
 import '@testing-library/jest-dom';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext';
 import { useRouter } from 'next/navigation';
+import { isLightHouse, isSiteSpeedAnalysis, isMobileFriendlinessAnalysis, isImageAnalysis, isUniqueContentAnalysis } from '../../src/app/(pages)/comparison/page';
+import { LightHouseAnalysis, LightHouseRecommendations, LightHouseScore, MetaDescriptionAnalysis, MobileFriendlinessAnalysis, SiteSpeedAnalysis, UniqueContentAnalysis, ImageAnalysis, RepeatedWords, ReasonsMap, SEOError } from 'frontend/src/app/models/ScraperModels';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -12,6 +14,59 @@ jest.mock('next/navigation', () => ({
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
 }));
+
+const lightHouseData: LightHouseAnalysis = {
+    scores: {
+        accessibility: 80,
+        bestPractices: 85,
+        performance: 90
+    },
+    diagnostics: {
+        recommendations: [
+        { title: 'Accessibility', description: 'Improve accessibility', score: 75 }
+        ]
+    }
+};
+  
+const siteSpeedData: SiteSpeedAnalysis = {
+    loadTime: 2.5,
+    recommendations: 'Optimize images'
+};
+  
+const mobileFriendlinessData: MobileFriendlinessAnalysis = {
+    isResponsive: true,
+    recommendations: 'Use larger fonts'
+};
+  
+const metaDescriptionData: MetaDescriptionAnalysis = {
+    length: 150,
+    recommendations: 'Keep it under 160 characters',
+    titleTag: 'Meta Description Test'
+};
+  
+const seoErrorData: SEOError = {
+    error: 'An error occurred'
+}; 
+
+const uniqueContentData: UniqueContentAnalysis = {
+    recommendations: 'Increase unique content',
+    textLength: 1200,
+    uniqueWordsPercentage: 60,
+    repeatedWords: [{ word: 'example', count: 5 }]
+};
+  
+const imageAnalysisData: ImageAnalysis = {
+    errorUrls: ['http://example.com/image1.jpg'],
+    missingAltTextCount: 3,
+    nonOptimizedCount: 2,
+    reasonsMap: { 
+        format: ['JPEG', 'PNG'], 
+        other: ['No EXIF data'], 
+        size: ['Too large']
+    },
+    recommendations: 'Add alt text and optimize images',
+    totalImages: 10
+};
 
 describe('Comparison Component', () => {
     const mockPush = jest.fn();
@@ -165,6 +220,31 @@ describe('Comparison Component', () => {
     beforeEach(() => {
         (useRouter as jest.Mock).mockReturnValue({ push: mockPush });  
         (useScrapingContext as jest.Mock).mockReturnValue({ results: mockResults }); 
+    });
+
+    it('isLightHouse should identify LightHouseAnalysis correctly', () => {
+        expect(isLightHouse(lightHouseData)).toBe(true);
+        expect(isLightHouse(seoErrorData)).toBe(false);
+    });
+
+    it('isSiteSpeedAnalysis should identify SiteSpeedAnalysis correctly', () => {
+        expect(isSiteSpeedAnalysis(siteSpeedData)).toBe(true);
+        expect(isSiteSpeedAnalysis(seoErrorData)).toBe(false);
+    });
+    
+    it('isMobileFriendlinessAnalysis should identify MobileFriendlinessAnalysis correctly', () => {
+        expect(isMobileFriendlinessAnalysis(mobileFriendlinessData)).toBe(true);
+        expect(isMobileFriendlinessAnalysis(seoErrorData)).toBe(false);
+    });
+
+    it('isUniqueContentAnalysis should identify UniqueContentAnalysis correctly', () => {
+        expect(isUniqueContentAnalysis(uniqueContentData)).toBe(true);
+        expect(isUniqueContentAnalysis(seoErrorData)).toBe(false);
+    });
+    
+    it('isImageAnalysis should identify ImageAnalysis correctly', () => {
+        expect(isImageAnalysis(imageAnalysisData)).toBe(true);
+        expect(isImageAnalysis(seoErrorData)).toBe(false);
     });
 
     it('should display all the basic main headings when page is first rendered', async () => {
