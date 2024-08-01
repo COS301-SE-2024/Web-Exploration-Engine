@@ -34,59 +34,6 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
     return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 
-const lightHouseData: LightHouseAnalysis = {
-    scores: {
-        accessibility: 80,
-        bestPractices: 85,
-        performance: 90
-    },
-    diagnostics: {
-        recommendations: [
-        { title: 'Accessibility', description: 'Improve accessibility', score: 75 }
-        ]
-    }
-};
-  
-const siteSpeedData: SiteSpeedAnalysis = {
-    loadTime: 2.5,
-    recommendations: 'Optimize images'
-};
-  
-const mobileFriendlinessData: MobileFriendlinessAnalysis = {
-    isResponsive: true,
-    recommendations: 'Use larger fonts'
-};
-  
-const metaDescriptionData: MetaDescriptionAnalysis = {
-    length: 150,
-    recommendations: 'Keep it under 160 characters',
-    titleTag: 'Meta Description Test'
-};
-  
-const seoErrorData: SEOError = {
-    error: 'An error occurred'
-}; 
-
-const uniqueContentData: UniqueContentAnalysis = {
-    recommendations: 'Increase unique content',
-    textLength: 1200,
-    uniqueWordsPercentage: 60,
-    repeatedWords: [{ word: 'example', count: 5 }]
-};
-  
-const imageAnalysisData: ImageAnalysis = {
-    errorUrls: ['http://example.com/image1.jpg'],
-    missingAltTextCount: 3,
-    nonOptimizedCount: 2,
-    reasonsMap: { 
-        format: ['JPEG', 'PNG'], 
-        other: ['No EXIF data'], 
-        size: ['Too large']
-    },
-    recommendations: 'Add alt text and optimize images',
-    totalImages: 10
-};
-
 describe('Comparison Component', () => {
     const mockPush = jest.fn();
     const mockResults = [
@@ -242,26 +189,89 @@ describe('Comparison Component', () => {
     });
 
     it('isLightHouse should identify LightHouseAnalysis correctly', () => {
+        const lightHouseData: LightHouseAnalysis = {
+            scores: {
+                accessibility: 80,
+                bestPractices: 85,
+                performance: 90
+            },
+            diagnostics: {
+                recommendations: [
+                { title: 'Accessibility', description: 'Improve accessibility', score: 75 }
+                ]
+            }
+        };
+
+        const seoErrorData: SEOError = {
+            error: 'An error occurred'
+        }; 
+
         expect(isLightHouse(lightHouseData)).toBe(true);
         expect(isLightHouse(seoErrorData)).toBe(false);
     });
 
     it('isSiteSpeedAnalysis should identify SiteSpeedAnalysis correctly', () => {
+        const siteSpeedData: SiteSpeedAnalysis = {
+            loadTime: 2.5,
+            recommendations: 'Optimize images'
+        };
+
+        const seoErrorData: SEOError = {
+            error: 'An error occurred'
+        }; 
+
         expect(isSiteSpeedAnalysis(siteSpeedData)).toBe(true);
         expect(isSiteSpeedAnalysis(seoErrorData)).toBe(false);
     });
     
     it('isMobileFriendlinessAnalysis should identify MobileFriendlinessAnalysis correctly', () => {
+        const mobileFriendlinessData: MobileFriendlinessAnalysis = {
+            isResponsive: true,
+            recommendations: 'Use larger fonts'
+        };
+
+        const seoErrorData: SEOError = {
+            error: 'An error occurred'
+        }; 
+
         expect(isMobileFriendlinessAnalysis(mobileFriendlinessData)).toBe(true);
         expect(isMobileFriendlinessAnalysis(seoErrorData)).toBe(false);
     });
 
     it('isUniqueContentAnalysis should identify UniqueContentAnalysis correctly', () => {
+        const uniqueContentData: UniqueContentAnalysis = {
+            recommendations: 'Increase unique content',
+            textLength: 1200,
+            uniqueWordsPercentage: 60,
+            repeatedWords: [{ word: 'example', count: 5 }]
+        };
+
+        const seoErrorData: SEOError = {
+            error: 'An error occurred'
+        }; 
+
         expect(isUniqueContentAnalysis(uniqueContentData)).toBe(true);
         expect(isUniqueContentAnalysis(seoErrorData)).toBe(false);
     });
     
     it('isImageAnalysis should identify ImageAnalysis correctly', () => {
+        const imageAnalysisData: ImageAnalysis = {
+            errorUrls: ['http://example.com/image1.jpg'],
+            missingAltTextCount: 3,
+            nonOptimizedCount: 2,
+            reasonsMap: { 
+                format: ['JPEG', 'PNG'], 
+                other: ['No EXIF data'], 
+                size: ['Too large']
+            },
+            recommendations: 'Add alt text and optimize images',
+            totalImages: 10
+        };
+
+        const seoErrorData: SEOError = {
+            error: 'An error occurred'
+        }; 
+
         expect(isImageAnalysis(imageAnalysisData)).toBe(true);
         expect(isImageAnalysis(seoErrorData)).toBe(false);
     });
