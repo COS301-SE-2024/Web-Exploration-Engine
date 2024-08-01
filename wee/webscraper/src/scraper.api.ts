@@ -352,19 +352,19 @@ export const SentimentResponse200 = ApiResponse({
   schema: {
     type: 'object',
     properties: {
-      metadataClass: {
-        type: 'object',
-        properties: {
-          label: { type: 'string' },
-          score: { type: 'number' },
-        },
+      positive: { type: 'number' },
+      negative: { type: 'number' },
+      neutral: { type: 'number' },
+      positiveWords: {
+        type: 'array',
+        items: { type: 'string' },
       },
-      domainClass: {
+      negativeWords: {
+        type: 'array',
+        items: { type: 'string' },
+      },
+      emotions: {
         type: 'object',
-        properties: {
-          label: { type: 'string' },
-          score: { type: 'number' },
-        },
       },
     },
   },
