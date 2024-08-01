@@ -137,40 +137,88 @@ describe('SentimentAnalysisService', () => {
   describe('getPositiveNegativeWords', () => {
     it('should return positive and negative words successfully', async () => {
       const metadata: Metadata = {
-        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        title: 'Test Title',
+        description: 'Test Description',
+        keywords: 'great amazing bad terrible',
         ogTitle: '',
         ogDescription: '',
         ogImage: ''
       };
-
+  
       const positiveWords = ['Test'];
       const negativeWords = [];
-
+  
       mockedAxios.post.mockResolvedValue({
         data: [[
           { label: '5 stars', score: 0.9 },
           { label: '1 star', score: 0.8 }
         ]]
       });
-
+  
       const result = await service.getPositiveNegativeWords(metadata);
       expect(result).toEqual({ positiveWords, negativeWords });
     });
-
-    it('should handle errors and return empty word lists', async () => {
+  
+    it('should handle neutral/unknown sentiment and not include them in the lists', async () => {
       const metadata: Metadata = {
-        title: 'Test Title', description: 'Test Description', keywords: 'test keywords',
+        title: 'Neutral Test',
+        description: 'Neutral Description',
+        keywords: 'neutral unknown',
         ogTitle: '',
         ogDescription: '',
         ogImage: ''
       };
-
-      mockedAxios.post.mockRejectedValue(new Error('Network error'));
-
+  
+      mockedAxios.post.mockResolvedValue({
+        data: [
+          [
+            { label: '3 stars', score: 0.5 }, 
+            { label: '3 stars', score: 0.4 }  
+          ]
+        ]
+      });
+  
+      const result = await service.getPositiveNegativeWords(metadata);
+      expect(result).toEqual({ positiveWords: [], negativeWords: [] });
+    });
+  
+    it('should handle unexpected response format from token classification API', async () => {
+      const metadata: Metadata = {
+        title: 'Unexpected Format Test',
+        description: 'Testing unexpected response format',
+        keywords: 'unexpected response',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+  
+      mockedAxios.post.mockResolvedValue({
+        data: {} 
+      });
+  
+      const result = await service.getPositiveNegativeWords(metadata);
+      expect(result).toEqual({ positiveWords: [], negativeWords: [] });
+    });
+  
+    it('should handle empty batch response gracefully', async () => {
+      const metadata: Metadata = {
+        title: 'Empty Batch Test',
+        description: 'Testing empty batch response',
+        keywords: 'empty batch',
+        ogTitle: '',
+        ogDescription: '',
+        ogImage: ''
+      };
+  
+      mockedAxios.post.mockResolvedValue({
+        data: [] 
+      });
+  
       const result = await service.getPositiveNegativeWords(metadata);
       expect(result).toEqual({ positiveWords: [], negativeWords: [] });
     });
   });
+  
 
   describe('analyzeEmotions', () => {
     it('should analyze emotions successfully', async () => {
