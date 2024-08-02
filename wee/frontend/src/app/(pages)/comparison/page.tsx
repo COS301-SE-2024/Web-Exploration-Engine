@@ -119,7 +119,7 @@ export default function Comparison() {
                     Website Status
                 </div>
                 <div className="flex justify-between ">
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                    <div data-testid="website1-status" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         {!websiteOne ? '-' : (websiteOne.domainStatus === 'live' ? 'Live' : 'Parked')}
                     </div>
 
@@ -132,7 +132,7 @@ export default function Comparison() {
                         </div>
                     </div>
 
-                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                    <div data-testid="website2-status" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         {!websiteTwo ? '-' : (websiteTwo.domainStatus === 'live' ? 'Live' : 'Parked')}
                     </div>
                 </div>
@@ -145,10 +145,10 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="website1-meta-score" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
-                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        <div data-testid="website1-meta-label" className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotMetaDataClassify[0].label ? websiteOne.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
@@ -180,10 +180,10 @@ export default function Comparison() {
                     </div>
 
                     <div className="text-center w-1/3">
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="website2-meta-score" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score ? (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
-                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        <div data-testid="website2-meta-label" className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label ? websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
@@ -215,10 +215,10 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="website1-domain-score" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotDomainClassify[0].score ? (websiteOne.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
-                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        <div data-testid="website1-domain-label" className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotDomainClassify[0].label ? websiteOne.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
@@ -250,10 +250,10 @@ export default function Comparison() {
                     </div>
 
                     <div className="text-center w-1/3">
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="website2-domain-score" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotDomainClassify[0].score ? (websiteTwo.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2) + '%' : '0%')}
                         </div>
-                        <div className='font-poppins-semibold text-sm sm:text-lg'>
+                        <div data-testid="website2-domain-label" className='font-poppins-semibold text-sm sm:text-lg'>
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotDomainClassify[0].label ? websiteTwo.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {

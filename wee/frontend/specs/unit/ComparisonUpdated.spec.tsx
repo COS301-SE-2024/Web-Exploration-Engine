@@ -7,9 +7,11 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
 jest.mock('next/navigation', () => ({
-    // useSearchParams: jest.fn(),
     useRouter: jest.fn(),
 }));
+
+// if this isn't included a resize observer problem is thrown
+jest.mock('react-apexcharts', () => () => null);
 
 global.fetch = jest.fn().mockResolvedValue({
     json: () => Promise.resolve({}), // Mock the json() method to return a Promise
@@ -40,7 +42,7 @@ jest.mock('../../src/app/context/ScrapingContext', () => ({
                 industryClassification: {
                     metadataClass: { label: 'E-commerce', score: 95 },
                     domainClass: { label: 'Retail', score: 90 },
-                    zeroShotDomainClassification: [
+                    zeroShotDomainClassify: [
                         {
                             "label": "Finance and Banking",
                             "score": 0.6868
@@ -112,7 +114,7 @@ jest.mock('../../src/app/context/ScrapingContext', () => ({
                 industryClassification: {
                     metadataClass: { label: 'Regional Banks', score: 62 },
                     domainClass: { label: 'Application Software', score: 78 },
-                    zeroShotDomainClassification: [
+                    zeroShotDomainClassify: [
                         {
                             "label": "Hospitality",
                             "score": 0.7070
@@ -217,6 +219,54 @@ describe('Comparison testing TWO', () => {
                 'https://www.example2.com'
             ]);
         });
+    });
+
+    it('simulate a user selecting the first option from the website ONE dropdown', async () => {
+        render(<Comparison />);
+    
+        const selectOneTrigger = screen.getByTestId('website1-select');
+    
+        expect(selectOneTrigger).toBeInTheDocument();
+    
+        fireEvent.click(selectOneTrigger);
+    
+        await waitFor(() => {
+            expect(screen.getByTestId('website1-option-0')).toBeInTheDocument();
+            expect(screen.getByTestId('website1-option-1')).toBeInTheDocument();
+        });
+
+        const firstOption = screen.getByTestId('website1-option-0');
+        fireEvent.click(firstOption);
+    
+        expect(screen.getByTestId('website1-status').textContent.trim()).toBe('Parked');
+        expect(screen.getByTestId('website1-meta-score').textContent.trim()).toBe('69.69%');
+        expect(screen.getByTestId('website1-meta-label').textContent.trim()).toBe('Tech');
+        expect(screen.getByTestId('website1-domain-score').textContent.trim()).toBe('68.68%');
+        expect(screen.getByTestId('website1-domain-label').textContent.trim()).toBe('Finance and Banking');
+    });
+
+    it('simulate a user selecting the first option from the website ONE dropdown', async () => {
+        render(<Comparison />);
+    
+        const selectTwoTrigger = screen.getByTestId('website2-select');
+    
+        expect(selectTwoTrigger).toBeInTheDocument();
+    
+        fireEvent.click(selectTwoTrigger);
+    
+        await waitFor(() => {
+            expect(screen.getByTestId('website2-option-0')).toBeInTheDocument();
+            expect(screen.getByTestId('website2-option-1')).toBeInTheDocument();
+        });
+
+        const firstOption = screen.getByTestId('website2-option-1');
+        fireEvent.click(firstOption);
+    
+        expect(screen.getByTestId('website2-status').textContent.trim()).toBe('Live');
+        expect(screen.getByTestId('website2-meta-score').textContent.trim()).toBe('96.96%');
+        expect(screen.getByTestId('website2-meta-label').textContent.trim()).toBe('Retail and Consumer Goods');
+        expect(screen.getByTestId('website2-domain-score').textContent.trim()).toBe('70.70%');
+        expect(screen.getByTestId('website2-domain-label').textContent.trim()).toBe('Hospitality');
     });
     
 });
