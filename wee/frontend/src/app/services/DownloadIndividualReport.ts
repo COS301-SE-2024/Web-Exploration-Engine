@@ -1,23 +1,17 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
   description: string;
 }
-
-interface Classifications {
-  label: string;
-  score: number;
-}
-
 export const handleDownloadReport = (
   url: string | null,
   summaryInfo: SummaryInfo | undefined,
   websiteStatus: string,
   isCrawlable: boolean,
-  industryClassification: Classifications[] | undefined,
-  domainClassification: Classifications[] | undefined,
+  industryClassification: IndustryClassificationCriteria[] | undefined,
+  domainClassification: IndustryClassificationCriteria[] | undefined,
   addresses: string[],
   emails: string[],
   phones: string[],
