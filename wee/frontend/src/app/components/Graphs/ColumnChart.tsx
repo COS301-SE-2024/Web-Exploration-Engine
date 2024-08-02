@@ -8,7 +8,7 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function BarChart({ dataLabel, dataSeries }: IChart) {
+export function ColumnChart({ dataLabel, dataSeries }: IChart) {
     const { theme } = useTheme();
 
     const [options, setOptions] = useState<ApexOptions>({
@@ -33,22 +33,32 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
         colors: theme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             bar: {
-                horizontal: true // determines whether it is a horizontal(true) or vertical(false) chart
+                distributed: true
             }
         },
         theme: {
             mode: theme === 'dark' ? 'dark' : 'light'
         },
         xaxis: {
+            labels: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
             axisBorder: {
-                show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                show: false
             }
         },
         yaxis: {
+            labels: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
             axisBorder: {
-                show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                show: false
             }
         },
         grid: {
@@ -66,18 +76,6 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
             colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            xaxis: {
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
-            },
-            yaxis: {
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
             },
             grid: {
                 borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',

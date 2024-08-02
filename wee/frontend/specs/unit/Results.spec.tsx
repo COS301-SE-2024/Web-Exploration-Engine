@@ -72,6 +72,35 @@ describe('Results Component', () => {
             industryClassification: {
                 metadataClass: { label: 'E-commerce', score: 95 },
                 domainClass: { label: 'Retail', score: 90 },
+                zeroShotDomainClassification: [
+                    {
+                        "label": "Finance and Banking",
+                        "score": 68
+                    },
+                    {
+                        "label": "Marine and Shipping",
+                        "score": 16
+                    },
+                    {
+                        "label": "Logistics and Supply Chain Management",
+                        "score": 15
+                    }
+                ],
+                zeroShotMetaDataClassify: [                    
+                    {
+                        "label": "Tech",
+                        "score": 69
+                    },
+                    {
+                        "label": "Utilities",
+                        "score": 19
+                    },
+                    {
+                        "label": "Marine Resources",
+                        "score": 18
+                    }                    
+                ]
+
             },
             screenshot: 'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
             addresses: ['15 Troye Street, Johannesburg, Gauteng'],
@@ -155,15 +184,187 @@ describe('Results Component', () => {
     });
 
     it('should display website status, crawlable status, industry classification, and domain classification', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    industryClassification: {
+                        metadataClass: { label: 'E-commerce', score: 95 },
+                        domainClass: { label: 'Retail', score: 90 },
+                        zeroShotDomainClassification: [
+                            {
+                                "label": "Finance and Banking",
+                                "score": 0.6868
+                            },
+                            {
+                                "label": "Marine and Shipping",
+                                "score": 0.1616
+                            },
+                            {
+                                "label": "Logistics and Supply Chain Management",
+                                "score": 0.1515
+                            }
+                        ],
+                        zeroShotMetaDataClassify: [                    
+                            {
+                                "label": "Tech",
+                                "score": 0.6969
+                            },
+                            {
+                                "label": "Restuarant",
+                                "score": 0.1919
+                            },
+                            {
+                                "label": "Marine Resources",
+                                "score": 0.1818
+                            }                    
+                        ]
+        
+                    },
+                },
+            ],
+        });
+
         await act(async () => {
             render(<Results />);
         });
 
         await waitFor(() => {
-            expect(screen.queryByText('Yes')).toBeDefined();
-            expect(screen.queryByText('Live')).toBeDefined();
-            expect(screen.queryByText('E-commerce - 95')).toBeDefined();
-            expect(screen.queryByText('Retail - 90')).toBeDefined();
+            expect(screen.getByText('Yes')).toBeDefined();
+            expect(screen.getByText('Live')).toBeDefined();
+            expect(screen.queryByText('Finance and Banking')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 68.68%')).toBeDefined();
+            expect(screen.queryByText('Marine and Shipping')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 16.16%')).toBeDefined();
+            expect(screen.queryByText('Logistics and Supply Chain Management')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 15.15%')).toBeDefined();
+
+            expect(screen.queryByText('Tech')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 69.69%')).toBeDefined();
+            expect(screen.queryByText('Restuarant')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 19.19%')).toBeDefined();
+            expect(screen.queryByText('Marine Resources')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 18.18%')).toBeDefined();
+        });
+    });
+
+    it('should display website status, crawlable status, UNKNOWN industry classification, and domain classification', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    industryClassification: {
+                        metadataClass: { label: 'E-commerce', score: 95 },
+                        domainClass: { label: 'Retail', score: 90 },
+                        zeroShotDomainClassification: [
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            },
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            },
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            }
+                        ],
+                        zeroShotMetaDataClassify: [                    
+                            {
+                                "label": "Tech",
+                                "score": 0.6969
+                            },
+                            {
+                                "label": "Restuarant",
+                                "score": 0.1919
+                            },
+                            {
+                                "label": "Marine Resources",
+                                "score": 0.1818
+                            }                    
+                        ]
+        
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Yes')).toBeDefined();
+            expect(screen.getByText('Live')).toBeDefined();
+            expect(screen.queryByText('No industry classifications available')).toBeDefined();
+
+            expect(screen.queryByText('Tech')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 69.69%')).toBeDefined();
+            expect(screen.queryByText('Restuarant')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 19.19%')).toBeDefined();
+            expect(screen.queryByText('Marine Resources')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 18.18%')).toBeDefined();
+        });
+    });
+
+    it('should display website status, crawlable status, industry classification, and UNKNOWN domain classification', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    industryClassification: {
+                        metadataClass: { label: 'E-commerce', score: 95 },
+                        domainClass: { label: 'Retail', score: 90 },
+                        zeroShotDomainClassification: [
+                            {
+                                "label": "Finance and Banking",
+                                "score": 0.6868
+                            },
+                            {
+                                "label": "Marine and Shipping",
+                                "score": 0.1616
+                            },
+                            {
+                                "label": "Logistics and Supply Chain Management",
+                                "score": 0.1515
+                            }
+                        ],
+                        zeroShotMetaDataClassify: [                    
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            },
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            },
+                            {
+                                "label": "Unknown",
+                                "score": 0
+                            }                
+                        ]
+        
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText('Yes')).toBeDefined();
+            expect(screen.getByText('Live')).toBeDefined();
+            expect(screen.queryByText('Finance and Banking')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 68.68%')).toBeDefined();
+            expect(screen.queryByText('Marine and Shipping')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 16.16%')).toBeDefined();
+            expect(screen.queryByText('Logistics and Supply Chain Management')).toBeDefined();
+            expect(screen.queryByText('Confidence Score: 15.15%')).toBeDefined();
+
+            expect(screen.queryByText('No domain match available')).toBeDefined();
         });
     });
 

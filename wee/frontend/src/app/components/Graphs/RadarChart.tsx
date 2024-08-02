@@ -3,12 +3,21 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
-import IChart from "../../models/ChartModel";
 import { ChartColours, DarkChartColours } from "./colours";
+
+interface MetaRadarInterface {
+    radarCategories: string[],
+    radarSeries: RadarSeries[]
+}
+
+export interface RadarSeries {
+    name: string,
+    data: number[]
+}
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function BarChart({ dataLabel, dataSeries }: IChart) {
+export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface) {
     const { theme } = useTheme();
 
     const [options, setOptions] = useState<ApexOptions>({
@@ -18,7 +27,7 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
             background: 'transparent',
             height: 100, // or any other fixed height
             width: '100%',
-            type: 'bar',
+            type: 'radar',
             toolbar: {
                 tools: {
                     zoom: false,
@@ -32,33 +41,31 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
         },
         colors: theme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
-            bar: {
-                horizontal: true // determines whether it is a horizontal(true) or vertical(false) chart
+            radar: {
+                polygons: {
+                    
+                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                }
             }
         },
         theme: {
             mode: theme === 'dark' ? 'dark' : 'light'
         },
-        xaxis: {
-            axisBorder: {
-                show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-            }
-        },
         yaxis: {
-            axisBorder: {
-                show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-            }
+            stepSize: 20
         },
-        grid: {
-            borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-        }
+        xaxis: {
+            categories: radarCategories,
+            labels: {
+                style: {
+                    colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
+                },                
+            },
+        },       
     });
 
-    const series = [{
-        data: dataSeries.map((value, index) => ({ x: dataLabel[index], y: value }))
-    }];
+    const series = radarSeries;      
 
     useEffect(() => {
         setOptions(prevOptions => ({
@@ -67,21 +74,22 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
             },
+            plotOptions: {
+                radar: {
+                    polygons: {                        
+                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                    }
+                }
+            },
             xaxis: {
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
-            },
-            yaxis: {
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
-            },
-            grid: {
-                borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-            }
+                categories: radarCategories,
+                labels: {
+                    style: {
+                        colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
+                    },                    
+                },
+            },   
         }));
     }, [theme]);
 
@@ -92,8 +100,8 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
                     <Chart
                         options={options}
                         series={series}
-                        type="bar"
-                        height={280}
+                        type="radar"
+                        height={650}
                         width="100%"
                     />
                 </div>

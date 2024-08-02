@@ -19,6 +19,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
+import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
 
 interface weakClassification {
@@ -31,6 +32,16 @@ interface mismatchedUrls {
     url: string;
     metadataClass: string;
     domainClass: string;
+}
+
+interface RadarInterface {
+    categories: string[],
+    series: RadarSeries[]
+}
+
+export interface RadarSeries {
+    name: string,
+    data: number[]
 }
 
 export default function SummaryReport() {
@@ -53,6 +64,8 @@ export default function SummaryReport() {
     const [parkedUrls, setParkedUrls] = useState<string[]>([]);
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     const [avgTime, setAvgTime] = useState<number>(0);
+    const [metaRadar, setMetaRadar] = useState<RadarInterface>();
+    const [domainRadar, setDomainRadar] = useState<RadarInterface>();
    
     useEffect(() => {
         
@@ -70,6 +83,8 @@ export default function SummaryReport() {
             setParkedUrls(summaryReport.parkedUrls ?? []); 
             setscrapableUrls(summaryReport.scrapableUrls ?? 0); 
             setAvgTime(summaryReport.avgTime ?? 0);
+            setMetaRadar(summaryReport.metaRadar ?? {categories: [], series: []});
+            setDomainRadar(summaryReport.domainRadar ?? {categories: [], series: []});
         }
 
     }, [summaryReport]);
@@ -371,6 +386,38 @@ export default function SummaryReport() {
                         </WEETable>
                     </div>
                 </div> {/* Grid */}
+
+            {/* Classification Distribution */}
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                Industry Classification Distribution
+                <InfoPopOver 
+                    heading="Industry Classification Distribution" 
+                    content="
+                        The radar graphs illustrate the top three industries associated with each of the scraped domains, based on their metadata or domain names. 
+                        Through these radar graphs, users can visually explore the distribution of industry classifications and observe how they intersect, which offers an insightful perspective.<br/><br/>
+                        Our Industry Classification Distribution relies on a zero-shot machine learning model. However, WEE cannot provide an absolute guarantee of the accuracy of these classifications. <br/><br/>
+                        Note: Feel free to click on a URL in the graph&apos;s legend. Doing so allows you to toggle visibility, especially if things start to appear busy." 
+                    placement="right-end" 
+                />
+            </h3>
+            <div className='gap-4 grid lg:grid-cols-2'>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Metadata
+                    </h3>
+                    {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
+                        <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                    ) : (<></>)}
+                </div>
+                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                    <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
+                        Domain
+                    </h3>
+                    {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
+                        <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                    ) : (<></>)}
+                </div>
+            </div>
 
             {/* Website status */}
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">

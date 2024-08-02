@@ -19,8 +19,8 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
-import { FiImage, FiType, FiLink, FiCode, FiUmbrella, FiBook } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError } from '../../models/ScraperModels';
+import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 
@@ -86,9 +86,9 @@ function ResultsComponent() {
   const [websiteStatus, setWebsiteStatus] = useState('');
   const [isCrawlable, setIsCrawlable] = useState(false);
   const [industryClassification, setIndustryClassification] =
-    useState<Classifications>();
+    useState<Classifications[]>([]);
   const [domainClassification, setDomainClassification] =
-    useState<Classifications>();
+    useState<Classifications[]>([]);
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
@@ -127,8 +127,8 @@ function ResultsComponent() {
 
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
-          setIndustryClassification(urlResults[0].industryClassification.metadataClass);
-          setDomainClassification(urlResults[0].industryClassification.domainClass);
+          setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify);
+          setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
@@ -154,7 +154,7 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification,addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
   };
  
   // Pagination Logic
@@ -407,53 +407,70 @@ function ResultsComponent() {
                       <TableRow key="3">
                         <TableCell>Industry</TableCell>
                         <TableCell>
-                          <Chip radius="sm" color="secondary" variant="flat">
-                            {isCrawlable ? `${industryClassification?.label}` : 'N/A'}
-                          </Chip>
-                          <Chip
-                            radius="sm"
-                            color={
-                              industryClassification?.score &&
-                              industryClassification?.score * 100 > 80
-                                ? 'success'
-                                : industryClassification?.score &&
-                                  industryClassification?.score * 100 >= 50
-                                ? 'warning'
-                                : 'danger'
-                            }
-                            variant="flat"
-                            className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
-                          >
-                            {isCrawlable && industryClassification?.score
-                              ? `Confidence Score: ${(industryClassification?.score * 100).toFixed(2)}%`
-                              : 'Confidence Score: 0%'}
-                          </Chip>
-                        </TableCell>
+                          {industryClassification && industryClassification.length > 0 && !industryClassification.every(industryLabel => industryLabel.label == 'Unknown') ? (
+                            industryClassification.map((classification, index) => (
+                              <div className='my-2' key={index}>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                  {isCrawlable ? `${classification.label}` : 'N/A'}
+                                </Chip>
+                                <Chip
+                                  radius="sm"
+                                  color={
+                                    classification.score &&
+                                    classification.score * 100 > 80
+                                      ? 'success'
+                                      : classification.score &&
+                                        classification.score * 100 >= 50
+                                      ? 'warning'
+                                      : 'danger'
+                                  }
+                                  variant="flat"
+                                  className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
+                                >
+                                  {isCrawlable && classification.score
+                                    ? `Confidence Score: ${(classification.score * 100).toFixed(2)}%`
+                                    : 'Confidence Score: 0%'}
+                                </Chip>
+                              </div>
+                            )))
+                          : (
+                            <span>No industry classifications available</span>
+                          )}
+                        </TableCell>                        
                       </TableRow>
                       <TableRow key="4">
                         <TableCell>Domain match</TableCell>
                         <TableCell>
-                          <Chip radius="sm" color="secondary" variant="flat">
-                            {isCrawlable ? `${domainClassification?.label}` : 'N/A'}
-                          </Chip>
-                          <Chip
-                            radius="sm"
-                            color={
-                              domainClassification?.score &&
-                              domainClassification?.score * 100 > 80
-                                ? 'success'
-                                : domainClassification?.score &&
-                                  domainClassification?.score * 100 >= 50
-                                ? 'warning'
-                                : 'danger'
-                            }
-                            variant="flat"
-                            className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
-                          >
-                            {isCrawlable && domainClassification?.score
-                              ? `Confidence Score: ${(domainClassification?.score * 100).toFixed(2)}%`
-                              : 'Confidence Score: 0%'}
-                          </Chip>
+                          {domainClassification && domainClassification.length > 0 && !domainClassification.every(domainLabel => domainLabel.label == 'Unknown') ? (
+                            domainClassification.map((domain, index) => (
+                              <div className='my-2' key={index}>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                  {isCrawlable ? `${domain.label}` : 'N/A'}
+                                </Chip>
+                                <Chip
+                                  radius="sm"
+                                  color={
+                                    domain.score &&
+                                    domain.score * 100 > 80
+                                      ? 'success'
+                                      : domain.score &&
+                                        domain.score * 100 >= 50
+                                      ? 'warning'
+                                      : 'danger'
+                                  }
+                                  variant="flat"
+                                  className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
+                                >
+                                  {isCrawlable && domain.score
+                                    ? `Confidence Score: ${(domain.score * 100).toFixed(2)}%`
+                                    : 'Confidence Score: 0%'}
+                                </Chip>
+                              </div>
+                            ))
+                          )
+                          : (
+                            <span>No domain match available</span>
+                          )}
                         </TableCell>
                       </TableRow>
                     </TableBody>
