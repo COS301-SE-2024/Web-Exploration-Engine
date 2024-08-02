@@ -10,8 +10,8 @@ export class ScrapeMetadataService {
     url: string, data: RobotsResponse
   ): Promise<Metadata | ErrorResponse> {
 
-    logger.log(serviceName);
-
+    logger.log(`${serviceName}`);
+    
     // Possible improvement: first scrape given URL, if no metadata found, scrape root URL
 
     const allowed = data.isBaseUrlAllowed;

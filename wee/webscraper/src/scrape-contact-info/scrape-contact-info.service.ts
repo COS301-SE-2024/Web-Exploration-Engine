@@ -3,7 +3,7 @@ import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 import logger from '../../../services/webscraperlogger';
 
-const serviceName = "ScrapeContactInfoService";
+const serviceName = "[ScrapeContactInfoService]";
 
 @Injectable()
 export class ScrapeContactInfoService {
@@ -14,8 +14,7 @@ export class ScrapeContactInfoService {
    * @returns {Promise<{ emails: string[], phones: string[] ,socialLinks:string[]}>} 
    */
   async scrapeContactInfo(url: string, robots: RobotsResponse): Promise<{ emails: string[], phones: string[], socialLinks: string[] }> {
-    logger.log(serviceName);
-
+    logger.log(`${serviceName}`);
     try {
       if (!robots.isUrlScrapable) {
         logger.warn(`${serviceName} Crawling not allowed for this URL`);

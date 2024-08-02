@@ -3,7 +3,7 @@ import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 import logger from '../../../services/webscraperlogger';
 
-const serviceName = "ScrapeImagesService";
+const serviceName = "[ScrapeImagesService]";
 
 @Injectable()
 export class ScrapeImagesService {
@@ -13,8 +13,8 @@ export class ScrapeImagesService {
      * @returns {Promise<string[]>} - Returns a promise that resolves to an array of image URLs.
      */
    async scrapeImages(url: string, robots: RobotsResponse): Promise<string[]> {
-    logger.log(serviceName);
-    
+    logger.log(`${serviceName}`);
+        
     // Possible improvement: scrape current URL first, if no images found, scrape root URL
     // Check if the URL is allowed to be scraped
     if (!robots.isUrlScrapable) {

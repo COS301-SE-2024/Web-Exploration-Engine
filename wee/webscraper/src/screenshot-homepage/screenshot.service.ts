@@ -8,8 +8,7 @@ const serviceName = "[ScreenshotService]";
 @Injectable()
 export class ScreenshotService {
   async captureScreenshot(url: string, robots: RobotsResponse): Promise<{ screenshot: string }> {
-    logger.log(serviceName);
-
+    logger.log(`${serviceName}`);
     if (!robots.isUrlScrapable) {
       logger.warn('${serviceName} Crawling not allowed for this URL');
       throw new Error('Crawling not allowed for this URL');

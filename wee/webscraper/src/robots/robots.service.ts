@@ -12,7 +12,7 @@ export class RobotsService {
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
     
-    logger.log(serviceName);
+    logger.log(`${serviceName}`);
 
    
     // Extract base URL
