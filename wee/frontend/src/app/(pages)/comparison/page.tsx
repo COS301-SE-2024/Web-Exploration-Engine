@@ -73,7 +73,7 @@ export default function Comparison() {
                     data-testid="website1-select"
                 >
                     {results.map((item, index) => (
-                        <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
+                        <SelectItem key={index} textValue={item.url} data-testid={`website1-option-${index}`}>{item.url}</SelectItem>
                     ))}
                 </WEESelect>
 
@@ -84,7 +84,7 @@ export default function Comparison() {
                     data-testid="website2-select"
                 >
                     {results.map((item, index) => (
-                        <SelectItem key={index} textValue={item.url}>{item.url}</SelectItem>
+                        <SelectItem key={index} textValue={item.url} data-testid={`website2-option-${index}`}>{item.url}</SelectItem>
                     ))}
                 </WEESelect>
             </div>
