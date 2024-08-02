@@ -14,8 +14,7 @@ export class IndustryClassificationService {
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
 
-    logger.log(serviceName);
-
+    logger.log(`${serviceName}`);
     try {
       const metadataClass = await this.metadataClassify(metadata);
       const domainClass = await this.domainClassify(url);
