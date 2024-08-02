@@ -12,6 +12,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 
 // Models
 import {
@@ -19,6 +20,7 @@ import {
   RobotsResponse,
   Metadata,
   IndustryClassification,
+  SentimentClassification
 } from './models/ServiceModels';
 
 @Injectable()
@@ -35,6 +37,7 @@ export class ScraperService {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
+    private readonly sentimentAnalysisService: SentimentAnalysisService,
   ) {}
 
   async scrape(url: string) {
@@ -69,6 +72,7 @@ export class ScraperService {
       addresses: [],
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
+      sentiment: null as SentimentClassification | null,
     };
 
     // validate url
@@ -121,6 +125,13 @@ export class ScraperService {
         data.metadata
       );
 
+
+    const sentimentAnalysisPromise =
+      this.sentimentAnalysisService.classifySentiment(
+        data.url,
+        data.metadata
+      );
+
     // scrape logo
     const logoPromise = this.scrapeLogoService.scrapeLogo(
       data.url,
@@ -153,6 +164,7 @@ export class ScraperService {
       addresses,
       screenshot,
       seoAnalysis,
+      sentiment,
     ] = await Promise.all([
       industryClassificationPromise,
       logoPromise,
@@ -161,8 +173,10 @@ export class ScraperService {
       addressPromise,
       screenshotPromise,
       seoAnalysisPromise,
+      sentimentAnalysisPromise,
     ]);
     data.industryClassification = industryClassification;
+    data.sentiment = sentiment;
     data.logo = logo;
     data.images = images;
     data.contactInfo = contactInfo;
@@ -324,6 +338,17 @@ export class ScraperService {
       canonicalTagAnalysis,
       lighthouseAnalysis,      
    };
+  }
+  
+  async classifySentiment(url: string) {
+    const metadataResponse = await this.scrapeMetadata(url);
+    if ('errorStatus' in metadataResponse) {
+      return metadataResponse;
+    }
+    return this.sentimentAnalysisService.classifySentiment(
+      url,
+      metadataResponse
+    );
   }
 }
 
