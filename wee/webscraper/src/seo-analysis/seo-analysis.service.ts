@@ -11,7 +11,7 @@ export class SeoAnalysisService {
   async seoAnalysis(url: string, robots: RobotsResponse) {
 
   
-    logger.log(`${serviceName}`);
+    logger.debug(`${serviceName}`);
     
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');

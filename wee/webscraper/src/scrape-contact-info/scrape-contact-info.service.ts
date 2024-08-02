@@ -14,7 +14,7 @@ export class ScrapeContactInfoService {
    * @returns {Promise<{ emails: string[], phones: string[] ,socialLinks:string[]}>} 
    */
   async scrapeContactInfo(url: string, robots: RobotsResponse): Promise<{ emails: string[], phones: string[], socialLinks: string[] }> {
-    logger.log(`${serviceName}`);
+    logger.debug(`${serviceName}`);
     try {
       if (!robots.isUrlScrapable) {
         logger.warn(`${serviceName} Crawling not allowed for this URL`);

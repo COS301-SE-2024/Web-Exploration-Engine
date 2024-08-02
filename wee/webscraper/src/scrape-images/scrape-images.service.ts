@@ -13,7 +13,7 @@ export class ScrapeImagesService {
      * @returns {Promise<string[]>} - Returns a promise that resolves to an array of image URLs.
      */
    async scrapeImages(url: string, robots: RobotsResponse): Promise<string[]> {
-    logger.log(`${serviceName}`);
+    logger.debug(`${serviceName}`);
         
     // Possible improvement: scrape current URL first, if no images found, scrape root URL
     // Check if the URL is allowed to be scraped

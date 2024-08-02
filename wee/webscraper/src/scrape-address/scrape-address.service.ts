@@ -14,7 +14,7 @@ export class ScrapeAddressService {
    */
   async scrapeAddress(url: string, robots: RobotsResponse): Promise<{ addresses: string[] }> {
 
-    logger.log(`${serviceName}`);
+    logger.debug(`${serviceName}`);
     try {
       if (!robots.isBaseUrlAllowed) {
         logger.warn(`${serviceName} Crawling not allowed for this URL`);

@@ -12,7 +12,7 @@ export class RobotsService {
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
     
-    logger.log(`${serviceName}`);
+    logger.debug(`${serviceName}`);
 
    
     // Extract base URL
@@ -100,7 +100,7 @@ export class RobotsService {
   extractDomain(url: string): string {
     try {
       const parsedUrl = new URL(url);
-      //logger.log(`${serviceName} Parse url ${parsedUrl}`);
+      //logger.debug(`${serviceName} Parse url ${parsedUrl}`);
 
       return parsedUrl.origin;
     } catch (error) {

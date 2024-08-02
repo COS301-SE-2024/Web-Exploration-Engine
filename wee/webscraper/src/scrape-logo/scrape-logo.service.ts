@@ -13,7 +13,7 @@ export class ScrapeLogoService {
      * @returns {Promise<string>} - Returns a promise that resolves to the URL of the logo or and empty string if no logo is found.
      */
   async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse): Promise<string> {
-    logger.log(`${serviceName}`);    
+    logger.debug(`${serviceName}`);    
     try {
         // Possible improvement: check if og image is a logo -- sometimes not the case 
         // Scrape for logo in given URL - if not found, scrape root URL
