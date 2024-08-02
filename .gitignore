@@ -5,3 +5,4 @@ node_modules/.bin/node-which
 /node_modules
 /wee/logging/prometheus
 my.secrets
+wee/webscraper/alien-grove-429815-s9-cd072240249e.json

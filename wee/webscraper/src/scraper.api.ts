@@ -343,3 +343,29 @@ export const SeoAnalysisResponse500 = ApiResponse({
     },
   },
 });
+
+export const SentimentOperation = ApiOperation({ summary: 'Classify sentiment analysis' });
+export const SentimentQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to classify' });
+export const SentimentResponse200 = ApiResponse({
+  status: 200,
+  description: 'Sentiment Analysis successful',
+  schema: {
+    type: 'object',
+    properties: {
+      positive: { type: 'number' },
+      negative: { type: 'number' },
+      neutral: { type: 'number' },
+      positiveWords: {
+        type: 'array',
+        items: { type: 'string' },
+      },
+      negativeWords: {
+        type: 'array',
+        items: { type: 'string' },
+      },
+      emotions: {
+        type: 'object',
+      },
+    },
+  },
+});

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act ,waitFor} from '@testing-library/react';
 import Login from '../../src/app/(landing)/login/page';
-import { login } from '../../src/app/services/AuthService';
+import { googleLogin, login } from '../../src/app/services/AuthService';
 import { useRouter } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({
@@ -11,6 +11,7 @@ jest.mock('next/navigation', () => ({
 // Mocking login function
 jest.mock('../../src/app/services/AuthService', () => ({
   login: jest.fn(),
+  googleLogin: jest.fn(),
 }));
 
 
@@ -25,11 +26,6 @@ describe('Login Component', () => {
     expect(screen.getByLabelText(/Password/i)).toBeDefined();
   });
 
-
-
-
-
-
   it('should display error if required fields are empty', async () => {
     render(<Login />);
 
@@ -37,6 +33,12 @@ describe('Login Component', () => {
 
 
     expect(screen.queryByText(/All fields are required/i)).toBeDefined();
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/All fields are required/i)).toBeNull(),
+      { timeout: 3200, }
+    );
+
   });
 
   it('should display error if email is invalid', async () => {
@@ -48,6 +50,11 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByText(/^Login$/));
 
     expect(screen.queryByText(/Please enter a valid email address/i)).toBeDefined();
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/Please enter a valid email address/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should call login function on valid submission', async () => {
@@ -73,6 +80,7 @@ describe('Login Component', () => {
     expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeNull();
     // expect(push).toHaveBeenCalled();
   });
+
   it('should redirect to home page after successful login', async () => {
     const push = jest.fn();
     (useRouter as jest.Mock).mockReturnValue({ push });
@@ -87,6 +95,7 @@ describe('Login Component', () => {
 
     await waitFor(() => expect(push).toHaveBeenCalledWith('/?uuid=mockUuid'));
   });
+
   it('should display error if invalid login credentials are provided', async () => {
     (login as jest.Mock).mockResolvedValue({ message: 'Invalid login credentials' });
 
@@ -99,6 +108,12 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByTestId('login-button'));
 
     await waitFor(() => expect(screen.queryByText(/Invalid email or password/i)).toBeDefined());
+
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/Invalid email or password/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should display error if a general error occurs', async () => {
@@ -113,6 +128,11 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByTestId('login-button'));
 
     await waitFor(() => expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeDefined());
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/An error occurred. Please try again later/i)).toBeNull(),
+      { timeout: 3200, }
+    );
   });
 
   it('should render the ThemeSwitch component', async () => {
@@ -129,9 +149,48 @@ describe('Login Component', () => {
     });
 
     expect(screen.getByText(/Login with Google/i)).toBeDefined();
-    expect(screen.getByText(/Login with Apple/i)).toBeDefined();
+  });
+});
+
+describe('Login Component - Google OAuth', () => {
+  it('should call googleLogin function on Google login button click', async () => {
+    const push = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({ push });
+
+    (googleLogin as jest.Mock).mockResolvedValue({
+      uuid: 'mockUuid',
+      emailVerified: true,
+      name: 'Mock User',
+    });
+
+    await act(async () => {
+      render(<Login />);
+    });
+
+    fireEvent.click(screen.getByText(/Login with Google/i));
+
+    await waitFor(() => expect(googleLogin).toHaveBeenCalled());
   });
 
- 
+  it('should display error if Google login fails', async () => {
+    (googleLogin as jest.Mock).mockResolvedValue({
+      code: 500,
+      message: 'Error logging in with Google',
+    });
 
+    await act(async () => {
+      render(<Login />);
+    });
+
+    fireEvent.click(screen.getByText(/Login with Google/i));
+
+    await waitFor(() => expect(googleLogin).toHaveBeenCalled());
+    await waitFor(() => expect(screen.queryByText(/An error occurred. Please try again later/i)).toBeDefined());
+
+    // error should disappear after 3 seconds
+    await waitFor(() => expect(
+      screen.queryByText(/An error occurred. Please try again later/i)).toBeNull(),
+      { timeout: 3200, }
+    );
+  });
 });

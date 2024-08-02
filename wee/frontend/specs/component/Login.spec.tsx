@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import Login from '../../src/app/(landing)/login/page';
 import { login } from '../../src/app/services/AuthService';
 import { useRouter } from 'next/navigation';
@@ -29,6 +29,13 @@ describe('Login Component', () => {
     fireEvent.click(screen.getByText(/^Login$/));
 
     expect(screen.queryByText(/All fields are required/i)).toBeDefined();
+
+    // error should disappear after 3 seconds
+    await waitFor(() =>
+      expect(screen.queryByText(/All fields are required/i)).toBeNull(),
+      {timeout: 3200,}
+
+    );
   });
 
   it('should display error if email is invalid', async () => {
@@ -46,6 +53,14 @@ describe('Login Component', () => {
     expect(
       screen.queryByText(/Please enter a valid email address/i)
     ).toBeDefined();
+
+    // error should disappear after 3 seconds
+    await waitFor(() =>
+      expect(
+        screen.queryByText(/Please enter a valid email address/i)
+      ).toBeNull(),
+      {timeout: 3200,}
+    );
   });
 
   it('should call login function on valid submission', async () => {
