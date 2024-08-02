@@ -95,6 +95,22 @@ jest.mock('../../src/app/context/ScrapingContext', () => ({
                             }
                         ]
                     },
+                    lighthouseAnalysis: {
+                        scores: {
+                            accessibility: 85,
+                            bestPractices: 93,
+                            performance: 24,
+                        },
+                        diagnostics: undefined,
+                    },
+                    siteSpeedAnalysis: {
+                        loadTime: 2.88,
+                        recommendations: '',
+                    },
+                    mobileFriendlinessAnalysis: {
+                        isResponsive: false,
+                        recommendations: '',
+                    },
                 }
             },
             {
@@ -166,6 +182,22 @@ jest.mock('../../src/app/context/ScrapingContext', () => ({
                                 count: 19,
                             }
                         ]
+                    },
+                    lighthouseAnalysis: {
+                        scores: {
+                            accessibility: 84,
+                            bestPractices: 78,
+                            performance: 60,
+                        },
+                        diagnostics: undefined,
+                    },
+                    siteSpeedAnalysis: {
+                        loadTime: 6.60,
+                        recommendations: '',
+                    },
+                    mobileFriendlinessAnalysis: {
+                        isResponsive: true,
+                        recommendations: '',
                     },
                 }
             }
@@ -243,9 +275,17 @@ describe('Comparison testing TWO', () => {
         expect(screen.getByTestId('website1-meta-label').textContent.trim()).toBe('Tech');
         expect(screen.getByTestId('website1-domain-score').textContent.trim()).toBe('68.68%');
         expect(screen.getByTestId('website1-domain-label').textContent.trim()).toBe('Finance and Banking');
+        expect(screen.getByTestId('website1-uniquewords').textContent.trim()).toBe('41.72%');
+        expect(screen.getByTestId('website1-missingAltText').textContent.trim()).toBe('11');
+        expect(screen.getByTestId('website1-nonOptimized').textContent.trim()).toBe('3');
+        expect(screen.getByTestId('website1-lighthouse-performance').textContent.trim()).toBe('24%Performance');
+        expect(screen.getByTestId('website1-lighthouse-accessibility').textContent.trim()).toBe('85%Accessibility');
+        expect(screen.getByTestId('website1-lighthouse-bestpractices').textContent.trim()).toBe('93%Best Practices');
+        expect(screen.getByTestId('website1-mobilefriendly').textContent.trim()).toBe('No');
+        expect(screen.getByTestId('website1-sitespeed').textContent.trim()).toBe('2.88');
     });
 
-    it('simulate a user selecting the first option from the website ONE dropdown', async () => {
+    it('simulate a user selecting the first option from the website TWO dropdown', async () => {
         render(<Comparison />);
     
         const selectTwoTrigger = screen.getByTestId('website2-select');
@@ -267,6 +307,14 @@ describe('Comparison testing TWO', () => {
         expect(screen.getByTestId('website2-meta-label').textContent.trim()).toBe('Retail and Consumer Goods');
         expect(screen.getByTestId('website2-domain-score').textContent.trim()).toBe('70.70%');
         expect(screen.getByTestId('website2-domain-label').textContent.trim()).toBe('Hospitality');
+        expect(screen.getByTestId('website2-uniquewords').textContent.trim()).toBe('71.42%');
+        expect(screen.getByTestId('website2-missingAltText').textContent.trim()).toBe('14');
+        expect(screen.getByTestId('website2-nonOptimized').textContent.trim()).toBe('13');
+        expect(screen.getByTestId('website2-lighthouse-performance').textContent.trim()).toBe('60%Performance');
+        expect(screen.getByTestId('website2-lighthouse-accessibility').textContent.trim()).toBe('84%Accessibility');
+        expect(screen.getByTestId('website2-lighthouse-bestpractices').textContent.trim()).toBe('78%Best Practices');
+        expect(screen.getByTestId('website2-mobilefriendly').textContent.trim()).toBe('Yes');
+        expect(screen.getByTestId('website2-sitespeed').textContent.trim()).toBe('6.60');
     });
     
 });
