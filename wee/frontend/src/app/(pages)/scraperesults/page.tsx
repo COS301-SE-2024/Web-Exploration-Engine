@@ -148,7 +148,7 @@ const getScrapingResults = async (url: string) => {
   try {
     // CHANGE TO DEPLOYED VERSION
     const response = await fetch(
-      `http://localhost:3000/api/scraper/status/scrape/${encodeURIComponent(url)}`
+      `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
     );
     if (!response.ok) {
       throw new Error(`Error initiating scrape: ${response.statusText}`);

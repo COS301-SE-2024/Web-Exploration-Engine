@@ -26,40 +26,56 @@ export class IndustryClassificationService {
   ];
 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
+    // update: try and catch for each classification - doesn't return unknown if one fails
+    let metadataClass;
+    let domainClass;
+    let zeroShotMetaDataClassify;
+    let zeroShotDomainClassify;
+
     try {
-      const metadataClass = await this.metadataClassify(metadata);
-      //console.log('Metadata Classification:', metadataClass);
-      const domainClass = await this.domainClassify(url);
-      //console.log('Domain Classification:', domainClass);
-      const zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
-      //console.log('Zero-Shot Metadata Classification:', zeroShotMetaDataClassify);
-      const zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
-      //console.log('Zero-Shot Domain Classification:', zeroShotDomainClassify);
-      return { metadataClass, domainClass, zeroShotMetaDataClassify , zeroShotDomainClassify };
-    } 
-    catch (error) {
+      metadataClass = await this.metadataClassify(metadata);
+    
+    } catch (error) {
       console.log(error.message);
-      return {
-        metadataClass: {
-          label: 'Unknown',
-          score: 0,
-        },
-        domainClass: {
-          label: 'Unknown',
-          score: 0,
-        },
-        zeroShotMetaDataClassify: [
-          { label: 'Unknown', score: 0 },
-          { label: 'Unknown', score: 0 },
-          { label: 'Unknown', score: 0 },
-        ],
-        zeroShotDomainClassify: [
-          { label: 'Unknown', score: 0 },
-          { label: 'Unknown', score: 0 },
-          { label: 'Unknown', score: 0 },
-        ],
+      metadataClass = { 
+        label: 'Unknown',
+        score: 0,
       };
     }
+
+    try {
+      domainClass = await this.domainClassify(url);
+    } catch (error) {
+      console.log(error.message);
+      domainClass = {
+        label: 'Unknown',
+        score: 0,
+      };
+    }
+
+    try {
+      zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
+    } catch (error) {
+      console.log(error.message);
+      zeroShotMetaDataClassify = [
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+      ];
+    }
+
+    try {
+      zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
+    } catch (error) {
+      console.log(error.message);
+      zeroShotDomainClassify = [
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+        { label: 'Unknown', score: 0 },
+      ];
+    }
+
+    return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
   }
 
   async metadataClassify(metadata: Metadata): Promise<{label: string, score: number}> {

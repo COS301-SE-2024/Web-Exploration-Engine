@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ScrapeAddressService {
@@ -10,14 +10,15 @@ export class ScrapeAddressService {
    * @param robots - The robots response to check if crawling is allowed.
    * @returns {Promise<{ addresses: string[] }>} 
    */
-  async scrapeAddress(url: string, robots: RobotsResponse): Promise<{ addresses: string[] }> {
+  async scrapeAddress(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ addresses: string[] }> {
+    let page;
+
     try {
       if (!robots.isBaseUrlAllowed) {
         console.error('Crawling not allowed for this URL');
         return { addresses: [] };
       }
 
-      const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
@@ -26,8 +27,6 @@ export class ScrapeAddressService {
       const textContent = document.body.innerText;
       return Array.from(textContent.matchAll(addressPattern), match => match[0].trim());
       });
-
-      await browser.close();
 
       //newline removed
       const cleanAddresses = addresses.map(address => address.replace(/\n/g, ' '));
@@ -46,6 +45,10 @@ export class ScrapeAddressService {
     } catch (error) {
       console.error(`Failed to scrape addresses: ${error.message}`);
       return { addresses: [] };
+    } finally {
+      if (page) {
+        await page.close();
+      }
     }
   }
 }

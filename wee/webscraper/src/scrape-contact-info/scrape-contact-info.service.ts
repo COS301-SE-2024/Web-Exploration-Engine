@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ScrapeContactInfoService {
@@ -8,17 +8,19 @@ export class ScrapeContactInfoService {
    * Scrapes contact information from the given URL.
    * @param url - The URL to scrape contact information from.
    * @param robots - Response object indicating if URL is scrapable.
-   * @returns {Promise<{ emails: string[], phones: string[] ,socialLinks:string[]}>} 
+   * @returns {Promise<{ emails: string[], phones: string[] , socialLinks:string[]}>} 
    */
-  async scrapeContactInfo(url: string, robots: RobotsResponse): Promise<{ emails: string[], phones: string[], socialLinks: string[] }> {
+
+  async scrapeContactInfo(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ emails: string[], phones: string[], socialLinks: string[] } > {
+    let page;
+
     try {
       if (!robots.isUrlScrapable) {
         console.error('Crawling not allowed for this URL');
         return { emails: [], phones: [], socialLinks: [] };
       }
-
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
+      
+      page = await browser.newPage();
       await page.goto(url);
 
       // Extract text content from the page
@@ -32,12 +34,14 @@ export class ScrapeContactInfoService {
       const phones = textContent.match(phonePattern) || [];
       const socialLinks = links.filter(link => /facebook|twitter|linkedin|instagram/.test(link.toLowerCase()));
 
-      await browser.close();
-
       return { emails, phones, socialLinks };
     } catch (error) {
       console.error(`Failed to scrape contact info: ${error.message}`);
       return { emails: [], phones: [], socialLinks: [] };
+    } finally {
+      if (page) {
+        await page.close();
+      }
     }
   }
 }

@@ -23,7 +23,7 @@ export async function pollForResult(url: string) {
         if (jobData.status === 'completed') {
           clearInterval(intervalId); // Stop polling once the job is completed
           resolve(jobData.result);
-        } else if (jobData.status === 'failed') {
+        } else if (jobData.status === 'error') {
           clearInterval(intervalId); // Stop polling if the job failed
           reject(new Error('Job failed'));
         } else {

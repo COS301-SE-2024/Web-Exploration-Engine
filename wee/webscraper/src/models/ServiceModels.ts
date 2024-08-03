@@ -43,3 +43,20 @@ export interface IndustryClassification {
     score: number;
   }[]
 }
+
+export interface ScrapeResult {
+  url: string;
+  domainStatus: string;
+  robots: RobotsResponse | ErrorResponse;
+  metadata?: Metadata | ErrorResponse;
+  industryClassification?: IndustryClassification | ErrorResponse;
+  logo?: string | ErrorResponse;
+  images?: string[] | ErrorResponse;
+  slogan?: string | ErrorResponse;
+  contactInfo?: { emails: string[], phones: string[], socialLinks: string[] } ;
+  addresses?: string[] | ErrorResponse;
+  screenshot?: string | ErrorResponse;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  seoAnalysis?: any;
+  time: number;
+}

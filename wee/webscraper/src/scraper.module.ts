@@ -58,7 +58,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
     ScrapeContactInfoService,
     ScrapeAddressService,
     ScreenshotService,
-    SeoAnalysisService ,
+    SeoAnalysisService,
   ],
 })
 export class ScraperModule {}

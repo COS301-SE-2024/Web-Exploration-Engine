@@ -1,19 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import axios from 'axios';
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.api_key;
-  async seoAnalysis(url: string, robots: RobotsResponse) {
+  async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
       return {
         error: 'Crawling not allowed for this URL',
       };
     }
-    const htmlContent = await this.fetchHtmlContent(url);
+
+    let htmlContent
+    try {
+      htmlContent = await this.fetchHtmlContent(url);
+    } catch (error) {
+      //console.error(`Error fetching HTML content: ${error.message}`);
+      return {
+        error: `Error fetching HTML content: ${error.message}`,
+      };
+    }
+    
     const [
       titleTagsAnalysis,
       metaDescriptionAnalysis,
@@ -33,11 +43,11 @@ export class SeoAnalysisService {
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
-      this.analyzeImageOptimization( url),
+      this.analyzeImageOptimization(url, browser),
       this.analyzeContentQuality( htmlContent),
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
-      this.analyzeMobileFriendliness(url),
+      this.analyzeMobileFriendliness(url, browser),
       this.analyzeStructuredData(htmlContent),
       this.analyzeIndexability(htmlContent),
       this.analyzeXmlSitemap(url),
@@ -138,12 +148,10 @@ export class SeoAnalysisService {
       recommendations,
     };
   }
-  async analyzeImageOptimization(url: string) {
-    const browser = await puppeteer.launch();
-    
-  
+  async analyzeImageOptimization(url: string, browser: puppeteer.Browser) {    
+    let page: puppeteer.Page;;
     try {
-      const page = await browser.newPage();
+      page = await browser.newPage();
       await page.goto(url, { waitUntil: 'networkidle0' });
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
@@ -194,7 +202,7 @@ export class SeoAnalysisService {
           nonOptimizedCount++;
           reasonsMap.other.push(imageUrl);  // Categorize as "other"
           errorUrls.push(`Error checking optimization for image: ${img.src}. ${error.message}`);
-        }
+        } 
       }
   
       let recommendations = '';
@@ -219,7 +227,9 @@ export class SeoAnalysisService {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
       };
     } finally {
-      await browser.close();
+      if (page) {
+        await page.close();
+      }
     }
   }
 
@@ -350,8 +360,7 @@ export class SeoAnalysisService {
       // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
-  async analyzeMobileFriendliness(url: string) {
-    const browser = await puppeteer.launch();
+  async analyzeMobileFriendliness(url: string, browser: puppeteer.Browser) {
     const page = await browser.newPage();
 
     try {
@@ -380,7 +389,9 @@ export class SeoAnalysisService {
     } catch (error) {
       console.error(`Error analyzing mobile-friendliness: ${error.message}`);
     } finally {
-      await browser.close();
+      if (page) {
+        await page.close();
+      }
     }
   }
   async analyzeStructuredData(htmlContent: string) {
