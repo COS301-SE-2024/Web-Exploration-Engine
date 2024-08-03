@@ -33,6 +33,7 @@ export default function NavBar() {
               setUser({
                   uuid: user.id,
                   emailVerified: user?.email_confirmed_at ? true : false,
+                  name: user?.user_metadata?.name,
               });
           } catch (error) {
               console.error("Error fetching user data:", error);
@@ -71,7 +72,7 @@ export default function NavBar() {
   const handleSavedReports = () => {  
     router.push('/savedreports');
   }
-
+    
   return (
       <Navbar
         isBordered
@@ -85,7 +86,7 @@ export default function NavBar() {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand>            
-          <p className="font-bold text-inherit">WEE</p>
+          <p className="font-bold text-inherit" data-testid='navTitle'>WEE</p>
         </NavbarBrand>
       </NavbarContent>
 
@@ -125,6 +126,12 @@ export default function NavBar() {
 
         {user ? (
             <>
+                {/* display users name */}
+                <NavbarItem className="hidden lg:flex">
+                    <p className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor">
+                        {user.name}
+                    </p>
+                </NavbarItem>
                 <NavbarItem className="hidden lg:flex">
                   <Avatar showFallback src='https://images.unsplash.com/broken' />
                 </NavbarItem>

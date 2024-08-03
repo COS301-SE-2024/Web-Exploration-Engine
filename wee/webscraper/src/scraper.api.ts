@@ -387,14 +387,80 @@ export const GetJobStatusTypeParam = ApiParam({
       'seo-analysis',
     ],
   },
-})
-export const GetJobStatusUrlParam = ApiParam({
-  name: 'url',
-  required: true,
-  description: 'The URL to check the status for.',
-})
-export const GetJobStatusResponse200 = ApiResponse({ status: 200, description: 'Job status retrieved successfully.' })
-export const GetJobStatusResponse400 = ApiResponse({ status: 400, description: 'Invalid type parameter.' })
-export const GetJobStatusResponse404 = ApiResponse({ status: 404, description: 'Job not found.' })
-export const GetJobStatusResponse500 = ApiResponse({ status: 500, description: 'Internal server error.' })
-export const GetJobStatusOperation = ApiOperation({ summary: 'Get the status of a scraping job' });
+});
+// // Scrape Addresses endpoint
+// export const ScrapeAddressesOperation = ApiOperation({ summary: 'Scrape addresses from a website' });
+// export const ScrapeAddressesQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape addresses from' });
+// export const ScrapeAddressesResponse200 = ApiResponse({
+//   status: 200,
+//   description: 'Addresses successfully scraped',
+//   schema: {
+//     type: 'array',
+//     items: {
+//       type: 'string',
+//     },
+//   },
+// });
+// export const ScrapeAddressesResponse400 = ApiResponse({
+//   status: 400,
+//   description: 'Bad Request. URL parameter is required',
+//   schema: {
+//     type: 'object',
+//     properties: {
+//       errorStatus: { type: 'number' },
+//       errorCode: { type: 'string' },
+//       errorMessage: { type: 'string' },
+//     },
+//   },
+// });
+// export const ScrapeAddressesResponse500 = ApiResponse({
+//   status: 500,
+//   description: 'Internal Server Error. An error occurred while scraping addresses',
+//   schema: {
+//     type: 'object',
+//     properties: {
+//       errorStatus: { type: 'number' },
+//       errorCode: { type: 'string' },
+//       errorMessage: { type: 'string' },
+//     },
+//   },
+// });
+
+// export const SeoAnalysisOperation = ApiOperation({ summary: 'Perform SEO analysis on a website' });
+// export const SeoAnalysisQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to perform SEO analysis on' });
+// export const SeoAnalysisResponse200 = ApiResponse({
+//   status: 200,
+//   description: 'SEO analysis successfully performed',
+//   schema: {
+//     type: 'object',
+//     properties: {
+//       titleTags: { type: 'string' },
+//       metaDescriptions: { type: 'string' },
+
+//         },
+//   },
+// });
+// export const SeoAnalysisResponse400 = ApiResponse({
+//   status: 400,
+//   description: 'Bad Request. URL parameter is required',
+//   schema: {
+//     type: 'object',
+//     properties: {
+//       errorStatus: { type: 'number' },
+//       errorCode: { type: 'string' },
+//       errorMessage: { type: 'string' },
+//     },
+//   },
+// });
+// export const SeoAnalysisResponse500 = ApiResponse({
+//   status: 500,
+//   description: 'Internal Server Error. An error occurred while performing SEO analysis',
+//   schema: {
+//     type: 'object',
+//     properties: {
+//       errorStatus: { type: 'number' },
+//       errorCode: { type: 'string' },
+//       errorMessage: { type: 'string' },
+//     },
+//   },
+// });

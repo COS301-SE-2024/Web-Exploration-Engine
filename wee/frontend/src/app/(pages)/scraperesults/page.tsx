@@ -84,7 +84,7 @@ function ResultsComponent() {
 
   // Pagination
   const [page, setPage] = React.useState(1);
-  const [resultsPerPage, setResultsPerPage] = React.useState(5);
+  const [resultsPerPage, setResultsPerPage] = React.useState(10);
   const pages = Math.ceil(filteredItems.length / resultsPerPage);
 
   const handleResultsPerPageChange = (
@@ -262,10 +262,9 @@ const getScrapingResults = async (url: string) => {
             onChange={handleResultsPerPageChange}
             aria-label="Number of results per page"
           >
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="7">7</option>
-            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
           </select>
         </label>
       </div>

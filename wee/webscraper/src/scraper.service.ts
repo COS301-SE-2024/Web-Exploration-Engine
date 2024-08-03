@@ -14,6 +14,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 
 // Models
 import {
@@ -21,6 +22,7 @@ import {
   RobotsResponse,
   Metadata,
   IndustryClassification,
+  SentimentClassification,
   ScrapeResult
 } from './models/ServiceModels';
 
@@ -40,6 +42,7 @@ export class ScraperService implements OnModuleInit {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
+    private readonly sentimentAnalysisService: SentimentAnalysisService
   ) {}
 
   onModuleInit() {
@@ -105,6 +108,7 @@ export class ScraperService implements OnModuleInit {
       addresses: [],
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
+      sentimentClassification: null as SentimentClassification | null,
       time: 0,
     } as ScrapeResult;
 
@@ -170,16 +174,18 @@ export class ScraperService implements OnModuleInit {
     const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
     const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
     const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
+    const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
-    const [industryClassification, logo, images] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise]);
+    const [industryClassification, logo, images, sentimentAnalysis] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise]);
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
-    
-
+  
     data.logo = logo;
 
     data.images = images;
+
+    data.sentimentClassification = sentimentAnalysis;
 
     // close browser
     await browser.close();
@@ -426,6 +432,40 @@ export class ScraperService implements OnModuleInit {
     const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
     await browser.close();
     return seoAnalysis;
+  }
+
+  async classifySentiment(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+
+    // create puppeteer instance
+    let browser;
+    try {
+      browser = await puppeteer.launch(); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const metadataResponse = await this.metadataService.scrapeMetadata(
+      robotsResponse.baseUrl,
+      robotsResponse as RobotsResponse,
+      browser
+    );
+    if ('errorStatus' in metadataResponse) {
+      await browser.close();
+      return metadataResponse;
+    }
+
+    const sentimentClassification = await this.sentimentAnalysisService.classifySentiment(url, metadataResponse as Metadata);
+    await browser.close();
+    return sentimentClassification;
   }
 
   async listenForScrapingTasks() {
