@@ -20,9 +20,10 @@ import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
+import { DonutChart } from '../../components/Graphs/DonutChart';
 
 interface Classifications {
   label: string;
@@ -70,6 +71,10 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
   return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 
+// function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
+//   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
+// }
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -103,6 +108,7 @@ function ResultsComponent() {
   const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinksAnalysis | SEOError>();
   const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
   const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
+  const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis>();
 
   useEffect(() => {
     if (url) {
@@ -144,6 +150,7 @@ function ResultsComponent() {
           setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
           setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
+          setSentimentAnalysis(urlResults[0].sentiment);
         }
       }
     }
@@ -1116,10 +1123,43 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="wow" data-testid="tab-wow" title="WOW factors">
+          <Tab key="sentiment" data-testid="tab-sentiment" title="Sentiment Analysis">
             <Card>
               <CardBody>
-                wow
+                {/* Sentiment Analysis */}
+                <div>
+                  {/* Sentiment Analysis */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Sentiment Analysis
+                    <InfoPopOver 
+                      heading="Sentiment Analysis" 
+                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      placement="right-end" 
+                    />
+                  </h3> 
+                    {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
+                      <div className='w-full md:w-1/2 md:mx-auto'>
+                        <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
+                      </div>  )
+                      : (
+                      <div>
+                        No sentiment analysis data to display
+                      </div> )
+                    }
+
+                  {/* Positive and Negative Words */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Positive and Negative Words
+                    <InfoPopOver 
+                      heading="Positive and Negative Words" 
+                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      placement="right-end" 
+                    />
+                  </h3> 
+                  <div>
+                    
+                  </div>
+                </div>{/* EO Sentiment Analysis */}
               </CardBody>
             </Card>
           </Tab>              
