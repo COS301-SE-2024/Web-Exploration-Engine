@@ -18,9 +18,8 @@ import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
-import { Metadata, ErrorResponse } from '../../models/ScraperModels';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -43,9 +42,9 @@ export default function Results() {
   );
 }
 
-function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
-  return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
-}
+// function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
+//   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
+// }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
   return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
@@ -71,6 +70,10 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
   return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 
+function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
+  return 'title' in data || 'description' in data || 'keywords' in data || 'ogTitle' in data || 'ogDescription' in data || 'ogImage' in data;
+}
+
 // function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
 //   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
 // }
@@ -94,6 +97,7 @@ function ResultsComponent() {
     useState<Classifications[]>([]);
   const [domainClassification, setDomainClassification] =
     useState<Classifications[]>([]);
+  const [metaData, setMetaData] = useState<Metadata | ErrorResponse>();
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
@@ -135,6 +139,7 @@ function ResultsComponent() {
           setImageList(urlResults[0].images);
           setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify);
           setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify);
+          setMetaData(urlResults[0].metadata);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
@@ -1156,9 +1161,50 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3> 
-                  <div>
+                  {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
+                    <div>There is no positive or negative words to display</div>
+                  )
+                  : (
+                    <>                    
+                      {metaData && isMetadata(metaData) ? (
+                        <div>
+                          <div>
+                            {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
+                              sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              <span key={index}>{part}</span>)
+                            ))}
+                          </div>
+                          <div>
+                            {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
+                              sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              <span key={index}>{part}</span>)
+                            ))}
+                          </div>
+                          <div>
+                            {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
+                              sentimentAnalysis?.positiveWords.includes(part) ? 
+                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              (sentimentAnalysis?.negativeWords.includes(part) ? 
+                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                              <span key={index}>{part}</span>)
+                            ))}                            
+                          </div>
+                        </div>
+                      )
+                      : (
+                        <div>
+                          {metaData?.errorMessage}
+                        </div>
+                      )}  
+                    </>
+                  )}                  
                     
-                  </div>
                 </div>{/* EO Sentiment Analysis */}
               </CardBody>
             </Card>
