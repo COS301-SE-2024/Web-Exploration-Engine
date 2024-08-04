@@ -736,11 +736,13 @@ function ResultsComponent() {
                                   The format of the following URLs are incorrect
                                 </h5>
                                 <div className='overflow-x-scroll'>
-                                  {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
-                                    <p key={index}>
-                                      <Link href={formatUrl}>{formatUrl}</Link> 
-                                    </p>                           
-                                  ))}
+                                  <ScrollShadow hideScrollBar className="max-h-[400px]" size={75}>
+                                    {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                      <p key={index}>
+                                        <Link href={formatUrl}>{formatUrl}</Link> 
+                                      </p>                           
+                                    ))}
+                                  </ScrollShadow>
                                 </div>
                               </div>
                           }
@@ -894,7 +896,6 @@ function ResultsComponent() {
                             List of Headings
                           </h5>
                           <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
-                            {/* <Content /> */}                            
                             {headingAnalysis?.headings.map((heading, index) => (
                               <p key={index}>{heading}</p>
                             ))}
@@ -1215,8 +1216,8 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3>       
-                  {sentimentAnalysis?.emotions ? (
-                    <div className='gap-3 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-7'>
+                  {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
+                    <div className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
                       <div className="flex justify-center">
                         <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
                       </div>
