@@ -1214,30 +1214,35 @@ function ResultsComponent() {
                       content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
                       placement="right-end" 
                     />
-                  </h3>         
-                  <div className='gap-3 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={20} label={"Anger"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={12} label={"Disgust"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={37} label={"Fear"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={40} label={"Joy"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={84} label={"Neutral"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={13} label={"Sadness"}/>
-                    </div>
-                    <div className="flex justify-center">
-                      <CircularProgressSentiment value={22} label={"Surprise"}/>
-                    </div>
-                  </div>       
+                  </h3>       
+                  {sentimentAnalysis?.emotions ? (
+                    <div className='gap-3 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 xl:grid-cols-7'>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"}/>
+                      </div>
+                      <div className="flex justify-center">
+                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"}/>
+                      </div>
+                    </div>   
+                  )
+                  : (
+                    <div>There is no emotions to display</div>
+                  )}     
                     
                 </div>{/* EO Sentiment Analysis */}
               </CardBody>
