@@ -21,6 +21,7 @@ import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
 import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
+import { AreaChart } from '../../components/Graphs/AreaChart';
 
 interface weakClassification {
     url: string;
@@ -459,9 +460,19 @@ export default function SummaryReport() {
                         </WEETable>
                     </div>
                 </div> {/* Grid */}
+
+
+                {/* Sentiment Analysis */}
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Sentiment Analysis
+                </h3>
+                <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+                    <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={[{name: 'https://www.wimpy.co.za', data:[0,0,0,28,44,1,26]}, {name: 'https://www.wootware.co.za/', data:[1,0,0,13,64,1,20]}, {name: 'https://www.spur.co.za', data:[1,0,0,76,15,1,8]}]}/>
+                </div>
+
             </div>
 
-        {/* Confirm save */}
+    {/* Confirm save */}
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
