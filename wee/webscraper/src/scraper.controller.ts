@@ -9,7 +9,8 @@ import {
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
-
+import { ProxyService } from './proxy/proxy.service';
+import * as puppeteer from 'puppeteer';
 @ApiTags('Scraping')
 @Controller('scraper')
 @UseInterceptors(PerformanceInterceptor)
@@ -17,9 +18,38 @@ export class ScraperController {
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsubService : PubSubService,
+    private readonly prox: ProxyService,
   ) {}
 
   topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
+
+  // proxy test
+  // @Get('proxy')
+  // async getProxy() {
+  //   const proxy = this.prox.getProxy();
+  //   const browser = await puppeteer.launch({
+  //     args: [`--proxy-server=${proxy.url}`],
+  //   });
+  
+  //   const page = await browser.newPage();
+
+  //   const username = proxy.username;
+  //   const password = proxy.password;
+
+  //   if (username && password) {
+  //     await page.authenticate({ username, password });
+  //   }
+  
+  //   try {
+  //     await page.goto('http://checkip.amazonaws.com/');
+  //     const ip = await page.evaluate(() => document.body.innerText.trim());
+  //     console.log(`IP Address: ${ip}`);
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //   }
+  
+  //   await browser.close();
+  // }
 
   @ScrapeOperation
   @ScraperQuery

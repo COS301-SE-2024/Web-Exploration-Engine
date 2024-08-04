@@ -388,6 +388,41 @@ export const GetJobStatusTypeParam = ApiParam({
     ],
   },
 });
+export const GetJobStatusUrlParam = ApiParam({
+  name: 'url',
+  required: true,
+  description: 'URL of the job.',
+  schema: {
+    type: 'string',
+  },
+});
+export const GetJobStatusOperation = ApiOperation({ summary: 'Get the status of a job' });
+
+export const GetJobStatusResponse200 = ApiResponse({
+  status: 200,
+  description: 'Job status successfully retrieved',
+  schema: {
+    type: 'object',
+    properties: {
+      status: { type: 'string' },
+      result: { type: 'object' },
+    },
+  },
+});
+
+export const GetJobStatusResponse400 = ApiResponse({
+  status: 400,
+  description: 'Bad Request. URL parameter is required',
+  schema: {
+    type: 'object',
+    properties: {
+      errorStatus: { type: 'number' },
+      errorCode: { type: 'string' },
+      errorMessage: { type: 'string' },
+    },
+  },
+});
+
 // // Scrape Addresses endpoint
 // export const ScrapeAddressesOperation = ApiOperation({ summary: 'Scrape addresses from a website' });
 // export const ScrapeAddressesQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape addresses from' });

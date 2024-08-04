@@ -21,7 +21,9 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
-import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service'; 
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
+import { ProxyService } from './proxy/proxy.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -52,8 +54,15 @@ import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysi
     RobotsService,
     ScrapeMetadataService,
     ScrapeStatusService,
-    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService,ScrapeAddressService,
-    ScreenshotService,SeoAnalysisService,SentimentAnalysisService
+    IndustryClassificationService, 
+    ScrapeLogoService, 
+    ScrapeImagesService,
+    ScrapeContactInfoService,
+    ScrapeAddressService,
+    ScreenshotService,
+    SeoAnalysisService,
+    SentimentAnalysisService,
+    ProxyService,
   ],
 })
 export class ScraperModule {}

@@ -40,8 +40,8 @@ export class SeoAnalysisService {
       lighthouseAnalysis,
 
     ] = await Promise.all([
-      this.analyzeMetaDescription(htmlContent, url),
       this.analyzeTitleTag(htmlContent),
+      this.analyzeMetaDescription(htmlContent, url),
       this.analyzeHeadings(htmlContent),
       this.analyzeImageOptimization(url, browser),
       this.analyzeContentQuality( htmlContent),
