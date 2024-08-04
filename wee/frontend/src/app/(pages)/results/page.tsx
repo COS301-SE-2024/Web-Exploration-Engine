@@ -23,6 +23,7 @@ import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysi
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
+import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 
 interface Classifications {
   label: string;
@@ -1203,7 +1204,40 @@ function ResultsComponent() {
                         </div>
                       )}  
                     </>
-                  )}                  
+                  )}   
+
+                  {/* Emotions */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Emotions
+                    <InfoPopOver 
+                      heading="Emotions" 
+                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      placement="right-end" 
+                    />
+                  </h3>         
+                  <div className='gap-3 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7'>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={20} label={"Anger"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={12} label={"Disgust"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={37} label={"Fear"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={40} label={"Joy"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={84} label={"Neutral"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={13} label={"Sadness"}/>
+                    </div>
+                    <div className="flex justify-center">
+                      <CircularProgressSentiment value={22} label={"Surprise"}/>
+                    </div>
+                  </div>       
                     
                 </div>{/* EO Sentiment Analysis */}
               </CardBody>
