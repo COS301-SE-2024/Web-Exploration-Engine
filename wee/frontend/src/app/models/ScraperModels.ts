@@ -235,15 +235,18 @@ export interface Summary {
   avgTime:number;
   metaRadar: {
     categories: string[],
-    series: RadarGraph[]
+    series: Graph[]
   },
   domainRadar: {
     categories: string[],
-    series: RadarGraph[]
+    series: Graph[]
+  },
+  emotionsArea: {
+    series: Graph[]
   }
 }
 
-export interface RadarGraph {
+export interface Graph {
   name: string,
   data: number[]
 }

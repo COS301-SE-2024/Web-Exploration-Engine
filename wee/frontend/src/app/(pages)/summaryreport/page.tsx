@@ -45,6 +45,15 @@ export interface RadarSeries {
     data: number[]
 }
 
+interface AreaInterface {
+    series: AreaSeries[]
+}
+
+export interface AreaSeries {
+    name: string,
+    data: number[]
+}
+
 export default function SummaryReport() {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -67,6 +76,7 @@ export default function SummaryReport() {
     const [avgTime, setAvgTime] = useState<number>(0);
     const [metaRadar, setMetaRadar] = useState<RadarInterface>();
     const [domainRadar, setDomainRadar] = useState<RadarInterface>();
+    const [emotionsArea, setEmotionsArea] = useState<AreaInterface>();
    
     useEffect(() => {
         
@@ -86,6 +96,7 @@ export default function SummaryReport() {
             setAvgTime(summaryReport.avgTime ?? 0);
             setMetaRadar(summaryReport.metaRadar ?? {categories: [], series: []});
             setDomainRadar(summaryReport.domainRadar ?? {categories: [], series: []});
+            setEmotionsArea(summaryReport.emotionsArea ?? {areaCategories: [], areaSeries: []});
         }
 
     }, [summaryReport]);
@@ -461,14 +472,17 @@ export default function SummaryReport() {
                     </div>
                 </div> {/* Grid */}
 
-
-                {/* Sentiment Analysis */}
                 <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                     Sentiment Analysis
                 </h3>
-                <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
-                    <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={[{name: 'https://www.wimpy.co.za', data:[0,0,0,28,44,1,26]}, {name: 'https://www.wootware.co.za/', data:[1,0,0,13,64,1,20]}, {name: 'https://www.spur.co.za', data:[1,0,0,76,15,1,8]}]}/>
-                </div>
+                {/* Sentiment Analysis */}
+                {
+                    summaryReport.emotionsArea && summaryReport.emotionsArea.series.length > 0 ? (
+                        <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+                            <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={summaryReport.emotionsArea.series}/>
+                        </div>
+                    ) : (<></>)
+                }
 
             </div>
 
