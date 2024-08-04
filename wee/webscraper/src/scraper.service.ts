@@ -71,7 +71,7 @@ export class ScraperService implements OnModuleInit {
         return this.getScreenshot(url);
       case 'scrape-contact-info':
         return this.scrapeContactInfo(url);
-      case 'scrape-address':
+      case 'scrape-addresses':
         return this.scrapeAddress(url);
       case 'seo-analysis':
         return this.seoAnalysis(url);
@@ -89,8 +89,10 @@ export class ScraperService implements OnModuleInit {
     let browser: puppeteer.Browser;
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); 
+
+      
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -251,7 +253,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -288,7 +290,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -325,7 +327,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); 
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -363,7 +365,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); 
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -390,7 +392,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -417,7 +419,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -444,7 +446,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -471,7 +473,7 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy.url}`],
+        args: [`--proxy-server=${proxy}`],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);

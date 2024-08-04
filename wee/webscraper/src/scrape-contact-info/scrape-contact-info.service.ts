@@ -12,15 +12,33 @@ export class ScrapeContactInfoService {
    */
 
   async scrapeContactInfo(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ emails: string[], phones: string[], socialLinks: string[] } > {
+    
+    // Check if the URL is allowed to be scraped
+    if (!robots.isUrlScrapable) {
+      console.error('Crawling not allowed for this URL');
+      return { emails: [], phones: [], socialLinks: [] };
+    }
+
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return { emails: [], phones: [], socialLinks: [] };
+    }
+    
     let page;
 
     try {
-      if (!robots.isUrlScrapable) {
-        console.error('Crawling not allowed for this URL');
-        return { emails: [], phones: [], socialLinks: [] };
-      }
-      
       page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
+      
       await page.goto(url);
 
       // Extract text content from the page

@@ -149,9 +149,27 @@ export class SeoAnalysisService {
     };
   }
   async analyzeImageOptimization(url: string, browser: puppeteer.Browser) {    
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return {
+        error: 'Proxy username or password not set',
+      };
+    }
+
     let page: puppeteer.Page;;
     try {
       page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password
+      });
+
       await page.goto(url, { waitUntil: 'networkidle0' });
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
@@ -361,7 +379,23 @@ export class SeoAnalysisService {
     }
   }
   async analyzeMobileFriendliness(url: string, browser: puppeteer.Browser) {
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return {
+        error: 'Proxy username or password not set',
+      };
+    }
+
     const page = await browser.newPage();
+    // authenticate page with proxy
+    await page.authenticate({
+      username,
+      password,
+    });
 
     try {
       await page.setViewport({

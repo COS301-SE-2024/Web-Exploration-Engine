@@ -11,15 +11,31 @@ export class ScrapeAddressService {
    * @returns {Promise<{ addresses: string[] }>} 
    */
   async scrapeAddress(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ addresses: string[] }> {
-    let page;
+    if (!robots.isBaseUrlAllowed) {
+      console.error('Crawling not allowed for this URL');
+      return { addresses: [] };
+    }
+
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return { addresses: [] };
+    };
+
+    let page: puppeteer.Page | null = null;
 
     try {
-      if (!robots.isBaseUrlAllowed) {
-        console.error('Crawling not allowed for this URL');
-        return { addresses: [] };
-      }
+      page = await browser.newPage();
 
-      const page = await browser.newPage();
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
+      
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       const addresses = await page.evaluate(() => {

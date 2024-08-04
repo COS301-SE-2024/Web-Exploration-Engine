@@ -18,10 +18,6 @@ export class ProxyService {
 
   getProxy() {
     const proxy = this.proxyPool[Math.floor(Math.random() * this.proxyPool.length)];
-    return {
-      url: `http://${proxy}:${this.proxyPort}`,
-      username: this.proxyUsername,
-      password: this.proxyPassword,
-    };
+    return `http://${proxy}:${this.proxyPort}`;
   }
 }

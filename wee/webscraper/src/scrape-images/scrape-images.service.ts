@@ -18,10 +18,26 @@ export class ScrapeImagesService {
         return [];
     }
 
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+        console.error('Proxy username or password not set');
+        return [];
+    }
+
     let page;
     
     try {
         page = await browser.newPage();
+        
+        // authenticate page with proxy
+        await page.authenticate({
+            username,
+            password,
+        });
+
         await page.goto(url);
         const imageUrls = await page.evaluate(() => {
             const images = document.querySelectorAll('img');

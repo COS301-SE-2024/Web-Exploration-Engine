@@ -14,11 +14,31 @@ export class ScreenshotService {
       } as ErrorResponse;
     }
 
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Proxy username or password not set',
+      } as ErrorResponse;
+    }
+
+    let page;
+
     try {
-      const page = await browser.newPage();
+      page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
+
       await page.goto(url, { waitUntil: 'networkidle2' });
       const screenshotBuffer = await page.screenshot({ fullPage: true });
-      await page.close();
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
@@ -31,6 +51,10 @@ export class ScreenshotService {
         errorCode: '500 Internal Server Error',
         errorMessage: 'Failed to capture screenshot',
       } as ErrorResponse;
+    } finally {
+      if (page) {
+        await page.close();
+      }
     }
   }
 }

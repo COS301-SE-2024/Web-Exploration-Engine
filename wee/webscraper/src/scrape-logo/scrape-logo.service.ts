@@ -11,6 +11,15 @@ export class ScrapeLogoService {
      * @returns {Promise<string>} - Returns a promise that resolves to the URL of the logo or and empty string if no logo is found.
      */
   async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string> {
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+        console.error('Proxy username or password not set');
+        return '';
+    }
+
     let page;
     try {
         // Possible improvement: check if og image is a logo -- sometimes not the case 
@@ -29,6 +38,12 @@ export class ScrapeLogoService {
         }
 
         page = await browser.newPage();
+        // authenticate page with proxy
+        await page.authenticate({
+            username,
+            password,
+        });
+        
         await page.goto(url);
 
         const logoPattern = 'logo';
