@@ -182,7 +182,6 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
             });
         }
 
-        doc.save('website-summary-report.pdf');
     };        
 
     await addChartToPDF();
