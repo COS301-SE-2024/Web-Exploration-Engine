@@ -62,3 +62,6 @@ out
 .env.test.local
 .env.production.local
 .env.development
+
+#Logs
+/logs
