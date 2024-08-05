@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../services/webscraperlogger';
 import { Cache } from 'cache-manager';
 

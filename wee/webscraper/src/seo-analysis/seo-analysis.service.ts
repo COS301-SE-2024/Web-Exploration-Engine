@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../../services/webscraperlogger';
 const serviceName = "[SeoAnalysisService]";
 @Injectable()

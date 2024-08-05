@@ -1,6 +1,7 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../../services/webscraperlogger';
 import fetch from 'node-fetch';
 

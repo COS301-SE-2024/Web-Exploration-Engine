@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import puppeteer from 'puppeteer';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../../services/webscraperlogger';
 const serviceName = "[ScrapeMetadataService]";
 
