@@ -1148,7 +1148,7 @@ function ResultsComponent() {
                     />
                   </h3> 
                     {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
-                      <div className='w-full md:w-1/2 md:mx-auto'>
+                      <div data-testid={"sentiment-donut-chart"} className='w-full md:w-1/2 md:mx-auto'>
                         <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
                       </div>  )
                       : (
@@ -1162,7 +1162,7 @@ function ResultsComponent() {
                     Positive and Negative Words
                     <InfoPopOver 
                       heading="Positive and Negative Words" 
-                      content="Metadata is classified in two categories: positive and negative words. This thoughtful classification empowers users to 
+                      content="Metadata can be classified into two possible categories: positive and negative words. This thoughtful classification empowers users to 
                         strategically optimize the language within their content, thereby enhancing their ability to shape audience perception and drive meaningful engagement
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
                       placement="right-end" 
@@ -1175,7 +1175,7 @@ function ResultsComponent() {
                     <>                    
                       {metaData && isMetadata(metaData) ? (
                         <div>
-                          <div>
+                          <div data-testid={"sentiment-meta-title"}>
                             {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
                               sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
                               <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
@@ -1184,7 +1184,7 @@ function ResultsComponent() {
                               <span key={index}>{part}</span>)
                             ))}
                           </div>
-                          <div>
+                          <div data-testid={"sentiment-meta-description"}>
                             {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
                               sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
                               <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
@@ -1193,7 +1193,7 @@ function ResultsComponent() {
                               <span key={index}>{part}</span>)
                             ))}
                           </div>
-                          <div>
+                          <div data-testid={"sentiment-meta-keywords"}>
                             {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
                               sentimentAnalysis?.positiveWords.includes(part) ? 
                               <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
@@ -1224,7 +1224,7 @@ function ResultsComponent() {
                     />
                   </h3>       
                   {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
-                    <div className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
+                    <div data-testid={"sentiment-emotions-progress-charts"} className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
                       <div className="flex justify-center">
                         <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
                       </div>
