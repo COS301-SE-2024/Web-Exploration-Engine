@@ -1140,7 +1140,10 @@ function ResultsComponent() {
                     Sentiment Analysis
                     <InfoPopOver 
                       heading="Sentiment Analysis" 
-                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      content="Sentiment analysis is conducted on the extracted metadata. This analysis would provide valuable insights 
+                        into whether the content is perceived as positive, negative, or neutral. By leveraging this insight, users 
+                        can effectively align their content tone with their brand&apos;s messaging.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
                       placement="right-end" 
                     />
                   </h3> 
@@ -1159,7 +1162,9 @@ function ResultsComponent() {
                     Positive and Negative Words
                     <InfoPopOver 
                       heading="Positive and Negative Words" 
-                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      content="Metadata is classified in two categories: positive and negative words. This thoughtful classification empowers users to 
+                        strategically optimize the language within their content, thereby enhancing their ability to shape audience perception and drive meaningful engagement
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
                       placement="right-end" 
                     />
                   </h3> 
@@ -1212,7 +1217,9 @@ function ResultsComponent() {
                     Emotions
                     <InfoPopOver 
                       heading="Emotions" 
-                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
+                      content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
+                        their metadata settings, thereby invoking the desired emotional responses.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
                       placement="right-end" 
                     />
                   </h3>       

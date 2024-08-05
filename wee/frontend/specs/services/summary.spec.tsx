@@ -72,6 +72,24 @@ describe('SummaryService', () => {
               "https://www.linkedin.com/company/absa/"
           ]
       },
+      sentiment: {
+        sentimentAnalysis: {
+          positive: 0.94,
+          negative: 0.001,
+          neutral: 0.05,
+        },
+        positiveWords: ['Flame', '100%', 'choice'],
+        negativeWords: ['Nothing', 'slaps'],
+        emotions: {
+          neutral: 0.88,
+          joy: 0.02,
+          surprise: 0.1,
+          anger: 0.01,
+          disgust: 0.2,
+          sadness: 0.003,
+          fear: 0.002,
+        },
+      },
       seoAnalysis: {
         XMLSitemapAnalysis: {error: 'Error Message'},
         lighthouseAnalysis: {error: 'Error Message'},
@@ -190,6 +208,24 @@ describe('SummaryService', () => {
               "https://twitter.com/AbsaSouthAfrica",
               "https://www.linkedin.com/company/absa/"
           ]
+      },
+      sentiment: {
+        sentimentAnalysis: {
+          positive: 0.82,
+          negative: 0.002,
+          neutral: 0.18,
+        },
+        positiveWords: ['your', 'journey'],
+        negativeWords: ['Nedbank'],
+        emotions: {
+          neutral: 0.77,
+          joy: 0.17,
+          surprise: 0.1,
+          anger: 0.006,
+          disgust: 0.002,
+          sadness: 0.007,
+          fear: 0.014,
+        },
       },
       seoAnalysis: {
         XMLSitemapAnalysis: {error: 'Error Message'},
@@ -310,6 +346,24 @@ describe('SummaryService', () => {
               "https://www.linkedin.com/company/absa/"
           ]
       },
+      sentiment: {
+        sentimentAnalysis: {
+          positive: 0.98,
+          negative: 0.005,
+          neutral: 0.01,
+        },
+        positiveWords: ['Life', 'Welcome', 'entire', 'enjoy', 'together'],
+        negativeWords: [],
+        emotions: {
+          neutral: 0.77,
+          joy: 0.17,
+          surprise: 0.1,
+          anger: 0.005,
+          disgust: 0.002,
+          sadness: 0.007,
+          fear: 0.014,
+        },
+      },
       seoAnalysis: {
         XMLSitemapAnalysis: {error: 'Error Message'},
         lighthouseAnalysis: {error: 'Error Message'},
@@ -428,6 +482,24 @@ describe('SummaryService', () => {
               "https://twitter.com/AbsaSouthAfrica",
               "https://www.linkedin.com/company/absa/"
           ]
+      },
+      sentiment: {
+        sentimentAnalysis: {
+          positive: 0.98,
+          negative: 0.001,
+          neutral: 0.015,
+        },
+        positiveWords: ['best', 'everyone', 'good', 'Famous', 'Take', 'Quick'],
+        negativeWords: [],
+        emotions: {
+          neutral: 0.44,
+          joy: 0.27,
+          surprise: 0.26,
+          anger: 0.004,
+          disgust: 0.002,
+          sadness: 0.007,
+          fear: 0.002,
+        },
       },
       seoAnalysis: {
         XMLSitemapAnalysis: {error: 'Error Message'},
@@ -605,7 +677,7 @@ describe('SummaryService', () => {
     ]));
   });
 
-  it('manipulate zero shot metadata data for radar grapgh', () => {
+  it('manipulate zero shot metadata data for radar graph', () => {
     scraperResults[0].industryClassification.zeroShotMetaDataClassify[0].label = 'Tech';
     scraperResults[0].industryClassification.zeroShotMetaDataClassify[0].score = 0.9;
     scraperResults[0].industryClassification.zeroShotMetaDataClassify[1].label = 'Telecomms';
@@ -647,7 +719,7 @@ describe('SummaryService', () => {
     ]));
   });
 
-  it('manipulate zero shot domain data for radar grapgh', () => {
+  it('manipulate zero shot domain data for radar graph', () => {
     scraperResults[0].industryClassification.zeroShotDomainClassify[0].label = 'Tech';
     scraperResults[0].industryClassification.zeroShotDomainClassify[0].score = 0.9;
     scraperResults[0].industryClassification.zeroShotDomainClassify[1].label = 'Telecomms';
@@ -687,6 +759,90 @@ describe('SummaryService', () => {
       {name: 'http://example3.com', data:[50, 0, 0, 0, 20, 70]},
       {name: 'http://example4.com', data:[0, 50, 0, 0, 10, 90]},
     ]));
+  });
+
+  it('emotions sentiment analysis data for area graph', () => {
+    scraperResults[0].sentiment.emotions = {
+      neutral: 0.88,
+      joy: 0.02,
+      surprise: 0.1,
+      anger: 0.01,
+      disgust: 0.2,
+      sadness: 0.003,
+      fear: 0.002,
+    };
+
+    scraperResults[1].sentiment.emotions = {
+      neutral: 0.77,
+      joy: 0.17,
+      surprise: 0.1,
+      anger: 0.006,
+      disgust: 0.002,
+      sadness: 0.007,
+      fear: 0.014,
+    };
+
+    scraperResults[2].sentiment.emotions = {
+      neutral: 0.77,
+      joy: 0.17,
+      surprise: 0.1,
+      anger: 0.005,
+      disgust: 0.002,
+      sadness: 0.007,
+      fear: 0.014,
+    };
+
+    scraperResults[3].sentiment.emotions = {
+      neutral: 0.44,
+      joy: 0.27,
+      surprise: 0.26,
+      anger: 0.004,
+      disgust: 0.002,
+      sadness: 0.007,
+      fear: 0.002,
+    }
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.emotionsArea.series).toEqual(expect.arrayContaining([
+      {name: 'http://example1.com', data:[1, 20, 0, 2, 88, 0, 10]},
+      {name: 'http://example2.com', data:[1, 0, 1, 17, 77, 1, 10]},
+      {name: 'http://example3.com', data:[1, 0, 1, 17, 77, 1, 10]},
+      {name: 'http://example4.com', data:[0, 0, 0, 27, 44, 1, 26]},
+    ]));
+
+  });
+
+  it('emotions sentiment analysis data for area graph with some undefined emotions', () => {
+    scraperResults[0].sentiment.emotions = {
+      neutral: 0.88,
+      joy: 0.02,
+      surprise: 0.1,
+      anger: 0.01,
+      disgust: 0.2,
+      sadness: 0.003,
+      fear: 0.002,
+    };
+
+    scraperResults[1].sentiment.emotions = {};
+
+    scraperResults[2].sentiment.emotions = {};
+
+    scraperResults[3].sentiment.emotions = {
+      neutral: 0.44,
+      joy: 0.27,
+      surprise: 0.26,
+      anger: 0.004,
+      disgust: 0.002,
+      sadness: 0.007,
+      fear: 0.002,
+    }
+
+    const summary = generateSummary(scraperResults);
+    expect(summary.emotionsArea.series).toEqual(expect.arrayContaining([
+      {name: 'http://example1.com', data:[1, 20, 0, 2, 88, 0, 10]},
+      {name: 'http://example4.com', data:[0, 0, 0, 27, 44, 1, 26]},
+    ]));
+
   });
 
 });
