@@ -1147,6 +1147,7 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3> 
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
                       <div data-testid={"sentiment-donut-chart"} className='w-full md:w-1/2 md:mx-auto'>
                         <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
@@ -1156,6 +1157,7 @@ function ResultsComponent() {
                         No sentiment analysis data to display
                       </div> )
                     }
+                  </div>
 
                   {/* Positive and Negative Words */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
@@ -1168,49 +1170,51 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3> 
-                  {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
-                    <div>There is no positive or negative words to display</div>
-                  )
-                  : (
-                    <>                    
-                      {metaData && isMetadata(metaData) ? (
-                        <div>
-                          <div data-testid={"sentiment-meta-title"}>
-                            {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
-                              sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
-                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
-                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              <span key={index}>{part}</span>)
-                            ))}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
+                      <div>There is no positive or negative words to display</div>
+                    )
+                    : (
+                      <>                    
+                        {metaData && isMetadata(metaData) ? (
+                          <div>
+                            <div data-testid={"sentiment-meta-title"}>
+                              {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}
+                            </div>
+                            <div data-testid={"sentiment-meta-description"}>
+                              {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}
+                            </div>
+                            <div data-testid={"sentiment-meta-keywords"}>
+                              {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}                            
+                            </div>
                           </div>
-                          <div data-testid={"sentiment-meta-description"}>
-                            {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
-                              sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
-                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
-                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              <span key={index}>{part}</span>)
-                            ))}
+                        )
+                        : (
+                          <div>
+                            {metaData?.errorMessage}
                           </div>
-                          <div data-testid={"sentiment-meta-keywords"}>
-                            {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
-                              sentimentAnalysis?.positiveWords.includes(part) ? 
-                              <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              (sentimentAnalysis?.negativeWords.includes(part) ? 
-                              <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                              <span key={index}>{part}</span>)
-                            ))}                            
-                          </div>
-                        </div>
-                      )
-                      : (
-                        <div>
-                          {metaData?.errorMessage}
-                        </div>
-                      )}  
-                    </>
-                  )}   
+                        )}  
+                      </>
+                    )}   
+                  </div>
 
                   {/* Emotions */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
@@ -1222,35 +1226,37 @@ function ResultsComponent() {
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
                       placement="right-end" 
                     />
-                  </h3>       
-                  {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
-                    <div data-testid={"sentiment-emotions-progress-charts"} className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"}/>
-                      </div>
-                      <div className="flex justify-center">
-                        <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"}/>
-                      </div>
-                    </div>   
-                  )
-                  : (
-                    <div>There is no emotions to display</div>
-                  )}     
+                  </h3>     
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>                  
+                    {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
+                      <div data-testid={"sentiment-emotions-progress-charts"} className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"}/>
+                        </div>
+                      </div>   
+                    )
+                    : (
+                      <div>There is no emotions to display</div>
+                    )}     
+                  </div>  
                     
                 </div>{/* EO Sentiment Analysis */}
               </CardBody>

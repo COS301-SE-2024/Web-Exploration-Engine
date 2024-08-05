@@ -18,13 +18,13 @@ export default function CircularProgressSentiment({value, label}: CircularProgre
     };
 
     const emotionColours = {
-        Anger: { color: '#FF0000', darkColor: '#8B0000' },
-        Disgust: { color: '#8B4513', darkColor: '#654321' },
-        Fear: { color: '#8A2BE2', darkColor: '#4B0082' },
-        Joy: { color: '#FFD700', darkColor: '#FFD700' }, // Same for both modes
-        Neutral: { color: '#808080', darkColor: '#505050' },
-        Sadness: { color: '#1E90FF', darkColor: '#104E8B' },
-        Surprise: { color: '#FFA500', darkColor: '#FF8C00' }
+        Anger: { color: '#FF0000', darkColor: '#940000' },
+        Disgust: { color: '#8B4513', darkColor: '#b28d6e' },
+        Fear: { color: '#8A2BE2', darkColor: '#BB86FC' },
+        Joy: { color: '#F9B133', darkColor: '#FFD700' }, // Same for both modes
+        Neutral: { color: '#808080', darkColor: '#95969d' },
+        Sadness: { color: '#1E90FF', darkColor: '#3fafe8' },
+        Surprise: { color: '#E97837', darkColor: '#FF8C00' }
     };
 
     const { color, darkColor } = emotionColours[label];
