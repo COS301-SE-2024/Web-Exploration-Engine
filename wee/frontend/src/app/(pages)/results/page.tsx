@@ -5,7 +5,7 @@ import {
   Button, Tabs, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter,
+  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
 import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
@@ -19,6 +19,10 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { Metadata, ErrorResponse } from '../../models/ScraperModels';
+import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification } from '../../models/ScraperModels';
+import WEETabs from '../../components/Util/Tabs';
+import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 
 interface Classifications {
   label: string;
@@ -42,6 +46,30 @@ function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
 }
 
+function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
+  return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
+}
+
+function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
+  return 'count' in data || 'headings' in data || 'recommendations' in data;
+}
+
+function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
+  return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+}
+
+function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is InternalLinksAnalysis {
+  return 'recommendations' in data || 'totalLinks' in data || 'uniqueLinks' in data;  
+}
+
+function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
+  return 'length' in data || 'recommendations' in data || 'titleTag' in data;  
+}
+
+function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
+  return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
+}
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -53,12 +81,14 @@ function ResultsComponent() {
 
   const router = useRouter();
 
+  const excludedUniqueRepeatedWords = ['for', 'in', 'to', 'a', 'the', 'with', 'on', 'and', 'you', 'your', 'of', 'is', 'r'];
+
   const [websiteStatus, setWebsiteStatus] = useState('');
   const [isCrawlable, setIsCrawlable] = useState(false);
   const [industryClassification, setIndustryClassification] =
-    useState<Classifications>();
+    useState<Classifications[]>([]);
   const [domainClassification, setDomainClassification] =
-    useState<Classifications>();
+    useState<Classifications[]>([]);
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
@@ -67,6 +97,12 @@ function ResultsComponent() {
   const [emails, setEmails] = useState<string[]>([]);
   const [phones, setPhones] = useState<string[]>([]);
   const [socialLinks, setSocialLinks] = useState<string[]>([]);
+  const [titleTagsAnalysis, setTitleTagAnalysis] = useState<TitleTagsAnalysis | SEOError>();
+  const [headingAnalysis, setHeadingAnalysis] = useState<HeadingAnalysis | SEOError>();
+  const [imagesAnalysis, setImageAnalysis] = useState<ImageAnalysis | SEOError>();
+  const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinksAnalysis | SEOError>();
+  const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
+  const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
@@ -91,8 +127,8 @@ function ResultsComponent() {
 
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
-          setIndustryClassification(urlResults[0].industryClassification.metadataClass);
-          setDomainClassification(urlResults[0].industryClassification.domainClass);
+          setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify);
+          setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
@@ -102,6 +138,12 @@ function ResultsComponent() {
           setEmails(urlResults[0].contactInfo.emails);
           setPhones(urlResults[0].contactInfo.phones);
           setSocialLinks(urlResults[0].contactInfo.socialLinks);
+          setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
+          setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
+          setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
+          setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
+          setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
+          setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
         }
       }
     }
@@ -111,124 +153,10 @@ function ResultsComponent() {
     router.back();
   };
 
-  const handleDownloadReport = () => {
-    const doc = new jsPDF();
-    
-    // Title
-    doc.setFontSize(20);
-    const title = 'Web Exploration Engine Individual Report';
-    const titleWidth = doc.getStringUnitWidth(title) * 20 / doc.internal.scaleFactor;
-    const x = (doc.internal.pageSize.width - titleWidth) / 2;
-    doc.text(title, x, 20);
-  
-    // Define table positions and dimensions
-    const startY = 30;
-    const margin = 14;
-    const headerHeight = 10;
-    const rowHeight = 10;
-    const columnWidth = [60, 190];
-    
-    // Function to draw a horizontal line
-    const drawLine = (lineY: number): void => {
-      doc.setDrawColor(200, 200, 200); // Light grey color
-      doc.line(0, lineY - 1, margin + columnWidth[0] + columnWidth[1], lineY - 1); 
-    };
-    
-    // Draw Table Header
-    const darkTealGreenR = 47; 
-    const darkTealGreenG = 139; 
-    const darkTealGreenB = 87; 
-    doc.setFontSize(14);
-    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
-    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.text('Category', margin + 2, startY + 7);
-    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
-  
-    // Function to split text into lines that fit within a max width
-    const splitText =(text: string, maxWidth: number): string[] => {
-      const lines = [];
-      let line = '';
-      const words = text.split(' ');
-  
-      for (const word of words) {
-        const testLine = line + (line.length > 0 ? ' ' : '') + word;
-        const testWidth = doc.getStringUnitWidth(testLine) * 20 / doc.internal.scaleFactor;
-  
-        if (testWidth > maxWidth) {
-          lines.push(line);
-          line = word;
-        } else {
-          line = testLine;
-        }
-      }
-      if (line.length > 0) {
-        lines.push(line);
-      }
-      
-      return lines;
-    };
-  
-    // Draw Table Rows
-    const rows = [
-      ['URL', url || 'N/A'],
-      ['Title', summaryInfo?.title || 'N/A'],
-      ['Description', summaryInfo?.description || 'N/A'],
-      ['Website Status', websiteStatus || 'N/A'],
-      ['Crawlable', isCrawlable ? 'Yes' : 'No'],
-      ['Industry', industryClassification?.label || 'N/A'],
-      ['Confidence Score', isCrawlable ? `${(industryClassification?.score ? (industryClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
-      ['Domain Match', domainClassification?.label || 'N/A'],
-      ['Confidence Score', isCrawlable ? `${(domainClassification?.score ? (domainClassification.score * 100).toFixed(2) : 0)}%` : 'N/A'],
-    ];
-  
-    let y = startY + headerHeight;
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-  
-    rows.forEach(row => {
-      const [category, info] = row;
-      const categoryLines = splitText(category, columnWidth[0] - 4);
-      const infoLines = splitText(info, columnWidth[1] - 4);
-      
-      categoryLines.forEach((line, i) => {
-        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
-      });
-      infoLines.forEach((line, i) => {
-        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
-      });
-      
-      // Draw line after each row
-      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
-      
-      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
-      
-      if (y > 270) { // Check if the y position exceeds the page limit
-        doc.addPage();
-        y = 20; // Reset y position on the new page
-        doc.text('Category', margin + 2, y + 7);
-        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
-        y += headerHeight;
-      }
-    });
-  
-    // Clean Filename
-    const cleanFilename = (url: string | null): string => {
-      if (!url) return 'website-summary-report';
-      let filename = url.replace('http://', '').replace('https://', '');
-      filename = filename.split('').map(char => {
-        return ['/', ':', '*', '?', '"', '<', '>', '|'].includes(char) ? '_' : char;
-      }).join('');
-      return filename.length > 50 ? filename.substring(0, 50) : filename;
-    };
-  
-    const filename = cleanFilename(url);
-    doc.save(`${filename}.pdf`);
+  const downloadSummaryReport = (key: any) => {
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
   };
-  
  
- 
-  
   // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
@@ -314,7 +242,7 @@ function ResultsComponent() {
         </Button>
 
         <div className="mb-8 text-center">
-            <h1 className="mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
               Results of {url}
             </h1>
             <div className="mt-4 mr-4 flex justify-end">
@@ -322,6 +250,7 @@ function ResultsComponent() {
                 <DropdownTrigger>
                   <Button 
                     variant="flat" 
+                    data-testid="btn-export-save-report"
                     startContent={<FiShare className={iconClasses}/>}
                   >
                     Export/Save
@@ -342,7 +271,7 @@ function ResultsComponent() {
                       key="download"
                       startContent={<FiDownload className={iconClasses}/>}
                       description="Download the report to your device"
-                      onAction={handleDownloadReport}
+                      onAction={downloadSummaryReport}
                       data-testid="download-report-button"
                     >
                       Download
@@ -361,7 +290,7 @@ function ResultsComponent() {
                       key="download"
                       startContent={<FiDownload className={iconClasses}/>}
                       description="Download the report to your device"
-                      onAction={handleDownloadReport}
+                      onAction={downloadSummaryReport}
                       data-testid="download-report-button"
                     >
                       Download
@@ -373,8 +302,8 @@ function ResultsComponent() {
         </div>
 
         {/* Tabs */}
-        <Tabs aria-label="Options" size="lg">
-          <Tab key="general" title="General Overview">
+        <WEETabs aria-label="Options">
+          <Tab key="general" data-testid="tab-general" title="General Overview">
             <Card>
               <CardBody>
 
@@ -478,53 +407,70 @@ function ResultsComponent() {
                       <TableRow key="3">
                         <TableCell>Industry</TableCell>
                         <TableCell>
-                          <Chip radius="sm" color="secondary" variant="flat">
-                            {isCrawlable ? `${industryClassification?.label}` : 'N/A'}
-                          </Chip>
-                          <Chip
-                            radius="sm"
-                            color={
-                              industryClassification?.score &&
-                              industryClassification?.score * 100 > 80
-                                ? 'success'
-                                : industryClassification?.score &&
-                                  industryClassification?.score * 100 >= 50
-                                ? 'warning'
-                                : 'danger'
-                            }
-                            variant="flat"
-                            className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
-                          >
-                            {isCrawlable && industryClassification?.score
-                              ? `Confidence Score: ${(industryClassification?.score * 100).toFixed(2)}%`
-                              : 'Confidence Score: 0%'}
-                          </Chip>
-                        </TableCell>
+                          {industryClassification && industryClassification.length > 0 && !industryClassification.every(industryLabel => industryLabel.label == 'Unknown') ? (
+                            industryClassification.map((classification, index) => (
+                              <div className='my-2' key={index}>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                  {isCrawlable ? `${classification.label}` : 'N/A'}
+                                </Chip>
+                                <Chip
+                                  radius="sm"
+                                  color={
+                                    classification.score &&
+                                    classification.score * 100 > 80
+                                      ? 'success'
+                                      : classification.score &&
+                                        classification.score * 100 >= 50
+                                      ? 'warning'
+                                      : 'danger'
+                                  }
+                                  variant="flat"
+                                  className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
+                                >
+                                  {isCrawlable && classification.score
+                                    ? `Confidence Score: ${(classification.score * 100).toFixed(2)}%`
+                                    : 'Confidence Score: 0%'}
+                                </Chip>
+                              </div>
+                            )))
+                          : (
+                            <span>No industry classifications available</span>
+                          )}
+                        </TableCell>                        
                       </TableRow>
                       <TableRow key="4">
                         <TableCell>Domain match</TableCell>
                         <TableCell>
-                          <Chip radius="sm" color="secondary" variant="flat">
-                            {isCrawlable ? `${domainClassification?.label}` : 'N/A'}
-                          </Chip>
-                          <Chip
-                            radius="sm"
-                            color={
-                              domainClassification?.score &&
-                              domainClassification?.score * 100 > 80
-                                ? 'success'
-                                : domainClassification?.score &&
-                                  domainClassification?.score * 100 >= 50
-                                ? 'warning'
-                                : 'danger'
-                            }
-                            variant="flat"
-                            className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
-                          >
-                            {isCrawlable && domainClassification?.score
-                              ? `Confidence Score: ${(domainClassification?.score * 100).toFixed(2)}%`
-                              : 'Confidence Score: 0%'}
-                          </Chip>
+                          {domainClassification && domainClassification.length > 0 && !domainClassification.every(domainLabel => domainLabel.label == 'Unknown') ? (
+                            domainClassification.map((domain, index) => (
+                              <div className='my-2' key={index}>
+                                <Chip radius="sm" color="secondary" variant="flat">
+                                  {isCrawlable ? `${domain.label}` : 'N/A'}
+                                </Chip>
+                                <Chip
+                                  radius="sm"
+                                  color={
+                                    domain.score &&
+                                    domain.score * 100 > 80
+                                      ? 'success'
+                                      : domain.score &&
+                                        domain.score * 100 >= 50
+                                      ? 'warning'
+                                      : 'danger'
+                                  }
+                                  variant="flat"
+                                  className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
+                                >
+                                  {isCrawlable && domain.score
+                                    ? `Confidence Score: ${(domain.score * 100).toFixed(2)}%`
+                                    : 'Confidence Score: 0%'}
+                                </Chip>
+                              </div>
+                            ))
+                          )
+                          : (
+                            <span>No domain match available</span>
+                          )}
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -598,7 +544,7 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="media" title="Media">
+          <Tab key="media" data-testid="tab-media" title="Media">
             <Card>
               <CardBody>
 
@@ -699,21 +645,485 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="seo" title="SEO Analysis">
+          <Tab key="seo" data-testid="tab-seo" title="SEO Analysis">
             <Card>
               <CardBody>
-                seo
+                {/* Onpage Analysis */}
+                <div>
+                  {/* Onpage Analysis Heading */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    On-Page Analysis
+                  </h3>                  
+
+                  {/* Image Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiImage />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Images
+                          <InfoPopOver 
+                            heading="Analysis of Images" 
+                            content="The code extracts all img elements, mapping their src and alt attributes to an array. It checks for alt text, image optimization, and formats like PNG, JPEG, WebP, and SVG. The function returns a report on total images, missing alt text, non-optimized images, reasons for non-optimization and recommendations. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      imagesAnalysis && isImageAnalysis(imagesAnalysis) ? 
+                        <div>
+                          {/* Count */}
+                          <div className='gap-6 grid sm:grid-cols-3'>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.totalImages}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Total Images
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.missingAltTextCount}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Missing Alt. Text
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                              <div>                             
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {imagesAnalysis?.nonOptimizedCount}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Non-Optimized Images
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+
+                          {
+                            imagesAnalysis?.reasonsMap.format.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The format of the following URLs are incorrect
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={formatUrl}>{formatUrl}</Link> 
+                                    </p>                           
+                                  ))}
+                                </div>
+                              </div>
+                          }
+
+                          {
+                            imagesAnalysis?.reasonsMap.size.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The size of the following URLs are to big
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={reasonUrl}>{reasonUrl}</Link> 
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                          }
+
+                          {
+                            imagesAnalysis?.reasonsMap.other.length != 0 &&
+                              <div className='py-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  The following images have some other problems
+                                </h5>
+                                <div className='overflow-x-scroll'>
+                                  {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={otherUrl}>{otherUrl}</Link> 
+                                    </p>
+                                  ))}
+                                </div>
+                              </div>
+                          }
+
+                          {/* {
+                            imagesAnalysis?.recommendations != '' &&
+                              <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{imagesAnalysis?.recommendations}</p>
+                              </div>
+                          } */}
+                        </div>
+                      :
+                      <>
+                        {imagesAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Image Analysis */}
+
+                  {/* Internal Linking Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiLink />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Internal Linking
+                          <InfoPopOver 
+                            heading="Analysis of Internal Linking" 
+                            content="The code selects internal links (anchor tags with href attributes starting with /), checks if there are fewer than 5 unique internal links, and recommends adding more if needed. Internal links improve site navigation and user experience, and they help search engines understand page relationships, boosting SEO. Ensuring a sufficient number of internal links enhances both site usability and search engine indexing." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      internalLinkingAnalysis && isInternalLinkAnalysis(internalLinkingAnalysis) ?
+                        <div>
+                          {/* Count */}
+                          <div className='gap-6 grid sm:grid-cols-2'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {internalLinkingAnalysis?.totalLinks}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Total Links
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {internalLinkingAnalysis?.uniqueLinks}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Unique Links
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* {
+                            internalLinkingAnalysis?.recommendations != '' &&
+                              <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{internalLinkingAnalysis?.recommendations}</p>
+                              </div>
+                          } */}
+                        </div>
+                      :
+                      <>
+                        {internalLinkingAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Internal Linking Analysis */}
+
+                  {/* Heading Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiUmbrella />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Headings
+                          <InfoPopOver 
+                            heading="Analysis of Headings" 
+                            content="The code selects all heading tags (H1 to H6) and recommends adding them if none are found. Proper use of headings improves content structure, readability, accessibility, and helps search engines index and understand the content hierarchy." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      headingAnalysis && isHeadingAnalysis(headingAnalysis) ?
+                      <div>
+                        <div className='py-1'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Count
+                          </h5>
+                          <p>{headingAnalysis?.count}</p>
+                        </div>
+
+                        <div className='py-1'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            List of Headings
+                          </h5>
+                          <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
+                            {/* <Content /> */}                            
+                            {headingAnalysis?.headings.map((heading, index) => (
+                              <p key={index}>{heading}</p>
+                            ))}
+                          </ScrollShadow>
+                        </div>
+
+                        {/* {
+                          headingAnalysis?.recommendations != '' &&
+                            <div data-testid='headings_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{headingAnalysis?.recommendations}</p>
+                            </div>
+                        } */}
+                      </div>
+                      :
+                      <>
+                        {headingAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Heading Analysis */}
+
+                  {/* MetaDescription Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiCode />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Meta Description
+                          <InfoPopOver 
+                            heading="Analysis of Meta Data" 
+                            content="This code checks if the meta description is within the optimal length (120-160 characters) and ensures that words from the URL are included in the meta description. This SEO analysis enhances visibility, relevance, and click-through rates for web pages." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      metaDescriptionAnalysis && isMetaDescriptionAnalysis(metaDescriptionAnalysis) ?
+                        <div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Title Tag
+                            </h5>
+                            <p>{metaDescriptionAnalysis?.titleTag}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Length
+                            </h5>
+                            <p>{metaDescriptionAnalysis?.length}</p>
+                          </div>
+
+                          {/* {
+                            metaDescriptionAnalysis?.recommendations !== '' && (
+                              <div data-testid='meta_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{metaDescriptionAnalysis?.recommendations}</p>
+                              </div>
+                          )} */}
+                        </div>
+                      :
+                      <>
+                        {metaDescriptionAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO MetaDescription Analysis */}
+
+                  {/* Title Tags */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiType />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Title Tags
+                          <InfoPopOver 
+                            heading="Analysis of Title tag" 
+                            content="This code extracts the title tag content and checks if its length is within the optimal range of 50-60 characters. Properly sized title tags are crucial as they serve as clickable headlines in search results and browser tabs, providing enough information without being truncated." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+                        
+                    {/* Content */}
+                    {
+                      titleTagsAnalysis && isTitleTagAnalysis(titleTagsAnalysis) ?                                             
+                        <div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Metadata Description
+                            </h5>
+                            <p>{titleTagsAnalysis?.metaDescription}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Length
+                            </h5>
+                            <p>{titleTagsAnalysis?.length}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Is URL in description?
+                            </h5>
+                            <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
+                          </div>
+
+                          {/* {
+                            titleTagsAnalysis?.recommendations != '' && 
+                              <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{titleTagsAnalysis?.recommendations}</p>
+                              </div>
+                          } */}
+                        </div>                      
+                      :
+                      <>
+                        {titleTagsAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO title tag */}
+
+                  {/* Unique Content Analysis */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiBook />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Unique Content
+                          <InfoPopOver 
+                            heading="Analysis of Content Quality" 
+                            content="The code extracts and processes text from the body tag by splitting it into words, filtering out non-alphabetic characters, and counting word frequency. It identifies the top 10 most frequent words, calculates the percentage of unique words, and checks if the content length exceeds 500 characters. Recommendations include increasing content length for better depth and improving word uniqueness to avoid keyword stuffing, which enhances SEO." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>     
+
+                    {/* Content */}
+                    {
+                      uniqContentAnalysis && isUniqueContentAnalysis(uniqContentAnalysis) ?
+                      <div>
+                        {/* Count */}
+                        <div className='gap-6 grid sm:grid-cols-2'>
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                            <div>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {uniqContentAnalysis?.textLength}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Text Length
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                            <div>
+                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
+                                  ?
+                                  (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
+                                  :
+                                  '0%'
+                                }
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Unique words
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='pt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Repeated words
+                          </h5>
+                          <div>
+                            {uniqContentAnalysis?.repeatedWords
+                            .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
+                            .map((wordObj, index) => (
+                              <span className='mr-2' key={index}>
+                                <Chip
+                                  radius="sm"                                  
+                                  // color={'primary'}
+                                  variant="flat"     
+                                  className='mt-2'                             
+                                >
+                                  {wordObj.word}: {wordObj.count}
+                                </Chip>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* {
+                          uniqContentAnalysis?.recommendations != '' &&
+                            <div data-testid='uniqueContent_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{uniqContentAnalysis?.recommendations}</p>
+                            </div>
+                        } */}
+                      </div>
+                      :
+                      <>
+                        {uniqContentAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Unique Content Analysis */}
+
+                </div> {/* EO on page SEO analysis */}
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="wow" title="WOW factors">
+          <Tab key="wow" data-testid="tab-wow" title="WOW factors">
             <Card>
               <CardBody>
                 wow
               </CardBody>
             </Card>
           </Tab>              
-        </Tabs>
+        </WEETabs>
       </div>   
 
       {/* Confirm save */}

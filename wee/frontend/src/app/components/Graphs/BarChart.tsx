@@ -39,6 +39,21 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
         theme: {
             mode: theme === 'dark' ? 'dark' : 'light'
         },
+        xaxis: {
+            axisBorder: {
+                show: true,
+                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        grid: {
+            borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        }
     });
 
     const series = [{
@@ -51,6 +66,21 @@ export function BarChart({ dataLabel, dataSeries }: IChart) {
             colors: theme === 'light' ? ChartColours : DarkChartColours,
             theme: {
                 mode: theme === 'dark' ? 'dark' : 'light'
+            },
+            xaxis: {
+                axisBorder: {
+                    show: true,
+                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                }
+            },
+            yaxis: {
+                axisBorder: {
+                    show: true,
+                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                }
+            },
+            grid: {
+                borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         }));
     }, [theme]);

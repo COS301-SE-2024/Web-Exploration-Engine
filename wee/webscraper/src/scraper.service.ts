@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import logger from '../../services/webscraperlogger';
+import { Cache } from 'cache-manager';
 
 // Services
 import { RobotsService } from './robots/robots.service';
@@ -12,7 +13,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
-
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 
 // Models
 import {
@@ -20,6 +21,7 @@ import {
   RobotsResponse,
   Metadata,
   IndustryClassification,
+  SentimentClassification
 } from './models/ServiceModels';
 
 const serviceName = "[ScraperService]";
@@ -27,6 +29,7 @@ logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService {
   constructor(
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
@@ -36,12 +39,26 @@ export class ScraperService {
     private readonly screenshotService: ScreenshotService,
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
-    private readonly seoAnalysisService: SeoAnalysisService 
-
+    private readonly seoAnalysisService: SeoAnalysisService,
+    private readonly sentimentAnalysisService: SentimentAnalysisService,
   ) {}
 
   async scrape(url: string) {
     const start = performance.now();
+
+    const cachedData:string = await this.cacheManager.get(url);
+    if (cachedData) {
+      const end = performance.now();
+      const times = (end - start) / 1000;
+      console.log('CACHE HIT', times);
+      const dataFromCache = JSON.parse(cachedData);
+
+      // update the time field of the object being returned from cache
+      dataFromCache.time = parseFloat(times.toFixed(4));      
+      return dataFromCache;
+    }
+    
+    console.log('CACHE MISS - SCRAPE');
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = {
@@ -58,6 +75,7 @@ export class ScraperService {
       addresses: [],
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
+      sentiment: null as SentimentClassification | null,
     };
 
     // validate url
@@ -110,6 +128,13 @@ export class ScraperService {
         data.metadata
       );
 
+
+    const sentimentAnalysisPromise =
+      this.sentimentAnalysisService.classifySentiment(
+        data.url,
+        data.metadata
+      );
+
     // scrape logo
     const logoPromise = this.scrapeLogoService.scrapeLogo(
       data.url,
@@ -142,6 +167,7 @@ export class ScraperService {
       addresses,
       screenshot,
       seoAnalysis,
+      sentiment,
     ] = await Promise.all([
       industryClassificationPromise,
       logoPromise,
@@ -150,8 +176,10 @@ export class ScraperService {
       addressPromise,
       screenshotPromise,
       seoAnalysisPromise,
+      sentimentAnalysisPromise,
     ]);
     data.industryClassification = industryClassification;
+    data.sentiment = sentiment;
     data.logo = logo;
     data.images = images;
     data.contactInfo = contactInfo;
@@ -172,8 +200,10 @@ export class ScraperService {
 
     const end = performance.now();
     const time = (end - start) / 1000;
-    data.time = parseFloat(time.toFixed(2));
+    data.time = parseFloat(time.toFixed(4));
 
+    // set the data in the cache
+    await this.cacheManager.set(url, JSON.stringify(data));
     return data;
   }
 
@@ -311,6 +341,17 @@ export class ScraperService {
       canonicalTagAnalysis,
       lighthouseAnalysis,      
    };
+  }
+  
+  async classifySentiment(url: string) {
+    const metadataResponse = await this.scrapeMetadata(url);
+    if ('errorStatus' in metadataResponse) {
+      return metadataResponse;
+    }
+    return this.sentimentAnalysisService.classifySentiment(
+      url,
+      metadataResponse
+    );
   }
 }
 

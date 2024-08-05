@@ -41,7 +41,7 @@ export class SeoAnalysisService {
       this.analyzeTitleTag(htmlContent),
       this.analyzeHeadings(htmlContent),
       this.analyzeImageOptimization( url),
-      this.analyzeImageOptimization( htmlContent),
+      this.analyzeContentQuality( htmlContent),
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
       this.analyzeMobileFriendliness(url),
@@ -91,7 +91,7 @@ export class SeoAnalysisService {
       metaDescription,
       length,
       // isOptimized,
-      // isUrlWordsInDescription,
+      isUrlWordsInDescription,
       recommendations: recommendations.trim(),
     };
   }

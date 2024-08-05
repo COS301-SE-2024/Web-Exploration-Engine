@@ -2,16 +2,50 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { ScraperModule } from './scraper.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+jest.mock('ioredis', () => {
+  class MockRedis {}
+  return { default: jest.fn().mockImplementation(() => new MockRedis()) };
+});
+
+jest.mock('cache-manager-redis-yet', () => ({
+  redisStore: jest.fn().mockImplementation(() => ({
+    set: jest.fn(),
+    get: jest.fn(),
+    del: jest.fn(),
+    reset: jest.fn(),
+    keys: jest.fn(),
+  })),
+}));
 
 describe('ScraperController', () => {
   let app: INestApplication;
+  let configService: ConfigService;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [ScraperModule],
-    }).compile();
+      imports: [ScraperModule, ConfigModule.forRoot()],
+    })
+    .overrideProvider(ConfigService)
+    .useValue({
+      get: jest.fn((key: string) => {
+        switch (key) {
+          case 'redis.host':
+            return 'localhost';
+          case 'redis.port':
+            return 6379;
+          case 'redis.password':
+            return 'testPassword';
+          default:
+            return null;
+        }
+      }),
+    })
+    .compile();
 
     app = moduleFixture.createNestApplication();
+    configService = moduleFixture.get<ConfigService>(ConfigService);
     await app.init();
   }, 60000); 
 

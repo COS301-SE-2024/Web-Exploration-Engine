@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Metadata } from './models/ServiceModels';
@@ -14,23 +14,18 @@ import {
   ScrapeContactInfoOperation, ScrapeContactInfoQuery, ScrapeContactInfoResponse200, ScrapeContactInfoResponse400, ScrapeContactInfoResponse500,
   ScrapeAddressesOperation, ScrapeAddressesQuery, ScrapeAddressesResponse200, ScrapeAddressesResponse400, ScrapeAddressesResponse500,
   SeoAnalysisOperation, SeoAnalysisQuery, SeoAnalysisResponse200, SeoAnalysisResponse400, SeoAnalysisResponse500,
-  
-
+  SentimentOperation, SentimentQuery,SentimentResponse200
 } from './scraper.api';
-import { StringDecoder } from 'string_decoder';
+import { PerformanceInterceptor } from './performance.interceptor';
 
 @ApiTags('Scraping')
 @Controller('scraper')
+@UseInterceptors(PerformanceInterceptor)
 export class ScraperController {
   constructor(
     private readonly scraperService: ScraperService,
   ) {}
 
-  /*
-    This is the endpoint that will be used through the frontend to scrape the website
-    Right now it only takes in a URL through a get request - but in future it will take
-    in the URL and the customised scraping options
-  */
   @ScrapeOperation
   @ScrapeQuery
   @ScrapeResponse200
@@ -105,7 +100,6 @@ export class ScraperController {
     return this.scraperService.getScreenshot(url);
   }
 
-
   @ScrapeContactInfoOperation
   @ScrapeContactInfoQuery
   @ScrapeContactInfoResponse200
@@ -136,4 +130,11 @@ export class ScraperController {
     return this.scraperService.seoAnalysis(url);
   }
 
+  @SentimentOperation
+  @SentimentQuery
+  @SentimentResponse200
+  @Get('Sentiment-analysis')
+  async classifySentimentIndustry(@Query('url') url: string) {
+    return this.scraperService.classifySentiment(url);
+  }
 }

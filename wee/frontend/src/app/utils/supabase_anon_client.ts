@@ -19,3 +19,4 @@ export const getSupabase = () => {
   }
   return supabase;
 };
+export { supabase };

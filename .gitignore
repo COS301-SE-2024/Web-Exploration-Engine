@@ -3,7 +3,6 @@
 /wee/.nyc_output
 node_modules/.bin/node-which
 /node_modules
-my.secrets
 /wee/logging/prometheus
-/wee/logs
+my.secrets
 *.log

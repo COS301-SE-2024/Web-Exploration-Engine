@@ -13,6 +13,7 @@ export interface SignUpRequest {
 export interface AuthResponse {
   uuid: string;
   emailVerified: boolean;
+  name: string;
 }
 
 export interface ErrorResponse {
