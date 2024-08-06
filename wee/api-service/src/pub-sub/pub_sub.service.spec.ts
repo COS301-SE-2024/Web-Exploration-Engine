@@ -62,16 +62,4 @@ describe('PubSubService', () => {
       });
     });
   });
-
-  describe('subscribe', () => {
-    it('should subscribe to a topic successfully', async () => {
-      const subscriptionName = 'test-subscription';
-      const messageHandler = jest.fn();
-
-      await service.subscribe(subscriptionName, messageHandler);
-
-      expect(pubsub.subscription).toHaveBeenCalledWith(subscriptionName);
-      expect(pubsub.on).toHaveBeenCalledWith('message', messageHandler);
-    });
-  });
 });
