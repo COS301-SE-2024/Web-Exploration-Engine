@@ -473,7 +473,15 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
                 <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
-                    Sentiment Analysis
+                    Sentiment Analysis - Emotions
+                    <InfoPopOver 
+                      heading="Sentiment Analysis - Emotions" 
+                      content="Through the analysis of domain-specific metadata, we gain insights into specific emotional cues. 
+                        This empowers users to precisely tailor their metadata settings, eliciting the desired emotional responses. 
+                        Additionally, our Area Chart facilitates the comparative analysis of your domains against each other or even against competitors.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
+                      placement="bottom" 
+                    />
                 </h3>
                 {/* Sentiment Analysis */}
                 {
