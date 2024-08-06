@@ -12,18 +12,6 @@ export class PubSubService {
     });
   }
 
-  async publishMessage(topicName: string, data: any) {
-    // Convert the data to a Buffer
-    const dataBuffer = Buffer.from(JSON.stringify(data));
-    try {
-      const messageId = await this.pubsub
-        .topic(topicName).publishMessage({ data: dataBuffer });
-      console.log(`Message ${messageId} published.`);
-    } catch (error) {
-      console.error(`Error publishing message: ${error}`);
-    }
-  }
-
   async subscribe(subscriptionName: string, messageHandler: (message: any) => void) {
     console.log(`Subscribing to topic: ${subscriptionName}`);
     const subscription = this.pubsub.subscription(subscriptionName);

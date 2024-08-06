@@ -1,5 +1,5 @@
 import { Controller, Get, Query, Inject, Param, UseInterceptors } from '@nestjs/common';
-import { PubSubService } from './pub-sub/pub_sub.service';
+import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
@@ -20,34 +20,6 @@ export class ScraperController {
   ) {}
 
   topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
-
-  // proxy test
-  // @Get('proxy')
-  // async getProxy() {
-  //   const proxy = this.prox.getProxy();
-  //   const browser = await puppeteer.launch({
-  //     args: [`--proxy-server=${proxy.url}`],
-  //   });
-  
-  //   const page = await browser.newPage();
-
-  //   const username = proxy.username;
-  //   const password = proxy.password;
-
-  //   if (username && password) {
-  //     await page.authenticate({ username, password });
-  //   }
-  
-  //   try {
-  //     await page.goto('http://checkip.amazonaws.com/');
-  //     const ip = await page.evaluate(() => document.body.innerText.trim());
-  //     console.log(`IP Address: ${ip}`);
-  //   } catch (error) {
-  //     console.error('Error:', error.message);
-  //   }
-  
-  //   await browser.close();
-  // }
 
   @ScrapeOperation
   @ScraperQuery
