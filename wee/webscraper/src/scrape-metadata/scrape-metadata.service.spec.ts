@@ -3,10 +3,7 @@ import { ScrapeMetadataService } from './scrape-metadata.service';
 import * as puppeteer from 'puppeteer';
 import { JSDOM } from 'jsdom';
 
-
 jest.mock('axios');
-jest.mock('puppeteer');
-const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
 
 describe('scrapeMetadata', () => {
   let service: ScrapeMetadataService;
@@ -32,7 +29,7 @@ describe('scrapeMetadata', () => {
       isUrlScrapable: false,
     };
 
-    const result = await service.scrapeMetadata('http://example.com', mockData);
+    const result = await service.scrapeMetadata('http://example.com', mockData, null);
     expect(result).toEqual({
       errorStatus: 403,
       errorCode: '403 Forbidden',
@@ -60,13 +57,17 @@ describe('scrapeMetadata', () => {
           ogDescription: 'OG Example Description',
           ogImage: 'http://example.com/image.png',
         }),
+        authenticate: jest.fn(),
         close: jest.fn(),
       }),
       close: jest.fn(),
-    };
-    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+    } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeMetadata('http://example.com', mockData);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const result = await service.scrapeMetadata('http://example.com', mockData, browser);
     expect(result).toEqual({
       title: 'Example Title',
       description: 'Example Description',
@@ -76,7 +77,6 @@ describe('scrapeMetadata', () => {
       ogImage: 'http://example.com/image.png',
     });
     expect(browser.newPage).toHaveBeenCalledTimes(1);
-    expect(browser.close).toHaveBeenCalledTimes(1);
   });
 
   it('should return an error response if scraping fails', async () => {
@@ -94,12 +94,16 @@ describe('scrapeMetadata', () => {
           throw new Error('Page not found');
         }),
         close: jest.fn(),
+        authenticate: jest.fn(),
       }),
       close: jest.fn(),
-    };
-    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+    } as unknown as puppeteer.Browser;
 
-    const response = await service.scrapeMetadata('http://example.com', mockData);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const response = await service.scrapeMetadata('http://example.com', mockData, browser);
     expect(response).toEqual({
       errorStatus: 500,
       errorCode: '500 Internal Server Error',
@@ -128,12 +132,16 @@ describe('scrapeMetadata', () => {
           ogImage: null,
         }),
         close: jest.fn(),
+        authenticate: jest.fn(),
       }),
       close: jest.fn(),
-    };
-    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+    } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeMetadata('http://example.com', mockData);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const result = await service.scrapeMetadata('http://example.com', mockData, browser);
     expect(result).toEqual({
       title: 'Example Title',
       description: null,
@@ -143,7 +151,6 @@ describe('scrapeMetadata', () => {
       ogImage: null,
     });
     expect(browser.newPage).toHaveBeenCalledTimes(1);
-    expect(browser.close).toHaveBeenCalledTimes(1);
   });
 
   it('should handle empty response from page.evaluate', async () => {
@@ -160,12 +167,16 @@ describe('scrapeMetadata', () => {
         goto: jest.fn(),
         evaluate: jest.fn().mockResolvedValue(null),
         close: jest.fn(),
+        authenticate: jest.fn(),
       }),
       close: jest.fn(),
-    };
-    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+    } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeMetadata('http://example.com', mockData);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const result = await service.scrapeMetadata('http://example.com', mockData, browser);
     expect(result).toEqual({
       title: null,
       description: null,
@@ -175,7 +186,6 @@ describe('scrapeMetadata', () => {
       ogImage: null,
     });
     expect(browser.newPage).toHaveBeenCalledTimes(1);
-    expect(browser.close).toHaveBeenCalledTimes(1);
   });
 
   it('should handle failure to launch puppeteer', async () => {
@@ -187,9 +197,16 @@ describe('scrapeMetadata', () => {
       isUrlScrapable: false,
     };
 
-    mockedPuppeteer.launch.mockRejectedValue(new Error('Failed to launch'));
+    const browser = {
+      newPage: jest.fn().mockRejectedValue(new Error('Failed to launch')),
+      close: jest.fn(),
+    } as unknown as puppeteer.Browser;
 
-    const response = await service.scrapeMetadata('http://example.com', mockData);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const response = await service.scrapeMetadata('http://example.com', mockData, browser);
     expect(response).toEqual({
       errorStatus: 500,
       errorCode: '500 Internal Server Error',

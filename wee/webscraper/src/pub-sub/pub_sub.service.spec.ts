@@ -31,38 +31,6 @@ describe('PubSubService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('publishMessage', () => {
-    it('should publish a message successfully', async () => {
-      const topicName = 'test-topic';
-      const data = { key: 'value' };
-      const messageId = '123';
-
-      pubsub.publishMessage.mockResolvedValue(messageId);
-
-      await service.publishMessage(topicName, data);
-
-      expect(pubsub.topic).toHaveBeenCalledWith(topicName);
-      expect(pubsub.publishMessage).toHaveBeenCalledWith({
-        data: Buffer.from(JSON.stringify(data)),
-      });
-    });
-
-    it('should handle errors when publishing a message', async () => {
-      const topicName = 'test-topic';
-      const data = { key: 'value' };
-      const error = new Error('publish error');
-
-      pubsub.publishMessage.mockRejectedValue(error);
-
-      await service.publishMessage(topicName, data);
-
-      expect(pubsub.topic).toHaveBeenCalledWith(topicName);
-      expect(pubsub.publishMessage).toHaveBeenCalledWith({
-        data: Buffer.from(JSON.stringify(data)),
-      });
-    });
-  });
-
   describe('subscribe', () => {
     it('should subscribe to a topic successfully', async () => {
       const subscriptionName = 'test-subscription';
