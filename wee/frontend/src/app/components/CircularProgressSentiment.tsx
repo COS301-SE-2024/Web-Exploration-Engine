@@ -6,6 +6,11 @@ interface CircularProgressInterface {
     label: 'Anger' | 'Disgust' | 'Fear' | 'Joy' | 'Neutral' | 'Sadness' | 'Surprise';
 }
 
+interface CustomCSSProperties extends React.CSSProperties {
+    '--indicator-color'?: string;
+    '--dark-indicator-color'?: string;
+}
+
 export default function CircularProgressSentiment({value, label}: CircularProgressInterface) {
     const emotionEmojis = {
         Anger: '😡',
@@ -42,7 +47,7 @@ export default function CircularProgressSentiment({value, label}: CircularProgre
                 style={{
                     '--indicator-color': color,
                     '--dark-indicator-color': darkColor
-                }}
+                } as CustomCSSProperties}
                 label={label}
                 value={value}
                 showValueLabel={true}
