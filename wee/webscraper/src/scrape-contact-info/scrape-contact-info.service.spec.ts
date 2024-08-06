@@ -4,7 +4,6 @@ import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 
 jest.mock('puppeteer');
-const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
 
 describe('ScrapeContactInfoService', () => {
   let service: ScrapeContactInfoService;
