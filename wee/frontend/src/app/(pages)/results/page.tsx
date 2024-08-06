@@ -18,11 +18,12 @@ import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
-import { Metadata, ErrorResponse } from '../../models/ScraperModels';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
+import { DonutChart } from '../../components/Graphs/DonutChart';
+import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 
 interface Classifications {
   label: string;
@@ -42,9 +43,9 @@ export default function Results() {
   );
 }
 
-function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
-  return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
-}
+// function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
+//   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
+// }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
   return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
@@ -70,6 +71,14 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
   return 'recommendations' in data || 'textLength' in data || 'uniqueWordsPercentage' in data || 'repeatedWords' in data;
 }
 
+function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
+  return 'title' in data || 'description' in data || 'keywords' in data || 'ogTitle' in data || 'ogDescription' in data || 'ogImage' in data;
+}
+
+// function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
+//   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
+// }
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -89,6 +98,7 @@ function ResultsComponent() {
     useState<Classifications[]>([]);
   const [domainClassification, setDomainClassification] =
     useState<Classifications[]>([]);
+  const [metaData, setMetaData] = useState<Metadata | ErrorResponse>();
   const [logo, setLogo] = useState('');
   const [imageList, setImageList] = useState<string[]>([]);
   const [summaryInfo, setSummaryInfo] = useState<SummaryInfo>();
@@ -103,6 +113,7 @@ function ResultsComponent() {
   const [internalLinkingAnalysis, setInternalLinkingAnalysis] = useState<InternalLinksAnalysis | SEOError>();
   const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
   const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
+  const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis>();
 
   useEffect(() => {
     if (url) {
@@ -129,6 +140,7 @@ function ResultsComponent() {
           setImageList(urlResults[0].images);
           setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify);
           setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify);
+          setMetaData(urlResults[0].metadata);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
           const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
@@ -144,6 +156,7 @@ function ResultsComponent() {
           setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
           setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
+          setSentimentAnalysis(urlResults[0].sentiment);
         }
       }
     }
@@ -723,11 +736,13 @@ function ResultsComponent() {
                                   The format of the following URLs are incorrect
                                 </h5>
                                 <div className='overflow-x-scroll'>
-                                  {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
-                                    <p key={index}>
-                                      <Link href={formatUrl}>{formatUrl}</Link> 
-                                    </p>                           
-                                  ))}
+                                  <ScrollShadow hideScrollBar className="max-h-[400px]" size={75}>
+                                    {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                      <p key={index}>
+                                        <Link href={formatUrl}>{formatUrl}</Link> 
+                                      </p>                           
+                                    ))}
+                                  </ScrollShadow>
                                 </div>
                               </div>
                           }
@@ -881,7 +896,6 @@ function ResultsComponent() {
                             List of Headings
                           </h5>
                           <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
-                            {/* <Content /> */}                            
                             {headingAnalysis?.headings.map((heading, index) => (
                               <p key={index}>{heading}</p>
                             ))}
@@ -1116,10 +1130,135 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
-          <Tab key="wow" data-testid="tab-wow" title="WOW factors">
+          <Tab key="sentiment" data-testid="tab-sentiment" title="Sentiment Analysis">
             <Card>
               <CardBody>
-                wow
+                {/* Sentiment Analysis */}
+                <div>
+                  {/* Sentiment Analysis */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Sentiment Analysis
+                    <InfoPopOver 
+                      heading="Sentiment Analysis" 
+                      content="Sentiment analysis is conducted on the extracted metadata. This analysis would provide valuable insights 
+                        into whether the content is perceived as positive, negative, or neutral. By leveraging this insight, users 
+                        can effectively align their content tone with their brand&apos;s messaging.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
+                      placement="right-end" 
+                    />
+                  </h3> 
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
+                      <div data-testid={"sentiment-donut-chart"} className='w-full md:w-1/2 md:mx-auto'>
+                        <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
+                      </div>  )
+                      : (
+                      <div>
+                        No sentiment analysis data to display
+                      </div> )
+                    }
+                  </div>
+
+                  {/* Positive and Negative Words */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Positive and Negative Words
+                    <InfoPopOver 
+                      heading="Positive and Negative Words" 
+                      content="Metadata can be classified into two possible categories: positive and negative words. This thoughtful classification empowers users to 
+                        strategically optimize the language within their content, thereby enhancing their ability to shape audience perception and drive meaningful engagement
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
+                      placement="right-end" 
+                    />
+                  </h3> 
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
+                      <div>There is no positive or negative words to display</div>
+                    )
+                    : (
+                      <>                    
+                        {metaData && isMetadata(metaData) ? (
+                          <div>
+                            <div data-testid={"sentiment-meta-title"}>
+                              {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}
+                            </div>
+                            <div data-testid={"sentiment-meta-description"}>
+                              {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}
+                            </div>
+                            <div data-testid={"sentiment-meta-keywords"}>
+                              {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
+                                sentimentAnalysis?.positiveWords.includes(part) ? 
+                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                (sentimentAnalysis?.negativeWords.includes(part) ? 
+                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
+                                <span key={index}>{part}</span>)
+                              ))}                            
+                            </div>
+                          </div>
+                        )
+                        : (
+                          <div>
+                            {metaData?.errorMessage}
+                          </div>
+                        )}  
+                      </>
+                    )}   
+                  </div>
+
+                  {/* Emotions */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Emotions
+                    <InfoPopOver 
+                      heading="Emotions" 
+                      content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
+                        their metadata settings, thereby invoking the desired emotional responses.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
+                      placement="right-end" 
+                    />
+                  </h3>     
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>                  
+                    {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
+                      <div data-testid={"sentiment-emotions-progress-charts"} className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"}/>
+                        </div>
+                        <div className="flex justify-center">
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"}/>
+                        </div>
+                      </div>   
+                    )
+                    : (
+                      <div>There is no emotions to display</div>
+                    )}     
+                  </div>  
+                    
+                </div>{/* EO Sentiment Analysis */}
               </CardBody>
             </Card>
           </Tab>              

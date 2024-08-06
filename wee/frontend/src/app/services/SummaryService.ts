@@ -22,6 +22,25 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const domainRadarCategories: string[] = [];
   const domainRadarSeries: { name: string; data: number[] }[] = [];
 
+  const emotionsAreaSeries: { name: string; data: number[] }[] = [];
+
+  // EMOTIONS AREA
+  for (const result of scraperResults) {
+    if (result.sentiment && JSON.stringify(result.sentiment.emotions) !== '{}') {
+      emotionsAreaSeries.push({
+        name: result.url, 
+        data: [
+          Math.round(result.sentiment.emotions.anger*100), 
+          Math.round(result.sentiment.emotions.disgust*100), 
+          Math.round(result.sentiment.emotions.fear*100), 
+          Math.round(result.sentiment.emotions.joy*100), 
+          Math.round(result.sentiment.emotions.neutral*100), 
+          Math.round(result.sentiment.emotions.sadness*100), 
+          Math.round(result.sentiment.emotions.surprise*100)
+        ]});
+    }
+  }
+
   // META RADAR
   // get all the categories in the scrape result page
   for (const result of scraperResults) {
@@ -174,7 +193,6 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
         industries,
         percentages: industryPercentages,
       },
-
       weakClassification,
     },
     domainMatch: {
@@ -192,6 +210,9 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     domainRadar: {
       categories: domainRadarCategories,
       series: domainRadarSeries,
+    },
+    emotionsArea: {
+      series: emotionsAreaSeries,
     }
   }
 }
