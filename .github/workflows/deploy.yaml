@@ -65,9 +65,6 @@ jobs:
           directory: wee/api-service
           file_name: .env
           fail_on_empty: false
-          directory: wee/webscraper
-          file_name: .env
-          fail_on_empty: false
      
       - name: Remove old files
         uses: appleboy/ssh-action@v1.0.3
