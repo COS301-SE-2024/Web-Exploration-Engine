@@ -24,7 +24,7 @@ services:
       sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
     user: webscraper
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3002/api/health"]
+      test: ["CMD", "curl", "-f", "https://capstone-wee.dns.net.za/api/health"]
       interval: 10s
       retries: 5
       start_period: 30s
