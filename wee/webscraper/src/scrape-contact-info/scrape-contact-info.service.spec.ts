@@ -4,7 +4,6 @@ import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 
 jest.mock('puppeteer');
-const mockedPuppeteer = puppeteer as jest.Mocked<typeof puppeteer>;
 
 describe('ScrapeContactInfoService', () => {
   let service: ScrapeContactInfoService;
@@ -18,6 +17,8 @@ describe('ScrapeContactInfoService', () => {
     service = module.get<ScrapeContactInfoService>(ScrapeContactInfoService);
   });
 
+  
+
   it('should handle errors gracefully', async () => {
     const url = 'https://example.com';
     const robots: RobotsResponse = {
@@ -28,10 +29,16 @@ describe('ScrapeContactInfoService', () => {
       isUrlScrapable: true,
     };
 
-    // Mocking puppeteer launch to simulate an error
-    mockedPuppeteer.launch.mockRejectedValue(new Error('Mocked error'));
+    const browser = {
+      newPage: jest.fn().mockRejectedValue(new Error('Failed to open page')),
+      close: jest.fn(),
+    } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeContactInfo(url, robots);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const result = await service.scrapeContactInfo(url, robots, browser as puppeteer.Browser);
     expect(result).toEqual({ emails: [], phones: [], socialLinks: [] });
   });
 
@@ -62,6 +69,7 @@ describe('ScrapeContactInfoService', () => {
       'https://twitter.com/example'
     ];
 
+
     const browser = {
       newPage: jest.fn().mockResolvedValue({
         goto: jest.fn(),
@@ -74,20 +82,22 @@ describe('ScrapeContactInfoService', () => {
             }
             return Promise.resolve([]);
           }),
+        authenticate: jest.fn(),
         close: jest.fn(),
       }),
       close: jest.fn(),
-    };
-    mockedPuppeteer.launch.mockResolvedValue(browser as any);
+    } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeContactInfo(url, robots);
+    // Mock environment variables
+    process.env.PROXY_USERNAME = 'username';
+    process.env.PROXY_PASSWORD = 'password';
+
+    const result = await service.scrapeContactInfo(url, robots, browser as puppeteer.Browser);
 
     expect(result.emails).toContain('contact@example.com');
     expect(result.phones).toContain('+1-800-555-1234');
     expect(result.socialLinks).toContain('https://facebook.com/example');
     expect(result.socialLinks).toContain('https://twitter.com/example');
-    expect(browser.newPage).toHaveBeenCalledTimes(1);
-    expect(browser.close).toHaveBeenCalledTimes(1);
   });
 
   it('should return empty arrays if URL is not scrapable', async () => {
@@ -100,7 +110,7 @@ describe('ScrapeContactInfoService', () => {
       isUrlScrapable: false,
     };
 
-    const result = await service.scrapeContactInfo(url, robots);
+    const result = await service.scrapeContactInfo(url, robots, null);
     expect(result).toEqual({ emails: [], phones: [], socialLinks: [] });
   });
 });

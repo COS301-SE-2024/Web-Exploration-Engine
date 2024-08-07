@@ -9,22 +9,8 @@ jest.mock('puppeteer');
 
 describe('SeoAnalysisService', () => {
     let service: SeoAnalysisService;
-    let mockBrowser: any;
-    let mockPage: any;
   
     beforeEach(async () => {
-      mockBrowser = {
-        newPage: jest.fn().mockResolvedValue(mockPage),
-        close: jest.fn(),
-      };
-      mockPage = {
-        goto: jest.fn(),
-        setViewport: jest.fn().mockResolvedValue(null), // Mock setViewport function
-        evaluate: jest.fn(),
-        close: jest.fn(),
-      };
-  
-      jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
   
       const module: TestingModule = await Test.createTestingModule({
         providers: [SeoAnalysisService],
@@ -43,7 +29,24 @@ describe('SeoAnalysisService', () => {
         isUrlScrapable: false,
       };
 
-      const result = await service.seoAnalysis('http://example.com', robots);
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn(),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+
+      const result = await service.seoAnalysis('http://example.com', robots, mockBrowser);
 
       expect(result).toEqual({ error: 'Crawling not allowed for this URL' });
     });
@@ -154,9 +157,14 @@ describe('SeoAnalysisService', () => {
             { src: 'http://example.com/image.jpg', alt: 'Test image' },
           ]),
           close: jest.fn(),
+          authenticate: jest.fn(),
         }),
         close: jest.fn(),
-      };
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
       jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
 
@@ -165,7 +173,7 @@ describe('SeoAnalysisService', () => {
         reasons: [],
       });
 
-      const result = await service.analyzeImageOptimization(url);
+      const result = await service.analyzeImageOptimization(url, browser);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -308,7 +316,25 @@ describe('analyzeHeadings', () => {
   describe('analyzeMobileFriendliness', () => {
     it('should return mobile friendliness analysis', async () => {
       const url = 'http://example.com';
-      const result = await service.analyzeMobileFriendliness(url);
+
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn(),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+
+      const result = await service.analyzeMobileFriendliness(url, mockBrowser);
 
       expect(result.isResponsive).toBe(undefined); 
       expect(result.recommendations).toBe('Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.'); 

@@ -250,3 +250,8 @@ export interface Graph {
   name: string,
   data: number[]
 }
+
+export interface Result {
+  status: string;
+  result?: ScraperResult;
+}

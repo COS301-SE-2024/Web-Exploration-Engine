@@ -34,6 +34,7 @@ jobs:
         run: |
           cd wee
           npx nx lint webscraper
+          npx nx lint api-service
           npx nx lint frontend
           echo "================== lint complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
@@ -43,6 +44,7 @@ jobs:
         run: |
           cd wee
           npx nx build webscraper
+          npx nx build api-service
           npx nx build frontend
           echo "================== build complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
@@ -53,6 +55,7 @@ jobs:
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
+          npx nx test api-service --coverage=true
           npx nx test frontend --coverage=true
 
           echo "================== jest tests complete =================="

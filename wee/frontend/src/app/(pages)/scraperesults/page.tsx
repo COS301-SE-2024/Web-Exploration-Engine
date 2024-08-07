@@ -19,9 +19,10 @@ import {
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import { ScraperResult } from '../../models/ScraperModels';
+import { ScraperResult, Result} from '../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
+import { pollForResult } from '../../services/PubSubService';
 
 function ResultsComponent() {
   const {
@@ -109,8 +110,15 @@ function ResultsComponent() {
           // add to array of urls still being processed
           processingUrls.push(url);
           console.log('API call for:', url);
-          getScrapingResults(url);
+          try {
+            getScrapingResults(url);
+          } catch (error) {
+            console.error('Error when scraping website:', error);
+          }
+
+          // remove from array of urls still being processed
           processingUrls.splice(processingUrls.indexOf(url), 1);
+          // add to array of urls that have been processed
           processedUrls.push(url);
         }
       });
@@ -135,18 +143,38 @@ function ResultsComponent() {
     }
   }, [results]);
 
-  const getScrapingResults = async (url: string) => {
+// Function to initiate scraping and handle results
+const getScrapingResults = async (url: string) => {
+  try {
+    // CHANGE TO DEPLOYED VERSION
+    const response = await fetch(
+      `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error initiating scrape: ${response.statusText}`);
+    }
+    const initData = await response.json();
+    console.log('Scrape initiation response:', initData);
+
+    // Poll the API until the scraping is done
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
-      );
-      const data = (await response.json()) as ScraperResult;
-      console.log('Response', data);
-      setResults((prevResults: ScraperResult[]) => [...prevResults, data]);
+      const result = await pollForResult(url) as Result;
+      if (result.status === 'error') {
+        throw new Error(`Error scraping website: ${url}`);
+      }
+      console.log('Scraping result:', result);
+      
+      // Assuming setResults is a function to update the state or handle results
+      setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
     } catch (error) {
       console.error('Error when scraping website:', error);
     }
-  };
+    
+  } catch (error) {
+    console.error('Error when scraping website:', error);
+  }
+};
+
 
   const onSearchChange = (value: string) => {
     if (value) {

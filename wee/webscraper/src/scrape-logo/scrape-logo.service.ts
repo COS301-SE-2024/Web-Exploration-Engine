@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
 import { Metadata, RobotsResponse } from '../models/ServiceModels';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ScrapeLogoService {
@@ -10,7 +10,17 @@ export class ScrapeLogoService {
      * @param metadata - The metadata object containing the ogImage property.
      * @returns {Promise<string>} - Returns a promise that resolves to the URL of the logo or and empty string if no logo is found.
      */
-  async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse): Promise<string> {
+  async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string> {
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+        console.error('Proxy username or password not set');
+        return '';
+    }
+
+    let page;
     try {
         // Possible improvement: check if og image is a logo -- sometimes not the case 
         // Scrape for logo in given URL - if not found, scrape root URL
@@ -27,8 +37,13 @@ export class ScrapeLogoService {
             return '';
         }
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+        page = await browser.newPage();
+        // authenticate page with proxy
+        await page.authenticate({
+            username,
+            password,
+        });
+        
         await page.goto(url);
 
         const logoPattern = 'logo';
@@ -41,12 +56,14 @@ export class ScrapeLogoService {
                 .map((img: HTMLImageElement) => img.src);
         }, logoPattern);
 
-        await browser.close();
-
         return imageUrls.length > 0 ? imageUrls[0] : '';
     } catch (error) {
-      console.error(`Failed to scrape logo: ${error.message}`);
+        console.error(`Failed to scrape logo: ${error.message}`);
         return '';
+    } finally {
+        if (page) {
+            await page.close();
+        }
     }
  }
 }
