@@ -6,6 +6,8 @@ import { useScrapingContext } from '../../src/app/context/ScrapingContext';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import '@testing-library/jest-dom';
+import { useUserContext } from '../../src/app/context/UserContext';
+import { saveReport } from '../../src/app/services/SaveReportService';
 
 // Mock useRouter and useScrapingContext
 jest.mock('next/navigation', () => ({
@@ -13,6 +15,9 @@ jest.mock('next/navigation', () => ({
 }));
 jest.mock('../../src/app/context/ScrapingContext', () => ({
   useScrapingContext: jest.fn(),
+}));
+jest.mock('../../src/app/context/UserContext', () => ({
+  useUserContext: jest.fn(),
 }));
 
 class ResizeObserver {
@@ -59,8 +64,20 @@ jest.mock('apexcharts', () => ({
   })),
 }));
 
+jest.mock('../../src/app/services/SaveReportService', () => ({
+  saveReport: jest.fn(),
+}));
+
 describe('SummaryReport Page', () => {
   const mockPush = jest.fn();
+  const mockBack = jest.fn();
+  
+  beforeEach(() => {
+    (useRouter as jest.Mock)?.mockReturnValue({ push: mockPush, back: mockBack});
+    (useScrapingContext as jest.Mock).mockReturnValue({ summaryReport: mockSummaryReport });
+    (useUserContext as jest.Mock).mockReturnValue({ user: mockUser });
+  });
+
   const mockSummaryReport = {
     domainStatus: [200, 404],
     domainErrorStatus: 1,
@@ -94,21 +111,24 @@ describe('SummaryReport Page', () => {
     avgTime: 100,
   };
 
-  beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-    (useScrapingContext as jest.Mock).mockReturnValue({ summaryReport: mockSummaryReport });
-  });
-
+  const mockUser = {
+    uuid: '48787157-7555-4104-bafc-e2c95bbaa959',
+    emailVerified: true,
+  };
+  
   it('renders the summary report page correctly', async () => {
     render(<SummaryReport />);
     expect(screen.getByText('Summary Report')).toBeInTheDocument();
     expect(screen.getByText('General stats')).toBeInTheDocument();
+    expect(screen.getByText('Domain match')).toBeInTheDocument();
+    expect(screen.getByText('Industry Classification Distribution')).toBeInTheDocument();
+    expect(screen.getByText('Website status')).toBeInTheDocument();
   });
 
   it('navigates back to scrape results on button click', () => {
     render(<SummaryReport />);
     fireEvent.click(screen.getByText('Back'));
-    expect(mockPush).toHaveBeenCalledWith('/scraperesults');
+    expect(mockBack).toHaveBeenCalled();
   });
 
   it('displays general stats correctly', () => {
@@ -156,5 +176,167 @@ describe('SummaryReport Page', () => {
     document.body.removeChild(pieChart);
     document.body.removeChild(barChart);
     document.body.removeChild(radialChart);
+  });
+
+  it('should display a popup when the save button is clicked', async () => {
+    render(<SummaryReport />);
+  
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+  
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+  
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+  
+    // Click the save button
+    fireEvent.click(saveButton);
+  
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+  });
+
+  it('should enter an error state when no report name is provided', async () => {
+    render(<SummaryReport />);
+  
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+  
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+  
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+  
+    // Click the save button
+    fireEvent.click(saveButton);
+  
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+  
+    // Click the save button in the modal
+    const saveModalButton = screen.getByRole('button', { name: /Save/i });
+    expect(saveModalButton).toBeInTheDocument();
+    fireEvent.click(saveModalButton);
+  
+    await waitFor(() => {
+      expect(saveReport).not.toHaveBeenCalled();
+    });
+
+    // Ensure the error state is displayed in the Input component
+    const inputWithError = screen.getByLabelText('Report Name', { invalid: true, disabled: true });
+    expect(inputWithError).toBeInTheDocument();
+  });
+
+  it('should enter an error state if name is entered then removed', async () => {
+    render(<SummaryReport />);
+
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+
+    // Click the save button
+    fireEvent.click(saveButton);
+
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+
+    // Enter a report name
+    const reportNameInput = screen.getByLabelText(/Report Name/i);
+    expect(reportNameInput).toBeInTheDocument();
+    fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+
+    // Clear the report name
+    fireEvent.change(reportNameInput, { target: { value: '' } });
+
+    const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
+    expect(inputWithError).toBeInTheDocument();
+  });
+
+  it('should call the saveReport function when the save button is clicked', async () => {
+      render(<SummaryReport />);
+    
+      // Ensure the component has rendered and the dropdown button is available
+      const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+      expect(dropdownButton).toBeInTheDocument();
+    
+      // Click the dropdown button to open the menu
+      fireEvent.click(dropdownButton);
+    
+      // Wait for the save button to appear
+      const saveButton = await screen.findByTestId('save-report-button');
+      expect(saveButton).toBeInTheDocument();
+    
+      // Click the save button
+      fireEvent.click(saveButton);
+    
+      // wait for popup to appear
+      const modal = await screen.findByTestId('save-report-modal');
+      expect(modal).toBeInTheDocument();
+
+      // Enter a report name
+      const reportNameInput = screen.getByLabelText(/Report Name/i);
+      expect(reportNameInput).toBeInTheDocument();
+      fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+    
+      // Click the save button in the modal
+      const saveModalButton = screen.getByRole('button', { name: /Save/i });
+      expect(saveModalButton).toBeInTheDocument();
+      fireEvent.click(saveModalButton);
+    
+      await waitFor(() => {
+        expect(saveReport).toHaveBeenCalled();
+      });
+  });
+
+  it('should display a success message when the report is saved successfully', async () => {
+    render(<SummaryReport />);
+  
+    // Ensure the component has rendered and the dropdown button is available
+    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+    expect(dropdownButton).toBeInTheDocument();
+  
+    // Click the dropdown button to open the menu
+    fireEvent.click(dropdownButton);
+  
+    // Wait for the save button to appear
+    const saveButton = await screen.findByTestId('save-report-button');
+    expect(saveButton).toBeInTheDocument();
+  
+    // Click the save button
+    fireEvent.click(saveButton);
+  
+    // wait for popup to appear
+    const modal = await screen.findByTestId('save-report-modal');
+    expect(modal).toBeInTheDocument();
+
+    // Enter a report name
+    const reportNameInput = screen.getByLabelText(/Report Name/i);
+    expect(reportNameInput).toBeInTheDocument();
+    fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
+  
+    // Click the save button in the modal
+    const saveModalButton = screen.getByRole('button', { name: /Save/i });
+    expect(saveModalButton).toBeInTheDocument();
+    fireEvent.click(saveModalButton);
+  
+    await waitFor(() => {
+      expect(screen.getByText('Report saved successfully')).toBeDefined();
+    });
   });
 });

@@ -14,13 +14,15 @@ import {
   Chip,
   Button,
   Spinner,
+  Selection
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import Scraping from '../../models/ScrapingModel';
+import { ScraperResult, Result} from '../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
+import { pollForResult } from '../../services/PubSubService';
 
 function ResultsComponent() {
   const {
@@ -32,7 +34,7 @@ function ResultsComponent() {
     processedUrls,
     setProcessedUrls,
     processingUrls,
-    setProcessingUrls,
+    setProcessingUrls
   } = useScrapingContext();
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -58,11 +60,11 @@ function ResultsComponent() {
     // Apply crawlable filter
     if (selectedCrawlableFilter === 'Yes') {
       filteredUrls = filteredUrls.filter(
-        (url) => url.robots && url.robots.isUrlScrapable
+        (url) => url.robots && 'isUrlScrapable' in url.robots && url.robots.isUrlScrapable
       );
     } else if (selectedCrawlableFilter === 'No') {
       filteredUrls = filteredUrls.filter(
-        (url) => url.robots && !url.robots.isUrlScrapable
+        (url) => url.robots && 'isUrlScrapable' in url.robots && !url.robots.isUrlScrapable
       );
     }
 
@@ -82,7 +84,7 @@ function ResultsComponent() {
 
   // Pagination
   const [page, setPage] = React.useState(1);
-  const [resultsPerPage, setResultsPerPage] = React.useState(5);
+  const [resultsPerPage, setResultsPerPage] = React.useState(10);
   const pages = Math.ceil(filteredItems.length / resultsPerPage);
 
   const handleResultsPerPageChange = (
@@ -108,8 +110,15 @@ function ResultsComponent() {
           // add to array of urls still being processed
           processingUrls.push(url);
           console.log('API call for:', url);
-          getScrapingResults(url);
+          try {
+            getScrapingResults(url);
+          } catch (error) {
+            console.error('Error when scraping website:', error);
+          }
+
+          // remove from array of urls still being processed
           processingUrls.splice(processingUrls.indexOf(url), 1);
+          // add to array of urls that have been processed
           processedUrls.push(url);
         }
       });
@@ -134,18 +143,39 @@ function ResultsComponent() {
     }
   }, [results]);
 
-  const getScrapingResults = async (url: string) => {
+// Function to initiate scraping and handle results
+const getScrapingResults = async (url: string) => {
+  try {
+    // CHANGE TO DEPLOYED VERSION
+    const apiUrl = process.env.API_ENDPOINT || 'http://localhost:3000/api';
+    const response = await fetch(
+      `${apiUrl}/scraper?url=${encodeURIComponent(url)}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error initiating scrape: ${response.statusText}`);
+    }
+    const initData = await response.json();
+    console.log('Scrape initiation response:', initData);
+
+    // Poll the API until the scraping is done
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
-      );
-      const data = (await response.json()) as Scraping;
-      console.log('Response', data);
-      setResults((prevResults: Scraping[]) => [...prevResults, data]);
+      const result = await pollForResult(url) as Result;
+      if (result.status === 'error') {
+        throw new Error(`Error scraping website: ${url}`);
+      }
+      console.log('Scraping result:', result);
+      
+      // Assuming setResults is a function to update the state or handle results
+      setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
     } catch (error) {
       console.error('Error when scraping website:', error);
     }
-  };
+    
+  } catch (error) {
+    console.error('Error when scraping website:', error);
+  }
+};
+
 
   const onSearchChange = (value: string) => {
     if (value) {
@@ -174,8 +204,12 @@ function ResultsComponent() {
     router.push(`/summaryreport`);
   };
 
+  const handleComparisonPage = () => {
+    router.push(`/comparison`);
+  };
+
   return (
-    <div className="p-4">
+    <div className="p-4 min-h-screen">
       <div className="flex justify-center">
         <WEEInput
           data-testid="search-urls"
@@ -196,6 +230,7 @@ function ResultsComponent() {
           label="Live/Parked"
           className="w-full pb-3 md:w-1/3"
           onChange={handleStatusFilterChange}
+          data-testid="status-filter"
         >
           <SelectItem key={'Parked'}>Parked</SelectItem>
           <SelectItem key={'Live'}>Live</SelectItem>
@@ -205,6 +240,7 @@ function ResultsComponent() {
           label="Crawlable"
           className="w-full pb-3 md:w-1/3"
           onChange={handleCrawlableFilterChange}
+          data-testid="crawlable-filter"
         >
           <SelectItem key={'Yes'}>Yes</SelectItem>
           <SelectItem key={'No'}>No</SelectItem>
@@ -227,10 +263,9 @@ function ResultsComponent() {
             onChange={handleResultsPerPageChange}
             aria-label="Number of results per page"
           >
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="7">7</option>
-            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
           </select>
         </label>
       </div>
@@ -265,7 +300,7 @@ function ResultsComponent() {
         }}
       >
         <TableHeader>
-          <TableColumn key="name" className="rounded-lg sm:rounded-none">
+          <TableColumn key="name" className="rounded-r-lg sm:rounded-none">
             URL
           </TableColumn>
           <TableColumn key="role" className="text-center hidden sm:table-cell">
@@ -310,17 +345,35 @@ function ResultsComponent() {
         </TableBody>
       </WEETable>
 
-      <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-        Summary
-      </h1>
-      <Button
-        data-testid="btn-report-summary"
-        className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
-        onClick={handleSummaryPage}
-        disabled={isLoading}
-      >
-        View overall summary report
-      </Button>
+      <div className='sm:flex sm:justify-between'>
+          <div>
+            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+              Summary
+            </h1>
+            <Button
+              data-testid="btn-report-summary"
+              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+              onClick={handleSummaryPage}
+              disabled={isLoading}
+            >
+              View overall summary report
+            </Button>
+          </div>
+
+          <div>
+            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+              Comparison
+            </h1>
+            <Button
+              data-testid="btn-comparison-summary"
+              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+              onClick={handleComparisonPage}
+            >
+              View comparison report
+            </Button>
+          </div>
+      </div>
+
     </div>
   );
 }

@@ -62,3 +62,7 @@ out
 .env.test.local
 .env.production.local
 .env.development
+
+# Google cloud credentials
+alien-grove-429815-s9-cd072240249e.json
+

@@ -14,9 +14,17 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
           
+      - name: Create credentials file
+        run: |
+          mkdir -p ${{ github.workspace }}/wee/api-service
+          mkdir -p ${{ github.workspace }}/wee/webscraper
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > ${{ github.workspace }}/wee/api-service/google-credentials.json
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > ${{ github.workspace }}/wee/webscraper/google-credentials.json
+          
       - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
+          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
           envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
           envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
@@ -28,7 +36,7 @@ jobs:
           file_name: .env
           fail_on_empty: false
 
-      - name: Make backend envfile
+      - name: Make webscraper envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
@@ -38,6 +46,25 @@ jobs:
           envkey_REDIS_HOST : ${{secrets.REDIS_HOST}}
           envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
           envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
+          envkey_GOOGLE_CLOUD_CREDENTIALS : ${{ github.workspace }}/wee/webscraper/google-credentials.json
+          directory: wee/webscraper
+          file_name: .env
+          fail_on_empty: false
+
+      - name: Make api-service envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
+          envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
+          envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY}}
+          envkey_NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY : ${{secrets.SUPABASE_SRV_KEY}}
+          envkey_REDIS_HOST : ${{secrets.REDIS_HOST}}
+          envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
+          envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
+          envkey_GOOGLE_CLOUD_CREDENTIALS : ${{ github.workspace }}/wee/api-service/google-credentials.json
+          directory: wee/api-service
+          file_name: .env
+          fail_on_empty: false
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false

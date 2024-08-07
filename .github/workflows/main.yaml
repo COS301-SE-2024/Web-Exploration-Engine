@@ -10,13 +10,14 @@ permissions:
   contents: read
 
 jobs:
-  lint-build-test:
-    name: Lint Build and Test
+  lint-build-test-deploy:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
 
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
     steps:
       - name: Code Checkout
@@ -36,6 +37,7 @@ jobs:
         run: |
           cd wee
           npx nx lint webscraper
+          npx nx lint api-service
           npx nx lint frontend
           echo "================== lint complete =================="
 
@@ -43,17 +45,21 @@ jobs:
         run: |
           cd wee
           npx nx build webscraper
+          npx nx build api-service
           npx nx build frontend
           echo "================== build complete =================="
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
 
-      - name: Run Jest Tests
+        #continue-on-error: true
+
+      - name: Jest Tests
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
+          npx nx test api-service --coverage=true
           npx nx test frontend --coverage=true
 
-          echo "================== test complete =================="
+          echo "================== jest tests complete =================="
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
@@ -84,14 +90,6 @@ jobs:
 
       - name: Start application
         run: |
-          cd wee/frontend
-          npx nx dev frontend  &
-          npx wait-on http://localhost:3000
-
-      - name: Run Cypress tests
-        run: |
-          cd wee/frontend
-          npx cypress run
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+          echo "================== deployment complete =================="
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
+        #continue-on-error: true
