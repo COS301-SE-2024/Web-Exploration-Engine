@@ -147,7 +147,8 @@ function ResultsComponent() {
 const getScrapingResults = async (url: string) => {
   try {
     // CHANGE TO DEPLOYED VERSION
-    const apiUrl = process.env.API_ENDPOINT || 'http://localhost:3002/api';
+    const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
+    console.log('API URL:', apiUrl);
     const response = await fetch(
       `${apiUrl}/scraper?url=${encodeURIComponent(url)}`
     );

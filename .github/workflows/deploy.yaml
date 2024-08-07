@@ -24,7 +24,7 @@ jobs:
       - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
-          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
+          envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_NEXT_PUBLIC_SUPABASE_URL : ${{secrets.SUPABASE_URL}}
           envkey_access_token : ${{secrets.WEBSCRAPER_API_ACCESS_TOKEN}}
           envkey_NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY : ${{secrets.SUPABASE_ANON_KEY}}
@@ -51,7 +51,7 @@ jobs:
           envkey_GOOGLE_CLOUD_CREDENTIALS : webscraper/google-credentials.json
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
-          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
+          envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
@@ -69,7 +69,7 @@ jobs:
           envkey_GOOGLE_CLOUD_CREDENTIALS : api-service/google-credentials.json
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
-          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
+          envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           directory: wee/api-service
           file_name: .env
           fail_on_empty: false
