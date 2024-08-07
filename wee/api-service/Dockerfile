@@ -24,7 +24,7 @@ RUN npm install -g npm@latest
 RUN npm install
 
 # Expose the port that the API service listens on
-EXPOSE 3000
+EXPOSE 3002
 
 # Define the command to run the application
 CMD ["npx", "nx", "serve", "api-service", "--skip-nx-cache", "--configuration=production", "--verbose"]
