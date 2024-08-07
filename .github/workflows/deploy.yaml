@@ -100,4 +100,4 @@ jobs:
           script: |
             cd wee
             ls
-            docker compose up --build 
+            timeout 30m docker compose up --build
