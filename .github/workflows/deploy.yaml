@@ -32,6 +32,8 @@ jobs:
           envkey_REDIS_HOST : ${{secrets.REDIS_HOST}}
           envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
           envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
+          envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
+          envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
@@ -47,6 +49,8 @@ jobs:
           envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
           envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
           envkey_GOOGLE_CLOUD_CREDENTIALS : ${{ github.workspace }}/wee/webscraper/google-credentials.json
+          envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
+          envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
@@ -62,6 +66,8 @@ jobs:
           envkey_REDIS_PORT : ${{secrets.REDIS_PORT}}
           envkey_REDIS_PASSWORD : ${{secrets.REDIS_PASSWORD}}
           envkey_GOOGLE_CLOUD_CREDENTIALS : ${{ github.workspace }}/wee/api-service/google-credentials.json
+          envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
+          envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
           directory: wee/api-service
           file_name: .env
           fail_on_empty: false
