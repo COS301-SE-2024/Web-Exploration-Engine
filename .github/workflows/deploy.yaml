@@ -51,6 +51,7 @@ jobs:
           envkey_GOOGLE_CLOUD_CREDENTIALS : webscraper/google-credentials.json
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
+          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false
@@ -68,6 +69,7 @@ jobs:
           envkey_GOOGLE_CLOUD_CREDENTIALS : api-service/google-credentials.json
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
+          envkey_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           directory: wee/api-service
           file_name: .env
           fail_on_empty: false
@@ -105,4 +107,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wee
-            docker compose up --build --force-recreate
+            docker compose up --build --detach --force-recreate
