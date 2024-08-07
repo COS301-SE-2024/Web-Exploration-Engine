@@ -18,8 +18,8 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/wee/api-service
           mkdir -p ${{ github.workspace }}/wee/webscraper
-          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > ${{ github.workspace }}/wee/api-service/google-credentials.json
-          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > ${{ github.workspace }}/wee/webscraper/google-credentials.json
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" | base64 --decode > ${{ github.workspace }}/wee/api-service/google-credentials.json
+          echo "${{ secrets.GOOGLE_CREDENTIALS }}" | base64 --decode > ${{ github.workspace }}/wee/webscraper/google-credentials.json
           
       - name: Make frontend envfile
         uses: SpicyPizza/create-envfile@v2.0
