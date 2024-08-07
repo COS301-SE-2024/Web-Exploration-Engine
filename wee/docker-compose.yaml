@@ -19,7 +19,7 @@ services:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       PUPPETEER_EXECUTABLE_PATH: '/usr/bin/google-chrome-stable'
     ports:
-      - "3002:3002"
+      - "3003:3003"
     command: >
       sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
     user: webscraper
@@ -39,7 +39,7 @@ services:
     env_file:
       - api-service/.env
     ports:
-      - "3000:3000"
+      - "3002:3002"
     command: >
       sh -c "npx nx serve api-service --skip-nx-cache --configuration=production --verbose"
     depends_on:
