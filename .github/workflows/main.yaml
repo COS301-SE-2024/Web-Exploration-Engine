@@ -1,10 +1,13 @@
-name: lint-build-test-deploy
+name: Lint Build and Test
 
 on:
   pull_request:
     branches: [master, development]
   push:
     branches: [master, development]
+
+permissions:
+  contents: read
 
 jobs:
   lint-build-test-deploy:
@@ -37,8 +40,6 @@ jobs:
           npx nx lint api-service
           npx nx lint frontend
           echo "================== lint complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
-        #continue-on-error: true
 
       - name: Build
         run: |
@@ -65,7 +66,29 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Deploy
+  run-cypress-tests:
+    name: Frontend Integration Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Install dependencies
+        run: |
+          cd wee/frontend
+          npm ci
+
+      - name: Start application
         run: |
           echo "================== deployment complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
