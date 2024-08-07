@@ -1,7 +1,7 @@
 // src/scraper/scraper.module.ts
 import { Module } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
-// import { ScraperController } from './scraper.controller';
+import { HealthController } from './scraper.controller';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -48,7 +48,7 @@ import { ProxyService } from './proxy/proxy.service';
     }),
     PubSubModule,
   ],
-  // controllers: [ScraperController],
+  controllers: [HealthController],
   providers: [
     ScraperService,
     RobotsService,

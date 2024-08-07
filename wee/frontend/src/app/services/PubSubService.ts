@@ -1,8 +1,8 @@
 // Function to check the status of the job
 export async function checkJobStatus(url: string) {
   try {
-    // CHANGE TO DEPLOYED VERSION
-    const response = await fetch(`http://localhost:3000/api/scraper/status/scrape/${encodeURIComponent(url)}`);
+    const apiUrl = process.env.API_URL || 'http://localhost:3000/api';
+    const response = await fetch(`${apiUrl}/scraper/status/scrape/${encodeURIComponent(url)}`);
     if (!response.ok) {
       throw new Error(`Error fetching job status: ${response.statusText}`);
     }

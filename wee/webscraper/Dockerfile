@@ -34,7 +34,7 @@ RUN chown -R webscraper:webscraper /app
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
-EXPOSE 3000
+EXPOSE 3002
 
 USER webscraper
 
