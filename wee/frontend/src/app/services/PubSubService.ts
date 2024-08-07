@@ -3,7 +3,7 @@ export async function checkJobStatus(url: string) {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
     console.log('API URL:', apiUrl);
-    const response = await fetch(`${apiUrl}/scraper/status/scrape/${encodeURIComponent(url)}`);
+    const response = await fetch(`${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
     if (!response.ok) {
       throw new Error(`Error fetching job status: ${response.statusText}`);
     }
