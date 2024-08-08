@@ -5,7 +5,7 @@ import { Cache } from 'cache-manager';
 import {
   ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
   ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
-  GetJobStatusTypeParam, GetJobStatusUrlParam, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400,
+  GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
@@ -48,7 +48,7 @@ export class ScraperController {
       return {
         message: 'Scraping task published',
         status: 'processing',
-        pollingUrl: `/status/scrape/${encodeURIComponent(url)}`,
+        pollingUrl: `/status?type=scrape&url=${encodeURIComponent(url)}`,
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -462,13 +462,14 @@ export class ScraperController {
     }
   }
 
-  @Get('status/:type/:url')
+  @Get('status')
   @GetJobStatusOperation
   @GetJobStatusResponse200
   @GetJobStatusResponse400
-  @GetJobStatusTypeParam
-  @GetJobStatusUrlParam
-  async getJobStatus(@Param('type') type: string, @Param('url') url: string ) {
+  @GetJobStatusTypeQuery
+  @GetJobStatusQuery
+  async getJobStatus(@Query('type') type: string, @Query('url') url: string ) {
+    console.log(url, type);
     try {
       const acceptedTypes = [
         'scrape', 

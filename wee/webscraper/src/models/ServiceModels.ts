@@ -78,6 +78,6 @@ export interface ScrapeResult {
   screenshot?: string | ErrorResponse;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   seoAnalysis?: any;
-  sentimentClassification?: SentimentClassification | ErrorResponse;
+  sentiment?: SentimentClassification | ErrorResponse;
   time: number;
 }

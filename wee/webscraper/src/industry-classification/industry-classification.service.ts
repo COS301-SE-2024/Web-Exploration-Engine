@@ -10,7 +10,7 @@ export class IndustryClassificationService {
   private readonly HUGGING_FACE_ZERO_SHOT_API_URL =
     'https://api-inference.huggingface.co/models/facebook/bart-large-mnli';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
+  private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   private readonly CANDIDATE_LABELS = [
     'Mining and Minerals', 'Agriculture', 'Manufacturing', 'Finance and Banking',
@@ -36,7 +36,7 @@ export class IndustryClassificationService {
       metadataClass = await this.metadataClassify(metadata);
     
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       metadataClass = { 
         label: 'Unknown',
         score: 0,
@@ -46,7 +46,7 @@ export class IndustryClassificationService {
     try {
       domainClass = await this.domainClassify(url);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       domainClass = {
         label: 'Unknown',
         score: 0,
@@ -56,7 +56,7 @@ export class IndustryClassificationService {
     try {
       zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       zeroShotMetaDataClassify = [
         { label: 'Unknown', score: 0 },
         { label: 'Unknown', score: 0 },
@@ -67,7 +67,7 @@ export class IndustryClassificationService {
     try {
       zeroShotDomainClassify = await this.zeroShotDomainClassify(url);
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       zeroShotDomainClassify = [
         { label: 'Unknown', score: 0 },
         { label: 'Unknown', score: 0 },
