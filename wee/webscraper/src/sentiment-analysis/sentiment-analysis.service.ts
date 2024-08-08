@@ -27,7 +27,7 @@ export class SentimentAnalysisService {
         emotions,
       };
     } catch (error) {
-      console.log('Error during sentiment classification:', error);
+      console.log('Error during sentiment classification:', error.message);
       return {
         sentimentAnalysis: {
           positive: 0,
@@ -95,7 +95,7 @@ export class SentimentAnalysisService {
         throw new Error('Unexpected response format from sentiment analysis API');
       }
     } catch (error) {
-      console.error('Error during sentiment analysis:', error);
+      console.error('Error during sentiment analysis:', error.message);
       return { positive: 0, negative: 0, neutral: 0 };
     }
   }
@@ -181,7 +181,7 @@ export class SentimentAnalysisService {
   
       return { positiveWords, negativeWords };
     } catch (error) {
-      console.error('Error during word-level sentiment analysis:', error);
+      console.error('Error during word-level sentiment analysis:', error.message);
       return { positiveWords: [], negativeWords: [] };
     }
   }
@@ -224,7 +224,7 @@ export class SentimentAnalysisService {
         throw new Error('Unexpected response format from emotion analysis API');
       }
     } catch (error) {
-      console.error('Error during emotion analysis:', error);
+      console.error('Error during emotion analysis:', error.message);
       return {};
     }
   }
