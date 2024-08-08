@@ -12,7 +12,7 @@ export class SentimentAnalysisService {
   private readonly HUGGING_FACE_EMOTION_API_URL =
     'https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
+  private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
     try {
@@ -27,7 +27,7 @@ export class SentimentAnalysisService {
         emotions,
       };
     } catch (error) {
-      console.log('Error during sentiment classification:', error.message);
+      console.log('Error during sentiment classification:', error);
       return {
         sentimentAnalysis: {
           positive: 0,
@@ -57,6 +57,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -94,7 +95,7 @@ export class SentimentAnalysisService {
         throw new Error('Unexpected response format from sentiment analysis API');
       }
     } catch (error) {
-      console.error('Error during sentiment analysis:', error.message);
+      console.error('Error during sentiment analysis:', error);
       return { positive: 0, negative: 0, neutral: 0 };
     }
   }
@@ -134,6 +135,7 @@ export class SentimentAnalysisService {
           {
             headers: {
               Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -179,7 +181,7 @@ export class SentimentAnalysisService {
   
       return { positiveWords, negativeWords };
     } catch (error) {
-      console.error('Error during word-level sentiment analysis:', error.message);
+      console.error('Error during word-level sentiment analysis:', error);
       return { positiveWords: [], negativeWords: [] };
     }
   }
@@ -200,6 +202,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -221,7 +224,7 @@ export class SentimentAnalysisService {
         throw new Error('Unexpected response format from emotion analysis API');
       }
     } catch (error) {
-      console.error('Error during emotion analysis:', error.message);
+      console.error('Error during emotion analysis:', error);
       return {};
     }
   }
