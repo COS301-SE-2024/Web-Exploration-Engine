@@ -89,7 +89,7 @@ export class ScraperService implements OnModuleInit {
     let browser: puppeteer.Browser;
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`] // '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); 
 
       
