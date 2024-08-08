@@ -19,6 +19,9 @@ export class ProxyService {
   getProxy() {
     const proxy = this.proxyPool[Math.floor(Math.random() * this.proxyPool.length)];
     // return `http://${proxy}:${this.proxyPort}`;
-    return `http${this.proxyUsername && this.proxyPassword ? 's' : ''}://${this.proxyUsername}:${this.proxyPassword}@${proxy}:${this.proxyPort}`;
+    const encodedUsername = encodeURIComponent(this.proxyUsername);
+    const encodedPassword = encodeURIComponent(this.proxyPassword);
+    return `http://${encodedUsername}:${encodedPassword}@${proxy}:${this.proxyPort}`;
+    // return `http${this.proxyUsername && this.proxyPassword ? 's' : ''}://${this.proxyUsername}:${this.proxyPassword}@${proxy}:${this.proxyPort}`;
   }
 }
