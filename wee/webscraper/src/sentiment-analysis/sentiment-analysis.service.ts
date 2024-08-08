@@ -57,6 +57,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -134,6 +135,7 @@ export class SentimentAnalysisService {
           {
             headers: {
               Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -200,6 +202,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
