@@ -98,7 +98,7 @@ export class ScraperService implements OnModuleInit {
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Failed to launch browser ${error}`,
       } as ErrorResponse;
     }
      
