@@ -30,6 +30,9 @@ RUN npm install
 
 RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 
+# Create the home directory for the webscraper user and set ownership
+RUN mkdir -p /home/webscraper && chown -R webscraper:webscraper /home/webscraper
+
 RUN chown -R webscraper:webscraper /app
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
