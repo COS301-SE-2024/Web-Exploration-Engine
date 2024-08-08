@@ -115,7 +115,7 @@ export class ScraperService implements OnModuleInit {
       addresses: [],
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
-      sentimentClassification: null as SentimentClassification | null,
+      sentiment: null as SentimentClassification | null,
       time: 0,
     } as ScrapeResult;
 
@@ -192,7 +192,7 @@ export class ScraperService implements OnModuleInit {
 
     data.images = images;
 
-    data.sentimentClassification = sentimentAnalysis;
+    data.sentiment = sentimentAnalysis;
 
     // close browser
     await browser.close();
