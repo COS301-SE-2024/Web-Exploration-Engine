@@ -103,7 +103,7 @@ Domain Name Services (Pty) Ltd.     </a>
  
   <tr>
     <td style="vertical-align: top; width:auto; border: 0; padding: 10px;">
-      <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7d33bfcd-ffa4-43d0-804c-a54da638223ci" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="assets/Mignon.jpg" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2><b style="font-size: 18px;">Mignon Erasmus</b></h2>
