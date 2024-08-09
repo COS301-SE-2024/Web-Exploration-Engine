@@ -31,6 +31,21 @@ describe('Signup and Login Tests', () => {
       cy.get('[data-testid="login-button"]').click();
       cy.get('span').should('contain', 'Invalid email or password');
     });
+    it('should login successfully with valid credentials', () => {
+      cy.intercept('POST', '/api/login', (req) => {
+        console.log('Intercepted request:', req);
+        req.reply({
+          statusCode: 200,
+          body: { uuid: '12345' }
+        });
+      }).as('loginRequest');
+
+      cy.get('input[type="email"]').type('valid@example.com');
+      cy.get('input[type="password"]').type('correctpassword');
+      cy.get('[data-testid="login-button"]').click();
+
+
+    });
 });
 
 
