@@ -34,8 +34,8 @@ Domain Name Services (Pty) Ltd.     </a>
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | [Software Requirements Specification](https://drive.google.com/file/d/1hIByMMoiA6zoGM0YLabwd8MGNqZqX2Tg/view?usp=drive_link)     | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1Ny_w3cc93BGqIUyIo3liALL498i1PeID/view?usp=drive_link)             | System design overview                     |
-| [User Manual](https://drive.google.com/file/d/1qTVVU-4q4Nkg2HMpySgCph18il9YEjDb/view?usp=drive_link)                             | Guidelines to using WEE                    |
+| [Architectural Specification](https://drive.google.com/file/d/1Za5tXMt_DuqFdsps3EYy9iLW0eXG6MoH/view?usp=drive_link)             | System design overview                     |
+| [User Manual](https://drive.google.com/file/d/1MRcQhdarDDe5C6epc5Zb6LLUcPG46zZR/view?usp=drive_link)                             | Guidelines to using WEE                    |
 | [Technical Installation Manual](https://drive.google.com/file/d/16cm_ga5pNMg-IPXeGS9LiORRwy188NQ_/view?usp=drive_link)           |  Instructions for system configuration     |
 | [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
 | [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
