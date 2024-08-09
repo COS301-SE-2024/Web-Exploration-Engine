@@ -46,6 +46,15 @@ describe('Signup and Login Tests', () => {
 
 
     });
+
+    it('should display an error message if Google login fails', () => {
+      cy.intercept('GET', '/api/google-login', {
+        statusCode: 500,
+        body: { code: 'SERVER_ERROR' }
+      }).as('googleLoginRequest');
+      cy.get('button').contains('Login with Google').click();
+
+  });
 });
 
 
