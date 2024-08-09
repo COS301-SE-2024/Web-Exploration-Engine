@@ -25,4 +25,14 @@ describe('Help Page Tests', () => {
     cy.get('a[href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"]').should('exist');
     cy.get('a[href="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"]').should('exist');
   });
+
+  it('should allow user to send feedback', () => {
+    cy.visit('/help');
+
+    cy.get('textarea').should('be.visible').type('This is a test message.');
+    cy.get('input[type="text"]').type('John Doe');
+    cy.get('input[type="email"]').type('john.doe@example.com');
+
+    cy.get('[data-testid="send-message-button"]').click();
+  });
 });
