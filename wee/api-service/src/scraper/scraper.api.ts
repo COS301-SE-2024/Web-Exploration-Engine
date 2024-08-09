@@ -367,35 +367,38 @@ export const ScraperResponse500 = ApiResponse({ status: 500, description: 'Inter
 // });
 
 // getJobStatus endpoint
-export const GetJobStatusTypeParam = ApiParam({
-  name: 'type',
-  required: true,
-  description: 'Type of the job.',
-  schema: {
-    type: 'string',
-    enum: [
-      'scrape', 
-      'read-robots', 
-      'scrape-metadata',
-      'scrape-status',
-      'classify-industry',
-      'scrape-logo',
-      'scrape-images',
-      'screenshot',
-      'scrape-contact-info',
-      'scrape-addresses',
-      'seo-analysis',
-    ],
-  },
-});
-export const GetJobStatusUrlParam = ApiParam({
-  name: 'url',
-  required: true,
-  description: 'URL of the job.',
-  schema: {
-    type: 'string',
-  },
-});
+// export const GetJobStatusTypeParam = ApiParam({
+//   name: 'type',
+//   required: true,
+//   description: 'Type of the job.',
+//   schema: {
+//     type: 'string',
+//     enum: [
+//       'scrape', 
+//       'read-robots', 
+//       'scrape-metadata',
+//       'scrape-status',
+//       'classify-industry',
+//       'scrape-logo',
+//       'scrape-images',
+//       'screenshot',
+//       'scrape-contact-info',
+//       'scrape-addresses',
+//       'seo-analysis',
+//     ],
+//   },
+// });
+// export const GetJobStatusUrlParam = ApiParam({
+//   name: 'url',
+//   required: true,
+//   description: 'URL of the job.',
+//   schema: {
+//     type: 'string',
+//   },
+// });
+export const GetJobStatusQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
+export const GetJobStatusTypeQuery = ApiQuery({ name: 'type', required: true, description: 'Type of the job' });
+
 export const GetJobStatusOperation = ApiOperation({ summary: 'Get the status of a job' });
 
 export const GetJobStatusResponse200 = ApiResponse({

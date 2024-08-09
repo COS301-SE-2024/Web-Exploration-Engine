@@ -12,7 +12,7 @@ export class SentimentAnalysisService {
   private readonly HUGGING_FACE_EMOTION_API_URL =
     'https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.access_token;
+  private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
     try {
@@ -57,6 +57,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -134,6 +135,7 @@ export class SentimentAnalysisService {
           {
             headers: {
               Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+              'Content-Type': 'application/json',
             },
           }
         );
@@ -200,6 +202,7 @@ export class SentimentAnalysisService {
         {
           headers: {
             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            'Content-Type': 'application/json',
           },
         }
       );
