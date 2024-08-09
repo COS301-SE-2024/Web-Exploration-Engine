@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act, fireEvent } from '@testing-library/react';
+import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import ScrapeResults from '../../src/app/(pages)/scraperesults/page'; // Adjust the import according to your file structure
 
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,7 @@ global.fetch = jest.fn().mockResolvedValue({
 
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: () => ({
-        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com'],
+        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com', 'https://www.example5.com'],
         setUrls: jest.fn(),
         results: [        
             {
@@ -37,11 +37,20 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
                 },
             },
         ],
-        processedUrls: ['https://www.example.com', 'https://www.example2.com'],
+        errorResults: [
+            {
+                errorStatus: 500,
+                errorCode: '500 Internal Server Error',
+                errorMessage: `Failed to scrape url`,
+                url: 'https://www.example5.com'
+            }
+        ],
+        processedUrls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example5.com'],
         setProcessedUrls: jest.fn(),
         processingUrls: [],
         setProcessingUrls: jest.fn(), 
         setResults: jest.fn(),
+        setErrorResults: jest.fn(),
         setSummaryReport: jest.fn(),
     }),
 }));
@@ -57,15 +66,15 @@ describe('Scrape Results Component', () => {
         (useRouter as jest.Mock).mockReturnValue({ push: mockPush }); 
     });
 
-    it('should display 2 results', async () => {
+    it('should display 3 results', async () => {
         await act(async () => {
             render(<ScrapeResults />);
         });
 
-        expect(screen.getByText('Total 2 results')).toBeDefined();
+        expect(screen.getByText('Total 3 results')).toBeDefined();
     });
 
-    it('should filter items based on searchValue', () => {
+    it('should filter items based on searchValue - test 1', () => {
         render(<ScrapeResults />);
 
         expect(screen.getByText('https://www.example.com')).toBeDefined();
@@ -91,10 +100,19 @@ describe('Scrape Results Component', () => {
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
     });
 
-    it('should not process the URL if it is already processed', () => {
+    it('should not process the URL if it is already processed', async () => {
         render(<ScrapeResults />);
 
-        expect(fetch).toHaveBeenCalledTimes(1); // Assuming 2 URLs were processed
+        await waitFor(() => expect(fetch).toHaveBeenCalled());
+
+        expect(fetch).toHaveBeenCalledTimes(1); // Assuming 3 URLs were processed
         expect(fetch).toHaveBeenCalledWith('http://localhost:3002/api/scraper?url=https%3A%2F%2Fwww.example3.com');
+    });
+
+    it('count the number of view buttons', () => {
+        render(<ScrapeResults />);
+
+        const viewButtons = screen.getAllByText('View');
+        expect(viewButtons.length).toBe(2);
     });
 });
