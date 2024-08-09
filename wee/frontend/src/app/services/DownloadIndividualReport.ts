@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -21,7 +21,8 @@ export const handleDownloadReport = (
   imageAnalysis: ImageAnalysis | SEOError | undefined,
   internalLinksAnalysis: InternalLinksAnalysis | SEOError | undefined,
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError | undefined,
-  uniqueContentAnalysis: UniqueContentAnalysis | SEOError | undefined
+  uniqueContentAnalysis: UniqueContentAnalysis | SEOError | undefined,
+  sentimentAnalysis: SentimentAnalysis |undefined,
 ) => {
   const doc = new jsPDF();
 
@@ -454,8 +455,77 @@ export const handleDownloadReport = (
       }
     });
   }
+///Sentiment
+doc.addPage();
+  doc.setFontSize(20);
+  const title8= 'Sentiment Analysis';
+  const titleWidth8 = doc.getStringUnitWidth(title8) * 20 / doc.internal.scaleFactor;
+  const x8 = (doc.internal.pageSize.width - titleWidth8) / 2;
+  doc.text(title8, x8, 20);
+  
+  
+  if (sentimentAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+      const sentiment = sentimentAnalysis && 'sentimentAnalysis' in sentimentAnalysis 
+      ? JSON.stringify(sentimentAnalysis.sentimentAnalysis) 
+      : 'N/A';
 
+  const positiveWords = sentimentAnalysis && 'positiveWords' in sentimentAnalysis 
+      ? sentimentAnalysis.positiveWords.join(', ') 
+      : 'N/A';
 
+  const negativeWords = sentimentAnalysis && 'negativeWords' in sentimentAnalysis 
+      ? sentimentAnalysis.negativeWords.join(', ') 
+      : 'N/A';
+
+  const emotion = sentimentAnalysis && 'emotions' in sentimentAnalysis 
+      ? Array.isArray(sentimentAnalysis.emotions) 
+          ? sentimentAnalysis.emotions.join(', ') 
+          : JSON.stringify(sentimentAnalysis.emotions) 
+      : 'N/A';
+
+  const sentimentAnalysisRows = [
+      ['Sentiment', sentiment],
+      ['Positive Words', positiveWords],
+      ['Negative Words', negativeWords],
+      ['Emotion', emotion],
+  ];
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    sentimentAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
   //
   const cleanFilename = (url: string | null): string => {
     if (!url) return 'website-summary-report';
