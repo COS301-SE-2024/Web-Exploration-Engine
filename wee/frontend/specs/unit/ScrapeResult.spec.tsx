@@ -4,6 +4,7 @@ import ScrapeResults from '../../src/app/(pages)/scraperesults/page'; // Adjust 
 import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
 import userEvent from '@testing-library/user-event';
+import { pollForResult } from '../../src/app/services/PubSubService';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -16,7 +17,10 @@ global.fetch = jest.fn().mockResolvedValue({
     ok: true, // Example ok status
     status: 200, // Example status code
 });
-  
+
+jest.mock('../../src/app/services/PubSubService', () => ({
+    pollForResult: jest.fn()
+}));
 
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: () => ({
@@ -254,6 +258,39 @@ describe('Scrape Results Component', () => {
             expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
             expect(screen.getByText('https://www.example2.com')).toBeDefined();
             expect(screen.queryByText('https://www.example5.com')).toBeNull();
+        });
+    });
+
+    it('pollForResult function - ErrorResult', async () => {
+        const mockErrorResult = {
+            errorStatus: 500,
+            errorCode: '500 Internal Server Error',
+            errorMessage: `Failed to scrape url`,
+            url: 'https://www.example6.com'
+        };
+
+        (pollForResult as jest.Mock).mockResolvedValueOnce(mockErrorResult);
+        const {container} = render(<ScrapeResults />);
+
+        await waitFor(() => {
+            expect(pollForResult).toHaveBeenCalled();
+        });
+    });
+
+    it('pollForResult function - Result', async () => {
+        const mockErrorResult = {
+            url: 'https://www.example7.com',
+            domainStatus: 'live',
+            robots: { 
+                isUrlScrapable: true,
+            },
+        };
+
+        (pollForResult as jest.Mock).mockResolvedValueOnce(mockErrorResult);
+        const {container} = render(<ScrapeResults />);
+
+        await waitFor(() => {
+            expect(pollForResult).toHaveBeenCalled();
         });
     });
 
