@@ -1,8 +1,9 @@
 import React from 'react';
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import ScrapeResults from '../../src/app/(pages)/scraperesults/page'; // Adjust the import according to your file structure
-
+import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -66,6 +67,10 @@ describe('Scrape Results Component', () => {
         (useRouter as jest.Mock).mockReturnValue({ push: mockPush }); 
     });
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('should display 3 results', async () => {
         await act(async () => {
             render(<ScrapeResults />);
@@ -79,12 +84,14 @@ describe('Scrape Results Component', () => {
 
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: 'example2' } });
 
         expect(screen.queryByText('https://www.example.com')).toBeNull();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.queryByText('https://www.example5.com')).toBeNull();
     });
 
     it('should not filter items when searchValue is empty', () => {
@@ -92,12 +99,14 @@ describe('Scrape Results Component', () => {
 
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: '' } });
 
         expect(screen.getByText('https://www.example.com')).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
     });
 
     it('should not process the URL if it is already processed', async () => {
@@ -115,4 +124,66 @@ describe('Scrape Results Component', () => {
         const viewButtons = screen.getAllByText('View');
         expect(viewButtons.length).toBe(2);
     });
+
+    it('Filter Crawlable - No', async () => {
+        render(<ScrapeResults />);
+
+        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
+
+        const crawlableFilterTrigger = screen.getByTestId('crawlable-filter');
+        expect(crawlableFilterTrigger).toBeInTheDocument();
+      
+        fireEvent.click(crawlableFilterTrigger);
+      
+        await waitFor(() => {
+          expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
+          expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
+        });
+      
+        const noCrawlableOption = screen.getByTestId('crawlable-filter-no');
+        fireEvent.click(noCrawlableOption);
+
+        await waitFor(() => {
+            const rows = screen.getAllByTestId('table-row');
+            expect(rows.length).toBeGreaterThan(0);
+        });
+    
+    
+        await waitFor(() => {
+            expect(screen.getByText('https://www.example5.com')).toBeDefined();
+        });
+    });
+
+    it('Filter Crawlable - Yes', async () => {
+        render(<ScrapeResults />);
+
+        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
+
+        const crawlableFilterTrigger = screen.getByTestId('crawlable-filter');
+        expect(crawlableFilterTrigger).toBeInTheDocument();
+      
+        fireEvent.click(crawlableFilterTrigger);
+      
+        await waitFor(() => {
+          expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
+          expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
+        });
+      
+        const yesCrawlableOption = screen.getByTestId('crawlable-filter-yes');
+        fireEvent.click(yesCrawlableOption);
+
+        await waitFor(() => {
+            const rows = screen.getAllByTestId('table-row');
+            expect(rows.length).toBeGreaterThan(0);
+        });    
+    
+        await waitFor(() => {
+            expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        });
+    });
+
 });

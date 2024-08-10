@@ -284,8 +284,8 @@ const getScrapingResults = async (url: string) => {
           onChange={handleStatusFilterChange}
           data-testid="status-filter"
         >
-          <SelectItem key={'Parked'}>Parked</SelectItem>
-          <SelectItem key={'Live'}>Live</SelectItem>
+          <SelectItem key={'Parked'} data-testid="status-filter-parked">Parked</SelectItem>
+          <SelectItem key={'Live'} data-testid="status-filter-live">Live</SelectItem>
         </WEESelect>
 
         <WEESelect
@@ -294,8 +294,8 @@ const getScrapingResults = async (url: string) => {
           onChange={handleCrawlableFilterChange}
           data-testid="crawlable-filter"
         >
-          <SelectItem key={'Yes'}>Yes</SelectItem>
-          <SelectItem key={'No'}>No</SelectItem>
+          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Yes</SelectItem>
+          <SelectItem key={'No'} data-testid="crawlable-filter-no">No</SelectItem>
         </WEESelect>
       </div>
 
@@ -368,13 +368,13 @@ const getScrapingResults = async (url: string) => {
 
         <TableBody emptyContent={'There are no results to be displayed'}>
           {items.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell>
+            <TableRow key={index} data-testid="table-row">
+              <TableCell >
                 {isErrorResponse(item) ? (
                   item.url ? item.url : 'Error'                  
                 ) : (
                   item.url &&
-                    <Link href={`/results?url=${encodeURIComponent(item.url)}`}>
+                    <Link href={`/results?url=${encodeURIComponent(item.url)}`} >
                       {item.url}
                     </Link>                  
                 )}
