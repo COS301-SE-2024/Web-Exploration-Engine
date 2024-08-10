@@ -33,15 +33,16 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| [Software Requirements Specification](https://drive.google.com/file/d/1wwzlQgMsZSCOejlKFO5LxF2ENHWYg7bx/view?usp=sharing)     | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1ZD3nqFtdKrYqurdR8HHw5Yvjg8JevZcI/view?usp=sharing)             | System design overview                     |
+| [Software Requirements Specification](https://drive.google.com/file/d/1hIByMMoiA6zoGM0YLabwd8MGNqZqX2Tg/view?usp=drive_link)     | Details on project requirements            |
+| [Architectural Specification](https://drive.google.com/file/d/1Ny_w3cc93BGqIUyIo3liALL498i1PeID/view?usp=drive_link)             | System design overview                     |
+| [User Manual](https://drive.google.com/file/d/1qTVVU-4q4Nkg2HMpySgCph18il9YEjDb/view?usp=drive_link)                             | Guidelines to using WEE                    |
+| [Technical Installation Manual](https://drive.google.com/file/d/16cm_ga5pNMg-IPXeGS9LiORRwy188NQ_/view?usp=drive_link)           |  Instructions for system configuration     |
+| [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
+| [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
 | [Architecture Diagram](https://drive.google.com/file/d/19bszabKay4TnxgkcHCeUG_R5ovr6d5wl/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
 | [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
 | [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71)                                                           | Team organisation and progress tracking    |
-| [User Manual](https://drive.google.com/file/d/13PiIBegn0emiqJLaUfwy20Ir0Iw4LkrR/view?usp=sharing)                             | Guidelines to using WEE                    |
-| [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
-| [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
 | [Previous Documentation Iterations](https://drive.google.com/drive/folders/1H4omJ2xESlP8_STEu7QdVYtMf1rgsZ-S?usp=sharing)     | See how our documentation has progressed   |
 
  <h1 align="center"> Demo Resources </h1>
@@ -53,6 +54,7 @@ Domain Name Services (Pty) Ltd.     </a>
 |---------------------------------|---------------------------------|---------------------------------|
 | Demo 1 | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 | Demo 2 | [Demo 2 Video](https://drive.google.com/file/d/1fmjxiQVnpMjOAuttFO75xRElCkPtDDWh/view?usp=sharing) | [Demo 2 Slides](https://www.canva.com/design/DAGHjFa1XEo/w8trIf8dZMyJ7xtJLpWiag/edit?utm_content=DAGHjFa1XEo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
+| Demo 3 | [Demo 3 Video](https://drive.google.com/file/d/1HYXFZeAeoHbty9NBG3c9h86kCwD3qBhI/view?usp=drive_link) | [Demo 3 Slides](https://www.canva.com/design/DAGM5VQp7f0/MTP7vC8GpmNQX7k_ND45SQ/edit?utm_content=DAGM5VQp7f0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 </div>
 
@@ -103,7 +105,7 @@ Domain Name Services (Pty) Ltd.     </a>
  
   <tr>
     <td style="vertical-align: top; width:auto; border: 0; padding: 10px;">
-      <img src="https://github.com/COS301-SE-2024/Web-Exploration-Engine/assets/99127918/7d33bfcd-ffa4-43d0-804c-a54da638223ci" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
+      <img src="assets/Mignon.jpg" width="800" height="auto" style="display: block; margin: 0 auto; border-radius: 30px;">
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2><b style="font-size: 18px;">Mignon Erasmus</b></h2>
