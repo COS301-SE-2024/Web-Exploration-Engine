@@ -86,8 +86,7 @@ describe('Scrape Results Component', () => {
     });
 
     it('should filter items based on searchValue - test 1', () => {
-        const {container} = render(<ScrapeResults />);
-        console.log(container.innerHTML);
+        render(<ScrapeResults />);
 
         expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
@@ -155,8 +154,7 @@ describe('Scrape Results Component', () => {
         await waitFor(() => {
             const rows = screen.getAllByTestId('table-row');
             expect(rows.length).toBeGreaterThan(0);
-        });
-    
+        });    
     
         await waitFor(() => {
             expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
@@ -198,7 +196,7 @@ describe('Scrape Results Component', () => {
     });
 
     it('Filter Status - Parked', async () => {
-        const {container} = render(<ScrapeResults />);
+        render(<ScrapeResults />);
 
         expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
@@ -230,7 +228,7 @@ describe('Scrape Results Component', () => {
     });
 
     it('Filter Status - Live', async () => {
-        const {container} = render(<ScrapeResults />);
+        render(<ScrapeResults />);
 
         expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
@@ -270,7 +268,7 @@ describe('Scrape Results Component', () => {
         };
 
         (pollForResult as jest.Mock).mockResolvedValueOnce(mockErrorResult);
-        const {container} = render(<ScrapeResults />);
+        render(<ScrapeResults />);
 
         await waitFor(() => {
             expect(pollForResult).toHaveBeenCalled();
@@ -278,7 +276,7 @@ describe('Scrape Results Component', () => {
     });
 
     it('pollForResult function - Result', async () => {
-        const mockErrorResult = {
+        const mockResult = {
             url: 'https://www.example7.com',
             domainStatus: 'live',
             robots: { 
@@ -286,8 +284,8 @@ describe('Scrape Results Component', () => {
             },
         };
 
-        (pollForResult as jest.Mock).mockResolvedValueOnce(mockErrorResult);
-        const {container} = render(<ScrapeResults />);
+        (pollForResult as jest.Mock).mockResolvedValueOnce(mockResult);
+        render(<ScrapeResults />);
 
         await waitFor(() => {
             expect(pollForResult).toHaveBeenCalled();
