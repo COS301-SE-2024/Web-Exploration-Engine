@@ -10,7 +10,7 @@ describe('IndustryClassificationService', () => {
 
   beforeEach(() => {
     service = new IndustryClassificationService();
-    process.env.access_Token = 'test-token'; // Mocking environment variable
+    process.env.ACCESS_TOKEN = 'test-token'; // Mocking environment variable
   });
 
   afterEach(() => {
