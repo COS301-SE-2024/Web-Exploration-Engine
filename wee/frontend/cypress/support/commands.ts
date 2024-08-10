@@ -17,6 +17,7 @@ declare namespace Cypress {
     login(email: string, password: string): void;
     mockUnsplash(): void;
     testHelp(page: string): void;
+    testLayout(page: string): void;
     importAllMocks(page: string): void;
   }
 }
@@ -43,6 +44,19 @@ Cypress.Commands.add('mockUnsplash', () => {
 Cypress.Commands.add('testHelp', (page) => {
   cy.visit(page);
   cy.get('[data-testid="help-button"]').should('exist');
+});
+
+Cypress.Commands.add('testLayout', (page) => {
+
+  cy.visit(page);
+  
+  //Testing Help Button
+  cy.get('[data-testid="help-button"]').should('exist');
+
+  //Testing Header
+
+
+  //Testing Footer
 });
 
 Cypress.Commands.add('importAllMocks', () => {
