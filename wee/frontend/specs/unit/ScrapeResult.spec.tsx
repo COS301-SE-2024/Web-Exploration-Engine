@@ -24,17 +24,19 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
         setUrls: jest.fn(),
         results: [        
             {
-                url: 'https://www.example.com',
-                robots: { 
-                    isUrlScrapable: false,
-                    domainStatus: 'parked', 
-                },
+                url: "https://www.example.com'",
+                domainStatus: 'parked',
+                robots: {
+                    "errorStatus": 500,
+                    "errorCode": "500 Internal Server Error",
+                    "errorMessage": "An error occurred while interpreting robots.txt file"
+                }
             },
             {
                 url: 'https://www.example2.com',
+                domainStatus: 'live',
                 robots: { 
                     isUrlScrapable: true,
-                    domainStatus: 'live',
                 },
             },
         ],
@@ -80,16 +82,17 @@ describe('Scrape Results Component', () => {
     });
 
     it('should filter items based on searchValue - test 1', () => {
-        render(<ScrapeResults />);
+        const {container} = render(<ScrapeResults />);
+        console.log(container.innerHTML);
 
-        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: 'example2' } });
 
-        expect(screen.queryByText('https://www.example.com')).toBeNull();
+        expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.queryByText('https://www.example5.com')).toBeNull();
     });
@@ -97,14 +100,14 @@ describe('Scrape Results Component', () => {
     it('should not filter items when searchValue is empty', () => {
         render(<ScrapeResults />);
 
-        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
         const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
         fireEvent.change(searchInput, { target: { value: '' } });
 
-        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
     });
@@ -128,7 +131,7 @@ describe('Scrape Results Component', () => {
     it('Filter Crawlable - No', async () => {
         render(<ScrapeResults />);
 
-        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
@@ -159,7 +162,7 @@ describe('Scrape Results Component', () => {
     it('Filter Crawlable - Yes', async () => {
         render(<ScrapeResults />);
 
-        expect(screen.getByText('https://www.example.com')).toBeDefined();
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
