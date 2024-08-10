@@ -120,6 +120,7 @@ function ResultsComponent() {
       const urlResults = results.filter((res) => res.url === url);
   
       if (urlResults && urlResults[0]) {
+        console.log(urlResults[0]);
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
