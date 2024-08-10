@@ -79,7 +79,7 @@ describe('ScraperController', () => {
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('status');
       expect(response.body).toHaveProperty('pollingUrl');
-      expect(response.body.pollingUrl).toMatch(/status\/scrape\//); 
+      expect(response.body.pollingUrl).toMatch(/^\/status\?type=scrape(&.*)?$/); 
     });
 
     it('should return an error if no URL is provided', async () => {

@@ -674,7 +674,7 @@ describe('ScraperService', () => {
             expect(result).toHaveProperty('addresses');
             expect(result).toHaveProperty('screenshot');
             expect(result).toHaveProperty('seoAnalysis');
-            expect(result).toHaveProperty('sentimentClassification');
+            expect(result).toHaveProperty('sentiment');
     
         });
     

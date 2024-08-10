@@ -20,6 +20,7 @@ describe('checkJobStatus', () => {
     const data = await checkJobStatus('http://example.com');
     expect(data).toEqual(mockData);
     expect(fetch).toHaveBeenCalledWith('http://localhost:3002/api/scraper/status/scrape/http%3A%2F%2Fexample.com');
+
   });
 
   it('should throw an error when the fetch response is not ok', async () => {
@@ -30,6 +31,7 @@ describe('checkJobStatus', () => {
 
     await expect(checkJobStatus('http://example.com')).rejects.toThrow('Error fetching job status: Internal Server Error');
     expect(fetch).toHaveBeenCalledWith('http://localhost:3002/api/scraper/status/scrape/http%3A%2F%2Fexample.com');
+
   });
 
   it('should throw an error when the fetch fails', async () => {
@@ -38,6 +40,7 @@ describe('checkJobStatus', () => {
 
     await expect(checkJobStatus('http://example.com')).rejects.toThrow('Network Error');
     expect(fetch).toHaveBeenCalledWith('http://localhost:3002/api/scraper/status/scrape/http%3A%2F%2Fexample.com');
+
   });
 });
 
