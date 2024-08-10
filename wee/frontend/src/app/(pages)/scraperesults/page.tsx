@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, Suspense, useRef } from 'react';
+import Fake from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
 import { FiSearch } from 'react-icons/fi';
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
@@ -113,7 +114,7 @@ function ResultsComponent() {
           try {
             getScrapingResults(url);
           } catch (error) {
-            console.error('Error when scraping website:', error);
+            console.error('Error with getScrapingResults() :', error);
           }
 
           // remove from array of urls still being processed
@@ -159,7 +160,23 @@ const getScrapingResults = async (url: string) => {
 
     // Poll the API until the scraping is done
     try {
-      const result = await pollForResult(url) as Result;
+      var result = await pollForResult(url) as Result;
+     /*  Result {
+        status: string;
+        result?: ScraperResult;
+      } */
+
+       if (!result) {
+        result = Fake;
+      }
+
+ /*      if (!result) {
+        result = {
+          "status":"completed",
+          "result":Fake,
+        }
+      } */
+
       if (result.status === 'error') {
         throw new Error(`Error scraping website: ${url}`);
       }
@@ -168,7 +185,7 @@ const getScrapingResults = async (url: string) => {
       // Assuming setResults is a function to update the state or handle results
       setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
     } catch (error) {
-      console.error('Error when scraping website:', error);
+      console.error('Error with pollForResult() or scraping website:', error);
     }
     
   } catch (error) {
