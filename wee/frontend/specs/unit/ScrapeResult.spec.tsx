@@ -155,6 +155,8 @@ describe('Scrape Results Component', () => {
     
     
         await waitFor(() => {
+            expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
+            expect(screen.queryByText('https://www.example2.com')).toBeNull();
             expect(screen.getByText('https://www.example5.com')).toBeDefined();
         });
     });
@@ -185,7 +187,73 @@ describe('Scrape Results Component', () => {
         });    
     
         await waitFor(() => {
+            expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
             expect(screen.getByText('https://www.example2.com')).toBeDefined();
+            expect(screen.queryByText('https://www.example5.com')).toBeNull();
+        });
+    });
+
+    it('Filter Status - Parked', async () => {
+        const {container} = render(<ScrapeResults />);
+
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
+        expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
+
+        const statusFilterTrigger = screen.getByTestId('status-filter');
+        expect(statusFilterTrigger).toBeInTheDocument();
+      
+        fireEvent.click(statusFilterTrigger);
+      
+        await waitFor(() => {
+          expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
+          expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
+        });
+      
+        const parkedStatusOption = screen.getByTestId('status-filter-parked');
+        fireEvent.click(parkedStatusOption);
+
+        await waitFor(() => {
+            const rows = screen.getAllByTestId('table-row');
+            expect(rows.length).toBeGreaterThan(0);
+        });    
+    
+        await waitFor(() => {
+            expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
+            expect(screen.queryByText('https://www.example2.com')).toBeNull();
+            expect(screen.queryByText('https://www.example5.com')).toBeNull();
+        });
+    });
+
+    it('Filter Status - Live', async () => {
+        const {container} = render(<ScrapeResults />);
+
+        expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
+        expect(screen.getByText('https://www.example2.com')).toBeDefined();
+        expect(screen.getByText('https://www.example5.com')).toBeDefined();
+
+        const statusFilterTrigger = screen.getByTestId('status-filter');
+        expect(statusFilterTrigger).toBeInTheDocument();
+      
+        fireEvent.click(statusFilterTrigger);
+      
+        await waitFor(() => {
+          expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
+          expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
+        });
+      
+        const parkedStatusOption = screen.getByTestId('status-filter-live');
+        fireEvent.click(parkedStatusOption);
+
+        await waitFor(() => {
+            const rows = screen.getAllByTestId('table-row');
+            expect(rows.length).toBeGreaterThan(0);
+        });    
+    
+        await waitFor(() => {
+            expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
+            expect(screen.getByText('https://www.example2.com')).toBeDefined();
+            expect(screen.queryByText('https://www.example5.com')).toBeNull();
         });
     });
 
