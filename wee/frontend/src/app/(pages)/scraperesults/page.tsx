@@ -213,7 +213,7 @@ const getScrapingResults = async (url: string) => {
     // Poll the API until the scraping is done
     try {
 
-       var result = await pollForResult(url) as Result;
+       let result = await pollForResult(url) as Result;
 
        if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
         if (url.includes('insecure'))
@@ -225,10 +225,7 @@ const getScrapingResults = async (url: string) => {
         else result = MockGithubResult;
       }
 
-
-      if (result.status === 'error') {
-        throw new Error(`Error scraping website: ${url}`);
-
+  
       if ('errorStatus' in result) {
         const errorResponse = { ...result, url };
         setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])

@@ -1232,7 +1232,6 @@ function ResultsComponent() {
                     Emotions Confidence Score
                     <InfoPopOver 
                       data-testid="popup-emotions"
-                      heading="Emotions" 
                       heading="Emotions Confidence Score" 
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
                         their metadata settings, thereby invoking the desired emotional responses.
