@@ -75,6 +75,7 @@ export default function NavBar() {
     
   return (
       <Navbar
+      data-testid="header"
         isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
