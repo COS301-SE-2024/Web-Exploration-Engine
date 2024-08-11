@@ -17,13 +17,15 @@ export class SentimentAnalysisService {
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
     try {
       const sentimentAnalysis = await this.sentimentAnalysis(metadata);
-      const { positiveWords, negativeWords } = await this.getPositiveNegativeWords(metadata);
+      // const { positiveWords, negativeWords } = await this.getPositiveNegativeWords(metadata);
       const emotions = await this.analyzeEmotions(metadata);
 
       return {
         sentimentAnalysis,
-        positiveWords,
-        negativeWords,
+        positiveWords: [], 
+        negativeWords: [],
+        // positiveWords,
+        // negativeWords,
         emotions,
       };
     } catch (error) {
@@ -100,91 +102,91 @@ export class SentimentAnalysisService {
     }
   }
 
-  async getPositiveNegativeWords(metadata: Metadata): Promise<{ positiveWords: string[], negativeWords: string[] }> {
-    const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
+  // async getPositiveNegativeWords(metadata: Metadata): Promise<{ positiveWords: string[], negativeWords: string[] }> {
+  //   const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
     
-    console.log(`Input text for word-level sentiment analysis: "${inputText}"`);
+  //   console.log(`Input text for word-level sentiment analysis: "${inputText}"`);
     
-    if (!inputText) {
-      console.log('Input text is empty, returning empty word lists.');
-      return { positiveWords: [], negativeWords: [] };
-    }
+  //   if (!inputText) {
+  //     console.log('Input text is empty, returning empty word lists.');
+  //     return { positiveWords: [], negativeWords: [] };
+  //   }
     
-    try {
-      const tokens: string[] = inputText.split(/\s+/).filter(token => token.length >= 4);
-      const uniqueTokens: string[] = Array.from(new Set(tokens));
+  //   try {
+  //     const tokens: string[] = inputText.split(/\s+/).filter(token => token.length >= 4);
+  //     const uniqueTokens: string[] = Array.from(new Set(tokens));
   
-      if (uniqueTokens.length === 0) {
-        //console.log('No tokens to analyze, returning empty word lists.');
-        return { positiveWords: [], negativeWords: [] };
-      }
+  //     if (uniqueTokens.length === 0) {
+  //       //console.log('No tokens to analyze, returning empty word lists.');
+  //       return { positiveWords: [], negativeWords: [] };
+  //     }
   
-      const BATCH_SIZE = 50;
-      const batches: string[][] = [];
-      for (let i = 0; i < uniqueTokens.length; i += BATCH_SIZE) {
-        batches.push(uniqueTokens.slice(i, i + BATCH_SIZE));
-      }
+  //     const BATCH_SIZE = 50;
+  //     const batches: string[][] = [];
+  //     for (let i = 0; i < uniqueTokens.length; i += BATCH_SIZE) {
+  //       batches.push(uniqueTokens.slice(i, i + BATCH_SIZE));
+  //     }
   
-      const positiveWords: string[] = [];
-      const negativeWords: string[] = [];
+  //     const positiveWords: string[] = [];
+  //     const negativeWords: string[] = [];
   
-      for (const batch of batches) {
-        const response = await axios.post(
-          this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
-          { inputs: batch },
-          {
-            headers: {
-              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+  //     for (const batch of batches) {
+  //       const response = await axios.post(
+  //         this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
+  //         { inputs: batch },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         }
+  //       );
   
-        console.log(`Response for batch ${batch}:`, response.data);
+  //       console.log(`Response for batch ${batch}:`, response.data);
   
-        if (response.data && Array.isArray(response.data)) {
-          for (const [index, tokenResponse] of response.data.entries()) {
-            const token = batch[index];
-            if (Array.isArray(tokenResponse)) {
-              let maxScore = -1;
-              let sentimentLabel = '';
+  //       if (response.data && Array.isArray(response.data)) {
+  //         for (const [index, tokenResponse] of response.data.entries()) {
+  //           const token = batch[index];
+  //           if (Array.isArray(tokenResponse)) {
+  //             let maxScore = -1;
+  //             let sentimentLabel = '';
               
-              tokenResponse.forEach((result: any) => {
-                if (result.score > maxScore) {
-                  maxScore = result.score;
-                  sentimentLabel = result.label;
-                }
-              });
+  //             tokenResponse.forEach((result: any) => {
+  //               if (result.score > maxScore) {
+  //                 maxScore = result.score;
+  //                 sentimentLabel = result.label;
+  //               }
+  //             });
   
-              if (maxScore > this.SCORE_THRESHOLD) {
-                switch (sentimentLabel) {
-                  case '5 stars':
-                  case '4 stars':
-                    positiveWords.push(token);
-                    break;
-                  case '1 star':
-                  case '2 stars':
-                    negativeWords.push(token);
-                    break;
-                  default:
-                    console.log(`Token with neutral/unknown sentiment: ${token}`);
-                }
-              }
-            } else {
-              console.log(`Unexpected response format for token: ${token}`);
-            }
-          }
-        } else {
-          throw new Error('Unexpected response format from token classification API');
-        }
-      }
+  //             if (maxScore > this.SCORE_THRESHOLD) {
+  //               switch (sentimentLabel) {
+  //                 case '5 stars':
+  //                 case '4 stars':
+  //                   positiveWords.push(token);
+  //                   break;
+  //                 case '1 star':
+  //                 case '2 stars':
+  //                   negativeWords.push(token);
+  //                   break;
+  //                 default:
+  //                   console.log(`Token with neutral/unknown sentiment: ${token}`);
+  //               }
+  //             }
+  //           } else {
+  //             console.log(`Unexpected response format for token: ${token}`);
+  //           }
+  //         }
+  //       } else {
+  //         throw new Error('Unexpected response format from token classification API');
+  //       }
+  //     }
   
-      return { positiveWords, negativeWords };
-    } catch (error) {
-      console.error('Error during word-level sentiment analysis:', error.message);
-      return { positiveWords: [], negativeWords: [] };
-    }
-  }
+  //     return { positiveWords, negativeWords };
+  //   } catch (error) {
+  //     console.error('Error during word-level sentiment analysis:', error.message);
+  //     return { positiveWords: [], negativeWords: [] };
+  //   }
+  // }
   async analyzeEmotions(metadata: Metadata): Promise<{ [emotion: string]: number }> {
     const inputText = `${metadata.title || ''} ${metadata.description || ''} ${metadata.keywords || ''}`.trim();
   
