@@ -1,4 +1,4 @@
 {
-    "status": "processing",
+    "status": "completed",
     "pollingURL": "/scraper/status/https%3A%2F%2Fwww.hbo.com%2Finsecure"
 }

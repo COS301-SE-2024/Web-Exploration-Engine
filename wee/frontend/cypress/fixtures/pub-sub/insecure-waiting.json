@@ -1,5 +1,5 @@
 {
     "message": "Scraping task published",
-    "status": "processing",
+    "status": "completed",
     "pollingUrl": "/status?type=scrape&url=https%3A%2F%2Fwww.hbo.com%2Finsecure"
 }
