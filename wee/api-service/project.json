@@ -1,0 +1,24 @@
+{
+  "name": "api-service",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "api-service/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "api-service:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "api-service:build:development"
+        },
+        "production": {
+          "buildTarget": "api-service:build:production"
+        }
+      }
+    }
+  }
+}

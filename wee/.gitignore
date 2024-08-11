@@ -8,6 +8,17 @@ tmp
 # dependencies
 node_modules
 
+# cypress coverage
+.nyc_output
+wee/.nyc_output
+/.nyc_output
+.nyc_output/*
+wee/.nyc_output/*
+/.nyc_output/*
+
+nyc_output/*
+wee/nyc_output/*
+/nyc_output/*
 # IDEs and editors
 /.idea
 .project
@@ -51,3 +62,7 @@ out
 .env.test.local
 .env.production.local
 .env.development
+
+# Google cloud credentials
+alien-grove-429815-s9-cd072240249e.json
+

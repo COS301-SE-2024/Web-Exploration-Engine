@@ -1,4 +1,4 @@
-name: lint-build-test-deploy
+name: Lint Build and Test
 
 on:
   pull_request:
@@ -6,13 +6,18 @@ on:
   push:
     branches: [master, development]
 
+permissions:
+  contents: read
+
 jobs:
   lint-build-test-deploy:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
 
     env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
     steps:
       - name: Code Checkout
@@ -20,49 +25,71 @@ jobs:
 
       - name: Change to repository root
         run: cd $GITHUB_WORKSPACE
-        
+
       - name: Print new build number
         run: echo "Build number is $BUILD_NUMBER"
 
       - name: Install dependencies
-        run:  |
+        run: |
           cd wee && npm install
-          
+
       - name: Lint
         run: |
           cd wee
           npx nx lint webscraper
+          npx nx lint api-service
           npx nx lint frontend
           echo "================== lint complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/build.sh
-        #continue-on-error: true
 
       - name: Build
         run: |
           cd wee
           npx nx build webscraper
+          npx nx build api-service
           npx nx build frontend
           echo "================== build complete =================="
-          bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
-          
+        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/lint.sh
+
         #continue-on-error: true
 
-      - name: Test
+      - name: Jest Tests
         run: |
           cd wee    
           npx nx test webscraper --coverage=true
+          npx nx test api-service --coverage=true
           npx nx test frontend --coverage=true
-          echo "================== test complete =================="
-        #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/test.sh
-        #continue-on-error: true
+
+          echo "================== jest tests complete =================="
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Deploy
+  run-cypress-tests:
+    name: Frontend Integration Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Install dependencies
         run: |
-          echo "================== test complete =================="
+          cd wee/frontend
+          npm ci
+
+      - name: Start application
+        run: |
+          echo "================== deployment complete =================="
         #bash ${GITHUB_WORKSPACE}/.github/workflows/scripts/deploy.sh
         #continue-on-error: true

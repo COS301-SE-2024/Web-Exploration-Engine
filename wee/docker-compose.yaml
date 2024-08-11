@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  redis-cache:
+    image: redis
+    ports:
+      - "6379:6379"
+    env_file:
+      - webscraper/.env
+    command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
+
+  webscraper:
+    build: 
+      context: .
+      dockerfile: webscraper/Dockerfile
+    env_file:
+      - webscraper/.env
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_EXECUTABLE_PATH: '/usr/bin/google-chrome-stable'
+    ports:
+      - "3003:3003"
+    command: >
+      sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
+    user: webscraper
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://capstone-wee.dns.net.za/api/health"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    depends_on:
+      - redis-cache
+
+  api-service:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    env_file:
+      - api-service/.env
+    ports:
+      - "3002:3002"
+    command: >
+      sh -c "npx nx serve api-service --skip-nx-cache --configuration=production --verbose"
+    depends_on:
+      webscraper:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    env_file:
+      - frontend/.env
+    ports:
+      - "3001:3001"
+    command: >
+      sh -c "npx nx start frontend --port 3001 --verbose"
+    depends_on:
+      - webscraper 
+      - api-service
