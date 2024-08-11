@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
-import { Summary, ScraperResult } from "../models/ScraperModels";
+import { Summary, ScraperResult, ErrorResponse } from "../models/ScraperModels";
 
 interface ScrapingContextType {
     results: ScraperResult[];
     setResults: (update: (prevResults: ScraperResult[]) => ScraperResult[]) => void;
+    errorResults: ErrorResponse[];
+    setErrorResults: (update: (prevResults: ErrorResponse[]) => ErrorResponse[]) => void;
     urls: string[];
     setUrls: (data: string[]) => void;
     processingUrls: string[];

@@ -120,6 +120,7 @@ function ResultsComponent() {
       const urlResults = results.filter((res) => res.url === url);
   
       if (urlResults && urlResults[0]) {
+        console.log(urlResults[0]);
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
@@ -1228,10 +1229,11 @@ function ResultsComponent() {
 
                   {/* Emotions */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
-                    Emotions
+                    Emotions Confidence Score
                     <InfoPopOver 
                       data-testid="popup-emotions"
                       heading="Emotions" 
+                      heading="Emotions Confidence Score" 
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
                         their metadata settings, thereby invoking the desired emotional responses.
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 

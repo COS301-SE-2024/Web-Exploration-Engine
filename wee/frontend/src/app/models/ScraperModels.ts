@@ -42,6 +42,7 @@ export interface ErrorResponse {
   errorStatus: number;
   errorCode: string;
   errorMessage: string;
+  url?: string;
   details?: {
     timestamp: string;
     path: string;
