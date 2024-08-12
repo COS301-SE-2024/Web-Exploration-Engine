@@ -83,10 +83,19 @@ export class SeoAnalysisService {
 
     let recommendations = '';
     if (!isOptimized) {
-      recommendations += 'Meta description length should be between 120 and 160 characters. ';
+      if (length < 120) {
+        recommendations += `Your meta description is short at ${length} characters. Consider adding more details to reach the optimal length of 120-160 characters. `;
+      } else if (length > 160) {
+        recommendations += `Your meta description is ${length} characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. `;
+      }
+    } else {
+      recommendations += `Your meta description (${length} characters long) is within the optimal length range of 120-160 characters. `;
     }
+  
     if (!isUrlWordsInDescription) {
-      recommendations += `Consider including words from the URL in the meta description: ${urlWords.join(' ')}. `;
+      recommendations += `The words from your URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.. `;
+    } else {
+      recommendations += `You've successfully included key terms from your URL in the meta description. `;
     }
 
     return {
@@ -119,18 +128,26 @@ export class SeoAnalysisService {
 
   async analyzeTitleTag(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const titleTag = $('title').text();
+    const titleTag = $('title').text().trim();
     const length = titleTag.length;
-    const isOptimized = length >= 50 && length <= 60;
-    const recommendations = isOptimized ? '' : 'Title tag length should be between 50 and 60 characters.';
-
+    let recommendations;
+  
+    if (length >= 50 && length <= 60) {
+      recommendations = `Title tag length (${length} characters) is in the optimal range.`;
+    } else if (length < 50) {
+      recommendations = `Your title tag is too short (${length} characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.`;
+    } else {
+      recommendations = `Your title tag is too long (${length} characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.`;
+    }
+  
     return {
       titleTag,
       length,
-      //isOptimized,
       recommendations,
     };
   }
+  
+  
 
   async analyzeHeadings(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
