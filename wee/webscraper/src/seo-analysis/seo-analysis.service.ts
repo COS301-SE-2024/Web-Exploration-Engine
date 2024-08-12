@@ -157,36 +157,44 @@ export class SeoAnalysisService {
       .filter(text => text.length > 0);
     
     const count = headings.length;
-    const recommendations = count > 0 ? '' : 'No headings (H1-H6) found. Add headings to improve structure.';
+  
+    let recommendations;
+    if (count > 0) {
+      const headingTags = $('h1, h2, h3, h4, h5, h6').toArray().map(el => el.tagName.toUpperCase());
+      const uniqueTags = [...new Set(headingTags)];
+      recommendations = `We found the following heading levels: ${uniqueTags.join(', ')}.`;
+    } else {
+      recommendations = 'No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.';
+    }
   
     return {
       headings,
       count,
       recommendations,
     };
-  }
+  }  
   async analyzeImageOptimization(url: string, browser: puppeteer.Browser) {    
     // proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
-
+  
     if (!username || !password) {
       console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
     }
-
-    let page: puppeteer.Page;;
+  
+    let page: puppeteer.Page;
     try {
       page = await browser.newPage();
-
+  
       // authenticate page with proxy
       await page.authenticate({
         username,
         password
       });
-
+  
       await page.goto(url, { waitUntil: 'networkidle0' });
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
@@ -242,10 +250,20 @@ export class SeoAnalysisService {
   
       let recommendations = '';
       if (missingAltTextCount > 0) {
-        recommendations += `${missingAltTextCount} images are missing alt text. `;
+        recommendations += `We found ${missingAltTextCount} images without alt text. Adding descriptive alt text helps with accessibility and improves SEO. Consider updating these images with relevant alt attributes. `;
       }
       if (nonOptimizedCount > 0) {
-        recommendations += `${nonOptimizedCount} images are not optimized. `;
+        recommendations += `We detected ${nonOptimizedCount} non-optimized images. Optimizing images can significantly improve page load times. `;
+  
+        if (reasonsMap.format.length > 0) {
+          recommendations += `Some images are in non-optimized formats. Consider converting them to modern formats like WebP for better performance. `;
+        }
+        if (reasonsMap.size.length > 0) {
+          recommendations += `Some images are too large. Consider resizing them to fit the actual display size on the webpage to reduce load times. `;
+        }
+        if (reasonsMap.other.length > 0) {
+          recommendations += `There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial. `;
+        }
       }
   
       return {
@@ -267,6 +285,7 @@ export class SeoAnalysisService {
       }
     }
   }
+  
 
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
     try {
