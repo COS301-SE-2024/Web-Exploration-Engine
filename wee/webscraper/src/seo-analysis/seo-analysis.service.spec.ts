@@ -264,7 +264,7 @@ describe('analyzeHeadings', () => {
   
       expect(result.totalLinks).toBe(0);
       expect(result.uniqueLinks).toBe(0);
-      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.');
+      expect(result.recommendations).toBe('The site has 0 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
     });
   });
   describe('analyzeSiteSpeed', () => {
@@ -286,7 +286,7 @@ describe('analyzeHeadings', () => {
         const result = await service.analyzeSiteSpeed(url);
 
         expect(result.loadTime).toBe(4); 
-        expect(result.recommendations).toBe('Page load time is above 3 seconds. Consider optimizing resources to improve site speed.');
+        expect(result.recommendations).toBe('The page load time is 4.00 seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience.');
     });
 
     it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
@@ -308,7 +308,7 @@ describe('analyzeHeadings', () => {
         const result = await service.analyzeSiteSpeed(url);
 
         expect(result.loadTime).toBe(3); 
-        expect(result.recommendations).toBe(''); // No recommendations for load time <= 3 seconds
+        expect(result.recommendations).toBe('The page load time is 3.00 seconds, which is well within the recommended limits.'); 
     });
 
 });
@@ -337,7 +337,7 @@ describe('analyzeHeadings', () => {
       const result = await service.analyzeMobileFriendliness(url, mockBrowser);
 
       expect(result.isResponsive).toBe(undefined); 
-      expect(result.recommendations).toBe('Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.'); 
+      expect(result.recommendations).toBe(`The site isn't fully responsive on a 375px viewport, which is a common width for smartphones. Review your CSS media queries and viewport meta tag to ensure better mobile compatibility.`); 
     });
   });
 
@@ -348,7 +348,7 @@ describe('analyzeHeadings', () => {
 
       expect(result.headings).toEqual([]);
       expect(result.count).toBe(0);
-      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.');
     });
   });
   describe('extractWordsFromUrl', () => {
@@ -508,7 +508,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 1,
-            recommendations: '',
+            recommendations: 'Your site includes 1 structured data element.',
         });
     });
 
@@ -518,7 +518,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 0,
-            recommendations: 'No structured data found. Add structured data to improve SEO.',
+            recommendations: 'Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.',
         });
     });
 
