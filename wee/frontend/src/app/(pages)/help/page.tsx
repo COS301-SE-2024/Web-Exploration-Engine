@@ -67,6 +67,11 @@ const faqs = [
     answer:
       'You can compare two different websites on the comparison page accessible in the result page. Simply select the respective URLs from the dropdown menu, and WEE will generate a detailed comparison report.',
   },
+  {
+    question: 'What is Sentiment Analysis and how does WEE use it?',
+    answer:
+      'Sentiment analysis is the process of determining the emotional tone behind a series of words, used to understand the attitudes, opinions, and emotions expressed in a piece of text. WEE utilizes sentiment analysis to evaluate the content of a website, providing insights into whether the text is positive, negative, or neutral. This can help businesses understand customer sentiment and improve their content strategy.',
+  },
 ];
 
 const VideoThumbnail: React.FC<{

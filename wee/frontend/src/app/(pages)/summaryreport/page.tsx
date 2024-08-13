@@ -21,6 +21,7 @@ import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
 import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
+import { AreaChart } from '../../components/Graphs/AreaChart';
 
 interface weakClassification {
     url: string;
@@ -40,6 +41,15 @@ interface RadarInterface {
 }
 
 export interface RadarSeries {
+    name: string,
+    data: number[]
+}
+
+interface AreaInterface {
+    series: AreaSeries[]
+}
+
+export interface AreaSeries {
     name: string,
     data: number[]
 }
@@ -66,6 +76,7 @@ export default function SummaryReport() {
     const [avgTime, setAvgTime] = useState<number>(0);
     const [metaRadar, setMetaRadar] = useState<RadarInterface>();
     const [domainRadar, setDomainRadar] = useState<RadarInterface>();
+    const [emotionsArea, setEmotionsArea] = useState<AreaInterface>();
    
     useEffect(() => {
         
@@ -85,6 +96,7 @@ export default function SummaryReport() {
             setAvgTime(summaryReport.avgTime ?? 0);
             setMetaRadar(summaryReport.metaRadar ?? {categories: [], series: []});
             setDomainRadar(summaryReport.domainRadar ?? {categories: [], series: []});
+            setEmotionsArea(summaryReport.emotionsArea ?? {areaCategories: [], areaSeries: []});
         }
 
     }, [summaryReport]);
@@ -164,7 +176,7 @@ export default function SummaryReport() {
                         Summary Report
                     </h1>
                     <div className="mt-4 mr-4 flex justify-end">
-                        <Dropdown>
+                        <Dropdown data-testid="btn-dropdown">
                             <DropdownTrigger>
                                 <Button 
                                 variant="flat" 
@@ -227,7 +239,8 @@ export default function SummaryReport() {
                 <div className='gap-4 grid sm:grid-cols-3'>
 
                     {/* Scraped stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div data-testid="visual-scraped-stats" 
+                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiSearch />
                         </div>
@@ -240,7 +253,8 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Crawlable stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div data-testid="visual-crawlable-stats"
+                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiCheck />
                         </div>
@@ -253,7 +267,8 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Avg scrape stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div data-testid="visual-avg-scrape-stats" 
+                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiClock />
                         </div>
@@ -270,7 +285,8 @@ export default function SummaryReport() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
-            <div className='gap-4 grid md:grid-cols-2'>
+            <div data-testid="visual-industry-classification" 
+            className='gap-4 grid md:grid-cols-2'>
                     <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                             Classification Distribution
@@ -331,7 +347,8 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
             {/* Domain match */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+            <h3 data-testid="visual-domain-match" 
+            className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain match
                 <InfoPopOver 
                     heading="Domain Match" 
@@ -388,7 +405,8 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
             {/* Classification Distribution */}
-            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+            <h3 
+            className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry Classification Distribution
                 <InfoPopOver 
                     heading="Industry Classification Distribution" 
@@ -459,9 +477,30 @@ export default function SummaryReport() {
                         </WEETable>
                     </div>
                 </div> {/* Grid */}
+
+                <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+                    Sentiment Analysis - Emotions
+                    <InfoPopOver 
+                      heading="Sentiment Analysis - Emotions" 
+                      content="Through the analysis of domain-specific metadata, we gain insights into specific emotional cues. 
+                        This empowers users to precisely tailor their metadata settings, eliciting the desired emotional responses. 
+                        Additionally, our Area Chart facilitates the comparative analysis of your domains against each other or even against competitors.
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
+                      placement="bottom" 
+                    />
+                </h3>
+                {/* Sentiment Analysis */}
+                {
+                    summaryReport.emotionsArea && summaryReport.emotionsArea.series.length > 0 ? (
+                        <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+                            <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={summaryReport.emotionsArea.series}/>
+                        </div>
+                    ) : (<></>)
+                }
+
             </div>
 
-        {/* Confirm save */}
+    {/* Confirm save */}
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}

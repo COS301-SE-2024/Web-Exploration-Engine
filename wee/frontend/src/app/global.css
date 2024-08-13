@@ -43,3 +43,11 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
 }
+
+.circular-progress-indicator {
+  stroke: var(--indicator-color);
+}
+
+.dark .circular-progress-indicator {
+  stroke: var(--dark-indicator-color);
+}

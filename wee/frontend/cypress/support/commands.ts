@@ -17,6 +17,11 @@ declare namespace Cypress {
     login(email: string, password: string): void;
     mockUnsplash(): void;
     testHelp(page: string): void;
+    testLayout(page: string): void;
+    triggerMockGitHub(): void;
+    triggerMockGitHubMockInsecure(): void;
+    triggerMockSteers(): void;
+    triggerMock(): void;
     importAllMocks(page: string): void;
   }
 }
@@ -43,6 +48,47 @@ Cypress.Commands.add('mockUnsplash', () => {
 Cypress.Commands.add('testHelp', (page) => {
   cy.visit(page);
   cy.get('[data-testid="help-button"]').should('exist');
+});
+
+Cypress.Commands.add('triggerMockGitHub', () => {
+  cy.visit('/');
+  cy.get('[data-testid="scraping-textarea-home"]').type('https://github.com');
+  //cy.get('[data-testid="input-start-scraping"]').type('https://github.com');
+  cy.get('[data-testid="btn-start-scraping"]').click();
+});
+
+Cypress.Commands.add('triggerMockGitHubMockInsecure', () => {
+  cy.visit('/');
+  cy.get('[data-testid="scraping-textarea-home"]').type('https://github.com,https://www.hbo.com/insecure')
+  cy.get('[data-testid="btn-start-scraping"]').click();
+});
+
+Cypress.Commands.add('testLayout', (page) => {
+
+  cy.visit(page);
+  
+    //Testing Header
+    cy.get('[data-testid="header"]').should('exist');
+
+  //Testing Footer
+  cy.get('[data-testid="footer"]').should('exist');
+
+  //cy.get('[data-testid="footer"]').should('have.attr', 'href').and('include', 'help')
+
+  //Chech DNS info
+  cy.get('[data-testid="footer"]').contains(/domain name services/i);
+  cy.get('[data-testid="footer"]').contains(/midrand, south africa/i);
+  cy.get('[data-testid="footer"]').contains(/27 11 568 2800/i);
+  
+  //Testing Help Button
+  cy.get('[data-testid="help-button"]').should('exist');
+  cy.get('[data-testid="help-button"]').click();
+
+  cy.get('[data-testid="help-modal"]').should('exist');
+  cy.get('[data-testid="help-modal"]').should('be.visible');
+  cy.get('[data-testid="help-modal"]').should('contain', 'Help');
+
+
 });
 
 Cypress.Commands.add('importAllMocks', () => {

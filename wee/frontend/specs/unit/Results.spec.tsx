@@ -36,6 +36,8 @@ jest.mock('jspdf', () => ({
     })),
 }));
 
+// if this isn't included a resize observer problem is thrown
+jest.mock('react-apexcharts', () => () => null);
 
 jest.mock('../../src/app/context/ScrapingContext', () => ({
     useScrapingContext: jest.fn(),
@@ -59,8 +61,8 @@ describe('Results Component', () => {
             url: mockUrl,
             robots: { isUrlScrapable: true },
             metadata: {
-                title: 'Example Title',
-                description: 'Example Description',
+                title: 'Burgers and Flame Grills | Steers South Africa',
+                description: 'Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.',
                 keywords: 'example, keywords',
                 ogTitle: 'Example OG Title',
                 ogDescription: 'Example OG Description',
@@ -112,6 +114,24 @@ describe('Results Component', () => {
                     "https://twitter.com/AbsaSouthAfrica",
                     "https://www.linkedin.com/company/absa/"
                 ]
+            },
+            sentiment: {
+                sentimentAnalysis: {
+                  positive: 0.94,
+                  negative: 0.001,
+                  neutral: 0.05,
+                },
+                positiveWords: ['Flame', '100%', 'choice'],
+                negativeWords: ['Nothing', 'slaps'],
+                emotions: {
+                  neutral: 0.88,
+                  joy: 0.02,
+                  surprise: 0.1,
+                  anger: 0.01,
+                  disgust: 0.2,
+                  sadness: 0.003,
+                  fear: 0.002,
+                },
             },
             seoAnalysis: {
                 // XMLSitemapAnalysis: {},
@@ -651,8 +671,8 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
-            // expect(screen.queryByTestId('internalLinking_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('internalLinking_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -683,7 +703,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
-            // expect(screen.queryByTestId('internalLinking_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('internalLinking_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -698,8 +718,8 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.length)).toBeDefined();
-            // expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -730,7 +750,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText('55')).toBeDefined();
-            // expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -748,8 +768,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.nonOptimizedCount)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[2])).toBeDefined();
-            // expect(screen.queryByTestId('images_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('images_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -788,7 +808,7 @@ describe('Results Component', () => {
             expect(screen.getByText('34')).toBeDefined();
             expect(screen.getByText('6')).toBeDefined();
             expect(screen.getByText('0')).toBeDefined();
-            // expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -804,8 +824,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.metaDescription)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.length)).toBeDefined();
             expect(screen.getByText('No')).toBeDefined();
-            // expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -838,7 +858,7 @@ describe('Results Component', () => {
             expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
             expect(screen.getByText("121")).toBeDefined();
             expect(screen.getByText('Yes')).toBeDefined();
-            // expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -854,7 +874,7 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.getByText('repeatedWordsOne: 19')).toBeDefined();
-            // expect(screen.queryByTestId('uniqueContent_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('uniqueContent_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -892,8 +912,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.getByText('repeatedWordsOne: 19')).toBeDefined();
-            // expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
+            expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
+            expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
         });
     });
 
@@ -926,8 +946,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.queryByText('repeatedWordsOne: 19')).not.toBeInTheDocument();
-            // expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
+            expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
+            expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
         });
     });
 
@@ -941,8 +961,8 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
-            // expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
         });
@@ -974,7 +994,7 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
-            // expect(screen.queryByTestId('headings_recommendations')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('headings_recommendations')).not.toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
         });
@@ -1006,10 +1026,227 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText('0')).toBeDefined();
-            // expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
-            // expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).not.toBeInTheDocument();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).not.toBeInTheDocument();
+        });
+    });
+
+    it('Sentiment Analysis: Donut chart, metadata, positive and negative words and emotion graphs displayed', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    sentiment: {
+                        sentimentAnalysis: {
+                          positive: 0.90,
+                          negative: 0.02,
+                          neutral: 0.08,
+                        },
+                        positiveWords: ['Flame', '100%', 'choice'],
+                        negativeWords: ['Nothing', 'slaps'],
+                        emotions: {
+                          neutral: 0.88,
+                          joy: 0.02,
+                          surprise: 0.1,
+                          anger: 0.01,
+                          disgust: 0.2,
+                          sadness: 0.003,
+                          fear: 0.002,
+                        },
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
+        fireEvent.click(SentimentTab);
+
+        await waitFor(() => {            
+            expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
+
+            const sentimentMetaTitleDiv = screen.getByTestId('sentiment-meta-title');
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Burgers and Flame Grills | Steers South Africa");
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Flame");
+
+            const sentimentMetaDescrDiv = screen.getByTestId('sentiment-meta-description');
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("slaps");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("100%");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("choice");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("burgers");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("chips");
+
+            const sentimentMetaKeywordsDiv = screen.getByTestId('sentiment-meta-keywords');
+            expect(sentimentMetaKeywordsDiv).toHaveTextContent("example, keywords");
+
+            expect(screen.getByTestId('sentiment-emotions-progress-charts')).toBeInTheDocument();
+        });
+    });
+
+    it('Sentiment Analysis: Donut chart, metadata, emotion graphs, NO positive and negative words displayed', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    sentiment: {
+                        sentimentAnalysis: {
+                          positive: 0.90,
+                          negative: 0.02,
+                          neutral: 0.08,
+                        },
+                        positiveWords: [],
+                        negativeWords: [],
+                        emotions: {
+                          neutral: 0.88,
+                          joy: 0.02,
+                          surprise: 0.1,
+                          anger: 0.01,
+                          disgust: 0.2,
+                          sadness: 0.003,
+                          fear: 0.002,
+                        },
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
+        fireEvent.click(SentimentTab);
+
+        await waitFor(() => {            
+            expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
+
+            const sentimentMetaTitleDiv = screen.queryByTestId('sentiment-meta-title');
+            expect(sentimentMetaTitleDiv).not.toBeInTheDocument();
+
+            const sentimentMetaDescrDiv = screen.queryByTestId('sentiment-meta-description');
+            expect(sentimentMetaDescrDiv).not.toBeInTheDocument();
+
+            const sentimentMetaKeywordsDiv = screen.queryByTestId('sentiment-meta-keywords');
+            expect(sentimentMetaKeywordsDiv).not.toBeInTheDocument();
+
+            expect(screen.queryByText('There is no positive or negative words to display')).toBeInTheDocument();
+
+            expect(screen.getByTestId('sentiment-emotions-progress-charts')).toBeInTheDocument();
+        });
+    });
+
+    it('Sentiment Analysis: Donut chart, metadata, positive and negative words and NO emotion graphs displayed', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    sentiment: {
+                        sentimentAnalysis: {
+                          positive: 0.90,
+                          negative: 0.02,
+                          neutral: 0.08,
+                        },
+                        positiveWords: ['Flame', '100%', 'choice'],
+                        negativeWords: ['Nothing', 'slaps'],
+                        emotions: {},
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
+        fireEvent.click(SentimentTab);
+
+        await waitFor(() => {            
+            expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
+
+            const sentimentMetaTitleDiv = screen.getByTestId('sentiment-meta-title');
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Burgers and Flame Grills | Steers South Africa");
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Flame");
+
+            const sentimentMetaDescrDiv = screen.getByTestId('sentiment-meta-description');
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("slaps");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("100%");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("choice");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("burgers");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("chips");
+
+            const sentimentMetaKeywordsDiv = screen.getByTestId('sentiment-meta-keywords');
+            expect(sentimentMetaKeywordsDiv).toHaveTextContent("example, keywords");
+
+            expect(screen.queryByTestId('sentiment-emotions-progress-charts')).not.toBeInTheDocument();
+            expect(screen.queryByText('There is no emotions to display')).toBeInTheDocument();
+        });
+    });
+
+    it('Sentiment Analysis: Metadata, positive and negative words and emotion graphs and NO donut chart displayed', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    sentiment: {
+                        sentimentAnalysis: {
+                          positive: 0,
+                          negative: 0,
+                          neutral: 0,
+                        },
+                        positiveWords: ['Flame', '100%', 'choice'],
+                        negativeWords: ['Nothing', 'slaps'],
+                        emotions: {
+                          neutral: 0.88,
+                          joy: 0.02,
+                          surprise: 0.1,
+                          anger: 0.01,
+                          disgust: 0.2,
+                          sadness: 0.003,
+                          fear: 0.002,
+                        },
+                    },
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
+        fireEvent.click(SentimentTab);
+
+        await waitFor(() => {            
+            expect(screen.queryByTestId('sentiment-donut-chart')).not.toBeInTheDocument();
+            expect(screen.queryByText('No sentiment analysis data to display')).toBeInTheDocument();
+
+            const sentimentMetaTitleDiv = screen.getByTestId('sentiment-meta-title');
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Burgers and Flame Grills | Steers South Africa");
+            expect(sentimentMetaTitleDiv).toHaveTextContent("Flame");
+
+            const sentimentMetaDescrDiv = screen.getByTestId('sentiment-meta-description');
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("Nothing");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("slaps");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("100%");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("choice");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("burgers");
+            expect(sentimentMetaDescrDiv).toHaveTextContent("chips");
+
+            const sentimentMetaKeywordsDiv = screen.getByTestId('sentiment-meta-keywords');
+            expect(sentimentMetaKeywordsDiv).toHaveTextContent("example, keywords");
+
+            expect(screen.getByTestId('sentiment-emotions-progress-charts')).toBeInTheDocument();
         });
     });
 

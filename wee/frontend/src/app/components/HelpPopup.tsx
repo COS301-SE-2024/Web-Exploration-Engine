@@ -55,14 +55,15 @@ export default function App() {
       </Button>
 
       <Modal
-        size={'sm'}
+        size={'sm'} 
         isOpen={isOpen}
         backdrop="transparent"
-        data-testid="help-modal"
         onOpenChange={onOpenChange}
         className="my-0 md:help-popup border-2 border-jungleGreen-600 bg-primaryBackgroundColor dark:bg-dark-primaryBackgroundColor"
       >
-        <ModalContent className="">
+        <ModalContent
+        data-testid="help-modal"
+        className="">
           {(onClose) => (
             <>
               <h1 className="mt-4 text-center font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">

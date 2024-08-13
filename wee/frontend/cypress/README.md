@@ -22,6 +22,12 @@ This command works from any directory :
 npx nx e2e frontend --configuration=production
 ```
 
+# Run Specific Cypress Test
+
+```bash
+npx cypress run --spec cypress/integration/scraping.cy.ts
+```
+
 # General Notes Regarding Cypress Tests
 
 ### When writing a test that involves visiting a url such as https://localhost:8888/ :

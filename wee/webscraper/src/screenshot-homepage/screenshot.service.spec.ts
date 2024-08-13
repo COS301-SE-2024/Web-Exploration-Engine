@@ -3,8 +3,6 @@ import { ScreenshotService } from './screenshot.service';
 import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 
-jest.mock('puppeteer');
-
 describe('ScreenshotService', () => {
   let service: ScreenshotService;
 
@@ -41,30 +39,52 @@ describe('ScreenshotService', () => {
       const mockScreenshot = 'mock-base64-screenshot';
       const screenshotBuffer = Buffer.from(mockScreenshot, 'base64');
 
-      // Mock puppeteer behavior
-      (puppeteer.launch as jest.Mock).mockResolvedValue({
-         newPage: jest.fn().mockResolvedValue({
-            goto: jest.fn().mockResolvedValue(undefined),
-            screenshot: jest.fn().mockResolvedValue(screenshotBuffer), // Return the Buffer directly
-         }),
-         close: jest.fn().mockResolvedValue(undefined),
-      });
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          screenshot: jest.fn().mockResolvedValue(screenshotBuffer),
+          authenticate: jest.fn(),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
 
-      const result = await service.captureScreenshot(mockUrl, mockRobotsAllow);
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+
+      const result = await service.captureScreenshot(mockUrl, mockRobotsAllow, browser);
 
       expect(result).toBeDefined();
-      expect(Buffer.from(result.screenshot, 'base64')).toEqual(screenshotBuffer); // Compare buffers
+      if ('screenshot' in result) {
+        expect(Buffer.from(result.screenshot , 'base64')).toEqual(screenshotBuffer); // Compare buffers
+      } else {
+        throw new Error('Expected result to have a screenshot property');
+      }
    });
 
+    it('should return an eror response if URL is not scrapable', async () => {
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          screenshot: jest.fn(),
+          authenticate: jest.fn(),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
 
-    it('should throw error for a non-scrapable URL', async () => {
-      try {
-        await service.captureScreenshot(mockUrl, mockRobotsDisallow);
-        // If it doesn't throw an error, fail the test
-        fail('Expected error was not thrown');
-      } catch (error) {
-        expect(error.message).toBe('Crawling not allowed for this URL');
+      const result = await service.captureScreenshot(mockUrl, mockRobotsDisallow, browser);
+      
+      if ('errorMessage' in result) {
+        expect(result.errorMessage).toBe('Not allowed to scrape this URL');
+      } else {
+        throw new Error('Expected result to have a message property');
       }
     });
   });

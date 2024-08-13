@@ -7,11 +7,11 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 // Models
-import { ScraperResult, Summary } from "../models/ScraperModels";
+import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
 
 
 export default function Home() {
-    const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport } = useScrapingContext();
+    const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
@@ -60,6 +60,7 @@ export default function Home() {
       setProcessedUrls([]);
       setProcessingUrls([]);
       setResults((prevResults: ScraperResult[]) => []);
+      setErrorResults((prevResults: ErrorResponse[]) => []);
       setSummaryReport({} as Summary);
 
       // Navigate to Results page with the entered URL as query parameter

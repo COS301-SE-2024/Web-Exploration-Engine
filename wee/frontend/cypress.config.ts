@@ -6,12 +6,13 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
     baseUrl: 'http://localhost:3000',
+    trashAssetsBeforeRuns: false,  // Prevents Cypress from deleting screenshots before new test runs
   },
 
   retries: {
     experimentalStrategy: 'detect-flake-but-always-fail',
     experimentalOptions: {
-      maxRetries: 5,
+      maxRetries: 1,
       stopIfAnyPassed: true,
     },
     openMode: true,

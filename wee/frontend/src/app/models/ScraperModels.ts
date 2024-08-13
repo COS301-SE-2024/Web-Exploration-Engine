@@ -12,12 +12,37 @@ export interface ScraperResult {
   addresses: string[];
   screenshot: string;
   seoAnalysis: SeoAnalysis;
+  sentiment: SentimentAnalysis;
+}
+
+export interface SentimentAnalysis {
+  sentimentAnalysis: SentimentAnalysisCategories;
+  positiveWords: string[];
+  negativeWords: string[];
+  emotions: SentimentEmotions;
+}
+
+export interface SentimentAnalysisCategories {
+  positive: number;
+  negative: number;
+  neutral: number;
+}
+
+export interface SentimentEmotions {
+  neutral: number;
+  joy: number;
+  surprise: number;
+  anger: number;
+  disgust: number;
+  sadness: number;
+  fear: number;
 }
 
 export interface ErrorResponse {
   errorStatus: number;
   errorCode: string;
   errorMessage: string;
+  url?: string;
   details?: {
     timestamp: string;
     path: string;
@@ -211,15 +236,23 @@ export interface Summary {
   avgTime:number;
   metaRadar: {
     categories: string[],
-    series: RadarGraph[]
+    series: Graph[]
   },
   domainRadar: {
     categories: string[],
-    series: RadarGraph[]
+    series: Graph[]
+  },
+  emotionsArea: {
+    series: Graph[]
   }
 }
 
-export interface RadarGraph {
+export interface Graph {
   name: string,
   data: number[]
+}
+
+export interface Result {
+  status: string;
+  result?: ScraperResult;
 }

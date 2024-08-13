@@ -1,11 +1,14 @@
 // src/scraper/scraper.module.ts
 import { Module } from '@nestjs/common';
 import { ScraperService } from './scraper.service';
-import { ScraperController } from './scraper.controller';
+import { HealthController } from './scraper.controller';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import config from './config';
+
+// Modules
+import { PubSubModule } from './pub-sub/pub_sub.module';
 
 // Services
 import { RobotsService } from './robots/robots.service';
@@ -18,7 +21,9 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
-import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service'; 
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
+import { ProxyService } from './proxy/proxy.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -40,16 +45,24 @@ import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysi
         return { store }
       },
       inject: [ConfigService]
-    })
+    }),
+    PubSubModule,
   ],
-  controllers: [ScraperController],
+  controllers: [HealthController],
   providers: [
     ScraperService,
     RobotsService,
     ScrapeMetadataService,
     ScrapeStatusService,
-    IndustryClassificationService, ScrapeLogoService, ScrapeImagesService,ScrapeContactInfoService,ScrapeAddressService,
-    ScreenshotService,SeoAnalysisService,SentimentAnalysisService
+    IndustryClassificationService, 
+    ScrapeLogoService, 
+    ScrapeImagesService,
+    ScrapeContactInfoService,
+    ScrapeAddressService,
+    ScreenshotService,
+    SeoAnalysisService,
+    SentimentAnalysisService,
+    ProxyService,
   ],
 })
 export class ScraperModule {}

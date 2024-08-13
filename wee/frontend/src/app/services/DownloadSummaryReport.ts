@@ -136,7 +136,7 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
                 });
             }
         }
-
+    
         await captureChart('bar-chart', 'Website Status Distribution', 30);
         if (parkedUrls && parkedUrls.length > 0) {
             doc.addPage();
@@ -149,7 +149,7 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
                 doc.text(`${index + 1}. ${url}`, 20, y);
             });
         }
-
+    
         await captureChart('radial-chart', 'Domain Match Distribution', 30);
         if (mismatchedUrls && mismatchedUrls.length > 0) {
             doc.addPage();
@@ -157,23 +157,24 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
             doc.setFontSize(12);
             doc.text('Mismatched URLs', 20, 20);
     
+            let currentY = 30;
+            const lineHeight = 10;
+            const maxLinesPerPage = Math.floor((doc.internal.pageSize.height - 30) / lineHeight);
+    
             mismatchedUrls.forEach((item, index) => {
-                const startY = 30;
-                const lineHeight = 10;
-                const maxLinesPerPage = Math.floor((doc.internal.pageSize.height - startY) / lineHeight);
-                const lines: string[] | undefined = doc.splitTextToSize(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, doc.internal.pageSize.width - 40);
-            
+                const lines = doc.splitTextToSize(`${index + 1}. ${item.url} - Meta: ${item.metadataClass}, Domain: ${item.domainClass}`, doc.internal.pageSize.width - 40);
+    
                 if (lines) {
-                    if (index > 0 && (startY + lines.length * lineHeight) > doc.internal.pageSize.height - 20) {
-                        doc.addPage();
-                        addPageNumber(++currentPage);
-                        doc.setFontSize(12);
-                        doc.text('Mismatched URLs (Continued)', 20, 20);
-                    }
-            
-                    lines.forEach((line: string, i: number) => {
-                        const y: number = startY + i * lineHeight;
-                        doc.text(line, 20, y);
+                    lines.forEach((line: string, lineIndex: number) => {
+                        if (currentY + lineHeight > doc.internal.pageSize.height - 20) {
+                            doc.addPage();
+                            addPageNumber(++currentPage);
+                            doc.setFontSize(12);
+                            doc.text('Mismatched URLs (Continued)', 20, 20);
+                            currentY = 30;
+                        }
+                        doc.text(line, 20, currentY);
+                        currentY += lineHeight;
                     });
                 } else {
                     console.error('splitTextToSize returned undefined for item:', item);
@@ -181,7 +182,6 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
             });
         }
 
-        doc.save('website-summary-report.pdf');
     };        
 
     await addChartToPDF();
