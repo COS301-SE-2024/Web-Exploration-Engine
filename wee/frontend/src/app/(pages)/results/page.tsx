@@ -7,7 +7,7 @@ import {
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
   Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
-import { FiShare, FiDownload, FiSave } from "react-icons/fi";
+import { FiShare, FiDownload, FiSave, FiActivity } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -19,11 +19,12 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
+import CircularProgressComparison from "../../components/CircularProgressComparison";
 
 interface Classifications {
   label: string;
@@ -79,6 +80,10 @@ function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
 //   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
 // }
 
+function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+  return 'scores' in data || 'diagnostics' in data;
+}
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -114,6 +119,7 @@ function ResultsComponent() {
   const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
   const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
   const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis>();
+  const [lighthouseAnalysis, setLightHouseAnalysis] = useState<LightHouseAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
@@ -158,6 +164,7 @@ function ResultsComponent() {
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
           setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
           setSentimentAnalysis(urlResults[0].sentiment);
+          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis)
         }
       }
     }
@@ -1134,6 +1141,79 @@ function ResultsComponent() {
                       </>
                     }
                   </div> {/* EO Unique Content Analysis */}
+
+                  {/* Technical Analysis Heading */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Technical Analysis
+                  </h3>   
+
+                  {/* LightHouse */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiActivity />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Light House Analysis
+                          <InfoPopOver 
+                            data-testid="popup-analysis-tags"
+                            heading="Light House Analysis" 
+                            content="The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices." 
+                            placement="bottom" 
+                          />
+                        </h4>
+                      </div>
+                    </div>
+                        
+                    {/* Content */}
+                    {
+                      lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?                                             
+                        <div>
+                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                            <div data-testid="website1-lighthouse-performance" className="flex justify-center">
+                                {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance}/>
+                                    :
+                                    <CircularProgressComparison label="Performance" value={0}/>
+                                }
+                            </div>
+
+                            <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
+                                {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Accessibility" value={lighthouseAnalysis.scores.accessibility}/>
+                                    :
+                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                }
+                            </div>
+
+                            <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
+                                {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                    <CircularProgressComparison label="Best Practices" value={lighthouseAnalysis.scores.bestPractices}/>
+                                    :
+                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                }
+                            </div>
+                          </div>
+
+                          {/* {
+                            titleTagsAnalysis?.recommendations != '' && 
+                              <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                  Recommendations
+                                </h5>
+                                <p>{titleTagsAnalysis?.recommendations}</p>
+                              </div>
+                          } */}
+                        </div>                      
+                      :
+                      <>
+                        {lighthouseAnalysis?.error}
+                      </>
+                    }
+                  </div> {/* EO Light House */}
+                
 
                 </div> {/* EO on page SEO analysis */}
               </CardBody>
