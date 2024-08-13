@@ -84,18 +84,18 @@ export class SeoAnalysisService {
     let recommendations = '';
     if (!isOptimized) {
       if (length < 120) {
-        recommendations += `Your meta description is short at ${length} characters. Consider adding more details to reach the optimal length of 120-160 characters. `;
+        recommendations += `The meta description is short at ${length} characters. Consider adding more details to reach the optimal length of 120-160 characters. `;
       } else if (length > 160) {
-        recommendations += `Your meta description is ${length} characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. `;
+        recommendations += `The meta description is ${length} characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. `;
       }
     } else {
-      recommendations += `Your meta description (${length} characters long) is within the optimal length range of 120-160 characters. `;
+      recommendations += `The meta description (${length} characters long) is within the optimal length range of 120-160 characters. `;
     }
   
     if (!isUrlWordsInDescription) {
-      recommendations += `The words from your URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.. `;
+      recommendations += `The words from the URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.. `;
     } else {
-      recommendations += `You've successfully included key terms from your URL in the meta description. `;
+      recommendations += `There is key terms included from the URL in the meta description. `;
     }
 
     return {
@@ -250,7 +250,7 @@ export class SeoAnalysisService {
   
       let recommendations = '';
       if (missingAltTextCount > 0) {
-        recommendations += `We found ${missingAltTextCount} images without alt text. Adding descriptive alt text helps with accessibility and improves SEO. Consider updating these images with relevant alt attributes. `;
+        recommendations += `We found ${missingAltTextCount} images without alt text. Adding descriptive alt text helps with accessibility and improves SEO. `;
       }
       if (nonOptimizedCount > 0) {
         recommendations += `We detected ${nonOptimizedCount} non-optimized images. Optimizing images can significantly improve page load times. `;
@@ -331,15 +331,15 @@ export class SeoAnalysisService {
       };
     }
   }
-   async analyzeContentQuality(htmlContent: string) {
+  async analyzeContentQuality(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-
+  
     const text = $('body').text();
     const textWords = text.split(/\s+/)
       .filter(word => /^[a-zA-Z]+$/.test(word)); 
     const textLength = textWords.length;
     const wordCounts = new Map<string, number>();
-
+  
     textWords.forEach(word => {
       const lowerCaseWord = word.toLowerCase();
       if (wordCounts.has(lowerCaseWord)) {
@@ -348,23 +348,28 @@ export class SeoAnalysisService {
         wordCounts.set(lowerCaseWord, 1);
       }
     });
-
+  
     const repeatedWords = [...wordCounts.entries()]
       .filter(([_, count]) => count > 1)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
       .map(([word, count]) => ({ word, count }));
-
-    const uniqueWordsPercentage = new Set(textWords).size / textWords.length*100;
-
+  
+    const uniqueWordsPercentage = new Set(textWords).size / textWords.length * 100;
+  
     let recommendations = '';
+  
     if (textLength < 500) {
-      recommendations += 'Content length should ideally be more than 500 characters. ';
+      recommendations += `The content is currently ${textLength} words long. For better engagement and SEO performance, consider expanding your content to be more than 500 words. This allows you to cover topics more comprehensively and improves your chances of ranking higher in search results. `;
+    }else {
+      recommendations += `The content is ${textLength} words long, which is ideal for covering topics comprehensively.`;
     }
-    if (uniqueWordsPercentage < 0.5) {
-      recommendations += 'Unique words percentage is very low, consider revising your content to increase its uniqueness. ';
+  
+    if (uniqueWordsPercentage < 50) {
+      recommendations += `The unique words percentage in your content is ${uniqueWordsPercentage.toFixed(2)}%, which indicates that your content may be repetitive. Try revising your content to introduce more variety in your language. `;
     }
 
+  
     return {
       textLength,
       uniqueWordsPercentage,
@@ -372,25 +377,39 @@ export class SeoAnalysisService {
       recommendations: recommendations.trim(),
     };
   }
+  
   async analyzeInternalLinks(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const internalLinks = $('a[href^="/"], a[href^="' + $('base').attr('href') + '"]')
+    const baseHref = $('base').attr('href') || '';
+    const internalLinks = $('a[href^="/"], a[href^="' + baseHref + '"]')
       .toArray()
       .map(el => $(el).attr('href'));
-
+  
     const uniqueLinks = new Set(internalLinks).size;
-
+    const totalLinks = internalLinks.length;
+  
     let recommendations = '';
+    
     if (uniqueLinks < 5) {
-      recommendations += 'Internal linking is sparse. Consider adding more internal links to aid navigation and SEO. ';
+      recommendations += `The site has ${uniqueLinks} unique internal links. Consider adding more to improve navigation and help users discover more of the content. `;
+    } else if (uniqueLinks < 10) {
+      recommendations += `The site has ${uniqueLinks} unique internal links. Consider adding more to ensure a strong internal linking structure to further boost the site's SEO. `;
+    } else {
+      recommendations += `The site has ${uniqueLinks} unique internal links, the site has a solid internal linking structure. `;
     }
-
+  
+    if (totalLinks > uniqueLinks) {
+      const duplicateLinks = totalLinks - uniqueLinks;
+      recommendations += `There are ${duplicateLinks} duplicate links. Consider reviewing these to avoid potential redundancy. `;
+    }
+  
     return {
-      totalLinks: internalLinks.length,
+      totalLinks,
       uniqueLinks,
       recommendations: recommendations.trim(),
     };
   }
+  
   async analyzeSiteSpeed(url: string) {
     const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}`;
   
