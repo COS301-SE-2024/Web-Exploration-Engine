@@ -420,8 +420,13 @@ export class SeoAnalysisService {
       const loadTime = data.lighthouseResult.audits['speed-index'].numericValue / 1000; // Convert milliseconds to seconds
   
       let recommendations = '';
-      if (loadTime > 3) {
-        recommendations += 'Page load time is above 3 seconds. Consider optimizing resources to improve site speed.';
+      
+      if (loadTime > 5) {
+        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is quite high. Users might experience noticeable delays. Consider optimizing images, reducing server response times, and leveraging browser caching to improve loading speed. `;
+      } else if (loadTime > 3) {
+        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience. `;
+      } else {
+        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is well within the recommended limits. `;
       }
   
       return {
@@ -433,25 +438,26 @@ export class SeoAnalysisService {
       // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
+  
   async analyzeMobileFriendliness(url: string, browser: puppeteer.Browser) {
-    // proxy authentication
+    // Proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
-
+  
     if (!username || !password) {
       console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
     }
-
+  
     const page = await browser.newPage();
-    // authenticate page with proxy
+    // Authenticate page with proxy
     await page.authenticate({
       username,
       password,
     });
-
+  
     try {
       await page.setViewport({
         width: 375,
@@ -459,43 +465,60 @@ export class SeoAnalysisService {
         isMobile: true,
         hasTouch: true,
       });
-
+  
       await page.goto(url, { waitUntil: 'networkidle2' });
-
+  
       const isResponsive = await page.evaluate(() => {
         return window.innerWidth === 375;
       });
-
+  
       let recommendations = '';
       if (!isResponsive) {
-        recommendations += 'Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.';
+        recommendations += `The site isn't fully responsive on a 375px viewport, which is a common width for smartphones. `;
+        recommendations += `Review your CSS media queries and viewport meta tag to ensure better mobile compatibility. `;
+      } else {
+        recommendations += `Your site is responsive on a 375px viewport, which is a common width for smartphones.`;
+        //recommendations += `Keep up the good work and continue testing on different devices.`;
       }
-
+  
       return {
         isResponsive,
         recommendations: recommendations.trim(),
       };
     } catch (error) {
       console.error(`Error analyzing mobile-friendliness: ${error.message}`);
+      // return {
+      //   error: `Error analyzing mobile-friendliness: ${error.message}`,
+      // };
     } finally {
       if (page) {
         await page.close();
       }
     }
   }
+  
   async analyzeStructuredData(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const structuredData = $('script[type="application/ld+json"]').toArray().map(el => $(el).html());
-
+  
     const count = structuredData.length;
-    const recommendations = count > 0 ? '' : 'No structured data found. Add structured data to improve SEO.';
-
+    let recommendations = '';
+  
+    if (count === 0) {
+      recommendations += `Your site currently lacks structured data, which can help search engines understand your content better. `;
+      recommendations += `Consider implementing structured data using Schema.org to enhance visibility and improve your SEO. `;
+    } else {
+      recommendations += `Your site includes ${count} ${count > 1 ? 'structured data elements' : 'structured data element'}. `;
+      //recommendations += `Review your structured data to ensure it's correctly implemented and covers relevant content types. `;
+      //recommendations += `Adding more detailed structured data can further improve your search engine results and rich snippets.`;
+    }
+  
     return {
-     // structuredData,
       count,
-      recommendations,
+      recommendations: recommendations.trim(),
     };
   }
+  
 
   async analyzeIndexability(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
