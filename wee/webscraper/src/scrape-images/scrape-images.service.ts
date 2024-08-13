@@ -12,12 +12,22 @@ export class ScrapeImagesService {
      * @returns {Promise<string[]>} - Returns a promise that resolves to an array of image URLs.
      */
    async scrapeImages(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string[]> {
-    logger.debug(`${serviceName}`);
+    logger.debug(`${serviceName}`);  
     // Possible improvement: scrape current URL first, if no images found, scrape root URL
     // Check if the URL is allowed to be scraped
     if (!robots.isUrlScrapable) {
-        logger.warn('${serviceName} Crawling not allowed for this URL');
-        console.error('Crawling not allowed for this URL');
+        logger.error(`${serviceName} Crawling not allowed for this URL`);  
+        console.error('Crawling not allowed for this URL, cannot scrape images');
+        return [];
+    }
+
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+        logger.error(`${serviceName} Proxy username or password not set`);  
+        console.error('Proxy username or password not set');
         return [];
     }
 
@@ -39,7 +49,7 @@ export class ScrapeImagesService {
         });
         return imageUrls.slice(0, 50);
     } catch (error) {
-      logger.error(`${serviceName} Failed to scrape images: ${error.message}`);
+      logger.error(`${serviceName} Failed to scrape images: ${error.message}`);  
       console.error(`Failed to scrape images: ${error.message}`);
         return [];
     } finally {

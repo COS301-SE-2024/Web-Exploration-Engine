@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
-import { RobotsResponse } from '../models/ServiceModels';
 import logger from '../../../services/webscraperlogger';
 import * as fs from 'fs/promises';
 const serviceName = "[ScreenshotService]";
