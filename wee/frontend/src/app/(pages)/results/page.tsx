@@ -7,7 +7,7 @@ import {
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
   Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
-import { FiShare, FiDownload, FiSave, FiActivity } from "react-icons/fi";
+import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -19,7 +19,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf'; 
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -84,6 +84,14 @@ function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAn
   return 'scores' in data || 'diagnostics' in data;
 }
 
+function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+  return 'loadTime' in data || 'recommendations' in data;
+}
+
+function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+  return 'isResponsive' in data || 'recommendations' in data;
+}
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -120,6 +128,8 @@ function ResultsComponent() {
   const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
   const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis>();
   const [lighthouseAnalysis, setLightHouseAnalysis] = useState<LightHouseAnalysis | SEOError>();
+  const [siteSpeedAnalysis, setSiteSpeedAnalysis] = useState<SiteSpeedAnalysis | SEOError>();
+  const [mobileFriendlinessAnalysis, setMobileFriendlinesAnalysis] = useState<MobileFriendlinessAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
@@ -164,7 +174,9 @@ function ResultsComponent() {
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
           setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
           setSentimentAnalysis(urlResults[0].sentiment);
-          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis)
+          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
+          setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
+          setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
         }
       }
     }
@@ -1213,7 +1225,102 @@ function ResultsComponent() {
                       </>
                     }
                   </div> {/* EO Light House */}
-                
+
+                  {/* Site speed and mobile friendliness */}
+                  <div className='gap-2 grid sm:grid-cols-2'> 
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiSmartphone />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Mobile Friendly
+                            <InfoPopOver 
+                              data-testid="popup-mobile-friendly"
+                              heading="Analysis of Mobile Friendliness" 
+                              content="The viewport is configured to simulate a mobile device (375x667 pixels), sets mobile and touch capabilities, and checks 
+                              if the page is fully loaded and responsive at the specified width. Mobile-friendly sites improve user experience, enhance SEO due 
+                              to Google&apos;s mobile-first indexing, and can boost conversion rates by ensuring ease of use on mobile devices." 
+                              placement="bottom" 
+                            />
+                          </h4>
+                        </div>
+                      </div>     
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(mobileFriendlinessAnalysis) ?
+                              mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                              : '-'                      
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(mobileFriendlinessAnalysis) && mobileFriendlinessAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p>{mobileFriendlinessAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiClock />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Site Speed
+                            <InfoPopOver 
+                              data-testid="popup-site-speed"
+                              heading="Analysis of Site Speed" 
+                              content="The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and 
+                              engagement, and can boost SEO by enhancing search rankings and driving more traffic." 
+                              placement="bottom" 
+                            />
+                          </h4>
+                        </div>
+                      </div>     
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div>
+                          <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                                {siteSpeedAnalysis && isSiteSpeedAnalysis(siteSpeedAnalysis) ?
+                                    siteSpeedAnalysis.loadTime.toFixed(2)
+                                    : '0'                            
+                                }
+                            </div>
+                            <div className='font-poppins-semibold text-sm sm:text-lg'>
+                                seconds
+                            </div>
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        siteSpeedAnalysis && isSiteSpeedAnalysis(siteSpeedAnalysis) && siteSpeedAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p>{siteSpeedAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+                  </div> {/* EO Site speed and mobile friendliness */}                
 
                 </div> {/* EO on page SEO analysis */}
               </CardBody>
