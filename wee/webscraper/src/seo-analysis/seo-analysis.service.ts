@@ -518,53 +518,64 @@ export class SeoAnalysisService {
       recommendations: recommendations.trim(),
     };
   }
-  
-
   async analyzeIndexability(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const metaRobots = $('meta[name="robots"]').attr('content') || '';
     const isIndexable = !metaRobots.includes('noindex');
-
-    const recommendations = isIndexable ? '' : 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.';
-
+  
+    let recommendations = '';
+  
+    if (isIndexable) {
+      recommendations += `Your page is currently set to be indexed by search engines, which is great for visibility. `;
+    } else {
+      recommendations += `The page is marked as "noindex," meaning it won't be indexed by search engines. `;
+      recommendations += `If you want this page to appear in search results, remove the "noindex" directive from the meta robots tag. `;
+    }
+  
     return {
       isIndexable,
-      recommendations,
+      recommendations: recommendations.trim(),
     };
   }
+  
   async analyzeXmlSitemap(url: string) {
     try {
       const sitemapUrl = new URL('/sitemap.xml', url).toString();
       const response = await axios.get(sitemapUrl);
-
+  
       const isSitemapValid = response.status === 200;
-      const recommendations = isSitemapValid ? '' : 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.';
-
+      const recommendations = isSitemapValid 
+        ? `The XML sitemap at ${sitemapUrl} is present and accessible.`
+        : `The XML sitemap at ${sitemapUrl} is missing or inaccessible. Ensure it is present and accessible.`;
+  
       return {
         isSitemapValid,
         recommendations,
       };
     } catch (error) {
-      //console.error(`Error fetching XML sitemap: ${error.message}`);
       return {
         isSitemapValid: false,
-        recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+        recommendations: `The XML sitemap at ${url}/sitemap.xml is missing or inaccessible. Ensure it is present and accessible. If the problem persists, check the server configuration or permissions.`,
       };
     }
   }
+  
   async analyzeCanonicalTags(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const canonicalTag = $('link[rel="canonical"]').attr('href') || '';
-
+  
     const isCanonicalTagPresent = !!canonicalTag;
-    const recommendations = isCanonicalTagPresent ? '' : 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.';
-
+    const recommendations = isCanonicalTagPresent 
+      ? `The canonical tag for the page is set to ${canonicalTag}.`
+      : `The page is missing a canonical tag. Adding a canonical tag helps avoid duplicate content issues and improves SEO.`;
+  
     return {
       canonicalTag,
       isCanonicalTagPresent,
       recommendations,
     };
   }
+  
   async runLighthouse(url: string) {
     try {
       const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&category=best-practices&strategy=desktop`);
