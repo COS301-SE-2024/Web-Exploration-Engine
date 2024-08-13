@@ -61,7 +61,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: 'Test description',
         length: 16,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 16 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
     it('should handle an empty meta description', async () => {
@@ -74,7 +74,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: '',
         length: 0,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 0 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
   
@@ -88,7 +88,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: '',
         length: 0,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 0 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
     it('should handle malformed HTML content', async () => {
@@ -101,7 +101,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: 'Test description',
         length: 16,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 16 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
   
@@ -214,7 +214,7 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         titleTag: 'Test Title',
         length: 10,
-        recommendations: 'Title tag length should be between 50 and 60 characters.',
+        recommendations: 'Your title tag is too short (10 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
       });
     });
 });
@@ -226,7 +226,7 @@ describe('analyzeHeadings', () => {
       expect(result).toEqual({
         headings: ['Heading 1', 'Heading 2'],
         count: 2,
-        recommendations: '',
+        recommendations: 'We found the following heading levels: H1, H2.',
       });
     });
     it('should handle pages with no headings', async () => {
@@ -235,7 +235,7 @@ describe('analyzeHeadings', () => {
   
       expect(result.headings).toEqual([]);
       expect(result.count).toBe(0);
-      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.');
     });
   });
   describe('analyzeContentQuality', () => {
@@ -246,7 +246,7 @@ describe('analyzeHeadings', () => {
       expect(result.textLength).toBe(8);
       expect(result.uniqueWordsPercentage).toBeCloseTo(50); 
       expect(result.repeatedWords.length).toBe(4);
-      expect(result.recommendations).toBe('Content length should ideally be more than 500 characters.');
+      expect(result.recommendations).toBe('The content is currently 8 words long. For better engagement and SEO performance, consider expanding your content to be more than 500 words. This allows you to cover topics more comprehensively and improves your chances of ranking higher in search results.');
     });
   });
   describe('analyzeInternalLinks', () => {
@@ -256,7 +256,7 @@ describe('analyzeHeadings', () => {
 
       expect(result.totalLinks).toBe(2); 
       expect(result.uniqueLinks).toBe(2); 
-      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.'); 
+      expect(result.recommendations).toBe('The site has 2 unique internal links. Consider adding more to improve navigation and help users discover more of the content.'); 
     });
     it('should handle pages with no internal links', async () => {
       const htmlContent = '<html><body></body></html>';

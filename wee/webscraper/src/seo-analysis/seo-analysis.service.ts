@@ -93,7 +93,7 @@ export class SeoAnalysisService {
     }
   
     if (!isUrlWordsInDescription) {
-      recommendations += `The words from the URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.. `;
+      recommendations += `The words from the URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page. `;
     } else {
       recommendations += `There is key terms included from the URL in the meta description. `;
     }
@@ -422,11 +422,11 @@ export class SeoAnalysisService {
       let recommendations = '';
       
       if (loadTime > 5) {
-        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is quite high. Users might experience noticeable delays. Consider optimizing images, reducing server response times, and leveraging browser caching to improve loading speed. `;
+        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is quite high. Users might experience noticeable delays. Consider optimizing images, reducing server response times, and leveraging browser caching to improve loading speed. `;
       } else if (loadTime > 3) {
-        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience. `;
+        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience. `;
       } else {
-        recommendations += `The page load time is ${loadTime.toFixed(1)} seconds, which is well within the recommended limits. `;
+        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is well within the recommended limits. `;
       }
   
       return {
