@@ -7,10 +7,10 @@
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nx/enforce-module-boundaries": [
-          "warning",
+          "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["../../../services/webscraperlogger"],
             "depConstraints": [
               {
                 "sourceTag": "*",

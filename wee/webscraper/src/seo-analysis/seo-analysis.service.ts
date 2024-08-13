@@ -10,9 +10,6 @@ const serviceName = "[SeoAnalysisService]";
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
   async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
-  private readonly API_KEY = process.env.api_key;
-  async seoAnalysis(url: string, robots: RobotsResponse) {
-
   
     logger.debug(`${serviceName}`);
     
