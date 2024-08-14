@@ -140,6 +140,19 @@ describe('SeoAnalysisService', () => {
         recommendations: `The meta description (150 characters long) is within the optimal length range of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
+    it('should return correct analysis when key terms from URL are included in meta description', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Example content with example keyword"></head></html>';
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+    
+      expect(result).toEqual({
+        metaDescription: 'Example content with example keyword',
+        length: 36,
+        isUrlWordsInDescription: true,  
+        recommendations: `The meta description is short at 36 characters. Consider adding more details to reach the optimal length of 120-160 characters. There is key terms included from the URL in the meta description.`
+      });
+    });
   });
 
   describe('fetchHtmlContent', () => {
@@ -466,13 +479,40 @@ describe('analyzeHeadings', () => {
       expect(result.uniqueLinks).toBe(2); 
       expect(result.recommendations).toBe('The site has 2 unique internal links. Consider adding more to improve navigation and help users discover more of the content.'); 
     });
+    it('should return internal links analysis with recommendations for adding more links', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(2);
+      expect(result.uniqueLinks).toBe(2);
+      expect(result.recommendations).toBe('The site has 2 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
+    });
+  
     it('should handle pages with no internal links', async () => {
       const htmlContent = '<html><body></body></html>';
       const result = await service.analyzeInternalLinks(htmlContent);
-  
+    
       expect(result.totalLinks).toBe(0);
       expect(result.uniqueLinks).toBe(0);
       expect(result.recommendations).toBe('The site has 0 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
+    });
+  
+    it('should handle pages with duplicate internal links', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page1">Link 1</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(2);
+      expect(result.uniqueLinks).toBe(1);
+      expect(result.recommendations).toBe('The site has 1 unique internal links. Consider adding more to improve navigation and help users discover more of the content. There are 1 duplicate links. Consider reviewing these to avoid potential redundancy.');
+    });
+  
+    it('should handle pages with a solid internal linking structure', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a><a href="/page3">Link 3</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(3);
+      expect(result.uniqueLinks).toBe(3);
+      expect(result.recommendations).toBe('The site has 3 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
     });
   });
   describe('analyzeSiteSpeed', () => {

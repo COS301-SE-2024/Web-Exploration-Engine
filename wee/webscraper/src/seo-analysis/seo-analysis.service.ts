@@ -241,7 +241,7 @@ export class SeoAnalysisService {
             errorUrls.push(`Error optimizing image: ${img.src}. ${reasons.join(', ')}`);
           }
         } catch (error) {
-          console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
+          //console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
           nonOptimizedCount++;
           reasonsMap.other.push(imageUrl);  // Categorize as "other"
           errorUrls.push(`Error checking optimization for image: ${img.src}. ${error.message}`);
@@ -275,7 +275,7 @@ export class SeoAnalysisService {
         errorUrls,
       };
     } catch (error) {
-      console.error(`Error analyzing images using Puppeteer: ${error.message}`);
+      //console.error(`Error analyzing images using Puppeteer: ${error.message}`);
       return {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
       };
@@ -445,7 +445,7 @@ export class SeoAnalysisService {
     const password = process.env.PROXY_PASSWORD;
   
     if (!username || !password) {
-      console.error('Proxy username or password not set');
+      //console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
@@ -486,7 +486,7 @@ export class SeoAnalysisService {
         recommendations: recommendations.trim(),
       };
     } catch (error) {
-      console.error(`Error analyzing mobile-friendliness: ${error.message}`);
+      //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
       // return {
       //   error: `Error analyzing mobile-friendliness: ${error.message}`,
       // };
@@ -586,7 +586,7 @@ export class SeoAnalysisService {
         if (categoryData?.score !== undefined) {
           return categoryData.score * 100;
         } else {
-          console.warn(`Category score for ${category} is not available.`);
+          //console.warn(`Category score for ${category} is not available.`);
           return null;
         }
       };
