@@ -471,15 +471,8 @@ describe('analyzeHeadings', () => {
     
   });
   describe('analyzeInternalLinks', () => {
-    it('should return internal links analysis', async () => {
-      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a></body></html>';
-      const result = await service.analyzeInternalLinks(htmlContent);
-
-      expect(result.totalLinks).toBe(2); 
-      expect(result.uniqueLinks).toBe(2); 
-      expect(result.recommendations).toBe('The site has 2 unique internal links. Consider adding more to improve navigation and help users discover more of the content.'); 
-    });
-    it('should return internal links analysis with recommendations for adding more links', async () => {
+  
+    it('should return internal links analysis with recommendations for adding more links if unique links are less than 10', async () => {
       const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a></body></html>';
       const result = await service.analyzeInternalLinks(htmlContent);
   
@@ -506,7 +499,16 @@ describe('analyzeHeadings', () => {
       expect(result.recommendations).toBe('The site has 1 unique internal links. Consider adding more to improve navigation and help users discover more of the content. There are 1 duplicate links. Consider reviewing these to avoid potential redundancy.');
     });
   
-    it('should handle pages with a solid internal linking structure', async () => {
+    it('should handle pages with a solid internal linking structure when unique links are 10 or more', async () => {
+      const htmlContent = '<html><body>' + Array.from({ length: 10 }, (_, i) => `<a href="/page${i+1}">Link ${i+1}</a>`).join('') + '</body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(10);
+      expect(result.uniqueLinks).toBe(10);
+      expect(result.recommendations).toBe('The site has 10 unique internal links, the site has a solid internal linking structure.');
+    });
+    
+    it('should return internal links analysis when unique links are between 1 and 9', async () => {
       const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a><a href="/page3">Link 3</a></body></html>';
       const result = await service.analyzeInternalLinks(htmlContent);
   
@@ -515,6 +517,7 @@ describe('analyzeHeadings', () => {
       expect(result.recommendations).toBe('The site has 3 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
     });
   });
+  
   describe('analyzeSiteSpeed', () => {
     it('should return site speed analysis with recommendations if load time is above 3 seconds', async () => {
         const url = 'http://example.com';
@@ -558,7 +561,28 @@ describe('analyzeHeadings', () => {
         expect(result.loadTime).toBe(3); 
         expect(result.recommendations).toBe('The page load time is 3.00 seconds, which is well within the recommended limits.'); 
     });
-
+    it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
+      const url = 'http://example.com';
+  
+      const mockApiResponse = {
+        lighthouseResult: {
+          audits: {
+            'speed-index': {
+              numericValue: 3000, 
+            },
+          },
+        },
+      };
+  
+      (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+  
+      const result = await service.analyzeSiteSpeed(url);
+  
+      expect(result.loadTime).toBe(3); 
+      expect(result.recommendations).toBe(
+        'The page load time is 3.00 seconds, which is well within the recommended limits.'
+      );
+    });
 });
 
   describe('analyzeMobileFriendliness', () => {
@@ -586,6 +610,30 @@ describe('analyzeHeadings', () => {
 
       expect(result.isResponsive).toBe(undefined); 
       expect(result.recommendations).toBe(`The site isn't fully responsive on a 375px viewport, which is a common width for smartphones. Review your CSS media queries and viewport meta tag to ensure better mobile compatibility.`); 
+    });
+    it('should return mobile friendliness analysis for a responsive site', async () => {
+      const url = 'http://example.com';
+  
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(true), 
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+    
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+  
+      const result = await service.analyzeMobileFriendliness(url, mockBrowser);
+  
+      expect(result.isResponsive).toBe(true); 
+      expect(result.recommendations).toBe(`Your site is responsive on a 375px viewport, which is a common width for smartphones.`);
     });
   });
 
