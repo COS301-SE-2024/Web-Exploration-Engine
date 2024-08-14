@@ -557,7 +557,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: false,
-            recommendations: `The page is marked as \"noindex,\" meaning it won't be indexed by search engines. If you want this page to appear in search results, remove the \"noindex\" directive from the meta robots tag.`,
+            recommendations: `The page is marked as "noindex," meaning it won't be indexed by search engines. If you want this page to appear in search results, remove the "noindex" directive from the meta robots tag.`,
         });
     });
 
