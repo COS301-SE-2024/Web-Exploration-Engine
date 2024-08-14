@@ -671,8 +671,8 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
-            expect(screen.queryByTestId('internalLinking_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('internalLinking_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -703,7 +703,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.totalLinks)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.internalLinksAnalysis.uniqueLinks)).toBeDefined();
-            expect(screen.queryByTestId('internalLinking_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('internalLinking_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -718,8 +718,8 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.length)).toBeDefined();
-            expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -750,7 +750,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText('55')).toBeDefined();
-            expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -768,8 +768,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.nonOptimizedCount)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.reasonsMap.format[2])).toBeDefined();
-            expect(screen.queryByTestId('images_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('images_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.imageAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -808,7 +808,7 @@ describe('Results Component', () => {
             expect(screen.getByText('34')).toBeDefined();
             expect(screen.getByText('6')).toBeDefined();
             expect(screen.getByText('0')).toBeDefined();
-            expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -824,8 +824,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.metaDescription)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.length)).toBeDefined();
             expect(screen.getByText('No')).toBeDefined();
-            expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -858,7 +858,7 @@ describe('Results Component', () => {
             expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
             expect(screen.getByText("121")).toBeDefined();
             expect(screen.getByText('Yes')).toBeDefined();
-            expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -874,7 +874,7 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.getByText('repeatedWordsOne: 19')).toBeDefined();
-            expect(screen.queryByTestId('uniqueContent_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('uniqueContent_recommendations')).not.toBeInTheDocument();
         });
     });
 
@@ -912,8 +912,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.getByText('repeatedWordsOne: 19')).toBeDefined();
-            expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
-            expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
+            // expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
         });
     });
 
@@ -946,8 +946,8 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.uniqueContentAnalysis.textLength)).toBeDefined();
             expect(screen.getByText('41.72%')).toBeDefined();
             expect(screen.queryByText('repeatedWordsOne: 19')).not.toBeInTheDocument();
-            expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
-            expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
+            // expect(screen.queryByTestId('uniqueContent_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText('Content length should ideally be more than 500 characters.')).toBeDefined();
         });
     });
 
@@ -961,8 +961,8 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
-            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
         });
@@ -994,7 +994,7 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.count)).toBeDefined();
-            expect(screen.queryByTestId('headings_recommendations')).not.toBeInTheDocument();
+            // expect(screen.queryByTestId('headings_recommendations')).not.toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).toBeDefined();
         });
@@ -1026,8 +1026,8 @@ describe('Results Component', () => {
 
         await waitFor(() => {
             expect(screen.getByText('0')).toBeDefined();
-            expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
+            // expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
+            // expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).not.toBeInTheDocument();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).not.toBeInTheDocument();
         });

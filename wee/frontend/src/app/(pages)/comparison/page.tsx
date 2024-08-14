@@ -11,17 +11,18 @@ import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnal
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
 import { InfoPopOver } from "../../components/InfoPopOver";
 
-function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
-    return 'scores' in data || 'diagnostics' in data;
-}
+// DON'T delete this please - will just be uncommented when integrated
+// function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+//     return 'scores' in data || 'diagnostics' in data;
+// }
 
-function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
-    return 'loadTime' in data || 'recommendations' in data;
-}
+// function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+//     return 'loadTime' in data || 'recommendations' in data;
+// }
 
-function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
-    return 'isResponsive' in data || 'recommendations' in data;
-}
+// function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+//     return 'isResponsive' in data || 'recommendations' in data;
+// }
 
 function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
     return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
@@ -440,25 +441,28 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website1-lighthouse-performance" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Performance" value={24}/>
                             </div>
                             <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Accessibility" value={85}/>
                             </div>
                             <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Best Practices" value={93}/>
                             </div>
                         </div>
                     </div>
@@ -475,25 +479,28 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                     <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website2-lighthouse-performance" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Performance" value={60}/>
                             </div>
                             <div data-testid="website2-lighthouse-accessibility" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Accessibility" value={84}/>
                             </div>
                             <div data-testid="website2-lighthouse-bestpractices" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Best Practices" value={78}/>
                             </div>
                         </div>
                     </div>
@@ -508,10 +515,11 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div data-testid="website1-mobilefriendly" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
-                        }
+                        } */}
+                        No
                     </div>
 
                     <div className="text-center m-auto">
@@ -524,10 +532,11 @@ export default function Comparison() {
                     </div>
 
                     <div data-testid="website2-mobilefriendly" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
-                        }
+                        } */}
+                        Yes
                     </div>
                 </div>
             </div>
@@ -541,10 +550,11 @@ export default function Comparison() {
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div data-testid="website1-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
+                            {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
-                            }
+                            } */}
+                            2.88
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds
@@ -562,10 +572,11 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div data-testid="website2-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
+                            {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
-                            }
+                            } */}
+                            6.60
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds
