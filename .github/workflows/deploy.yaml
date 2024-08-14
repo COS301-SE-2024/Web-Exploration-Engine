@@ -35,6 +35,7 @@ jobs:
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
           envkey_PROXIES: ${{secreys.PROXIES}}
+          envkey_PROXY_PORT: ${{secreys.PROXY_PORT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
           directory: wee/frontend
           file_name: .env
@@ -54,6 +55,7 @@ jobs:
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
           envkey_PROXIES: ${{secreys.PROXIES}}
+          envkey_PROXY_PORT: ${{secreys.PROXY_PORT}}
           envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
           directory: wee/webscraper
@@ -73,6 +75,7 @@ jobs:
           envkey_GOOGLE_CLOUD_CREDENTIALS : api-service/google-credentials.json
           envkey_PROXY_USERNAME: ${{secrets.PROXY_USERNAME}}
           envkey_PROXY_PASSWORD: ${{secrets.PROXY_PASSWORD}}
+          envkey_PROXY_PORT: ${{secreys.PROXY_PORT}}
           envkey_PROXIES: ${{secreys.PROXIES}}
           envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
