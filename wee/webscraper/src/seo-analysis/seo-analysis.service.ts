@@ -5,7 +5,7 @@ import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 @Injectable()
 export class SeoAnalysisService {
-  private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
+  private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
