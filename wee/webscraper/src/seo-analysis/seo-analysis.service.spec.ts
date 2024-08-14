@@ -536,7 +536,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 2,
-            recommendations: '',
+            recommendations: 'Your site includes 2 structured data elements.',
         });
     });
   });
@@ -547,7 +547,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: true,
-            recommendations: '',
+            recommendations: 'Your page is currently set to be indexed by search engines, which is great for visibility.',
         });
     });
 
@@ -557,7 +557,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: false,
-            recommendations: 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.',
+            recommendations: `The page is marked as \"noindex,\" meaning it won't be indexed by search engines. If you want this page to appear in search results, remove the \"noindex\" directive from the meta robots tag.`,
         });
     });
 
@@ -567,7 +567,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: true,
-            recommendations: '',
+            recommendations: 'Your page is currently set to be indexed by search engines, which is great for visibility.',
         });
     });
   });
@@ -583,7 +583,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isSitemapValid: true,
-            recommendations: '',
+            recommendations: 'The XML sitemap at http://example.com/sitemap.xml is present and accessible.',
         });
     });
 
@@ -597,7 +597,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isSitemapValid: false,
-            recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+            recommendations: 'The XML sitemap at http://example.com/sitemap.xml is missing or inaccessible. Ensure it is present and accessible. If the problem persists, check the server configuration or permissions.',
         });
     });
 });
@@ -610,7 +610,7 @@ describe('analyzeCanonicalTags', () => {
       expect(result).toEqual({
           canonicalTag: 'http://example.com/canonical',
           isCanonicalTagPresent: true,
-          recommendations: '',
+          recommendations: 'The canonical tag for the page is set to http://example.com/canonical.',
       });
   });
 
@@ -622,7 +622,7 @@ describe('analyzeCanonicalTags', () => {
       expect(result).toEqual({
           canonicalTag: '',
           isCanonicalTagPresent: false,
-          recommendations: 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.',
+          recommendations: 'The page is missing a canonical tag. Adding a canonical tag helps avoid duplicate content issues and improves SEO.',
       });
   });
 });
