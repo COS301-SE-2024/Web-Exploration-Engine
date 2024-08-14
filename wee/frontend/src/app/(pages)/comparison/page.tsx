@@ -103,7 +103,6 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center mt-3'>
                 Domain Overview
                 <InfoPopOver 
-                data-testid="popup-info-domain-info"
                     heading="Domain Overview" 
                     content="This section provides important tags to classify the website based on the extracted information. </br></br>
                         <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
@@ -116,8 +115,7 @@ export default function Comparison() {
             </h4>
 
             {/* Website Status */}
-            <div data-testid="sect-website-status"
-             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Website Status
                 </div>
@@ -142,8 +140,7 @@ export default function Comparison() {
             </div>
 
             {/* Industry Classification */}
-            <div data-testid="sect-industry-classification"
-            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Industry Classification
                 </div>
@@ -213,8 +210,7 @@ export default function Comparison() {
             </div>
 
             {/* Domain match */}
-            <div data-testid="sect-domain-match"
-             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Domain Match
                 </div>
@@ -285,7 +281,6 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 On-Page SEO Analysis
                 <InfoPopOver 
-                data-testid="popup-info-onpage-seo"
                     heading="On-page SEO Analysis" 
                     content="On-page SEO analysis involves fine-tuning webpages to improve their search engine visibility and enhance the user experience. By optimizing content directly on the page, we aim to achieve higher rankings on platforms like Google, ultimately driving more organic traffic to the site. </br></br>
                         <i>Unique Content</i>: Text from body tag is extracted and processed. The calculated percentage of unique words can be used to avoid keyword stuffing which enhances SEO. </br>
@@ -295,8 +290,7 @@ export default function Comparison() {
             </h4>
 
             {/* Unique Content */}
-            <div data-testid="sect-unique-content"
-             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Unique Content
                 </div>
@@ -337,8 +331,7 @@ export default function Comparison() {
             </div>
 
             {/* Image on page */}
-            <div data-testid="sect-images"
-            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Images
                 </div>
@@ -421,7 +414,6 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 Technical SEO Analysis
                 <InfoPopOver 
-                data-testid="popup-info-technical-seo"
                     heading="Technical SEO Analysis" 
                     content="Technical SEO analysis refers to anything that makes your site easier for search engines to crawl, index and render. </br></br>
                         <i>Light House</i>: The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices </br>
@@ -432,8 +424,7 @@ export default function Comparison() {
             </h4>
 
             {/* LightHouseAnalysis */}
-            <div data-testid="sect-lighthouse"
-             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Light House
                 </div>
@@ -508,8 +499,7 @@ export default function Comparison() {
             </div>
 
             {/* Mobile Friendly */}
-            <div data-testid="sect-mobile-friendly"
-             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Mobile Friendly
                 </div>
@@ -542,8 +532,7 @@ export default function Comparison() {
             </div>
 
             {/* Site Speed */}
-            <div data-testid="sect-site-speed" 
-            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Site Speed
                 </div>
