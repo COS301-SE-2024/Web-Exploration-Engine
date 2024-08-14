@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import logger from '../../../services/webscraperlogger';
+import logger from '../../logging/webscraperlogger';
 import axios from 'axios';
 const serviceName = "[IndustryClassificationService]";
 

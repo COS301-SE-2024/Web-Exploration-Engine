@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
-import logger from '../../../services/webscraperlogger';
+import logger from '../../logging/webscraperlogger';
 const serviceName = "[ScrapeMetadataService]";
 
 @Injectable()

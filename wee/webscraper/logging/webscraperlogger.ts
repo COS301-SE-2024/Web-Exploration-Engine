@@ -3,7 +3,7 @@ import 'winston-daily-rotate-file';
 
 const getLogger = (fileName = 'application') => {
   const fileLogTransport = new transports.DailyRotateFile({
-    filename: `logs/${fileName}-%DATE%.log`,
+    filename: `../../logs/${fileName}-%DATE%.log`,
     datePattern: 'YYYY-MM-DD',
     zippedArchive: true,
     maxSize: '20m',
@@ -11,11 +11,11 @@ const getLogger = (fileName = 'application') => {
   });
 
   const consoleTransport = new transports.Console({
-    //level: process.env.LOG_LEVEL,
     handleExceptions: false,
-    json: true,
-    colorize: true,
-    format: format.printf((i) => `${i.message} ${i.servicename} `),
+    format: format.combine(
+      format.colorize(), // Adds colour to console output
+      format.printf((i) => `${i.message} ${i.servicename} `)
+    ),
   });
 
   const logger = createLogger({
@@ -35,14 +35,9 @@ const getLogger = (fileName = 'application') => {
     transports: [consoleTransport],
   });
 
-  //add to file regardless of environment
+  // Add to file regardless of environment
   logger.add(fileLogTransport);
 
-  /* 
-  if (process.env.NODE_ENV === 'development') {
-    logger.add(fileLogTransport);
-  }
- */
   return logger;
 };
 

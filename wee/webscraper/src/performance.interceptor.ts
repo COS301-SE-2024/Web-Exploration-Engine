@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { performance } from 'perf_hooks';
-import logger from '../../services/webscraperlogger';
+import logger from '../logging/webscraperlogger';
 const serviceName = "[PerformanceInterceptor]";
 
 @Injectable()

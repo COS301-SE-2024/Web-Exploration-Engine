@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import logger from '../../services/webscraperlogger';
+import logger from '../logging/webscraperlogger';
 import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
 
