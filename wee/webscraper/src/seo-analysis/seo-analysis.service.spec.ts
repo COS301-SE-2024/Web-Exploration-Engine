@@ -113,6 +113,33 @@ describe('SeoAnalysisService', () => {
   
       await expect(service.analyzeMetaDescription(htmlContent, url)).rejects.toThrow('Unexpected error');
     });
+    it('should handle a meta description over 160 characters', async () => {
+      const htmlContent = `<html><head><meta name="description" content="${'a'.repeat(161)}"></head></html>`;
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'a'.repeat(161),
+        length: 161,
+        isUrlWordsInDescription: false,
+        recommendations: `The meta description is 161 characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
+      });
+    });
+  
+    it('should handle a meta description within the optimal length range', async () => {
+      const htmlContent = `<html><head><meta name="description" content="${'a'.repeat(150)}"></head></html>`;
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'a'.repeat(150),
+        length: 150,
+        isUrlWordsInDescription: false,
+        recommendations: `The meta description (150 characters long) is within the optimal length range of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
+      });
+    });
   });
 
   describe('fetchHtmlContent', () => {
@@ -188,6 +215,154 @@ describe('SeoAnalysisService', () => {
         errorUrls: [],
       });
     });
+    it('should handle non-optimized images with format issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.png', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['format'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: ['http://example.com/image.png'],
+          size: [],
+          other: [],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. Some images are in non-optimized formats. Consider converting them to modern formats like WebP for better performance.',
+        errorUrls: ['Error optimizing image: http://example.com/image.png. format'],
+      });
+    });
+  
+    it('should handle non-optimized images with size issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.jpg', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['size'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: ['http://example.com/image.jpg'],
+          other: [],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. Some images are too large. Consider resizing them to fit the actual display size on the webpage to reduce load times.',
+        errorUrls: ['Error optimizing image: http://example.com/image.jpg. size'],
+      });
+    });
+  
+    it('should handle non-optimized images with other issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.gif', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['other issue'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: [],
+          other: ['http://example.com/image.gif'],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial.',
+        errorUrls: ['Error optimizing image: http://example.com/image.gif. other issue'],
+      });
+    });
+  
+    it('should handle errors during image optimization', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.jpg', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockRejectedValue(new Error('Unexpected error'));
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: [],
+          other: ['http://example.com/image.jpg'],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial.',
+        errorUrls: ['Error checking optimization for image: http://example.com/image.jpg. Unexpected error'],
+      });
+    });
   });
   describe('isImageOptimized', () => {
     it('should handle unsupported image formats', async () => {
@@ -215,6 +390,38 @@ describe('SeoAnalysisService', () => {
         titleTag: 'Test Title',
         length: 10,
         recommendations: 'Your title tag is too short (10 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+    it('should handle a title tag within the optimal length range', async () => {
+      const htmlContent = '<html><head><title>Optimal Length Title Tag</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'Optimal Length Title Tag',
+        length: 24,
+        recommendations: 'Your title tag is too short (24 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+  
+    it('should handle a title tag that is too short', async () => {
+      const htmlContent = '<html><head><title>Short</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'Short',
+        length: 5,
+        recommendations: 'Your title tag is too short (5 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+  
+    it('should handle a title tag that is too long', async () => {
+      const htmlContent = '<html><head><title>This is a Very Long Title Tag That Exceeds the Optimal Length</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'This is a Very Long Title Tag That Exceeds the Optimal Length',
+        length: 61,
+        recommendations: 'Your title tag is too long (61 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
       });
     });
 });
@@ -248,6 +455,7 @@ describe('analyzeHeadings', () => {
       expect(result.repeatedWords.length).toBe(4);
       expect(result.recommendations).toBe('The content is currently 8 words long. For better engagement and SEO performance, consider expanding your content to be more than 500 words. This allows you to cover topics more comprehensively and improves your chances of ranking higher in search results.');
     });
+    
   });
   describe('analyzeInternalLinks', () => {
     it('should return internal links analysis', async () => {

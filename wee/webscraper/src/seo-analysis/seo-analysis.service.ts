@@ -179,7 +179,7 @@ export class SeoAnalysisService {
     const password = process.env.PROXY_PASSWORD;
   
     if (!username || !password) {
-      console.error('Proxy username or password not set');
+      //console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
