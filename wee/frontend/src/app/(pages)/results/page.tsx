@@ -7,6 +7,7 @@ import {
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
   Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
@@ -1207,7 +1208,7 @@ function ResultsComponent() {
                     {
                       lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                         <div>
-                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pb-4'>
                             <div data-testid="website1-lighthouse-performance" className="flex justify-center">
                               {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                                 <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance} />
@@ -1233,15 +1234,43 @@ function ResultsComponent() {
                             </div>
                           </div>
 
-                          {/* {
-                            titleTagsAnalysis?.recommendations != '' && 
-                              <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  Recommendations
-                                </h5>
-                                <p>{titleTagsAnalysis?.recommendations}</p>
-                              </div>
-                          } */}
+                          <Accordion
+                            className="mx-auto "
+                            selectionMode="multiple"
+                            variant="splitted"
+                          >
+                            {lighthouseAnalysis.diagnostics.recommendations.map((recomm, index) => (
+                              <AccordionItem
+                                className=""
+                                key={index}
+                                id={'recommendation-' + index}
+                                aria-label={`Accordion ${index + 1}`}
+                                title={(
+                                  <span>
+                                    <span className='font-poppins-medium'>{recomm.title}</span>
+                                    {recomm.displayValue && (
+                                      <span className='text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {` - ${recomm.displayValue}`}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
+                              >
+                                <div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-800 dark:text-jungleGreen-400'>Description: </span>
+                                    <span>{recomm.description}</span>
+                                  </div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-800 dark:text-jungleGreen-400'>Score: </span>
+                                    <span>{recomm.score * 100}%</span>
+                                  </div>
+                                </div>
+                                
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+
                         </div>
                         :
                         <>
