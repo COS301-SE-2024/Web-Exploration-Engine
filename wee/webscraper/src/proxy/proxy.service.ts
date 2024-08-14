@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ProxyService {
-  private readonly proxyPool = [
-    '13.245.162.149', // Techodyssey
-    '13.246.234.173', // Caitlin
-  ];
+  private readonly proxyPool = process.env.PROXIES.split(',');
   private readonly proxyPort = 3128;
   private readonly proxyUsername = process.env.PROXY_USERNAME;
   private readonly proxyPassword = process.env.PROXY_PASSWORD;
@@ -18,7 +15,6 @@ export class ProxyService {
 
   getProxy() {
     const proxy = this.proxyPool[Math.floor(Math.random() * this.proxyPool.length)];
-    // return `http://${proxy}:${this.proxyPort}`;
     return `http://${proxy}:${this.proxyPort}`;
   }
 }
