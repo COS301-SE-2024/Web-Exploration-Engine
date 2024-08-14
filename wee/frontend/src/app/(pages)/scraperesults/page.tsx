@@ -1,10 +1,5 @@
 'use client';
 import React, { useEffect, Suspense, useRef } from 'react';
-import Fake from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
-import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
-import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
-import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
-import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
 import { FiSearch } from 'react-icons/fi';
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
@@ -164,7 +159,7 @@ function ResultsComponent() {
           try {
             getScrapingResults(url);
           } catch (error) {
-            console.error('Error with getScrapingResults() :', error);
+            console.error('Error when scraping website:', error);
           }
 
           // remove from array of urls still being processed
@@ -212,20 +207,8 @@ const getScrapingResults = async (url: string) => {
 
     // Poll the API until the scraping is done
     try {
+      const result = await pollForResult(url) as Result;
 
-       let result = await pollForResult(url) as Result;
-
-       if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
-        if (url.includes('insecure'))
-          result = MockSteersResult;
-        else if (url.includes('wimpy'))
-          result = MockWimpyResult;
-        else if (url.includes('steers'))
-          result = MockSteersResult;
-        else result = MockGithubResult;
-      }
-
-  
       if ('errorStatus' in result) {
         const errorResponse = { ...result, url };
         setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])
@@ -237,7 +220,7 @@ const getScrapingResults = async (url: string) => {
       console.log('Scraping result:', result);
       
     } catch (error) {
-      console.error('Error with pollForResult() or scraping website:', error);
+      console.error('Error when scraping website:', error);
     }
     
   } catch (error) {

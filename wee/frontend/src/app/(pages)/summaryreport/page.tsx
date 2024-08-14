@@ -176,7 +176,7 @@ export default function SummaryReport() {
                         Summary Report
                     </h1>
                     <div className="mt-4 mr-4 flex justify-end">
-                        <Dropdown data-testid="btn-dropdown">
+                        <Dropdown>
                             <DropdownTrigger>
                                 <Button 
                                 variant="flat" 
@@ -239,8 +239,7 @@ export default function SummaryReport() {
                 <div className='gap-4 grid sm:grid-cols-3'>
 
                     {/* Scraped stats */}
-                    <div data-testid="visual-scraped-stats" 
-                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiSearch />
                         </div>
@@ -253,8 +252,7 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Crawlable stats */}
-                    <div data-testid="visual-crawlable-stats"
-                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiCheck />
                         </div>
@@ -267,8 +265,7 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Avg scrape stats */}
-                    <div data-testid="visual-avg-scrape-stats" 
-                    className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiClock />
                         </div>
@@ -285,8 +282,7 @@ export default function SummaryReport() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
-            <div data-testid="visual-industry-classification" 
-            className='gap-4 grid md:grid-cols-2'>
+            <div className='gap-4 grid md:grid-cols-2'>
                     <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                             Classification Distribution
@@ -347,8 +343,7 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
             {/* Domain match */}
-            <h3 data-testid="visual-domain-match" 
-            className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain match
                 <InfoPopOver 
                     heading="Domain Match" 
@@ -405,8 +400,7 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
             {/* Classification Distribution */}
-            <h3 
-            className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry Classification Distribution
                 <InfoPopOver 
                     heading="Industry Classification Distribution" 
