@@ -766,7 +766,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="nonOptimisedImages" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.nonOptimizedCount}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -938,7 +938,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Count
                             </h5>
-                            <p>{headingAnalysis?.count}</p>
+                            <p data-testid="headingscount">{headingAnalysis?.count}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1066,7 +1066,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Is URL in description?
                             </h5>
-                            <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
+                            <p data-testid="titletagWordsInDesr">{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
@@ -1211,14 +1211,14 @@ function ResultsComponent() {
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                         <div className='min-h-[6rem]'>
-                          <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          <div data-testid="canonicalTagPresent" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) ?
                               canonicalTagAnalysis.isCanonicalTagPresent ? 'Yes' : 'No'
                               : '-'
                             }
                           </div>
-                          <div className='font-poppins-semibold text-sm sm:text-lg'>
-                            {canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) ?
+                          <div data-testid="canonicalTag" className='font-poppins-semibold text-sm sm:text-lg'>
+                            {canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) && canonicalTagAnalysis.canonicalTag != "" ?
                               canonicalTagAnalysis.canonicalTag
                               : 'No canonical tag present'
                             }
@@ -1233,7 +1233,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{canonicalTagAnalysis.recommendations}</p>
+                          <p data-testid='canonical_recommendations'>{canonicalTagAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>

@@ -134,8 +134,15 @@ describe('Results Component', () => {
                 },
             },
             seoAnalysis: {
-                // XMLSitemapAnalysis: {},
-                // canonicalTagAnalysis: {},
+                // XMLSitemapAnalysis: {
+                //     isSitemapValid: true,
+                //     recommendations: "The XML sitemap at https://www.bargainbooks.co.za/sitemap.xml is present and accessible.",
+                // },
+                canonicalTagAnalysis: {
+                    canonicalTag: "https://www.bargainbooks.co.za/",
+                    isCanonicalTagPresent: true,
+                    recommendations: "The canonical tag for the page is set to https://www.bargainbooks.co.za/.",
+                },
                 headingAnalysis: {
                     count: 2,
                     headings: ['HeadingOne', 'HeadingTwo'],
@@ -153,7 +160,10 @@ describe('Results Component', () => {
                     recommendations: '11 images are missing alt text. 3 images are not optimized.',
                     totalImages: 27,
                 },
-                // indexabilityAnalysis: {},
+                // indexabilityAnalysis: {
+                //     isIndexable: true,
+                //     recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                // },
                 internalLinksAnalysis: {
                     recommendations: 'This is the internal linking recommendation',
                     totalLinks: 17,
@@ -164,8 +174,14 @@ describe('Results Component', () => {
                     recommendations: "Title tag length should be between 50 and 60 characters.",
                     titleTag: "South African Online Computer Store",
                 },
-                // mobileFriendlinessAnalysis: {},
-                // structuredDataAnalysis: {},
+                // mobileFriendlinessAnalysis: {
+                //     isResponsive: true,
+                //     recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                // },
+                // structuredDataAnalysis: {
+                //     count: 0,
+                //     recommendations: "Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.",
+                // },
                 titleTagsAnalysis: {
                     isUrlWordsInDescription: false,
                     length: 88,
@@ -807,7 +823,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText('34')).toBeDefined();
             expect(screen.getByText('6')).toBeDefined();
-            expect(screen.getByText('0')).toBeDefined();
+            expect(screen.queryByTestId('nonOptimisedImages')?.textContent).toBe('0');
             expect(screen.queryByTestId('images_recommendations')).not.toBeInTheDocument();
         });
     });
@@ -857,7 +873,7 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
             expect(screen.getByText("121")).toBeDefined();
-            expect(screen.getByText('Yes')).toBeDefined();
+            expect(screen.queryByTestId('titletagWordsInDesr')?.textContent).toBe('Yes');
             expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
         });
     });
@@ -1025,13 +1041,61 @@ describe('Results Component', () => {
         fireEvent.click(SEOTab);
 
         await waitFor(() => {
-            expect(screen.getByText('0')).toBeDefined();
+            expect(screen.queryByTestId('headingscount')?.textContent).toBe('0');
             expect(screen.queryByTestId('headings_recommendations')).toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.headingAnalysis.recommendations)).toBeDefined();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[0])).not.toBeInTheDocument();
             expect(screen.queryByText(mockResults[0].seoAnalysis.headingAnalysis.headings[1])).not.toBeInTheDocument();
         });
     });
+
+    it('Technical SEO: Canonical Tags', async() => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('canonicalTagPresent')?.textContent).toBe('Yes');
+            expect(screen.getByText(mockResults[0].seoAnalysis.canonicalTagAnalysis.canonicalTag)).toBeDefined();
+            expect(screen.queryByTestId('canonical_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.canonicalTagAnalysis.recommendations)).toBeDefined();
+        });
+    })
+
+    it('Technical SEO: Canonical Tags, NO tag present', async() => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        canonicalTagAnalysis: {
+                            canonicalTag: "",
+                            isCanonicalTagPresent: false,
+                            recommendations: "The canonical tag for the page is set to https://www.bargainbooks.co.za/.",
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('canonicalTagPresent')?.textContent).toBe('No');
+            expect(screen.queryByTestId('canonicalTag')?.textContent).toBe('No canonical tag present');
+            expect(screen.queryByTestId('canonical_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.canonicalTagAnalysis.recommendations)).toBeDefined();
+        });
+    })
 
     it('Sentiment Analysis: Donut chart, metadata, positive and negative words and emotion graphs displayed', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
