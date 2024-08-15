@@ -42,15 +42,15 @@ export class ScreenshotService {
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
+      console.log("Screenshot", url, typeof screenshotBase64); 
+
       return { screenshot: screenshotBase64 };
 
     } catch (error) {
       console.error('Failed to capture screenshot', error);
       return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to capture screenshot',
-      } as ErrorResponse;
+        screenshot: '',
+      } 
     } finally {
       if (page) {
         await page.close();

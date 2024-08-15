@@ -181,7 +181,8 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
                 }
             });
         }
-
+        await captureChart('radar-chart', 'Industry and Domain Classification Distribution', 30);
+        await captureChart('area-chart', 'Emotion Confidence Classification Distribution', 30);
     };        
 
     await addChartToPDF();

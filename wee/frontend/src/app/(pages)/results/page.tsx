@@ -120,6 +120,7 @@ function ResultsComponent() {
       const urlResults = results.filter((res) => res.url === url);
   
       if (urlResults && urlResults[0]) {
+        console.log(urlResults[0]);
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
@@ -779,7 +780,7 @@ function ResultsComponent() {
                               </div>
                           }
 
-                          {/* {
+                          {
                             imagesAnalysis?.recommendations != '' &&
                               <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -787,7 +788,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{imagesAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>
                       :
                       <>
@@ -844,7 +845,7 @@ function ResultsComponent() {
                             </div>
                           </div>
 
-                          {/* {
+                          {
                             internalLinkingAnalysis?.recommendations != '' &&
                               <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -852,7 +853,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{internalLinkingAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>
                       :
                       <>
@@ -902,7 +903,7 @@ function ResultsComponent() {
                           </ScrollShadow>
                         </div>
 
-                        {/* {
+                        {
                           headingAnalysis?.recommendations != '' &&
                             <div data-testid='headings_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -910,7 +911,7 @@ function ResultsComponent() {
                               </h5>
                               <p>{headingAnalysis?.recommendations}</p>
                             </div>
-                        } */}
+                        }
                       </div>
                       :
                       <>
@@ -956,7 +957,7 @@ function ResultsComponent() {
                             <p>{metaDescriptionAnalysis?.length}</p>
                           </div>
 
-                          {/* {
+                          {
                             metaDescriptionAnalysis?.recommendations !== '' && (
                               <div data-testid='meta_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -964,7 +965,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{metaDescriptionAnalysis?.recommendations}</p>
                               </div>
-                          )} */}
+                          )}
                         </div>
                       :
                       <>
@@ -1017,7 +1018,7 @@ function ResultsComponent() {
                             <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
-                          {/* {
+                          {
                             titleTagsAnalysis?.recommendations != '' && 
                               <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -1025,7 +1026,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{titleTagsAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>                      
                       :
                       <>
@@ -1109,7 +1110,7 @@ function ResultsComponent() {
                           </div>
                         </div>
 
-                        {/* {
+                        {
                           uniqContentAnalysis?.recommendations != '' &&
                             <div data-testid='uniqueContent_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -1117,7 +1118,7 @@ function ResultsComponent() {
                               </h5>
                               <p>{uniqContentAnalysis?.recommendations}</p>
                             </div>
-                        } */}
+                        }
                       </div>
                       :
                       <>
@@ -1218,9 +1219,9 @@ function ResultsComponent() {
 
                   {/* Emotions */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
-                    Emotions
+                    Emotions Confidence Score
                     <InfoPopOver 
-                      heading="Emotions" 
+                      heading="Emotions Confidence Score" 
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
                         their metadata settings, thereby invoking the desired emotional responses.
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
