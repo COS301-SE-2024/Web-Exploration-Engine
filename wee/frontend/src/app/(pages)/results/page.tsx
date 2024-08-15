@@ -8,7 +8,7 @@ import {
   Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock } from "react-icons/fi";
+import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -1191,7 +1191,7 @@ function ResultsComponent() {
                       {/* Heading */}
                       <div className='flex mb-2'>
                         <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
-                          <FiClock />
+                          <FiTag />
                         </div>
                         <div className='my-auto'>
                           <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
@@ -1199,8 +1199,9 @@ function ResultsComponent() {
                             <InfoPopOver
                               data-testid="popup-canonical-tags"
                               heading="Analysis of Canonical Tags"
-                              content="The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and 
-                              engagement, and can boost SEO by enhancing search rankings and driving more traffic."
+                              content="The code identifies a link element with rel='canonical', retrieves its href attribute, and checks if the canonical tag is present. If the tag is missing, 
+                              it provides a recommendation. Canonical tags are crucial for SEO, as they help prevent duplicate content issues by signaling the primary version of a page, thereby 
+                              consolidating ranking signals and avoiding diluted page authority."
                               placement="bottom"
                             />
                           </h4>
@@ -1302,9 +1303,9 @@ function ResultsComponent() {
                             <InfoPopOver
                               data-testid="popup-xml-sitemap"
                               heading="XML Sitemap Analysis"
-                              content="The viewport is configured to simulate a mobile device (375x667 pixels), sets mobile and touch capabilities, and checks 
-                              if the page is fully loaded and responsive at the specified width. Mobile-friendly sites improve user experience, enhance SEO due 
-                              to Google&apos;s mobile-first indexing, and can boost conversion rates by ensuring ease of use on mobile devices."
+                              content="This feature checks the presence and accessibility of your XML sitemap by appending /sitemap.xml to your base URL. If the sitemap is missing or 
+                              inaccessible, you'll receive a status update with recommendations for resolving the issue. An XML sitemap is essential for effective search engine crawling 
+                              and indexing, ensuring that all critical pages are discovered, which can significantly enhance your site's visibility and traffic."
                               placement="bottom"
                             />
                           </h4>
@@ -1342,7 +1343,7 @@ function ResultsComponent() {
                         </div>
                         <div className='my-auto'>
                           <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
-                            Mobile Friendly
+                            Mobile Friendliness
                             <InfoPopOver
                               data-testid="popup-mobile-friendly"
                               heading="Analysis of Mobile Friendliness"
@@ -1377,6 +1378,98 @@ function ResultsComponent() {
                       }
                     </div>
                   </div> {/* EO xml and mobile friendliness */}
+
+
+                  {/* indexibility and structured */}
+                  <div className='gap-2 grid sm:grid-cols-2 mt-2'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiCompass />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Indexibility Analysis
+                            <InfoPopOver
+                              data-testid="popup-indexibility"
+                              heading="Indexibility Analysis"
+                              content="The code selects the meta tag with name='robots', extracts its content attribute, and checks for the noindex directive. If noindex is present, it sets 
+                              isIndexable to false, indicating the page won't be indexed by search engines. Ensuring pages are indexable is crucial for search engine visibility and traffic, 
+                              as unintentional noindex settings can hinder SEO efforts."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) ?
+                            indexibilityAnalysis.isIndexable? 'Yes' : 'No'
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) && indexibilityAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p>{indexibilityAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiLayout />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Structured Data Analysis
+                            <InfoPopOver
+                              data-testid="popup-structured"
+                              heading="Structured Data Analysis"
+                              content="The code selects script tags with type='application/ld+json', extracts and counts the JSON-LD structured data, and generates a recommendation 
+                              if none is found. Structured data enhances search visibility by enabling rich snippets and improves SEO by helping search engines better understand and 
+                              index content, potentially increasing traffic and rankings."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {structuredDataAnalysis && isStructuredDataAnalysis(structuredDataAnalysis) ?
+                            structuredDataAnalysis.count
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        structuredDataAnalysis && isStructuredDataAnalysis(structuredDataAnalysis) && structuredDataAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p>{structuredDataAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+                  </div> {/* EO structured and indexibility */}
 
                   {/* LightHouse */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
