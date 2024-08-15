@@ -1,10 +1,5 @@
 'use client';
 import React, { useEffect, Suspense, useRef } from 'react';
-import Fake from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
-import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
-import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
-import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
-import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
 import { FiSearch } from 'react-icons/fi';
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
@@ -214,17 +209,6 @@ const getScrapingResults = async (url: string) => {
     try {
 
        let result = await pollForResult(url) as Result;
-
-       if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
-        if (url.includes('insecure'))
-          result = MockSteersResult;
-        else if (url.includes('wimpy'))
-          result = MockWimpyResult;
-        else if (url.includes('steers'))
-          result = MockSteersResult;
-        else result = MockGithubResult;
-      }
-
   
       if ('errorStatus' in result) {
         const errorResponse = { ...result, url };
