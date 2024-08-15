@@ -9,8 +9,12 @@ jobs:
     name: Deploy grafana and loki
     runs-on: ubuntu-latest
     steps:  
+      - name: Check out repository
+        uses: actions/checkout@v2
+
       - name: List files
         run: ls -la loki-grafana-setup
+
       - name: Upload docker compose and config files to the server
         uses: appleboy/scp-action@v0.1.4
         with:
