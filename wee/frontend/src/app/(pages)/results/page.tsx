@@ -1180,104 +1180,9 @@ function ResultsComponent() {
                   </div> {/* EO Unique Content Analysis */}
 
                   {/* Technical Analysis Heading */}
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-2">
                     Technical Analysis
                   </h3>
-
-                  {/* LightHouse */}
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
-                    {/* Heading */}
-                    <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
-                        <FiActivity />
-                      </div>
-                      <div className='my-auto'>
-                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
-                          Light House Analysis
-                          <InfoPopOver
-                            data-testid="popup-analysis-tags"
-                            heading="Light House Analysis"
-                            content="The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices."
-                            placement="bottom"
-                          />
-                        </h4>
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    {
-                      lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
-                        <div>
-                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pb-4'>
-                            <div data-testid="website1-lighthouse-performance" className="flex justify-center">
-                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
-                                <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance} />
-                                :
-                                <CircularProgressComparison label="Performance" value={0} />
-                              }
-                            </div>
-
-                            <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
-                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
-                                <CircularProgressComparison label="Accessibility" value={lighthouseAnalysis.scores.accessibility} />
-                                :
-                                <CircularProgressComparison label="Accessibility" value={0} />
-                              }
-                            </div>
-
-                            <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
-                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
-                                <CircularProgressComparison label="Best Practices" value={lighthouseAnalysis.scores.bestPractices} />
-                                :
-                                <CircularProgressComparison label="Best Practices" value={0} />
-                              }
-                            </div>
-                          </div>
-
-                          <Accordion
-                            className="mx-auto "
-                            selectionMode="multiple"
-                            variant="splitted"
-                          >
-                            {lighthouseAnalysis.diagnostics.recommendations.map((recomm, index) => (
-                              <AccordionItem
-                                className=""
-                                key={index}
-                                id={'recommendation-' + index}
-                                aria-label={`Accordion ${index + 1}`}
-                                title={(
-                                  <span>
-                                    <span className='font-poppins-medium'>{recomm.title}</span>
-                                    {recomm.displayValue && (
-                                      <span className='text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {` - ${recomm.displayValue}`}
-                                      </span>
-                                    )}
-                                  </span>
-                                )}
-                              >
-                                <div>
-                                  <div>
-                                    <span className='font-poppins-medium text-jungleGreen-800 dark:text-jungleGreen-400'>Description: </span>
-                                    <span>{recomm.description}</span>
-                                  </div>
-                                  <div>
-                                    <span className='font-poppins-medium text-jungleGreen-800 dark:text-jungleGreen-400'>Score: </span>
-                                    <span>{recomm.score * 100}%</span>
-                                  </div>
-                                </div>
-                                
-                              </AccordionItem>
-                            ))}
-                          </Accordion>
-
-                        </div>
-                        :
-                        <>
-                          {lighthouseAnalysis?.error}
-                        </>
-                    }
-                  </div> {/* EO Light House */}
 
                   {/* Site speed and canonical tags */}
                   <div className='gap-2 grid sm:grid-cols-2'>
@@ -1380,7 +1285,6 @@ function ResultsComponent() {
                         </div>
                       }
                     </div>
-
                   </div> {/* EO Site speed and canonical tags */}
 
                   {/* xml and mobile friendliness */}
@@ -1472,8 +1376,102 @@ function ResultsComponent() {
                         </div>
                       }
                     </div>
-
                   </div> {/* EO xml and mobile friendliness */}
+
+                  {/* LightHouse */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiActivity />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Light House Analysis
+                          <InfoPopOver
+                            data-testid="popup-analysis-tags"
+                            heading="Light House Analysis"
+                            content="The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices."
+                            placement="bottom"
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                        <div>
+                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pb-4'>
+                            <div data-testid="website1-lighthouse-performance" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance} />
+                                :
+                                <CircularProgressComparison label="Performance" value={0} />
+                              }
+                            </div>
+
+                            <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Accessibility" value={lighthouseAnalysis.scores.accessibility} />
+                                :
+                                <CircularProgressComparison label="Accessibility" value={0} />
+                              }
+                            </div>
+
+                            <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Best Practices" value={lighthouseAnalysis.scores.bestPractices} />
+                                :
+                                <CircularProgressComparison label="Best Practices" value={0} />
+                              }
+                            </div>
+                          </div>
+
+                          <Accordion
+                            className="mx-auto "
+                            selectionMode="multiple"
+                            variant="splitted"
+                          >
+                            {lighthouseAnalysis.diagnostics.recommendations.map((recomm, index) => (
+                              <AccordionItem
+                                className=""
+                                key={index}
+                                id={'recommendation-' + index}
+                                aria-label={`Accordion ${index + 1}`}
+                                title={(
+                                  <span>
+                                    <span className='font-poppins-medium'>{recomm.title}</span>
+                                    {recomm.displayValue && (
+                                      <span className='text-jungleGreen-600 dark:text-jungleGreen-400'>
+                                        {` - ${recomm.displayValue}`}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
+                              >
+                                <div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-600 dark:text-jungleGreen-400'>Description: </span>
+                                    <span>{recomm.description}</span>
+                                  </div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-600 dark:text-jungleGreen-400'>Score: </span>
+                                    <span>{recomm.score * 100}%</span>
+                                  </div>
+                                </div>
+
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+
+                        </div>
+                        :
+                        <>
+                          {lighthouseAnalysis?.error}
+                        </>
+                    }
+                  </div> {/* EO Light House */}
 
                 </div> {/* EO on page SEO analysis */}
               </CardBody>
