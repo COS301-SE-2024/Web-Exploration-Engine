@@ -412,7 +412,7 @@ export default function SummaryReport() {
                     placement="right-end" 
                 />
             </h3>
-            <div className='gap-4 grid lg:grid-cols-2'>
+            <div  id="radar-chart" className='gap-4 grid lg:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Metadata
