@@ -1,4 +1,4 @@
-name: Deploy 
+name: Grafana and Loki deployment 
 
 on:
   push:
@@ -9,15 +9,6 @@ jobs:
     name: Deploy grafana and loki
     runs-on: ubuntu-latest
     steps:  
-      - name: Upload logs to server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
-          source: "logs"
-          target: ./
       - name: Upload docker compose and config files to the server
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -36,5 +27,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd wee
+            cd loki-grafana-setup
             docker compose up --build --detach --force-recreate
