@@ -4,3 +4,4 @@ node_modules/.bin/node-which
 /wee/logging/prometheus
 my.secrets
 *.log
+*-audit.json

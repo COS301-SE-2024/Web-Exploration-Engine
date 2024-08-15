@@ -28,7 +28,7 @@ const getLogger = (fileName = 'application') => {
       format.splat(),
       format.printf(
         ({ level, message, servicename, label = process.env.NODE_ENV, timestamp }) =>
-          `${timestamp} [${label}] ${level}: ${message},${servicename}`
+          `${timestamp} [${label}] ${level}: ${message}, ${servicename}`
       )
     ),
     defaultMeta: { service: 'my-app' },
