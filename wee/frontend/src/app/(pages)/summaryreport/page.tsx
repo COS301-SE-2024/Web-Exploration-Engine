@@ -179,6 +179,7 @@ export default function SummaryReport() {
                         <Dropdown data-testid="btn-dropdown">
                             <DropdownTrigger>
                                 <Button 
+                                id="btn-save-export"
                                 variant="flat" 
                                 startContent={<FiShare className={iconClasses}/>}
                                 >
@@ -210,6 +211,7 @@ export default function SummaryReport() {
                                 <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
                                 <DropdownItem
                                     key="save"
+                                    data-testid="dropdown-item-save"
                                     startContent={<FiSave className={iconClasses}/>}
                                     description="Sign up or log in to save the report on our website"
                                 >
@@ -217,10 +219,10 @@ export default function SummaryReport() {
                                 </DropdownItem>
                                 <DropdownItem
                                     key="download"
+                                    data-testid="dropdown-item-download"
                                     startContent={<FiDownload className={iconClasses}/>}
                                     description="Download the report to your device"
                                     onAction={handleDownloadReport}
-                                    data-testid="download-report-button"
                                 >
                                     Download
                                 </DropdownItem>
@@ -291,6 +293,7 @@ export default function SummaryReport() {
                         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                             Classification Distribution
                             <InfoPopOver 
+                                data-testid="pop-industry-classification" 
                                 heading="Industry classification" 
                                 content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
                                 placement="top" 
@@ -304,7 +307,8 @@ export default function SummaryReport() {
                             <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
                         </span>
                     </div>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                <div data-testid="visual-weak-classifications"
+                className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Weak classifications
                         <InfoPopOver 
@@ -314,6 +318,7 @@ export default function SummaryReport() {
                         />
                     </h3>
                     <WEETable 
+                        data-testid="table-weak-classifications"
                         isHeaderSticky
                         className='max-h-[15rem]'
                         aria-label="Industry classification table"
@@ -347,8 +352,7 @@ export default function SummaryReport() {
                 </div> {/* Grid */}
 
             {/* Domain match */}
-            <h3 data-testid="visual-domain-match" 
-            className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+            <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain match
                 <InfoPopOver 
                     heading="Domain Match" 
@@ -356,7 +360,8 @@ export default function SummaryReport() {
                     placement="right-end" 
                 />
             </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
+            <div data-testid="visual-domain-match"
+            className='gap-4 grid md:grid-cols-3'>
                 <div id="radial-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
                 </div>
@@ -366,6 +371,7 @@ export default function SummaryReport() {
                             Domain mismatch information
                         </h3>
                         <WEETable 
+                            data-testid="table-domain-match"
                             isHeaderSticky
                             className='max-h-[15rem]'
                             aria-label="Domain mismatch information table"
