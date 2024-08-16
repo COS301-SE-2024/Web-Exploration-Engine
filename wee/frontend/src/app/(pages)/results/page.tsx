@@ -1314,7 +1314,7 @@ function ResultsComponent() {
 
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="isSitemapvalid" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {xmlSitemapAnalysis && isXMLSitemapAnalysis(xmlSitemapAnalysis) ?
                             xmlSitemapAnalysis.isSitemapValid ? 'Yes' : 'No'
                             : '-'
@@ -1329,7 +1329,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{xmlSitemapAnalysis.recommendations}</p>
+                          <p data-testid="xml_recommendation">{xmlSitemapAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>
@@ -1358,7 +1358,7 @@ function ResultsComponent() {
 
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="mobile_friendliness" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(mobileFriendlinessAnalysis) ?
                             mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
@@ -1373,7 +1373,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{mobileFriendlinessAnalysis.recommendations}</p>
+                          <p data-testid="mobile_recommendations">{mobileFriendlinessAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>

@@ -134,10 +134,10 @@ describe('Results Component', () => {
                 },
             },
             seoAnalysis: {
-                // XMLSitemapAnalysis: {
-                //     isSitemapValid: true,
-                //     recommendations: "The XML sitemap at https://www.steers.co.za/sitemap.xml is present and accessible.",
-                // },
+                XMLSitemapAnalysis: {
+                    isSitemapValid: true,
+                    recommendations: "The XML sitemap at https://www.steers.co.za/sitemap.xml is present and accessible.",
+                },
                 canonicalTagAnalysis: {
                     canonicalTag: "https://www.bargainbooks.co.za/",
                     isCanonicalTagPresent: true,
@@ -191,10 +191,10 @@ describe('Results Component', () => {
                     recommendations: "Title tag length should be between 50 and 60 characters.",
                     titleTag: "South African Online Computer Store",
                 },
-                // mobileFriendlinessAnalysis: {
-                //     isResponsive: true,
-                //     recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
-                // },
+                mobileFriendlinessAnalysis: {
+                    isResponsive: true,
+                    recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                },
                 siteSpeedAnalysis: {
                     loadTime: 3.15987747,
                     recommendations: "The page load time is 3.16 seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience."
@@ -1156,6 +1156,148 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.queryByTestId('siteSpeed')?.textContent).toBe("0");
             expect(screen.queryByTestId('sitespeed_recommendations')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Technical SEO: XML Sitemap Analysis', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('isSitemapvalid')?.textContent).toBe("Yes");
+            expect(screen.queryByTestId('xml_recommendation')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.XMLSitemapAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: XML Sitemap Analysis without valid xml sitemap', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        XMLSitemapAnalysis: {
+                            isSitemapValid: false,
+                            recommendations: "The XML sitemap at https://www.steers.co.za/sitemap.xml is present and accessible.",
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('isSitemapvalid')?.textContent).toBe("No");
+            expect(screen.queryByTestId('xml_recommendation')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.XMLSitemapAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: XML Sitemap Analysis undefined', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        XMLSitemapAnalysis: undefined
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('isSitemapvalid')?.textContent).toBe("-");
+            expect(screen.queryByTestId('xml_recommendation')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Technical SEO: Mobile friendliness', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('mobile_friendliness')?.textContent).toBe("Yes");
+            expect(screen.queryByTestId('mobile_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.mobileFriendlinessAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: Mobile friendliness NO mobile friendliness', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        mobileFriendlinessAnalysis: {
+                            isResponsive: false,
+                            recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('mobile_friendliness')?.textContent).toBe("No");
+            expect(screen.queryByTestId('mobile_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.mobileFriendlinessAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: Mobile friendliness undefined', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        mobileFriendlinessAnalysis: undefined
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('mobile_friendliness')?.textContent).toBe("-");
+            expect(screen.queryByTestId('mobile_recommendations')).not.toBeInTheDocument();
         });
     });
 
