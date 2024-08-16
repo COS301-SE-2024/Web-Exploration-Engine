@@ -85,10 +85,106 @@ describe('results', () => {
     
 
 
-    // Mocking Responses
-  });
-  
+    //==========================================
+    // Checking the results page content : Steers
+    //==========================================
 
-  
+
+    cy.get('[data-testid="btnView1"]')
+    .should('exist')
+    .click();
+
+    cy.url().should('include', 'results');
+
+    //  Tab : General Overview
+    cy.log('Testing General overview tab');
+
+    cy.get('[data-testid="tab-general"]').should('exist');
+    cy.get('[data-testid="tab-general"]').click();
+    
+    //Tab Section : Header, Title, Logo
+    cy.get('[data-testid="div-summary"]')
+    .should('exist')
+    .should('be.visible')
+    
+    cy.get('[data-testid="p-title"]')
+    .should('exist')
+    .should('be.visible')
+    .should(
+        'contain.text',
+        'Burgers and Flame Grills | Steers South Africa'
+      )
+
+    cy.get('[data-testid="img-logo"]')
+    .should('exist')
+    .should('have.attr','src')
+
+    cy.get('[data-testid="p-summary"]')
+    .should('exist')
+    .should('be.visible')
+    .should(
+        'contain.text',
+        'Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.'
+      )
+    // Tab Section : Summary Info
+
+
+    //  Tab : Media
+    cy.log('Testing Media Tab');
+    cy.get('[data-testid="tab-media"]').click();
+
+    cy.get('[data-testid="div-homepagescreenshot"]')
+    .should('exist')
+    .should('be.visible')
+
+    cy.get('[data-testid="pagination-images"]')
+    .should('exist')
+    .should('be.visible')
+
+    // Check the select dropdown for "Images Per Page"
+    cy.get('[data-testid="pagination-images"] select')
+      .should('be.visible')
+      .find('option')
+      .should('have.length', 6) // There are 6 options
+      .then(($options) => {
+        const expectedValues = ['4', '8', '16', '24', '36', '48'];
+        $options.each((index, option) => {
+          expect(option.value).to.equal(expectedValues[index]);
+        });
+      });
+
+    // Check the images in the cards
+    cy.get('[id="unique-results-image-container"]')
+      .find('[id="unique-results-image"]')
+      .should('have.length.greaterThan', 0); // Ensure there is at least one image
+
+    cy.get('[id="unique-results-image-container"]')
+      .find('img')
+      .should('have.attr', 'alt', 'Image')
+      .and('have.attr', 'src'); // Ensure images have src attribute
+
+
+
+    //  Tab : SEO Analysis
+    cy.log('Testing SEO Analysis');
+
+    cy.get('[data-testid="tab-seo"]').click();
+
+    
+    cy.contains(/images/i).should('exist');
+    cy.contains(/internal linking/i).should('exist');
+    cy.contains(/headings/i).should('exist');
+    cy.contains(/meta/i).should('exist');
+    cy.contains(/title tags/i).should('exist');
+    cy.contains(/unique content/i).should('exist');
+
+
+    //  Tab : Sentiment Analysis
+    cy.log('Testing Sentiment Analysis');
+
+
+
+  });
+
 
 });
