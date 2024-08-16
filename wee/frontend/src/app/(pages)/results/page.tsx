@@ -265,7 +265,8 @@ function ResultsComponent() {
                   <Button 
                    id="btn-save-export"
                     variant="flat" 
-                    data-testid="btn-export-save-report"
+                    // data-testid="btn-export-save-report"
+                    data-testid="save-report-button"
                     startContent={<FiShare className={iconClasses}/>}
                   >
                     Export/Save
@@ -965,14 +966,14 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Title Tag
                             </h5>
-                            <p>{metaDescriptionAnalysis?.titleTag}</p>
+                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.titleTag}</p>
                           </div>
 
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Length
                             </h5>
-                            <p>{metaDescriptionAnalysis?.length}</p>
+                            <p data-testid="p-metadescription-length">{metaDescriptionAnalysis?.length}</p>
                           </div>
 
                           {/* {
@@ -1020,14 +1021,14 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Metadata Description
                             </h5>
-                            <p>{titleTagsAnalysis?.metaDescription}</p>
+                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.metaDescription}</p>
                           </div>
 
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Length
                             </h5>
-                            <p>{titleTagsAnalysis?.length}</p>
+                            <p data-testid="p-titletag-length">{titleTagsAnalysis?.length}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1082,7 +1083,8 @@ function ResultsComponent() {
                         <div className='gap-6 grid sm:grid-cols-2'>
                           <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                             <div>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="div-uniq-textlength"
+                              className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {uniqContentAnalysis?.textLength}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
@@ -1093,7 +1095,8 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                             <div>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="div-uniq-percentage"
+                              className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
                                   ?
                                   (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
@@ -1112,7 +1115,8 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Repeated words
                           </h5>
-                          <div>
+                          <div data-testid="div-uniq-rep-words"
+                          >
                             {uniqContentAnalysis?.repeatedWords
                             .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
                             .map((wordObj, index) => (
@@ -1169,7 +1173,8 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3> 
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                  <div data-testid="div-sentiment-analysis"
+                  className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
                       <div data-testid={"sentiment-donut-chart"} className='w-full md:w-1/2 md:mx-auto'>
                         <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
@@ -1193,7 +1198,8 @@ function ResultsComponent() {
                       placement="right-end" 
                     />
                   </h3> 
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                  <div 
+                   className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
                       <div>There is no positive or negative words to display</div>
                     )
@@ -1336,7 +1342,7 @@ function ResultsComponent() {
       </Modal>
 
        {/* successfull save */}
-       <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
+       <Modal data-testid="modal-save-success" isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
           <ModalContent>
               <ModalBody>
                   <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
