@@ -1532,7 +1532,7 @@ function ResultsComponent() {
                                 id={'recommendation-' + index}
                                 aria-label={`Accordion ${index + 1}`}
                                 title={(
-                                  <span>
+                                  <span data-testid={`lighthouse_recommendation_${index}`}>
                                     <span className='font-poppins-medium'>{recomm.title}</span>
                                     {recomm.displayValue && (
                                       <span className='text-jungleGreen-600 dark:text-jungleGreen-400'>

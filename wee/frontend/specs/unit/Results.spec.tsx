@@ -182,6 +182,12 @@ describe('Results Component', () => {
                                 description: "First Contentful Paint marks the time at which the first text or image is painted. .",
                                 score: 0.99,
                                 displayValue: "0.6s"
+                            },
+                            {
+                                title: "Reduced unused JavaScript",
+                                description: "Random description",
+                                score: 0.99,
+                                // displayValue: "0.6s"
                             }
                         ]
                     }
@@ -1398,10 +1404,12 @@ describe('Results Component', () => {
             expect(screen.queryByTestId('lighthouse-performance')?.textContent).toBe("87%Performance");
             expect(screen.queryByTestId('lighthouse-accessibility')?.textContent).toBe("89%Accessibility");
             expect(screen.queryByTestId('lighthouse-bestpractices')?.textContent).toBe("78%Best Practices");
+            expect(screen.queryByTestId('lighthouse_recommendation_0')?.textContent).toBe(mockResults[0].seoAnalysis.lighthouseAnalysis.diagnostics.recommendations[0].title + ' - ' + mockResults[0].seoAnalysis.lighthouseAnalysis.diagnostics.recommendations[0].displayValue);
+            expect(screen.queryByTestId('lighthouse_recommendation_1')?.textContent).toBe(mockResults[0].seoAnalysis.lighthouseAnalysis.diagnostics.recommendations[1].title);
         });
     });
 
-    it('Technical SEO: Lighthouse analysis undefined', async () => {
+    it('Technical SEO: Lighthouse analysis 0', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
                 {
@@ -1416,12 +1424,6 @@ describe('Results Component', () => {
                             },
                             diagnostics: {
                                 recommendations: [
-                                    {
-                                        title: "First Contentful Paint",
-                                        description: "First Contentful Paint marks the time at which the first text or image is painted. .",
-                                        score: 0.99,
-                                        displayValue: "0.6s"
-                                    }
                                 ]
                             }
                         },
@@ -1441,6 +1443,7 @@ describe('Results Component', () => {
             expect(screen.queryByTestId('lighthouse-performance')?.textContent).toBe("0%Performance");
             expect(screen.queryByTestId('lighthouse-accessibility')?.textContent).toBe("0%Accessibility");
             expect(screen.queryByTestId('lighthouse-bestpractices')?.textContent).toBe("0%Best Practices");
+            expect(screen.queryByTestId('lighthouse_recommendation_0')).not.toBeInTheDocument();
         });
     });
 
