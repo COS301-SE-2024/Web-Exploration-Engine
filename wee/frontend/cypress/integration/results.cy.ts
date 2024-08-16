@@ -166,21 +166,21 @@ describe('results', () => {
 
 
     //Wait for steers and github to finish
-    cy.wait('@mock_scraper_mockgithub_done');
+    cy.wait('@mock_scraper_mockgithub_done', { timeout: 10000 });
 
-    cy.wait('@mock_scraper_mocksteers_done');
+    cy.wait('@mock_scraper_mocksteers_done', { timeout: 10000 });
 
     //==========================================
     // Accessing the results page
     //==========================================
-    cy.wait(7000)
+    //cy.wait(7000)
 
-    cy.get('[data-testid="btnView0"]')
+    cy.get('[data-testid="btnView0"]', { timeout: 10000 })
     .should('exist')
     .should('be.visible')
     //.click();
 
-    cy.get('[data-testid="btnView1"]')
+    cy.get('[data-testid="btnView1"]', { timeout: 10000 })
     .should('exist')
     .should('be.visible')
     //.click();

@@ -293,18 +293,18 @@ describe('summaryreport', () => {
     //======================================================
 
     //Wait for github to finish
-    cy.wait('@mock_scraper_mockgithub_done');
+    cy.wait('@mock_scraper_mockgithub_done', { timeout: 10000 });
 
     //Wait for steers to finish
-    cy.wait('@mock_scraper_mocksteers_done');
+    cy.wait('@mock_scraper_mocksteers_done', { timeout: 10000 });
 
     //Wait for wimpy to finish
-    cy.wait('@mock_scraper_mockwimpy_done');
+    cy.wait('@mock_scraper_mockwimpy_done', { timeout: 10000 });
 
     cy.url().should('include', 'scraperesults');
     cy.wait(9000);
 
-    cy.get('[data-testid="btn-report-summary"]');
+    //cy.get('[data-testid="btn-report-summary"]');
     cy.get('[data-testid="btn-report-summary"]').click();
     cy.url().should('include', 'summary');
 
