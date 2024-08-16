@@ -6,7 +6,7 @@ export default defineConfig({
   e2e: {
     ...nxE2EPreset(__filename, { cypressDir: 'cypress' }),
     baseUrl: 'http://localhost:3000',
-    trashAssetsBeforeRuns: false,  // Prevents Cypress from deleting screenshots before new test runs
+    trashAssetsBeforeRuns: true,  // Prevents Cypress from deleting screenshots before new test runs
   },
 
   retries: {
