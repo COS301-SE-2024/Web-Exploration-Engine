@@ -266,7 +266,7 @@ function ResultsComponent() {
                    id="btn-save-export"
                     variant="flat" 
                     // data-testid="btn-export-save-report"
-                    data-testid="save-report-button"
+                    data-testid="btn-export-save-report"
                     startContent={<FiShare className={iconClasses}/>}
                   >
                     Export/Save
