@@ -215,14 +215,17 @@ const getScrapingResults = async (url: string) => {
 
        let result = await pollForResult(url) as Result;
 
-       if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
-        if (url.includes('insecure'))
-          result = MockSteersResult;
-        else if (url.includes('wimpy'))
+       //if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
+        if ( url.includes('mock.test.')) {
+      
+        if (url.includes('mock.test.wimpy'))
           result = MockWimpyResult;
-        else if (url.includes('steers'))
+        else if (url.includes('mock.test.github'))
+          result = MockGithubResult;
+        else if (url.includes('mock.test.steers'))
           result = MockSteersResult;
-        else result = MockGithubResult;
+        else if (url.includes('mock.test.insecure'))
+          result = MockInsecureResult;
       }
 
   
