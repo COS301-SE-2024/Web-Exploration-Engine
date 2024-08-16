@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
+import logger from '../../logging/webscraperlogger';
 import axios from 'axios';
+const serviceName = "[IndustryClassificationService]";
 
 @Injectable()
 export class IndustryClassificationService {
+
   private readonly HUGGING_FACE_API_URL =
     'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
@@ -25,8 +28,10 @@ export class IndustryClassificationService {
     'Insurance','Legal Services','Fitness and Wellness','Jewelry','Entertainment and Recreation'
   ];
 
+ 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     // update: try and catch for each classification - doesn't return unknown if one fails
+    logger.debug(`${serviceName}`);
     let metadataClass;
     let domainClass;
     let zeroShotMetaDataClassify;
@@ -36,6 +41,7 @@ export class IndustryClassificationService {
       metadataClass = await this.metadataClassify(metadata);
     
     } catch (error) {
+      logger.error(`${serviceName} ${error}`);
       console.log(error);
       metadataClass = { 
         label: 'Unknown',
@@ -105,9 +111,11 @@ export class IndustryClassificationService {
         };
         return res;
       } else {
+        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
@@ -139,9 +147,11 @@ export class IndustryClassificationService {
         };
         return res;
       } else {
+        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
         throw new Error('Failed to classify industry using Hugging Face model');
       }
     } catch (error) {
+      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
@@ -197,6 +207,7 @@ export class IndustryClassificationService {
   
       return topResults;
     } catch (error) {
+      logger.debug(`${serviceName} Error classifying industry: ${error.message}`);
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
@@ -248,6 +259,7 @@ export class IndustryClassificationService {
   
       return topResults;
     } catch (error) {
+      logger.error(`${serviceName} Error classifying industry: ${error.message}`);      
       throw new Error(`Error classifying domain: ${error.message}`);
     }
   }
