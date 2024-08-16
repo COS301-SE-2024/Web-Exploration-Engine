@@ -7,9 +7,9 @@ describe('results', () => {
     cy.visit('/results?');
 
     //Testing Export / Save Button
-    cy.get('[data-testid="btn-export-save-report"]').should('exist');
-    cy.get('[data-testid="btn-export-save-report"]').click();
-    cy.get('[data-testid="btn-export-save-report"]').should('exist');
+    cy.get('[data-testid="save-report-button"]').should('exist');
+    cy.get('[data-testid="save-report-button"]').click();
+    cy.get('[data-testid="save-report-button"]').should('exist');
 
     /*     cy.get('.dropdown-item') 
     .contains(/download/i)
