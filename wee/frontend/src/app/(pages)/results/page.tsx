@@ -279,7 +279,8 @@ function ResultsComponent() {
                       startContent={<FiSave className={iconClasses}/>}
                       description="Save the report on our website"
                       onAction={onOpenChange}
-                      data-testid="dropdown-item-save"                    >
+                      //data-testid="dropdown-item-save"
+                      data-testid="save-report-button"                    >
                       Save
                     </DropdownItem>
                     <DropdownItem
@@ -287,7 +288,8 @@ function ResultsComponent() {
                       startContent={<FiDownload className={iconClasses}/>}
                       description="Download the report to your device"
                       onAction={downloadSummaryReport}
-                      data-testid="dropdown-item-download"                    >
+                      //data-testid="dropdown-item-download" 
+                      data-testid="download-report-button"                   >
                       Download
                     </DropdownItem>
                   </DropdownMenu> 
