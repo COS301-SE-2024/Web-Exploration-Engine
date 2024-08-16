@@ -22,6 +22,14 @@ declare namespace Cypress {
     triggerMockGitHubMockInsecure(): void;
     triggerMockSteers(): void;
     triggerMock(): void;
+    scrape4Websites(): void;
+    scrape3Websites(): void;
+    scrape2Websites(): void;
+    scrapeGithub(): void;
+    scrapeWimpy(): void;
+    scrapeInsecure(): void;
+    scrapeSteers(): void;
+
     importAllMocks(page: string): void;
   }
 }
