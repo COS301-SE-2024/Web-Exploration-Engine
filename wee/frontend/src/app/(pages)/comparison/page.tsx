@@ -11,17 +11,18 @@ import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnal
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
 import { InfoPopOver } from "../../components/InfoPopOver";
 
-function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
-    return 'scores' in data || 'diagnostics' in data;
-}
+// DON'T delete this please - will just be uncommented when integrated
+// function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+//     return 'scores' in data || 'diagnostics' in data;
+// }
 
-function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
-    return 'loadTime' in data || 'recommendations' in data;
-}
+// function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+//     return 'loadTime' in data || 'recommendations' in data;
+// }
 
-function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
-    return 'isResponsive' in data || 'recommendations' in data;
-}
+// function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+//     return 'isResponsive' in data || 'recommendations' in data;
+// }
 
 function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
     return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
@@ -102,6 +103,7 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center mt-3'>
                 Domain Overview
                 <InfoPopOver 
+                data-testid="popup-info-domain-info"
                     heading="Domain Overview" 
                     content="This section provides important tags to classify the website based on the extracted information. </br></br>
                         <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
@@ -114,7 +116,8 @@ export default function Comparison() {
             </h4>
 
             {/* Website Status */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-website-status"
+             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Website Status
                 </div>
@@ -139,7 +142,8 @@ export default function Comparison() {
             </div>
 
             {/* Industry Classification */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-industry-classification"
+            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Industry Classification
                 </div>
@@ -209,7 +213,8 @@ export default function Comparison() {
             </div>
 
             {/* Domain match */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-domain-match"
+             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Domain Match
                 </div>
@@ -280,6 +285,7 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 On-Page SEO Analysis
                 <InfoPopOver 
+                data-testid="popup-info-onpage-seo"
                     heading="On-page SEO Analysis" 
                     content="On-page SEO analysis involves fine-tuning webpages to improve their search engine visibility and enhance the user experience. By optimizing content directly on the page, we aim to achieve higher rankings on platforms like Google, ultimately driving more organic traffic to the site. </br></br>
                         <i>Unique Content</i>: Text from body tag is extracted and processed. The calculated percentage of unique words can be used to avoid keyword stuffing which enhances SEO. </br>
@@ -289,7 +295,8 @@ export default function Comparison() {
             </h4>
 
             {/* Unique Content */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-unique-content"
+             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Unique Content
                 </div>
@@ -330,7 +337,8 @@ export default function Comparison() {
             </div>
 
             {/* Image on page */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-images"
+            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Images
                 </div>
@@ -413,6 +421,7 @@ export default function Comparison() {
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 Technical SEO Analysis
                 <InfoPopOver 
+                data-testid="popup-info-technical-seo"
                     heading="Technical SEO Analysis" 
                     content="Technical SEO analysis refers to anything that makes your site easier for search engines to crawl, index and render. </br></br>
                         <i>Light House</i>: The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices </br>
@@ -423,7 +432,8 @@ export default function Comparison() {
             </h4>
 
             {/* LightHouseAnalysis */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-lighthouse"
+             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Light House
                 </div>
@@ -431,25 +441,28 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                         <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website1-lighthouse-performance" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Performance" value={24}/>
                             </div>
                             <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Accessibility" value={85}/>
                             </div>
                             <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
-                                {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Best Practices" value={93}/>
                             </div>
                         </div>
                     </div>
@@ -466,25 +479,28 @@ export default function Comparison() {
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
                     <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website2-lighthouse-performance" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
                                     :
                                     <CircularProgressComparison label="Performance" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Performance" value={60}/>
                             </div>
                             <div data-testid="website2-lighthouse-accessibility" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
                                     :
                                     <CircularProgressComparison label="Accessibility" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Accessibility" value={84}/>
                             </div>
                             <div data-testid="website2-lighthouse-bestpractices" className="flex justify-center">
-                                {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
+                                {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
                                     <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
                                     :
                                     <CircularProgressComparison label="Best Practices" value={0}/>
-                                }
+                                } */}
+                                <CircularProgressComparison label="Best Practices" value={78}/>
                             </div>
                         </div>
                     </div>
@@ -492,16 +508,18 @@ export default function Comparison() {
             </div>
 
             {/* Mobile Friendly */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-mobile-friendly"
+             className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Mobile Friendly
                 </div>
                 <div className="flex justify-between ">
                     <div data-testid="website1-mobilefriendly" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteOne.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteOne.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
-                        }
+                        } */}
+                        No
                     </div>
 
                     <div className="text-center m-auto">
@@ -514,26 +532,29 @@ export default function Comparison() {
                     </div>
 
                     <div data-testid="website2-mobilefriendly" className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
+                        {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(websiteTwo.seoAnalysis.mobileFriendlinessAnalysis) ?
                             websiteTwo.seoAnalysis.mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
                             : '-'
-                        }
+                        } */}
+                        Yes
                     </div>
                 </div>
             </div>
 
             {/* Site Speed */}
-            <div className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-site-speed" 
+            className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Site Speed
                 </div>
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
                         <div data-testid="website1-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
+                            {/* {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
-                            }
+                            } */}
+                            2.88
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds
@@ -551,10 +572,11 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div data-testid="website2-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
+                            {/* {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
                                 : '0'                            
-                            }
+                            } */}
+                            6.60
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
                             seconds

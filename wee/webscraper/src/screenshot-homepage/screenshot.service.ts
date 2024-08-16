@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
-import logger from '../../logging/webscraperlogger';
-import * as fs from 'fs/promises';
-const serviceName = "[ScreenshotService]";
+
+
 @Injectable()
 export class ScreenshotService {
   async captureScreenshot(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ screenshot: string } | ErrorResponse> {
-    logger.debug(`${serviceName}`);
     if (!robots.isUrlScrapable) {
-      logger.warn('${serviceName} Crawling not allowed for this URL');
       return {
         errorStatus: 403,
         errorCode: '403 Forbidden',
