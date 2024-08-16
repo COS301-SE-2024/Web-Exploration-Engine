@@ -1450,7 +1450,7 @@ function ResultsComponent() {
 
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="structuredData" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {structuredDataAnalysis && isStructuredDataAnalysis(structuredDataAnalysis) ?
                             structuredDataAnalysis.count
                             : '-'
@@ -1465,7 +1465,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{structuredDataAnalysis.recommendations}</p>
+                          <p data-testid="structured_recommendations">{structuredDataAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>
@@ -1496,7 +1496,7 @@ function ResultsComponent() {
                       lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                         <div>
                           <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pb-4'>
-                            <div data-testid="website1-lighthouse-performance" className="flex justify-center">
+                            <div data-testid="lighthouse-performance" className="flex justify-center">
                               {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                                 <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance} />
                                 :
@@ -1504,7 +1504,7 @@ function ResultsComponent() {
                               }
                             </div>
 
-                            <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
+                            <div data-testid="lighthouse-accessibility" className="flex justify-center">
                               {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                                 <CircularProgressComparison label="Accessibility" value={lighthouseAnalysis.scores.accessibility} />
                                 :
@@ -1512,7 +1512,7 @@ function ResultsComponent() {
                               }
                             </div>
 
-                            <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
+                            <div data-testid="lighthouse-bestpractices" className="flex justify-center">
                               {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
                                 <CircularProgressComparison label="Best Practices" value={lighthouseAnalysis.scores.bestPractices} />
                                 :

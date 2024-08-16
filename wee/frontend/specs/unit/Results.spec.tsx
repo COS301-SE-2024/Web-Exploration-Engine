@@ -199,10 +199,10 @@ describe('Results Component', () => {
                     loadTime: 3.15987747,
                     recommendations: "The page load time is 3.16 seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience."
                 },
-                // structuredDataAnalysis: {
-                //     count: 0,
-                //     recommendations: "Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.",
-                // },
+                structuredDataAnalysis: {
+                    count: 0,
+                    recommendations: "Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.",
+                },
                 titleTagsAnalysis: {
                     isUrlWordsInDescription: false,
                     length: 88,
@@ -1368,6 +1368,21 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.queryByTestId('indexibilityAnalysis')?.textContent).toBe("-");
             expect(screen.queryByTestId('indexable_recommendation')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Technical SEO: Structured data analysis', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('structuredData')?.textContent).toBe("0");
+            expect(screen.queryByTestId('structured_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.structuredDataAnalysis.recommendations)).toBeDefined();
         });
     });
 
