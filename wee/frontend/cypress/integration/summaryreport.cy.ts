@@ -301,11 +301,13 @@ describe('summaryreport', () => {
     //Wait for wimpy to finish
     cy.wait('@mock_scraper_mockwimpy_done', { timeout: 10000 });
 
-    cy.url().should('include', 'scraperesults');
-    cy.wait(9000);
+    cy.url()
+    .should('include', 'scraperesults', { timeout: 10000 });
+   // cy.wait(9000);
 
     //cy.get('[data-testid="btn-report-summary"]');
-    cy.get('[data-testid="btn-report-summary"]').click();
+    cy.get('[data-testid="btn-report-summary"]')
+    .click({ timeout: 10000 });
     cy.url().should('include', 'summary');
 
     //======================================================
