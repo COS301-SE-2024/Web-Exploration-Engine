@@ -136,7 +136,7 @@ describe('Results Component', () => {
             seoAnalysis: {
                 // XMLSitemapAnalysis: {
                 //     isSitemapValid: true,
-                //     recommendations: "The XML sitemap at https://www.bargainbooks.co.za/sitemap.xml is present and accessible.",
+                //     recommendations: "The XML sitemap at https://www.steers.co.za/sitemap.xml is present and accessible.",
                 // },
                 canonicalTagAnalysis: {
                     canonicalTag: "https://www.bargainbooks.co.za/",
@@ -169,6 +169,23 @@ describe('Results Component', () => {
                     totalLinks: 17,
                     uniqueLinks: 9,
                 },
+                // lightHouseAnalysis: {
+                //     scores: {
+                //         accessibility: 89,
+                //         bestPractices: 78,
+                //         performance: 87
+                //     },
+                //     diagnostics: {
+                //         recommendations: [
+                //             {
+                //                 title: "First Contentful Paint",
+                //                 description: "First Contentful Paint marks the time at which the first text or image is painted. .",
+                //                 score: 0.99,
+                //                 displayValue: "0.6s"
+                //             }
+                //         ]
+                //     }
+                // },
                 metaDescriptionAnalysis: {
                     length: 80,
                     recommendations: "Title tag length should be between 50 and 60 characters.",
@@ -178,6 +195,10 @@ describe('Results Component', () => {
                 //     isResponsive: true,
                 //     recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
                 // },
+                siteSpeedAnalysis: {
+                    loadTime: 3.15987747,
+                    recommendations: "The page load time is 3.16 seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience."
+                },
                 // structuredDataAnalysis: {
                 //     count: 0,
                 //     recommendations: "Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.",
@@ -1096,6 +1117,47 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.canonicalTagAnalysis.recommendations)).toBeDefined();
         });
     })
+
+    it('Technical SEO: Site Speed', async() => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('siteSpeed')?.textContent).toBe("3.16");
+            expect(screen.queryByTestId('sitespeed_recommendations')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.siteSpeedAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: Site Speed with zero loadtime', async() => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        siteSpeedAnalysis: undefined
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('siteSpeed')?.textContent).toBe("0");
+            expect(screen.queryByTestId('sitespeed_recommendations')).not.toBeInTheDocument();
+        });
+    });
 
     it('Sentiment Analysis: Donut chart, metadata, positive and negative words and emotion graphs displayed', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({

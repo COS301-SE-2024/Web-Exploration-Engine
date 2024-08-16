@@ -1263,7 +1263,7 @@ function ResultsComponent() {
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                         <div className='min-h-[6rem]'>
-                          <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          <div data-testid="siteSpeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {siteSpeedAnalysis && isSiteSpeedAnalysis(siteSpeedAnalysis) ?
                               siteSpeedAnalysis.loadTime.toFixed(2)
                               : '0'
@@ -1282,7 +1282,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{siteSpeedAnalysis.recommendations}</p>
+                          <p data-testid='sitespeed_recommendations'>{siteSpeedAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>
