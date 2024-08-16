@@ -82,6 +82,116 @@ describe('results', () => {
  /*    cy.get('[data-testid="popup-sentiment"]').click();
     cy.get('[data-testid="popup-emotions"]').click();
     cy.get('[data-testid="popup-neg-pos-words"]').click(); */
+
+    // Mocking Responses
+
+
+  });
+
+  it('results of 2 urls - github, steers', () => {
+    cy.visit('/');
+    cy.get('[data-testid="scraping-textarea-home"]').type(
+      'https://mock.test.github.com,https://mock.test.steers.co.za'
+    );
+    cy.get('[data-testid="btn-start-scraping"]').click();
+
+    //======================================================
+    // GitHub Mock
+    //======================================================
+
+    //Full response
+    cy.fixture('/pub-sub/github-done')
+      .as('mock_scraper_mockgithub_done')
+      .then((mock_scraper_mockgithub_done) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.github.com', //mock.test.github.com
+          mock_scraper_mockgithub_done
+        ).as('mock_scraper_mockgithub_done');
+      });
+
+    //Pub Sub - Publish Event
+    cy.fixture('/pub-sub/github-waiting')
+      .as('mock_scraper_mockgithub_waiting')
+      .then((mock_scraper_mockgithub_waiting) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_mockgithub_waiting
+        ).as('mock_scraper_mockgithub_waiting');
+      });
+
+    //Pub Sub - Get Event Status
+    cy.fixture('/pub-sub/github-status')
+      .as('mock_scraper_mockgithub_status')
+      .then((mock_scraper_mockgithub_status) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_mockgithub_status
+        ).as('mock_scraper_mockgithub_status');
+      });
+
+
+  //======================================================
+    // Steers Mock
+    //======================================================
+
+    //Full response
+    cy.fixture('/pub-sub/steers-done')
+      .as('mock_scraper_mocksteers_done')
+      .then((mock_scraper_mocksteers_done) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.steers.co.za', //mock.test.steers.co.za
+          mock_scraper_mocksteers_done
+        ).as('mock_scraper_mocksteers_done');
+      });
+
+    //Pub Sub - Publish Event
+    cy.fixture('/pub-sub/steers-waiting')
+      .as('mock_scraper_mocksteers_waiting')
+      .then((mock_scraper_mocksteers_waiting) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.steers.co.za',
+          mock_scraper_mocksteers_waiting
+        ).as('mock_scraper_mocksteers_waiting');
+      });
+
+    //Pub Sub - Get Event Status
+    cy.fixture('/pub-sub/steers-status')
+      .as('mock_scraper_mocksteers_status')
+      .then((mock_scraper_mocksteers_status) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.steers.co.za',
+          mock_scraper_mocksteers_status
+        ).as('mock_scraper_mocksteers_status');
+      });
+
+
+    //Wait for steers and github to finish
+    cy.wait('@mock_scraper_mockgithub_done');
+
+    cy.wait('@mock_scraper_mocksteers_done');
+
+    //==========================================
+    // Accessing the results page
+    //==========================================
+    cy.wait(7000)
+
+    cy.get('[data-testid="btnView0"]')
+    .should('exist')
+    .should('be.visible')
+    //.click();
+
+    cy.get('[data-testid="btnView1"]')
+    .should('exist')
+    .should('be.visible')
+    //.click();
+
+    cy.url().should('include', 'results');
     
 
 
