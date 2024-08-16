@@ -134,7 +134,8 @@ describe('comparison page', () => {
 
     cy.get('[data-testid="website2-select"]').should('exist');
     cy.get('[data-testid="website2-select"]').click();
-
+    cy.get('[data-testid="website2-select"]').type('http');
+    
 /*  cy.get('[data-testid="website2-option-0"]').should('exist');
     cy.get('[data-testid="website2-option-1"]').should('exist');
     cy.get('[data-testid="website2-option-1"]').click();
