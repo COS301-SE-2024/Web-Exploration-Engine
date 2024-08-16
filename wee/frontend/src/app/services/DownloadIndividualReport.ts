@@ -471,10 +471,10 @@ doc.addPage();
     doc.setTextColor(255, 255, 255);
     doc.text('Category', margin + 2, startY + 7);
     doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
-      const sentiment = sentimentAnalysis && 'sentimentAnalysis' in sentimentAnalysis 
-      ? JSON.stringify(sentimentAnalysis.sentimentAnalysis) 
-      : 'N/A';
-
+    const sentiment = sentimentAnalysis && 'sentimentAnalysis' in sentimentAnalysis 
+    ? JSON.stringify(Object.values(sentimentAnalysis.sentimentAnalysis)[0]) 
+    : 'N/A';
+  
   const positiveWords = sentimentAnalysis && 'positiveWords' in sentimentAnalysis 
       ? sentimentAnalysis.positiveWords.join(', ') 
       : 'N/A';
@@ -483,12 +483,12 @@ doc.addPage();
       ? sentimentAnalysis.negativeWords.join(', ') 
       : 'N/A';
 
-  const emotion = sentimentAnalysis && 'emotions' in sentimentAnalysis 
+      const emotion = sentimentAnalysis && 'emotions' in sentimentAnalysis 
       ? Array.isArray(sentimentAnalysis.emotions) 
-          ? sentimentAnalysis.emotions.join(', ') 
-          : JSON.stringify(sentimentAnalysis.emotions) 
+          ? JSON.stringify(Object.values(sentimentAnalysis.emotions)[0]) 
+          : JSON.stringify(Object.values(sentimentAnalysis.emotions)[0]) 
       : 'N/A';
-
+    
   const sentimentAnalysisRows = [
       ['Sentiment', sentiment],
       ['Positive Words', positiveWords],
