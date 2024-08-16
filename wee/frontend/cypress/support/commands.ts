@@ -172,6 +172,190 @@ Cypress.Commands.add('importAllMocks', () => {
     });
 });
 
+
+Cypress.Commands.add('scrape4Websites', () => {
+
+  cy.visit('/');
+  cy.get('[data-testid="scraping-textarea-home"]').type('https://mock.test.steers.co.za,https://mock.test.wimpy.co.za,https://mock.test.github.com,https://mock.test.insecure.co.za');
+  cy.get('[data-testid="btn-start-scraping"]').click();
+
+  //======================================================
+  // GitHub Mock
+  //======================================================
+
+  //Full response
+    cy.fixture('/pub-sub/github-done')
+    .as('mock_scraper_mockgithub_done')
+    .then((mock_scraper_mockgithub_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.github.com',//mock.test.github.com
+        mock_scraper_mockgithub_done
+      ).as('mock_scraper_mockgithub_done');
+    });
+
+  //Pub Sub - Publish Event
+  cy.fixture('/pub-sub/github-waiting')
+    .as('mock_scraper_mockgithub_waiting')
+    .then((mock_scraper_mockgithub_waiting) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.github.com',
+        mock_scraper_mockgithub_waiting
+      ).as('mock_scraper_mockgithub_waiting');
+    });
+
+  //Pub Sub - Get Event Status
+   cy.fixture('/pub-sub/github-status')
+   .as('mock_scraper_mockgithub_status')
+   .then((mock_scraper_mockgithub_status) => {
+     cy.intercept(
+       'GET',
+       'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
+       mock_scraper_mockgithub_status
+     ).as('mock_scraper_mockgithub_status');
+   });
+
+
+
+  //======================================================
+  // Steers Mock
+  //======================================================
+
+  //Full response
+  cy.fixture('/pub-sub/steers-done')
+  .as('mock_scraper_mocksteers_done')
+  .then((mock_scraper_mocksteers_done) => {
+    cy.intercept(
+      'GET',
+      'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.steers.co.za',//mock.test.steers.co.za
+      mock_scraper_mocksteers_done
+    ).as('mock_scraper_mocksteers_done');
+  });
+
+//Pub Sub - Publish Event
+cy.fixture('/pub-sub/steers-waiting')
+  .as('mock_scraper_mocksteers_waiting')
+  .then((mock_scraper_mocksteers_waiting) => {
+    cy.intercept(
+      'GET',
+      'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.steers.co.za',
+      mock_scraper_mocksteers_waiting
+    ).as('mock_scraper_mocksteers_waiting');
+  });
+
+//Pub Sub - Get Event Status
+ cy.fixture('/pub-sub/steers-status')
+ .as('mock_scraper_mocksteers_status')
+ .then((mock_scraper_mocksteers_status) => {
+   cy.intercept(
+     'GET',
+     'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.steers.co.za',
+     mock_scraper_mocksteers_status
+   ).as('mock_scraper_mocksteers_status');
+ });
+
+
+
+  //======================================================
+  // Wimpy Mock
+  //======================================================
+
+  //Full response
+  cy.fixture('/pub-sub/wimpy-done')
+  .as('mock_scraper_mockwimpy_done')
+  .then((mock_scraper_mockwimpy_done) => {
+    cy.intercept(
+      'GET',
+      'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.wimpy.co.za',//mock.test.wimpy.co.za
+      mock_scraper_mockwimpy_done
+    ).as('mock_scraper_mockwimpy_done');
+  });
+
+//Pub Sub - Publish Event
+cy.fixture('/pub-sub/wimpy-waiting')
+  .as('mock_scraper_mockwimpy_waiting')
+  .then((mock_scraper_mockwimpy_waiting) => {
+    cy.intercept(
+      'GET',
+      'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.wimpy.co.za',
+      mock_scraper_mockwimpy_waiting
+    ).as('mock_scraper_mockwimpy_waiting');
+  });
+
+//Pub Sub - Get Event Status
+ cy.fixture('/pub-sub/wimpy-status')
+ .as('mock_scraper_mockwimpy_status')
+ .then((mock_scraper_mockwimpy_status) => {
+   cy.intercept(
+     'GET',
+     'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.wimpy.co.za',
+     mock_scraper_mockwimpy_status
+   ).as('mock_scraper_mockwimpy_status');
+ });
+
+  //======================================================
+    // Insecure Mock
+    //======================================================
+
+    //Full response
+    cy.fixture('/pub-sub/insecure-done')
+    .as('mock_scraper_mockinsecure_done')
+    .then((mock_scraper_mockinsecure_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.insecure.co.za',//mock.test.insecure.co.za
+        mock_scraper_mockinsecure_done
+      ).as('mock_scraper_mockinsecure_done');
+    });
+
+  //Pub Sub - Publish Event
+  cy.fixture('/pub-sub/insecure-waiting')
+    .as('mock_scraper_mockinsecure_waiting')
+    .then((mock_scraper_mockinsecure_waiting) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.insecure.co.za',
+        mock_scraper_mockinsecure_waiting
+      ).as('mock_scraper_mockinsecure_waiting');
+    });
+
+  //Pub Sub - Get Event Status
+   cy.fixture('/pub-sub/insecure-status')
+   .as('mock_scraper_mockinsecure_status')
+   .then((mock_scraper_mockinsecure_status) => {
+     cy.intercept(
+       'GET',
+       'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.insecure.co.za',
+       mock_scraper_mockinsecure_status
+     ).as('mock_scraper_mockinsecure_status');
+   });
+
+
+
+
+  //======================================================
+  // Cypress Waits
+  //======================================================
+    
+  //Wait for github to finish
+  cy.wait('@mock_scraper_mockgithub_done');
+
+  //Wait for steers to finish
+   cy.wait('@mock_scraper_mocksteers_done');
+
+  //Wait for wimpy to finish
+  cy.wait('@mock_scraper_mockwimpy_done');
+
+  //Waiting for the insecure mock doesnt work
+
+
+  cy.url().should('include', 'scraperesults');
+  
+
+});
+
+
 //
 //
 // -- This is a dual command --
