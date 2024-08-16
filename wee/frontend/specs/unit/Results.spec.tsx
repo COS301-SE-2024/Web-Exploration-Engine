@@ -169,23 +169,23 @@ describe('Results Component', () => {
                     totalLinks: 17,
                     uniqueLinks: 9,
                 },
-                // lightHouseAnalysis: {
-                //     scores: {
-                //         accessibility: 89,
-                //         bestPractices: 78,
-                //         performance: 87
-                //     },
-                //     diagnostics: {
-                //         recommendations: [
-                //             {
-                //                 title: "First Contentful Paint",
-                //                 description: "First Contentful Paint marks the time at which the first text or image is painted. .",
-                //                 score: 0.99,
-                //                 displayValue: "0.6s"
-                //             }
-                //         ]
-                //     }
-                // },
+                lighthouseAnalysis: {
+                    scores: {
+                        accessibility: 89,
+                        bestPractices: 78,
+                        performance: 87
+                    },
+                    diagnostics: {
+                        recommendations: [
+                            {
+                                title: "First Contentful Paint",
+                                description: "First Contentful Paint marks the time at which the first text or image is painted. .",
+                                score: 0.99,
+                                displayValue: "0.6s"
+                            }
+                        ]
+                    }
+                },
                 metaDescriptionAnalysis: {
                     length: 80,
                     recommendations: "Title tag length should be between 50 and 60 characters.",
@@ -1383,6 +1383,64 @@ describe('Results Component', () => {
             expect(screen.queryByTestId('structuredData')?.textContent).toBe("0");
             expect(screen.queryByTestId('structured_recommendations')).toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.structuredDataAnalysis.recommendations)).toBeDefined();
+        });
+    });
+    
+    it('Technical SEO: Lighthouse analysis', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('lighthouse-performance')?.textContent).toBe("87%Performance");
+            expect(screen.queryByTestId('lighthouse-accessibility')?.textContent).toBe("89%Accessibility");
+            expect(screen.queryByTestId('lighthouse-bestpractices')?.textContent).toBe("78%Best Practices");
+        });
+    });
+
+    it('Technical SEO: Lighthouse analysis undefined', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        lighthouseAnalysis: {
+                            scores: {
+                                performance: 0,
+                                accessibility: 0,
+                                bestPractices: 0,
+                            },
+                            diagnostics: {
+                                recommendations: [
+                                    {
+                                        title: "First Contentful Paint",
+                                        description: "First Contentful Paint marks the time at which the first text or image is painted. .",
+                                        score: 0.99,
+                                        displayValue: "0.6s"
+                                    }
+                                ]
+                            }
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('lighthouse-performance')?.textContent).toBe("0%Performance");
+            expect(screen.queryByTestId('lighthouse-accessibility')?.textContent).toBe("0%Accessibility");
+            expect(screen.queryByTestId('lighthouse-bestpractices')?.textContent).toBe("0%Best Practices");
         });
     });
 

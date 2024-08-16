@@ -1528,7 +1528,6 @@ function ResultsComponent() {
                           >
                             {lighthouseAnalysis.diagnostics.recommendations.map((recomm, index) => (
                               <AccordionItem
-                                className=""
                                 key={index}
                                 id={'recommendation-' + index}
                                 aria-label={`Accordion ${index + 1}`}
