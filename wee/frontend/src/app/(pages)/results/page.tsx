@@ -325,7 +325,6 @@ function ResultsComponent() {
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     Summary 
                     <InfoPopOver 
-                      data-testid="popup-summary"
                       heading="Website Summary" 
                       content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
                       placement="right-end" 
@@ -377,7 +376,6 @@ function ResultsComponent() {
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     Domain Tags
                     <InfoPopOver 
-                    data-testid="popup-domain-tags"
                       heading="Domain Tags" 
                       content="This section provides important tags to classify the website based on the extracted information. </br></br>
                         <i>Crawling status</i>: This field indicates if the url was allowed to be scraped </br>
@@ -685,7 +683,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Images
                           <InfoPopOver 
-                            data-testid="popup-images"
                             heading="Analysis of Images" 
                             content="The code extracts all img elements, mapping their src and alt attributes to an array. It checks for alt text, image optimization, and formats like PNG, JPEG, WebP, and SVG. The function returns a report on total images, missing alt text, non-optimized images, reasons for non-optimization and recommendations. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO." 
                             placement="bottom" 
@@ -792,7 +789,7 @@ function ResultsComponent() {
                               </div>
                           }
 
-                          {/* {
+                          {
                             imagesAnalysis?.recommendations != '' &&
                               <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -800,7 +797,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{imagesAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>
                       :
                       <>
@@ -820,7 +817,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Internal Linking
                           <InfoPopOver 
-                            data-testid="popup-linking"
                             heading="Analysis of Internal Linking" 
                             content="The code selects internal links (anchor tags with href attributes starting with /), checks if there are fewer than 5 unique internal links, and recommends adding more if needed. Internal links improve site navigation and user experience, and they help search engines understand page relationships, boosting SEO. Ensuring a sufficient number of internal links enhances both site usability and search engine indexing." 
                             placement="bottom" 
@@ -860,7 +856,7 @@ function ResultsComponent() {
                             </div>
                           </div>
 
-                          {/* {
+                          {
                             internalLinkingAnalysis?.recommendations != '' &&
                               <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -868,7 +864,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{internalLinkingAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>
                       :
                       <>
@@ -888,7 +884,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Headings
                           <InfoPopOver 
-                            data-testid="popup-headings"
                             heading="Analysis of Headings" 
                             content="The code selects all heading tags (H1 to H6) and recommends adding them if none are found. Proper use of headings improves content structure, readability, accessibility, and helps search engines index and understand the content hierarchy." 
                             placement="bottom" 
@@ -920,7 +915,7 @@ function ResultsComponent() {
                           </ScrollShadow>
                         </div>
 
-                        {/* {
+                        {
                           headingAnalysis?.recommendations != '' &&
                             <div data-testid='headings_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -928,7 +923,7 @@ function ResultsComponent() {
                               </h5>
                               <p>{headingAnalysis?.recommendations}</p>
                             </div>
-                        } */}
+                        }
                       </div>
                       :
                       <>
@@ -948,7 +943,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Meta Description
                           <InfoPopOver 
-                            data-testid="popup-meta-description"
                             heading="Analysis of Meta Data" 
                             content="This code checks if the meta description is within the optimal length (120-160 characters) and ensures that words from the URL are included in the meta description. This SEO analysis enhances visibility, relevance, and click-through rates for web pages." 
                             placement="bottom" 
@@ -975,7 +969,7 @@ function ResultsComponent() {
                             <p>{metaDescriptionAnalysis?.length}</p>
                           </div>
 
-                          {/* {
+                          {
                             metaDescriptionAnalysis?.recommendations !== '' && (
                               <div data-testid='meta_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -983,7 +977,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{metaDescriptionAnalysis?.recommendations}</p>
                               </div>
-                          )} */}
+                          )}
                         </div>
                       :
                       <>
@@ -1003,7 +997,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Title Tags
                           <InfoPopOver 
-                            data-testid="popup-title-tags"
                             heading="Analysis of Title tag" 
                             content="This code extracts the title tag content and checks if its length is within the optimal range of 50-60 characters. Properly sized title tags are crucial as they serve as clickable headlines in search results and browser tabs, providing enough information without being truncated." 
                             placement="bottom" 
@@ -1037,7 +1030,7 @@ function ResultsComponent() {
                             <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
-                          {/* {
+                          {
                             titleTagsAnalysis?.recommendations != '' && 
                               <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                                 <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -1045,7 +1038,7 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{titleTagsAnalysis?.recommendations}</p>
                               </div>
-                          } */}
+                          }
                         </div>                      
                       :
                       <>
@@ -1065,7 +1058,6 @@ function ResultsComponent() {
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Unique Content
                           <InfoPopOver 
-                            data-testid="popup-unique-content"
                             heading="Analysis of Content Quality" 
                             content="The code extracts and processes text from the body tag by splitting it into words, filtering out non-alphabetic characters, and counting word frequency. It identifies the top 10 most frequent words, calculates the percentage of unique words, and checks if the content length exceeds 500 characters. Recommendations include increasing content length for better depth and improving word uniqueness to avoid keyword stuffing, which enhances SEO." 
                             placement="bottom" 
@@ -1130,7 +1122,7 @@ function ResultsComponent() {
                           </div>
                         </div>
 
-                        {/* {
+                        {
                           uniqContentAnalysis?.recommendations != '' &&
                             <div data-testid='uniqueContent_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -1138,7 +1130,7 @@ function ResultsComponent() {
                               </h5>
                               <p>{uniqContentAnalysis?.recommendations}</p>
                             </div>
-                        } */}
+                        }
                       </div>
                       :
                       <>
@@ -1160,7 +1152,6 @@ function ResultsComponent() {
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Sentiment Analysis
                     <InfoPopOver 
-                      data-testid="popup-sentiment"
                       heading="Sentiment Analysis" 
                       content="Sentiment analysis is conducted on the extracted metadata. This analysis would provide valuable insights 
                         into whether the content is perceived as positive, negative, or neutral. By leveraging this insight, users 
@@ -1185,7 +1176,6 @@ function ResultsComponent() {
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Positive and Negative Words
                     <InfoPopOver 
-                      data-testid="popup-neg-pos-words"
                       heading="Positive and Negative Words" 
                       content="Metadata can be classified into two possible categories: positive and negative words. This thoughtful classification empowers users to 
                         strategically optimize the language within their content, thereby enhancing their ability to shape audience perception and drive meaningful engagement
@@ -1243,7 +1233,6 @@ function ResultsComponent() {
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Emotions Confidence Score
                     <InfoPopOver 
-                      data-testid="popup-emotions"
                       heading="Emotions Confidence Score" 
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
                         their metadata settings, thereby invoking the desired emotional responses.

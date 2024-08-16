@@ -63,7 +63,10 @@
     "robots-parser": "^3.0.1",
     "rxjs": "^7.8.0",
     "swagger-ui-express": "^5.0.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "wait-on": "^7.2.0",
+    "winston": "^3.13.1",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",

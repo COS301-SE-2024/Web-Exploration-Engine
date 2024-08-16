@@ -36,4 +36,3 @@ describe('Help Page Tests', () => {
     cy.get('[data-testid="send-message-button"]').click();
   });
 });
-

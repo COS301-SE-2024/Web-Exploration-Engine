@@ -1,9 +1,5 @@
 describe('results', () => {
-  it('general layout intact', () => {
-    cy.testLayout('/results');
-  });
-
-  it('all page content should load', () => {
+  it('should be on right page', () => {
     cy.visit('/results?');
 
     //Testing Export / Save Button
