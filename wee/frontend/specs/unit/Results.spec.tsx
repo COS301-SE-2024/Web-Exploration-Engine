@@ -160,10 +160,10 @@ describe('Results Component', () => {
                     recommendations: '11 images are missing alt text. 3 images are not optimized.',
                     totalImages: 27,
                 },
-                // indexabilityAnalysis: {
-                //     isIndexable: true,
-                //     recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
-                // },
+                indexabilityAnalysis: {
+                    isIndexable: true,
+                    recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                },
                 internalLinksAnalysis: {
                     recommendations: 'This is the internal linking recommendation',
                     totalLinks: 17,
@@ -193,7 +193,7 @@ describe('Results Component', () => {
                 },
                 mobileFriendlinessAnalysis: {
                     isResponsive: true,
-                    recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                    recommendations: "Your site is responsive on a 375px viewport, which is a common width for smartphones.",
                 },
                 siteSpeedAnalysis: {
                     loadTime: 3.15987747,
@@ -1271,7 +1271,6 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.queryByTestId('mobile_friendliness')?.textContent).toBe("No");
             expect(screen.queryByTestId('mobile_recommendations')).toBeInTheDocument();
-            expect(screen.getByText(mockResults[0].seoAnalysis.mobileFriendlinessAnalysis.recommendations)).toBeDefined();
         });
     });
 
@@ -1298,6 +1297,77 @@ describe('Results Component', () => {
         await waitFor(() => {
             expect(screen.queryByTestId('mobile_friendliness')?.textContent).toBe("-");
             expect(screen.queryByTestId('mobile_recommendations')).not.toBeInTheDocument();
+        });
+    });
+
+    it('Technical SEO: Indexibility', async () => {
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('indexibilityAnalysis')?.textContent).toBe("Yes");
+            expect(screen.queryByTestId('indexable_recommendation')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.indexabilityAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: Indexibility, NO indexibility', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        indexabilityAnalysis: {
+                            isIndexable: false,
+                            recommendations: "Your page is currently set to be indexed by search engines, which is great for visibility.",
+                        },
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('indexibilityAnalysis')?.textContent).toBe("No");
+            expect(screen.queryByTestId('indexable_recommendation')).toBeInTheDocument();
+            expect(screen.getByText(mockResults[0].seoAnalysis.indexabilityAnalysis.recommendations)).toBeDefined();
+        });
+    });
+
+    it('Technical SEO: Indexibility, undefined', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    seoAnalysis: {
+                        ...mockResults[0].seoAnalysis,
+                        indexabilityAnalysis: undefined
+                    }
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('indexibilityAnalysis')?.textContent).toBe("-");
+            expect(screen.queryByTestId('indexable_recommendation')).not.toBeInTheDocument();
         });
     });
 

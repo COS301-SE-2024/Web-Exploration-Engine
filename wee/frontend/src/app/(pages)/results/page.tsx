@@ -1406,7 +1406,7 @@ function ResultsComponent() {
 
                       {/* Content */}
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
-                        <div className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                        <div data-testid="indexibilityAnalysis" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) ?
                             indexibilityAnalysis.isIndexable? 'Yes' : 'No'
                             : '-'
@@ -1421,7 +1421,7 @@ function ResultsComponent() {
                           <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                             Recommendations
                           </h5>
-                          <p>{indexibilityAnalysis.recommendations}</p>
+                          <p data-testid="indexable_recommendation">{indexibilityAnalysis.recommendations}</p>
                         </div>
                       }
                     </div>
