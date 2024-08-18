@@ -472,7 +472,7 @@ doc.addPage();
     doc.text('Category', margin + 2, startY + 7);
     doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
     const sentiment = sentimentAnalysis && 'sentimentAnalysis' in sentimentAnalysis 
-    ? JSON.stringify(Object.values(sentimentAnalysis.sentimentAnalysis)[0]) 
+    ? `${Object.keys(sentimentAnalysis.sentimentAnalysis)[0]}: ${(Object.values(sentimentAnalysis.sentimentAnalysis)[0] * 100).toFixed(2)}%`
     : 'N/A';
   
   const positiveWords = sentimentAnalysis && 'positiveWords' in sentimentAnalysis 
@@ -484,11 +484,9 @@ doc.addPage();
       : 'N/A';
 
       const emotion = sentimentAnalysis && 'emotions' in sentimentAnalysis 
-      ? Array.isArray(sentimentAnalysis.emotions) 
-          ? JSON.stringify(Object.values(sentimentAnalysis.emotions)[0]) 
-          : JSON.stringify(Object.values(sentimentAnalysis.emotions)[0]) 
+      ? `${Object.keys(sentimentAnalysis.emotions)[0]}: ${(Object.values(sentimentAnalysis.emotions)[0] * 100).toFixed(2)}%`
       : 'N/A';
-    
+  
   const sentimentAnalysisRows = [
       ['Sentiment', sentiment],
       ['Positive Words', positiveWords],
