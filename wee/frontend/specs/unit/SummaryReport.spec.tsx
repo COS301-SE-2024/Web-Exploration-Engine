@@ -139,6 +139,19 @@ describe('SummaryReport Page', () => {
     expect(screen.getByText('100 sec')).toBeInTheDocument(); // Average Time
   });
 
+  it("don't display radar graphs on mobile phone", () => {
+    global.innerWidth = 250;
+    global.dispatchEvent(new Event('resize'));
+
+    render(<SummaryReport />);
+
+    expect(screen.getByText('Sorry, the metadata radar graph is not available on mobile devices')).toBeInTheDocument();
+    expect(screen.getByText('Sorry, the domain radar graph is not available on mobile devices')).toBeInTheDocument();
+
+    expect(screen.queryByTestId('metaRadar')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('domainRadar')).not.toBeInTheDocument();
+  });
+
   it('should call jsPDF and download the PDF when download button is clicked', async () => {
     render(<SummaryReport />);
     const dropdownButton = screen.getByRole('button', { name: /export\/save/i });

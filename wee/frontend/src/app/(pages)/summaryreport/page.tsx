@@ -422,7 +422,7 @@ export default function SummaryReport() {
                     </span>
                     <span className='hidden sm:block'>
                         {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
-                            <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                            <RadarChart data-testid="metaRadar" radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
                         ) : (<></>)}
                     </span>
                 </div>
@@ -435,7 +435,7 @@ export default function SummaryReport() {
                     </span>
                     <span className='hidden sm:block'>
                         {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
-                            <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                            <RadarChart data-testid="domainRadar" radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
                         ) : (<></>)}
                     </span>
                 </div>
