@@ -7,7 +7,8 @@ import {
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
   Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
-import { FiShare, FiDownload, FiSave } from "react-icons/fi";
+import { Accordion, AccordionItem } from '@nextui-org/accordion';
+import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -16,14 +17,15 @@ import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
-import jsPDF from 'jspdf'; 
+import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
+import CircularProgressComparison from "../../components/CircularProgressComparison";
 
 interface Classifications {
   label: string;
@@ -56,15 +58,15 @@ function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAna
 }
 
 function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
-  return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+  return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data;
 }
 
 function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is InternalLinksAnalysis {
-  return 'recommendations' in data || 'totalLinks' in data || 'uniqueLinks' in data;  
+  return 'recommendations' in data || 'totalLinks' in data || 'uniqueLinks' in data;
 }
 
 function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
-  return 'length' in data || 'recommendations' in data || 'titleTag' in data;  
+  return 'length' in data || 'recommendations' in data || 'titleTag' in data;
 }
 
 function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
@@ -78,6 +80,34 @@ function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
 // function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
 //   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
 // }
+
+function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
+  return 'scores' in data || 'diagnostics' in data;
+}
+
+function isSiteSpeedAnalysis(data: SiteSpeedAnalysis | SEOError): data is SiteSpeedAnalysis {
+  return 'loadTime' in data || 'recommendations' in data;
+}
+
+function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOError): data is MobileFriendlinessAnalysis {
+  return 'isResponsive' in data || 'recommendations' in data;
+}
+
+function isXMLSitemapAnalysis(data: XMLSitemapAnalysis | SEOError): data is XMLSitemapAnalysis {
+  return 'isSitemapValid' in data || 'recommendations' in data;
+}
+
+function isCanonicalTagAnalysis(data: CanonicalTagAnalysis | SEOError): data is CanonicalTagAnalysis {
+  return 'canonicalTag' in data || 'isCanonicalTagPresent' in data || 'recommendations' in data;
+}
+
+function isIndexibilityAnalysis(data: IndexabilityAnalysis | SEOError): data is IndexabilityAnalysis {
+  return 'isIndexable' in data || 'recommendations' in data;
+}
+
+function isStructuredDataAnalysis(data: StructuredDataAnalysis | SEOError): data is StructuredDataAnalysis {
+  return 'count' in data || 'recommendations' in data;
+}
 
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -114,18 +144,25 @@ function ResultsComponent() {
   const [metaDescriptionAnalysis, setMetaDescriptionAnalysis] = useState<MetaDescriptionAnalysis | SEOError>();
   const [uniqContentAnalysis, setUniqueContentAnalysis] = useState<UniqueContentAnalysis | SEOError>();
   const [sentimentAnalysis, setSentimentAnalysis] = useState<SentimentAnalysis>();
+  const [lighthouseAnalysis, setLightHouseAnalysis] = useState<LightHouseAnalysis | SEOError>();
+  const [siteSpeedAnalysis, setSiteSpeedAnalysis] = useState<SiteSpeedAnalysis | SEOError>();
+  const [mobileFriendlinessAnalysis, setMobileFriendlinesAnalysis] = useState<MobileFriendlinessAnalysis | SEOError>();
+  const [xmlSitemapAnalysis, setXmlSitemapAnalysis] = useState<XMLSitemapAnalysis | SEOError>();
+  const [canonicalTagAnalysis, setCanonicalTagAnalysis] = useState<CanonicalTagAnalysis | SEOError>();
+  const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
+  const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
 
   useEffect(() => {
     if (url) {
       const urlResults = results.filter((res) => res.url === url);
-  
+
       if (urlResults && urlResults[0]) {
         console.log(urlResults[0]);
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
           setIsCrawlable(false);
-        } 
+        }
         else {
           setIsCrawlable(urlResults[0].robots.isUrlScrapable);
           setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
@@ -139,8 +176,8 @@ function ResultsComponent() {
 
           setLogo(urlResults[0].logo);
           setImageList(urlResults[0].images);
-          setIndustryClassification(urlResults[0].industryClassification.zeroShotMetaDataClassify);
-          setDomainClassification(urlResults[0].industryClassification.zeroShotDomainClassify);
+          setIndustryClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotMetaDataClassify : []);
+          setDomainClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotDomainClassify : []);
           setMetaData(urlResults[0].metadata);
 
           const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
@@ -158,19 +195,26 @@ function ResultsComponent() {
           setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
           setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
           setSentimentAnalysis(urlResults[0].sentiment);
+          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
+          setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
+          setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
+          setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
+          setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
+          setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
+          setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
         }
       }
     }
-  }, [url]);  
+  }, [url]);
 
   const backToScrapeResults = () => {
     router.back();
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis,sentimentAnalysis);
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis);
   };
- 
+
   // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(16);
@@ -195,12 +239,12 @@ function ResultsComponent() {
   const [reportName, setReportName] = useState('');
   const [isInvalid, setIsInvalid] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const {isOpen, onOpenChange} = useDisclosure();
+  const { isOpen, onOpenChange } = useDisclosure();
   const { isOpen: isSuccessOpen, onOpenChange: onSuccessOpenChange } = useDisclosure();
 
   const handleInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setReportName(e.target.value);
-    if(e.target.value.length > 0) {
+    if (e.target.value.length > 0) {
       setIsInvalid(false);
       setIsDisabled(false);
     }
@@ -212,7 +256,7 @@ function ResultsComponent() {
 
   const handleSave = async (reportName: string) => {
     reportName = reportName.trim();
-    if(reportName.length === 0) {
+    if (reportName.length === 0) {
       setIsInvalid(true);
       setIsDisabled(true);
       return;
@@ -242,7 +286,7 @@ function ResultsComponent() {
       setIsInvalid(false);
       setIsDisabled(true);
     }
-}, [isOpen]);
+  }, [isOpen]);
 
 
   return (
@@ -256,63 +300,63 @@ function ResultsComponent() {
         </Button>
 
         <div className="mb-8 text-center">
-            <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-              Results of {url}
-            </h1>
-            <div className="mt-4 mr-4 flex justify-end">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button 
-                    variant="flat" 
-                    data-testid="btn-export-save-report"
-                    startContent={<FiShare className={iconClasses}/>}
+          <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Results of {url}
+          </h1>
+          <div className="mt-4 mr-4 flex justify-end">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  variant="flat"
+                  data-testid="btn-export-save-report"
+                  startContent={<FiShare className={iconClasses} />}
+                >
+                  Export/Save
+                </Button>
+              </DropdownTrigger>
+              {user ? (
+                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                  <DropdownItem
+                    key="save"
+                    startContent={<FiSave className={iconClasses} />}
+                    description="Save the report on our website"
+                    onAction={onOpenChange}
+                    data-testid="save-report-button"
                   >
-                    Export/Save
-                  </Button>
-                </DropdownTrigger>
-                {user ? (
-                  <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
-                    <DropdownItem
-                      key="save"
-                      startContent={<FiSave className={iconClasses}/>}
-                      description="Save the report on our website"
-                      onAction={onOpenChange}
-                      data-testid="save-report-button"
-                    >
-                      Save
-                    </DropdownItem>
-                    <DropdownItem
-                      key="download"
-                      startContent={<FiDownload className={iconClasses}/>}
-                      description="Download the report to your device"
-                      onAction={downloadSummaryReport}
-                      data-testid="download-report-button"
-                    >
-                      Download
-                    </DropdownItem>
-                  </DropdownMenu> 
-                ) : (
-                  <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
-                    <DropdownItem
-                      key="save"
-                      startContent={<FiSave className={iconClasses}/>}
-                      description="Sign up or log in to save the report on our website"
-                    >
-                      Save
-                    </DropdownItem>
-                    <DropdownItem
-                      key="download"
-                      startContent={<FiDownload className={iconClasses}/>}
-                      description="Download the report to your device"
-                      onAction={downloadSummaryReport}
-                      data-testid="download-report-button"
-                    >
-                      Download
-                    </DropdownItem>
-                  </DropdownMenu> 
-                )}
-              </Dropdown>
-            </div>
+                    Save
+                  </DropdownItem>
+                  <DropdownItem
+                    key="download"
+                    startContent={<FiDownload className={iconClasses} />}
+                    description="Download the report to your device"
+                    onAction={downloadSummaryReport}
+                    data-testid="download-report-button"
+                  >
+                    Download
+                  </DropdownItem>
+                </DropdownMenu>
+              ) : (
+                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
+                  <DropdownItem
+                    key="save"
+                    startContent={<FiSave className={iconClasses} />}
+                    description="Sign up or log in to save the report on our website"
+                  >
+                    Save
+                  </DropdownItem>
+                  <DropdownItem
+                    key="download"
+                    startContent={<FiDownload className={iconClasses} />}
+                    description="Download the report to your device"
+                    onAction={downloadSummaryReport}
+                    data-testid="download-report-button"
+                  >
+                    Download
+                  </DropdownItem>
+                </DropdownMenu>
+              )}
+            </Dropdown>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -324,11 +368,12 @@ function ResultsComponent() {
                 {/* Summary */}
                 <div className="py-3">
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-                    Summary 
-                    <InfoPopOver 
-                      heading="Website Summary" 
-                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata." 
-                      placement="right-end" 
+                    Summary
+                    <InfoPopOver
+                      data-testid="popup-summary"
+                      heading="Website Summary"
+                      content="This section provides a brief overview of the website based on the information extracted from the website's metadata."
+                      placement="right-end"
                     />
                   </h3>
                   <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
@@ -338,17 +383,17 @@ function ResultsComponent() {
                           <p>
                             {summaryInfo?.title}
                           </p>
-                          <br/>
+                          <br />
                           {logo && (
                             <div className="flex justify-center">
                               <div className="flex justify-center">
-                              <Image
-                                alt="Logo"
-                                src={logo}
-                                className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-                              />
-                            </div>
-                              
+                                <Image
+                                  alt="Logo"
+                                  src={logo}
+                                  className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+                                />
+                              </div>
+
                             </div>
                           )}
                           {!logo && (
@@ -356,15 +401,15 @@ function ResultsComponent() {
                               No logo available.
                             </p>
                           )}
-                          <br/>
+                          <br />
                           <p>
                             {summaryInfo?.description}
                           </p>
                         </div>
-                        
+
                       ) : (
                         <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-                            No summary information available.
+                          No summary information available.
                         </p>
                       )}
                     </CardBody>
@@ -375,17 +420,18 @@ function ResultsComponent() {
                 <div className="py-3">
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
                     Domain Tags
-                    <InfoPopOver 
-                      heading="Domain Tags" 
+                    <InfoPopOver
+                      data-testid="popup-domain-tags"
+                      heading="Domain Tags"
                       content="This section provides important tags to classify the website based on the extracted information. </br></br>
                         <i>Crawling status</i>: This field indicates if the url was allowed to be scraped </br>
                         <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br>
                         <i>*Industry</i>: This field provides the industry classification of the website. </br>
                         <i>*Domain match</i>: This field provides the domain classification of the website. </br>
                         <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br>
-                        <i>Note</i>: The fields marked with an asterisk (*) are generated using machine learning models." 
+                        <i>Note</i>: The fields marked with an asterisk (*) are generated using machine learning models."
 
-                      placement="right-end" 
+                      placement="right-end"
                     />
                   </h3>
                   <WEETable isStriped aria-label="Example static collection table">
@@ -397,7 +443,7 @@ function ResultsComponent() {
                       <TableRow key="1">
                         <TableCell>Crawlable</TableCell>
                         <TableCell>
-                        <Chip
+                          <Chip
                             radius="sm"
                             color={isCrawlable === true ? 'success' : 'warning'}
                             variant="flat"
@@ -431,12 +477,12 @@ function ResultsComponent() {
                                   radius="sm"
                                   color={
                                     classification.score &&
-                                    classification.score * 100 > 80
+                                      classification.score * 100 > 80
                                       ? 'success'
                                       : classification.score &&
                                         classification.score * 100 >= 50
-                                      ? 'warning'
-                                      : 'danger'
+                                        ? 'warning'
+                                        : 'danger'
                                   }
                                   variant="flat"
                                   className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
@@ -447,10 +493,10 @@ function ResultsComponent() {
                                 </Chip>
                               </div>
                             )))
-                          : (
-                            <span>No industry classifications available</span>
-                          )}
-                        </TableCell>                        
+                            : (
+                              <span>No industry classifications available</span>
+                            )}
+                        </TableCell>
                       </TableRow>
                       <TableRow key="4">
                         <TableCell>Domain match</TableCell>
@@ -465,12 +511,12 @@ function ResultsComponent() {
                                   radius="sm"
                                   color={
                                     domain.score &&
-                                    domain.score * 100 > 80
+                                      domain.score * 100 > 80
                                       ? 'success'
                                       : domain.score &&
                                         domain.score * 100 >= 50
-                                      ? 'warning'
-                                      : 'danger'
+                                        ? 'warning'
+                                        : 'danger'
                                   }
                                   variant="flat"
                                   className="ml-[2px] mt-2 sm:ml-2 sm:mt-0"
@@ -482,9 +528,9 @@ function ResultsComponent() {
                               </div>
                             ))
                           )
-                          : (
-                            <span>No domain match available</span>
-                          )}
+                            : (
+                              <span>No domain match available</span>
+                            )}
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -568,8 +614,8 @@ function ResultsComponent() {
                     Home page screenshot
                   </h3>
 
-                  {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,') 
-                  ? (
+                  {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,')
+                    ? (
                       <div className="flex justify-center">
                         <div className="flex justify-center">
                           <Image
@@ -579,8 +625,8 @@ function ResultsComponent() {
                           />
                         </div>
                       </div>
-                    ) 
-                  : (
+                    )
+                    : (
                       <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
                         No homepage screenshot available.
                       </p>
@@ -592,25 +638,25 @@ function ResultsComponent() {
                 {imageList && imageList.length > 0 && (
                   <div className="py-3">
                     <span className="flex justify-between">
-                        <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
-                          Images
-                        </h3>
-                        <label className="flex items-center text-default-400 text-small">
-                          Images Per Page :
-                          <select
-                            value={itemsPerPage}
-                            className="bg-transparent outline-none text-default-400 text-small"
-                            onChange={handleItemsPerPageChange}
-                            aria-label="Number of results per page" 
-                          >
-                            <option value="4">4</option>
-                            <option value="8">8</option>
-                            <option value="16">16</option>
-                            <option value="24">24</option>
-                            <option value="36">36</option>
-                            <option value="48">48</option>
-                          </select>
-                        </label>
+                      <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                        Images
+                      </h3>
+                      <label className="flex items-center text-default-400 text-small">
+                        Images Per Page :
+                        <select
+                          value={itemsPerPage}
+                          className="bg-transparent outline-none text-default-400 text-small"
+                          onChange={handleItemsPerPageChange}
+                          aria-label="Number of results per page"
+                        >
+                          <option value="4">4</option>
+                          <option value="8">8</option>
+                          <option value="16">16</option>
+                          <option value="24">24</option>
+                          <option value="36">36</option>
+                          <option value="48">48</option>
+                        </select>
+                      </label>
                     </span>
 
                     <div
@@ -646,7 +692,7 @@ function ResultsComponent() {
                 )}
 
                 {imageList.length === 0 && (
-                  <>                 
+                  <>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
                       Images
                     </h3>
@@ -667,22 +713,23 @@ function ResultsComponent() {
                   {/* Onpage Analysis Heading */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     On-Page Analysis
-                  </h3>                  
+                  </h3>
 
                   {/* Image Analysis */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiImage />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Images
-                          <InfoPopOver 
-                            heading="Analysis of Images" 
-                            content="The code extracts all img elements, mapping their src and alt attributes to an array. It checks for alt text, image optimization, and formats like PNG, JPEG, WebP, and SVG. The function returns a report on total images, missing alt text, non-optimized images, reasons for non-optimization and recommendations. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-images"
+                            heading="Analysis of Images"
+                            content="The code extracts all img elements, mapping their src and alt attributes to an array. It checks for alt text, image optimization, and formats like PNG, JPEG, WebP, and SVG. The function returns a report on total images, missing alt text, non-optimized images, reasons for non-optimization and recommendations. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
@@ -690,7 +737,7 @@ function ResultsComponent() {
 
                     {/* Content */}
                     {
-                      imagesAnalysis && isImageAnalysis(imagesAnalysis) ? 
+                      imagesAnalysis && isImageAnalysis(imagesAnalysis) ?
                         <div>
                           {/* Count */}
                           <div className='gap-6 grid sm:grid-cols-3'>
@@ -718,8 +765,8 @@ function ResultsComponent() {
                             </div>
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
-                              <div>                             
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div>
+                                <div data-testid="nonOptimisedImages" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.nonOptimizedCount}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -732,68 +779,68 @@ function ResultsComponent() {
 
                           {
                             imagesAnalysis?.reasonsMap.format.length != 0 &&
-                              <div className='py-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  The format of the following URLs are incorrect
-                                </h5>
-                                <div className='overflow-x-scroll'>
-                                  <ScrollShadow hideScrollBar className="max-h-[400px]" size={75}>
-                                    {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
-                                      <p key={index}>
-                                        <Link href={formatUrl}>{formatUrl}</Link> 
-                                      </p>                           
-                                    ))}
-                                  </ScrollShadow>
-                                </div>
+                            <div className='py-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                The format of the following URLs are incorrect
+                              </h5>
+                              <div className='overflow-x-scroll'>
+                                <ScrollShadow hideScrollBar className="max-h-[400px]" size={75}>
+                                  {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
+                                    <p key={index}>
+                                      <Link href={formatUrl}>{formatUrl}</Link>
+                                    </p>
+                                  ))}
+                                </ScrollShadow>
                               </div>
+                            </div>
                           }
 
                           {
                             imagesAnalysis?.reasonsMap.size.length != 0 &&
-                              <div className='py-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  The size of the following URLs are to big
-                                </h5>
-                                <div className='overflow-x-scroll'>
-                                  {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
-                                    <p key={index}>
-                                      <Link href={reasonUrl}>{reasonUrl}</Link> 
-                                    </p>
-                                  ))}
-                                </div>
+                            <div className='py-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                The size of the following URLs are to big
+                              </h5>
+                              <div className='overflow-x-scroll'>
+                                {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
+                                  <p key={index}>
+                                    <Link href={reasonUrl}>{reasonUrl}</Link>
+                                  </p>
+                                ))}
                               </div>
+                            </div>
                           }
 
                           {
                             imagesAnalysis?.reasonsMap.other.length != 0 &&
-                              <div className='py-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  The following images have some other problems
-                                </h5>
-                                <div className='overflow-x-scroll'>
-                                  {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
-                                    <p key={index}>
-                                      <Link href={otherUrl}>{otherUrl}</Link> 
-                                    </p>
-                                  ))}
-                                </div>
+                            <div className='py-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                The following images have some other problems
+                              </h5>
+                              <div className='overflow-x-scroll'>
+                                {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
+                                  <p key={index}>
+                                    <Link href={otherUrl}>{otherUrl}</Link>
+                                  </p>
+                                ))}
                               </div>
+                            </div>
                           }
 
                           {
                             imagesAnalysis?.recommendations != '' &&
-                              <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  Recommendations
-                                </h5>
-                                <p>{imagesAnalysis?.recommendations}</p>
-                              </div>
+                            <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{imagesAnalysis?.recommendations}</p>
+                            </div>
                           }
                         </div>
-                      :
-                      <>
-                        {imagesAnalysis?.error}
-                      </>
+                        :
+                        <>
+                          {imagesAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO Image Analysis */}
 
@@ -801,16 +848,17 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiLink />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Internal Linking
-                          <InfoPopOver 
-                            heading="Analysis of Internal Linking" 
-                            content="The code selects internal links (anchor tags with href attributes starting with /), checks if there are fewer than 5 unique internal links, and recommends adding more if needed. Internal links improve site navigation and user experience, and they help search engines understand page relationships, boosting SEO. Ensuring a sufficient number of internal links enhances both site usability and search engine indexing." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-linking"
+                            heading="Analysis of Internal Linking"
+                            content="The code selects internal links (anchor tags with href attributes starting with /), checks if there are fewer than 5 unique internal links, and recommends adding more if needed. Internal links improve site navigation and user experience, and they help search engines understand page relationships, boosting SEO. Ensuring a sufficient number of internal links enhances both site usability and search engine indexing."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
@@ -847,18 +895,18 @@ function ResultsComponent() {
 
                           {
                             internalLinkingAnalysis?.recommendations != '' &&
-                              <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  Recommendations
-                                </h5>
-                                <p>{internalLinkingAnalysis?.recommendations}</p>
-                              </div>
+                            <div data-testid='internalLinking_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{internalLinkingAnalysis?.recommendations}</p>
+                            </div>
                           }
                         </div>
-                      :
-                      <>
-                        {internalLinkingAnalysis?.error}
-                      </>
+                        :
+                        <>
+                          {internalLinkingAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO Internal Linking Analysis */}
 
@@ -866,16 +914,17 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiUmbrella />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Headings
-                          <InfoPopOver 
-                            heading="Analysis of Headings" 
-                            content="The code selects all heading tags (H1 to H6) and recommends adding them if none are found. Proper use of headings improves content structure, readability, accessibility, and helps search engines index and understand the content hierarchy." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-headings"
+                            heading="Analysis of Headings"
+                            content="The code selects all heading tags (H1 to H6) and recommends adding them if none are found. Proper use of headings improves content structure, readability, accessibility, and helps search engines index and understand the content hierarchy."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
@@ -884,39 +933,39 @@ function ResultsComponent() {
                     {/* Content */}
                     {
                       headingAnalysis && isHeadingAnalysis(headingAnalysis) ?
-                      <div>
-                        <div className='py-1'>
-                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                            Count
-                          </h5>
-                          <p>{headingAnalysis?.count}</p>
-                        </div>
+                        <div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Count
+                            </h5>
+                            <p data-testid="headingscount">{headingAnalysis?.count}</p>
+                          </div>
 
-                        <div className='py-1'>
-                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                            List of Headings
-                          </h5>
-                          <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
-                            {headingAnalysis?.headings.map((heading, index) => (
-                              <p key={index}>{heading}</p>
-                            ))}
-                          </ScrollShadow>
-                        </div>
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              List of Headings
+                            </h5>
+                            <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
+                              {headingAnalysis?.headings.map((heading, index) => (
+                                <p key={index}>{heading}</p>
+                              ))}
+                            </ScrollShadow>
+                          </div>
 
-                        {
-                          headingAnalysis?.recommendations != '' &&
+                          {
+                            headingAnalysis?.recommendations != '' &&
                             <div data-testid='headings_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                 Recommendations
                               </h5>
                               <p>{headingAnalysis?.recommendations}</p>
                             </div>
-                        }
-                      </div>
-                      :
-                      <>
-                        {headingAnalysis?.error}
-                      </>
+                          }
+                        </div>
+                        :
+                        <>
+                          {headingAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO Heading Analysis */}
 
@@ -924,16 +973,17 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiCode />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Meta Description
-                          <InfoPopOver 
-                            heading="Analysis of Meta Data" 
-                            content="This code checks if the meta description is within the optimal length (120-160 characters) and ensures that words from the URL are included in the meta description. This SEO analysis enhances visibility, relevance, and click-through rates for web pages." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-meta-description"
+                            heading="Analysis of Meta Data"
+                            content="This code checks if the meta description is within the optimal length (120-160 characters) and ensures that words from the URL are included in the meta description. This SEO analysis enhances visibility, relevance, and click-through rates for web pages."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
@@ -965,12 +1015,12 @@ function ResultsComponent() {
                                 </h5>
                                 <p>{metaDescriptionAnalysis?.recommendations}</p>
                               </div>
-                          )}
+                            )}
                         </div>
-                      :
-                      <>
-                        {metaDescriptionAnalysis?.error}
-                      </>
+                        :
+                        <>
+                          {metaDescriptionAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO MetaDescription Analysis */}
 
@@ -978,24 +1028,25 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiType />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Title Tags
-                          <InfoPopOver 
-                            heading="Analysis of Title tag" 
-                            content="This code extracts the title tag content and checks if its length is within the optimal range of 50-60 characters. Properly sized title tags are crucial as they serve as clickable headlines in search results and browser tabs, providing enough information without being truncated." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-title-tags"
+                            heading="Analysis of Title tag"
+                            content="This code extracts the title tag content and checks if its length is within the optimal range of 50-60 characters. Properly sized title tags are crucial as they serve as clickable headlines in search results and browser tabs, providing enough information without being truncated."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
                     </div>
-                        
+
                     {/* Content */}
                     {
-                      titleTagsAnalysis && isTitleTagAnalysis(titleTagsAnalysis) ?                                             
+                      titleTagsAnalysis && isTitleTagAnalysis(titleTagsAnalysis) ?
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
@@ -1015,23 +1066,23 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Is URL in description?
                             </h5>
-                            <p>{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
+                            <p data-testid="titletagWordsInDesr">{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
-                            titleTagsAnalysis?.recommendations != '' && 
-                              <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                                <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                                  Recommendations
-                                </h5>
-                                <p>{titleTagsAnalysis?.recommendations}</p>
-                              </div>
+                            titleTagsAnalysis?.recommendations != '' &&
+                            <div data-testid='titleTag_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                              <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                                Recommendations
+                              </h5>
+                              <p>{titleTagsAnalysis?.recommendations}</p>
+                            </div>
                           }
-                        </div>                      
-                      :
-                      <>
-                        {titleTagsAnalysis?.error}
-                      </>
+                        </div>
+                        :
+                        <>
+                          {titleTagsAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO title tag */}
 
@@ -1039,93 +1090,480 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiBook />
                       </div>
                       <div className='my-auto'>
                         <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
                           Unique Content
-                          <InfoPopOver 
-                            heading="Analysis of Content Quality" 
-                            content="The code extracts and processes text from the body tag by splitting it into words, filtering out non-alphabetic characters, and counting word frequency. It identifies the top 10 most frequent words, calculates the percentage of unique words, and checks if the content length exceeds 500 characters. Recommendations include increasing content length for better depth and improving word uniqueness to avoid keyword stuffing, which enhances SEO." 
-                            placement="bottom" 
+                          <InfoPopOver
+                            data-testid="popup-unique-content"
+                            heading="Analysis of Content Quality"
+                            content="The code extracts and processes text from the body tag by splitting it into words, filtering out non-alphabetic characters, and counting word frequency. It identifies the top 10 most frequent words, calculates the percentage of unique words, and checks if the content length exceeds 500 characters. Recommendations include increasing content length for better depth and improving word uniqueness to avoid keyword stuffing, which enhances SEO."
+                            placement="bottom"
                           />
                         </h4>
                       </div>
-                    </div>     
+                    </div>
 
                     {/* Content */}
                     {
                       uniqContentAnalysis && isUniqueContentAnalysis(uniqContentAnalysis) ?
-                      <div>
-                        {/* Count */}
-                        <div className='gap-6 grid sm:grid-cols-2'>
-                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
-                            <div>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {uniqContentAnalysis?.textLength}
+                        <div>
+                          {/* Count */}
+                          <div className='gap-6 grid sm:grid-cols-2'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {uniqContentAnalysis?.textLength}
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Text Length
+                                </div>
                               </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Text Length
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                              <div>
+                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage
+                                    ?
+                                    (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
+                                    :
+                                    '0%'
+                                  }
+                                </div>
+                                <div className='font-poppins-semibold text-lg'>
+                                  Unique words
+                                </div>
                               </div>
                             </div>
                           </div>
 
-                          <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                          <div className='pt-2'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Repeated words
+                            </h5>
                             <div>
-                              <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage 
-                                  ?
-                                  (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
-                                  :
-                                  '0%'
-                                }
-                              </div>
-                              <div className='font-poppins-semibold text-lg'>
-                                Unique words
-                              </div>
+                              {uniqContentAnalysis?.repeatedWords
+                                .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
+                                .map((wordObj, index) => (
+                                  <span className='mr-2' key={index}>
+                                    <Chip
+                                      radius="sm"
+                                      // color={'primary'}
+                                      variant="flat"
+                                      className='mt-2'
+                                    >
+                                      {wordObj.word}: {wordObj.count}
+                                    </Chip>
+                                  </span>
+                                ))}
                             </div>
                           </div>
-                        </div>
 
-                        <div className='pt-2'>
-                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                            Repeated words
-                          </h5>
-                          <div>
-                            {uniqContentAnalysis?.repeatedWords
-                            .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
-                            .map((wordObj, index) => (
-                              <span className='mr-2' key={index}>
-                                <Chip
-                                  radius="sm"                                  
-                                  // color={'primary'}
-                                  variant="flat"     
-                                  className='mt-2'                             
-                                >
-                                  {wordObj.word}: {wordObj.count}
-                                </Chip>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {
-                          uniqContentAnalysis?.recommendations != '' &&
+                          {
+                            uniqContentAnalysis?.recommendations != '' &&
                             <div data-testid='uniqueContent_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                 Recommendations
                               </h5>
                               <p>{uniqContentAnalysis?.recommendations}</p>
                             </div>
-                        }
-                      </div>
-                      :
-                      <>
-                        {uniqContentAnalysis?.error}
-                      </>
+                          }
+                        </div>
+                        :
+                        <>
+                          {uniqContentAnalysis?.error}
+                        </>
                     }
                   </div> {/* EO Unique Content Analysis */}
+
+                  {/* Technical Analysis Heading */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-2">
+                    Technical Analysis
+                  </h3>
+
+                  {/* Site speed and canonical tags */}
+                  <div className='gap-2 grid sm:grid-cols-2'>
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiTag />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Canonical Tags
+                            <InfoPopOver
+                              data-testid="popup-canonical-tags"
+                              heading="Analysis of Canonical Tags"
+                              content="The code identifies a link element with rel='canonical', retrieves its href attribute, and checks if the canonical tag is present. If the tag is missing, 
+                              it provides a recommendation. Canonical tags are crucial for SEO, as they help prevent duplicate content issues by signaling the primary version of a page, thereby 
+                              consolidating ranking signals and avoiding diluted page authority."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div className='min-h-[6rem]'>
+                          <div data-testid="canonicalTagPresent" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) ?
+                              canonicalTagAnalysis.isCanonicalTagPresent ? 'Yes' : 'No'
+                              : '-'
+                            }
+                          </div>
+                          <div data-testid="canonicalTag" className='font-poppins-semibold text-sm sm:text-lg'>
+                            {canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) && canonicalTagAnalysis.canonicalTag != "" ?
+                              canonicalTagAnalysis.canonicalTag
+                              : 'No canonical tag present'
+                            }
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        canonicalTagAnalysis && isCanonicalTagAnalysis(canonicalTagAnalysis) && canonicalTagAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid='canonical_recommendations'>{canonicalTagAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiClock />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Site Speed
+                            <InfoPopOver
+                              data-testid="popup-site-speed"
+                              heading="Analysis of Site Speed"
+                              content="The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and 
+                              engagement, and can boost SEO by enhancing search rankings and driving more traffic."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div className='min-h-[6rem]'>
+                          <div data-testid="siteSpeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                            {siteSpeedAnalysis && isSiteSpeedAnalysis(siteSpeedAnalysis) ?
+                              siteSpeedAnalysis.loadTime.toFixed(2)
+                              : '0'
+                            }
+                          </div>
+                          <div className='font-poppins-semibold text-sm sm:text-lg'>
+                            seconds
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        siteSpeedAnalysis && isSiteSpeedAnalysis(siteSpeedAnalysis) && siteSpeedAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid='sitespeed_recommendations'>{siteSpeedAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+                  </div> {/* EO Site speed and canonical tags */}
+
+                  {/* xml and mobile friendliness */}
+                  <div className='gap-2 grid sm:grid-cols-2 mt-2'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiCode />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            XML Sitemap Analysis
+                            <InfoPopOver
+                              data-testid="popup-xml-sitemap"
+                              heading="XML Sitemap Analysis"
+                              content="This feature checks the presence and accessibility of your XML sitemap by appending /sitemap.xml to your base URL. If the sitemap is missing or 
+                              inaccessible, you'll receive a status update with recommendations for resolving the issue. An XML sitemap is essential for effective search engine crawling 
+                              and indexing, ensuring that all critical pages are discovered, which can significantly enhance your site's visibility and traffic."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div data-testid="isSitemapvalid" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {xmlSitemapAnalysis && isXMLSitemapAnalysis(xmlSitemapAnalysis) ?
+                            xmlSitemapAnalysis.isSitemapValid ? 'Yes' : 'No'
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        xmlSitemapAnalysis && isXMLSitemapAnalysis(xmlSitemapAnalysis) && xmlSitemapAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid="xml_recommendation">{xmlSitemapAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiSmartphone />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Mobile Friendliness
+                            <InfoPopOver
+                              data-testid="popup-mobile-friendly"
+                              heading="Analysis of Mobile Friendliness"
+                              content="The viewport is configured to simulate a mobile device (375x667 pixels), sets mobile and touch capabilities, and checks 
+                              if the page is fully loaded and responsive at the specified width. Mobile-friendly sites improve user experience, enhance SEO due 
+                              to Google&apos;s mobile-first indexing, and can boost conversion rates by ensuring ease of use on mobile devices."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div data-testid="mobile_friendliness" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(mobileFriendlinessAnalysis) ?
+                            mobileFriendlinessAnalysis.isResponsive ? 'Yes' : 'No'
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        mobileFriendlinessAnalysis && isMobileFriendlinessAnalysis(mobileFriendlinessAnalysis) && mobileFriendlinessAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid="mobile_recommendations">{mobileFriendlinessAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+                  </div> {/* EO xml and mobile friendliness */}
+
+
+                  {/* indexibility and structured */}
+                  <div className='gap-2 grid sm:grid-cols-2 mt-2'>
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiCompass />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Indexibility Analysis
+                            <InfoPopOver
+                              data-testid="popup-indexibility"
+                              heading="Indexibility Analysis"
+                              content="The code selects the meta tag with name='robots', extracts its content attribute, and checks for the noindex directive. If noindex is present, it sets 
+                              isIndexable to false, indicating the page won't be indexed by search engines. Ensuring pages are indexable is crucial for search engine visibility and traffic, 
+                              as unintentional noindex settings can hinder SEO efforts."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div data-testid="indexibilityAnalysis" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) ?
+                            indexibilityAnalysis.isIndexable? 'Yes' : 'No'
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) && indexibilityAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid="indexable_recommendation">{indexibilityAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+
+                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
+
+                      {/* Heading */}
+                      <div className='flex mb-2'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                          <FiLayout />
+                        </div>
+                        <div className='my-auto'>
+                          <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                            Structured Data Analysis
+                            <InfoPopOver
+                              data-testid="popup-structured"
+                              heading="Structured Data Analysis"
+                              content="The code selects script tags with type='application/ld+json', extracts and counts the JSON-LD structured data, and generates a recommendation 
+                              if none is found. Structured data enhances search visibility by enabling rich snippets and improves SEO by helping search engines better understand and 
+                              index content, potentially increasing traffic and rankings."
+                              placement="bottom"
+                            />
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
+                        <div data-testid="structuredData" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+                          {structuredDataAnalysis && isStructuredDataAnalysis(structuredDataAnalysis) ?
+                            structuredDataAnalysis.count
+                            : '-'
+                          }
+                        </div>
+                      </div>
+
+                      {/* Recommendations */}
+                      {
+                        structuredDataAnalysis && isStructuredDataAnalysis(structuredDataAnalysis) && structuredDataAnalysis.recommendations != "" &&
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                            Recommendations
+                          </h5>
+                          <p data-testid="structured_recommendations">{structuredDataAnalysis.recommendations}</p>
+                        </div>
+                      }
+                    </div>
+                  </div> {/* EO structured and indexibility */}
+
+                  {/* LightHouse */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    {/* Heading */}
+                    <div className='flex mb-2'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <FiActivity />
+                      </div>
+                      <div className='my-auto'>
+                        <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 pl-4 text-lg'>
+                          Light House Analysis
+                          <InfoPopOver
+                            data-testid="popup-analysis-tags"
+                            heading="Light House Analysis"
+                            content="The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices."
+                            placement="bottom"
+                          />
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    {
+                      lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                        <div>
+                          <div className='gap-3 grid grid-cols-3 font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pb-4'>
+                            <div data-testid="lighthouse-performance" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Performance" value={lighthouseAnalysis.scores.performance} />
+                                :
+                                <CircularProgressComparison label="Performance" value={0} />
+                              }
+                            </div>
+
+                            <div data-testid="lighthouse-accessibility" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Accessibility" value={lighthouseAnalysis.scores.accessibility} />
+                                :
+                                <CircularProgressComparison label="Accessibility" value={0} />
+                              }
+                            </div>
+
+                            <div data-testid="lighthouse-bestpractices" className="flex justify-center">
+                              {lighthouseAnalysis && isLightHouse(lighthouseAnalysis) ?
+                                <CircularProgressComparison label="Best Practices" value={lighthouseAnalysis.scores.bestPractices} />
+                                :
+                                <CircularProgressComparison label="Best Practices" value={0} />
+                              }
+                            </div>
+                          </div>
+
+                          <Accordion
+                            className="mx-auto "
+                            selectionMode="multiple"
+                            variant="splitted"
+                          >
+                            {lighthouseAnalysis.diagnostics.recommendations.map((recomm, index) => (
+                              <AccordionItem
+                                key={index}
+                                id={'recommendation-' + index}
+                                aria-label={`Accordion ${index + 1}`}
+                                title={(
+                                  <span data-testid={`lighthouse_recommendation_${index}`}>
+                                    <span className='font-poppins-medium'>{recomm.title}</span>
+                                    {recomm.displayValue && (
+                                      <span className='text-jungleGreen-600 dark:text-jungleGreen-400'>
+                                        {` - ${recomm.displayValue}`}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
+                              >
+                                <div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-600 dark:text-jungleGreen-400'>Description: </span>
+                                    <span>{recomm.description}</span>
+                                  </div>
+                                  <div>
+                                    <span className='font-poppins-medium text-jungleGreen-600 dark:text-jungleGreen-400'>Score: </span>
+                                    <span>{recomm.score * 100}%</span>
+                                  </div>
+                                </div>
+
+                              </AccordionItem>
+                            ))}
+                          </Accordion>
+
+                        </div>
+                        :
+                        <>
+                          {lighthouseAnalysis?.error}
+                        </>
+                    }
+                  </div> {/* EO Light House */}
 
                 </div> {/* EO on page SEO analysis */}
               </CardBody>
@@ -1139,136 +1577,139 @@ function ResultsComponent() {
                   {/* Sentiment Analysis */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Sentiment Analysis
-                    <InfoPopOver 
-                      heading="Sentiment Analysis" 
+                    <InfoPopOver
+                      data-testid="popup-sentiment"
+                      heading="Sentiment Analysis"
                       content="Sentiment analysis is conducted on the extracted metadata. This analysis would provide valuable insights 
                         into whether the content is perceived as positive, negative, or neutral. By leveraging this insight, users 
                         can effectively align their content tone with their brand&apos;s messaging.
-                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
-                      placement="right-end" 
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
+                      placement="right-end"
                     />
-                  </h3> 
+                  </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {sentimentAnalysis && sentimentAnalysis.sentimentAnalysis && sentimentAnalysis.sentimentAnalysis.positive > 0 && sentimentAnalysis.sentimentAnalysis.neutral > 0 && sentimentAnalysis.sentimentAnalysis.negative > 0 ? (
                       <div data-testid={"sentiment-donut-chart"} className='w-full md:w-1/2 md:mx-auto'>
-                        <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive*100), (sentimentAnalysis?.sentimentAnalysis.neutral*100), (sentimentAnalysis?.sentimentAnalysis.negative*100)]} legendPosition='right'/>
-                      </div>  )
+                        <DonutChart dataLabel={['Positive', 'Neutral', 'Negative']} dataSeries={[(sentimentAnalysis?.sentimentAnalysis.positive * 100), (sentimentAnalysis?.sentimentAnalysis.neutral * 100), (sentimentAnalysis?.sentimentAnalysis.negative * 100)]} legendPosition='right' />
+                      </div>)
                       : (
-                      <div>
-                        No sentiment analysis data to display
-                      </div> )
+                        <div>
+                          No sentiment analysis data to display
+                        </div>)
                     }
                   </div>
 
                   {/* Positive and Negative Words */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Positive and Negative Words
-                    <InfoPopOver 
-                      heading="Positive and Negative Words" 
+                    <InfoPopOver
+                      data-testid="popup-neg-pos-words"
+                      heading="Positive and Negative Words"
                       content="Metadata can be classified into two possible categories: positive and negative words. This thoughtful classification empowers users to 
                         strategically optimize the language within their content, thereby enhancing their ability to shape audience perception and drive meaningful engagement
-                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
-                      placement="right-end" 
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
+                      placement="right-end"
                     />
-                  </h3> 
+                  </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
                       <div>There is no positive or negative words to display</div>
                     )
-                    : (
-                      <>                    
-                        {metaData && isMetadata(metaData) ? (
-                          <div>
-                            <div data-testid={"sentiment-meta-title"}>
-                              {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
-                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
-                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
-                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                <span key={index}>{part}</span>)
-                              ))}
+                      : (
+                        <>
+                          {metaData && isMetadata(metaData) ? (
+                            <div>
+                              <div data-testid={"sentiment-meta-title"}>
+                                {metaData?.title && metaData.title.split(/(\s+)/).map((part, index) => (
+                                  sentimentAnalysis?.positiveWords.includes(part.trim()) ?
+                                    <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                    (sentimentAnalysis?.negativeWords.includes(part.trim()) ?
+                                      <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                      <span key={index}>{part}</span>)
+                                ))}
+                              </div>
+                              <div data-testid={"sentiment-meta-description"}>
+                                {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
+                                  sentimentAnalysis?.positiveWords.includes(part.trim()) ?
+                                    <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                    (sentimentAnalysis?.negativeWords.includes(part.trim()) ?
+                                      <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                      <span key={index}>{part}</span>)
+                                ))}
+                              </div>
+                              <div data-testid={"sentiment-meta-keywords"}>
+                                {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
+                                  sentimentAnalysis?.positiveWords.includes(part) ?
+                                    <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                    (sentimentAnalysis?.negativeWords.includes(part) ?
+                                      <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> :
+                                      <span key={index}>{part}</span>)
+                                ))}
+                              </div>
                             </div>
-                            <div data-testid={"sentiment-meta-description"}>
-                              {metaData?.description && metaData.description.split(/(\s+)/).map((part, index) => (
-                                sentimentAnalysis?.positiveWords.includes(part.trim()) ? 
-                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                (sentimentAnalysis?.negativeWords.includes(part.trim()) ? 
-                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                <span key={index}>{part}</span>)
-                              ))}
-                            </div>
-                            <div data-testid={"sentiment-meta-keywords"}>
-                              {metaData?.keywords && metaData.keywords.split(/(\s+)/).map((part, index) => (
-                                sentimentAnalysis?.positiveWords.includes(part) ? 
-                                <span key={index}><Chip color="success" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                (sentimentAnalysis?.negativeWords.includes(part) ? 
-                                <span key={index}><Chip color="danger" variant="flat" radius="sm" className='px-0 my-1'>{part}</Chip></span> : 
-                                <span key={index}>{part}</span>)
-                              ))}                            
-                            </div>
-                          </div>
-                        )
-                        : (
-                          <div>
-                            {metaData?.errorMessage}
-                          </div>
-                        )}  
-                      </>
-                    )}   
+                          )
+                            : (
+                              <div>
+                                {metaData?.errorMessage}
+                              </div>
+                            )}
+                        </>
+                      )}
                   </div>
 
                   {/* Emotions */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Emotions Confidence Score
-                    <InfoPopOver 
-                      heading="Emotions Confidence Score" 
+                    <InfoPopOver
+                      data-testid="popup-emotions"
+                      heading="Emotions Confidence Score"
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
                         their metadata settings, thereby invoking the desired emotional responses.
-                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models." 
-                      placement="right-end" 
+                        </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
+                      placement="right-end"
                     />
-                  </h3>     
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>                  
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {sentimentAnalysis?.emotions && (JSON.stringify(sentimentAnalysis?.emotions) !== '{}') ? (
                       <div data-testid={"sentiment-emotions-progress-charts"} className='gap-3 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7'>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.anger * 100} label={"Anger"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.disgust * 100} label={"Disgust"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.fear * 100} label={"Fear"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.joy * 100} label={"Joy"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.neutral * 100} label={"Neutral"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.sadness * 100} label={"Sadness"} />
                         </div>
                         <div className="flex justify-center">
-                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"}/>
+                          <CircularProgressSentiment value={sentimentAnalysis?.emotions.surprise * 100} label={"Surprise"} />
                         </div>
-                      </div>   
+                      </div>
                     )
-                    : (
-                      <div>There is no emotions to display</div>
-                    )}     
-                  </div>  
-                    
+                      : (
+                        <div>There is no emotions to display</div>
+                      )}
+                  </div>
+
                 </div>{/* EO Sentiment Analysis */}
               </CardBody>
             </Card>
-          </Tab>              
+          </Tab>
         </WEETabs>
-      </div>   
+      </div>
 
       {/* Confirm save */}
-      <Modal 
-        isOpen={isOpen} 
+      <Modal
+        isOpen={isOpen}
         onOpenChange={onOpenChange}
         placement="top-center"
         data-testid="save-report-modal"
@@ -1278,7 +1719,7 @@ function ResultsComponent() {
             <>
               <ModalBody>
                 <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                    Save Report
+                  Save Report
                 </h1>
                 <Input
                   autoFocus
@@ -1298,12 +1739,12 @@ function ResultsComponent() {
                 >
                   Close
                 </Button>
-                <Button 
-                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
+                <Button
+                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                   onPress={() => handleSave(reportName)}
                   disabled={isDisabled}
                   data-testid="submit-report-name"
-                  >
+                >
                   Save
                 </Button>
               </ModalFooter>
@@ -1312,15 +1753,15 @@ function ResultsComponent() {
         </ModalContent>
       </Modal>
 
-       {/* successfull save */}
-       <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
-          <ModalContent>
-              <ModalBody>
-                  <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                      Report saved successfully
-                  </h1>
-              </ModalBody>
-          </ModalContent>
+      {/* successfull save */}
+      <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
+        <ModalContent>
+          <ModalBody>
+            <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+              Report saved successfully
+            </h1>
+          </ModalBody>
+        </ModalContent>
       </Modal>
     </>
   );
