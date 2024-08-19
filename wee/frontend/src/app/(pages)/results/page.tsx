@@ -719,7 +719,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiImage />
                       </div>
                       <div className='my-auto'>
@@ -848,7 +848,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiLink />
                       </div>
                       <div className='my-auto'>
@@ -914,7 +914,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiUmbrella />
                       </div>
                       <div className='my-auto'>
@@ -973,7 +973,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiCode />
                       </div>
                       <div className='my-auto'>
@@ -1028,7 +1028,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiType />
                       </div>
                       <div className='my-auto'>
@@ -1090,7 +1090,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiBook />
                       </div>
                       <div className='my-auto'>
@@ -1190,7 +1190,7 @@ function ResultsComponent() {
                     <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl'>
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiTag />
                         </div>
                         <div className='my-auto'>
@@ -1243,7 +1243,7 @@ function ResultsComponent() {
 
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiClock />
                         </div>
                         <div className='my-auto'>
@@ -1294,7 +1294,7 @@ function ResultsComponent() {
 
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiCode />
                         </div>
                         <div className='my-auto'>
@@ -1338,7 +1338,7 @@ function ResultsComponent() {
 
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiSmartphone />
                         </div>
                         <div className='my-auto'>
@@ -1386,7 +1386,7 @@ function ResultsComponent() {
 
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiCompass />
                         </div>
                         <div className='my-auto'>
@@ -1430,7 +1430,7 @@ function ResultsComponent() {
 
                       {/* Heading */}
                       <div className='flex mb-2'>
-                        <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                        <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                           <FiLayout />
                         </div>
                         <div className='my-auto'>
@@ -1475,7 +1475,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     {/* Heading */}
                     <div className='flex mb-2'>
-                      <div className='flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
+                      <div className='my-auto flex text-4xl justify-center rounded-full bg-jungleGreen-700 dark:bg-jungleGreen-300 p-2 text-dark-primaryTextColor dark:text-primaryTextColor'>
                         <FiActivity />
                       </div>
                       <div className='my-auto'>
