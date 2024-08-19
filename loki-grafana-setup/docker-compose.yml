@@ -53,4 +53,4 @@ services:
     networks:
       - loki
     volumes:
-      - ./grafana/grafana.ini:/etc/grafana/grafana.ini  # Mount your grafana.ini file
+      - ./grafana/:/etc/grafana/  # Mount your grafana.ini file
