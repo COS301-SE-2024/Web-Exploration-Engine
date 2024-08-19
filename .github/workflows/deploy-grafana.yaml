@@ -15,6 +15,20 @@ jobs:
       - name: List files
         run: ls -la loki-grafana-setup
 
+      - name: Remove old files
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            if [ -d "loki-grafana-setup" ]; then
+              rm -r loki-grafana-setup
+            else
+              echo "Directory loki-grafana-setup does not exist."
+            fi
+
       - name: Upload docker compose and config files to the server
         uses: appleboy/scp-action@v0.1.4
         with:
