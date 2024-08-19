@@ -164,12 +164,19 @@ describe('SummaryReport Page', () => {
     radialChart.id = 'radial-chart';
     document.body.appendChild(radialChart);
 
-    // Simulate click on download button
+    const radarChart = document.createElement('div');
+    radialChart.id = 'radar-chart';
+    document.body.appendChild(radarChart);
+
+    const areaChart = document.createElement('div');
+    radialChart.id = 'area-chart';
+    document.body.appendChild(areaChart);
+
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
       expect(jsPDF).toHaveBeenCalled();
-      expect(html2canvas).toHaveBeenCalledTimes(3);
+      expect(html2canvas).toHaveBeenCalledTimes(5);
     });
 
     // Cleanup mock elements

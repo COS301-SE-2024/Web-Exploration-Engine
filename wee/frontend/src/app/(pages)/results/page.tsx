@@ -168,7 +168,7 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis);
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses,emails,phones,socialLinks,titleTagsAnalysis,headingAnalysis,imagesAnalysis,internalLinkingAnalysis,metaDescriptionAnalysis,uniqContentAnalysis,sentimentAnalysis);
   };
  
   // Pagination Logic
