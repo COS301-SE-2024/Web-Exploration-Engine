@@ -14,13 +14,13 @@ describe('KeywordAnalysisService', () => {
 
     service = module.get<KeywordAnalysisService>(KeywordAnalysisService);
   });
-
   describe('getKeywordRanking', () => {
     it('should return keyword ranking and results', async () => {
       const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-        { title: 'Test Title 2', link: 'http://example2.com' },
+        { link: 'http://example.com' },
+        { link: 'http://example2.com' },
       ];
+
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
         newPage: jest.fn().mockResolvedValueOnce({
           goto: jest.fn().mockResolvedValueOnce(undefined),
@@ -34,16 +34,16 @@ describe('KeywordAnalysisService', () => {
 
       expect(result).toEqual({
         ranking: 1,
-        results: mockResults,
+        recommendation: 'The URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.',
       });
     });
 
-    it('should return search results and ranking with div', async () => {
+    it('should return ranking and recommendations with URLs ranked higher', async () => {
       const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-        { title: 'Test Title 2', link: 'http://example2.com' },
+        { link: 'http://example2.com' },
+        { link: 'http://example.com' },
       ];
-  
+
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
         newPage: jest.fn().mockResolvedValueOnce({
           goto: jest.fn().mockResolvedValueOnce(undefined),
@@ -52,158 +52,55 @@ describe('KeywordAnalysisService', () => {
         }),
         close: jest.fn(),
       });
-  
+
       const result = await service.getKeywordRanking('http://example.com', 'test keyword');
-  
-      // Debug: Ensure results is an array
-      console.log(result.results);
-  
-      expect(Array.isArray(result.results)).toBe(true); // Ensure result.results is an array
-      expect(result.results).toEqual(mockResults);
-  
-      const ranking = result.results.findIndex(result => {
-        const resultUrl = new URL(result.link).hostname;
-        return resultUrl.includes(new URL('http://example.com').hostname);
-      }) + 1;
-  
-      expect(result.ranking).toBe(ranking);
-    });
-  
-    it('should return empty ranking if URL is not in results with div', async () => {
-      const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-        { title: 'Test Title 2', link: 'http://example2.com' },
-      ];
-  
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
-        close: jest.fn(),
-      });
-  
-      const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword');
-  
-      // Debug: Ensure results is an array
-      console.log(result.results);
-  
-      expect(Array.isArray(result.results)).toBe(true); // Ensure result.results is an array
-      expect(result.results).toEqual(mockResults);
-  
-      const ranking = result.results.findIndex(result => {
-        const resultUrl = new URL(result.link).hostname;
-        return resultUrl.includes(new URL('http://nonexistenturl.com').hostname);
-      }) + 1;
-  
-      expect(result.ranking).toBe('');
-    });
-    it('should return empty ranking if URL not found', async () => {
-      const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-      ];
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
-        close: jest.fn(),
-      });
-
-      const result = await service.getKeywordRanking('http://nonexistent.com', 'test keyword');
 
       expect(result).toEqual({
-        ranking: '',
-        results: mockResults,
+        ranking: 2,
+        recommendation: 'The URL is ranked at position 2 for the keyword. However, the following URLs are ranked higher: example2.com. Consider analyzing the content, backlinks, and SEO strategies of these competitors to improve the ranking.',
       });
     });
+
+    it('should return empty ranking if URL is not in results', async () => {
+      const mockResults = [
+        { link: 'http://example.com' },
+        { link: 'http://example2.com' },
+      ];
+
+      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
+        newPage: jest.fn().mockResolvedValueOnce({
+          goto: jest.fn().mockResolvedValueOnce(undefined),
+          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+          close: jest.fn(),
+        }),
+        close: jest.fn(),
+      });
+
+      const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword');
+
+      expect(result).toEqual({
+        ranking: 'Not ranked in the top results',
+        recommendation:'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.',
+      });
+    });
+
     it('should handle invalid URLs gracefully', async () => {
       const invalidUrl = 'invalid-url';
       await expect(service.getKeywordRanking(invalidUrl, 'test keyword')).rejects.toThrow('Invalid URL');
     });
-    it('should handle edge cases with different URL formats', async () => {
-      const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-        { title: 'Test Title 2', link: 'http://example.com/page' },
-      ];
-  
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
-        close: jest.fn(),
-      });
-  
-      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
-  
-      expect(result).toEqual({
-        ranking: 1,
-        results: mockResults,
-      });
-    });
 
-    it('should handle invalid URLs gracefully', async () => {
-      const invalidUrl = 'invalid-url';
-      try {
-        await service.getKeywordRanking(invalidUrl, 'test keyword');
-      } catch (e) {
-        expect(e.message).toContain('Invalid URL');
-      }
-    });
-    it('should return empty ranking if URL not found', async () => {
-
-      const mockResults = [
-        { title: 'Test Title 1', link: 'http://example.com' },
-      ];
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
-        close: jest.fn(),
-      });
-
-   
-      const result = await service.getKeywordRanking('http://nonexistent.com', 'test keyword');
-
-      expect(result).toEqual({
-        ranking: '',
-        results: mockResults,
-      });
-    });
-    it('should handle invalid URLs gracefully', async () => {
-      const invalidUrl = 'invalid-url';
-      try {
-        await service.getKeywordRanking(invalidUrl, 'test keyword');
-      } catch (e) {
-        expect(e.message).toContain('Invalid URL');
-      }
-    });
     it('should handle errors during Puppeteer interactions', async () => {
- 
       (puppeteer.launch as jest.Mock).mockRejectedValueOnce(new Error('Puppeteer error'));
 
-
-      try {
-        await service.getKeywordRanking('http://example.com', 'test keyword');
-      } catch (e) {
-
-        expect(e).toEqual(new Error('Puppeteer error'));
-      }
+      await expect(service.getKeywordRanking('http://example.com', 'test keyword')).rejects.toThrow('Puppeteer error');
     });
 
-    it('should return correct ranking when URL is in different positions', async () => {
-
+    it('should handle edge cases with different URL formats', async () => {
       const mockResults = [
-        { title: 'Test Title 1', link: 'http://example2.com' },
-        { title: 'Test Title 2', link: 'http://example.com' },
-        { title: 'Test Title 3', link: 'http://example3.com' },
+        { link: 'http://example.com' },
+        { link: 'http://example.com/page' },
       ];
+
       (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
         newPage: jest.fn().mockResolvedValueOnce({
           goto: jest.fn().mockResolvedValueOnce(undefined),
@@ -213,13 +110,11 @@ describe('KeywordAnalysisService', () => {
         close: jest.fn(),
       });
 
-
       const result = await service.getKeywordRanking('http://example.com', 'test keyword');
 
-
       expect(result).toEqual({
-        ranking: 2,
-        results: mockResults,
+        ranking: 1,
+        recommendation: 'The URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.',
       });
     });
   });
