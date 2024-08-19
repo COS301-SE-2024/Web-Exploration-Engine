@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master, config/deploy, config/grafana-loki]
+    branches: [master, config/deploy]
 
 jobs:
   deploy:

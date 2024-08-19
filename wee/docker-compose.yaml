@@ -10,8 +10,6 @@ services:
     command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
 
   webscraper:
-    volumes:
-      - /logs:/app/logs
     build: 
       context: .
       dockerfile: webscraper/Dockerfile
