@@ -39,108 +39,108 @@ export class KeywordAnalysisService {
         };
     }
 
-    async getKeywordDensity(url: string, keyword: string) {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+    // async getKeywordDensity(url: string, keyword: string) {
+    //     const browser = await puppeteer.launch();
+    //     const page = await browser.newPage();
         
-        await page.goto(url);
+    //     await page.goto(url);
         
-        const keywordDensity = await page.evaluate((keyword) => {
-            const bodyText = document.body.innerText;
-            const keywordCount = (bodyText.match(new RegExp(keyword, 'gi')) || []).length;
-            const totalWords = bodyText.split(/\s+/).length;
-            const density = (keywordCount / totalWords) * 100;
-            return {
-                keywordCount,
-                totalWords,
-                density: density.toFixed(2)
-            };
-        }, keyword);
+    //     const keywordDensity = await page.evaluate((keyword) => {
+    //         const bodyText = document.body.innerText;
+    //         const keywordCount = (bodyText.match(new RegExp(keyword, 'gi')) || []).length;
+    //         const totalWords = bodyText.split(/\s+/).length;
+    //         const density = (keywordCount / totalWords) * 100;
+    //         return {
+    //             keywordCount,
+    //             totalWords,
+    //             density: density.toFixed(2)
+    //         };
+    //     }, keyword);
       
-        await browser.close();
+    //     await browser.close();
         
-        return keywordDensity;
-    }
-    async getKeywordInAnchorTexts(url: string, keyword: string) {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+    //     return keywordDensity;
+    // }
+    // async getKeywordInAnchorTexts(url: string, keyword: string) {
+    //     const browser = await puppeteer.launch();
+    //     const page = await browser.newPage();
         
-        await page.goto(url);
+    //     await page.goto(url);
 
-        const anchorTextAnalysis = await page.evaluate((keyword) => {
-            const anchors = document.querySelectorAll('a');
-            const anchorDetails = Array.from(anchors).map(anchor => {
-                const text = anchor.innerText;
-                const href = anchor.href;
-                const containsKeyword = text.includes(keyword) || href.includes(keyword);
+    //     const anchorTextAnalysis = await page.evaluate((keyword) => {
+    //         const anchors = document.querySelectorAll('a');
+    //         const anchorDetails = Array.from(anchors).map(anchor => {
+    //             const text = anchor.innerText;
+    //             const href = anchor.href;
+    //             const containsKeyword = text.includes(keyword) || href.includes(keyword);
                 
-                return {
-                    text,
-                    href,
-                    containsKeyword
-                };
-            });
+    //             return {
+    //                 text,
+    //                 href,
+    //                 containsKeyword
+    //             };
+    //         });
     
-            const keywordInAnchorsCount = anchorDetails.filter(anchor => anchor.containsKeyword).length;
-            const totalAnchors = anchorDetails.length;
-            const keywordInAnchorsPercentage = totalAnchors > 0 ? (keywordInAnchorsCount / totalAnchors) * 100 : 0;
+    //         const keywordInAnchorsCount = anchorDetails.filter(anchor => anchor.containsKeyword).length;
+    //         const totalAnchors = anchorDetails.length;
+    //         const keywordInAnchorsPercentage = totalAnchors > 0 ? (keywordInAnchorsCount / totalAnchors) * 100 : 0;
             
-            return { 
-                keywordInAnchorsPercentage: keywordInAnchorsPercentage.toFixed(2), 
-                anchorDetails 
-            };
-        }, keyword);
+    //         return { 
+    //             keywordInAnchorsPercentage: keywordInAnchorsPercentage.toFixed(2), 
+    //             anchorDetails 
+    //         };
+    //     }, keyword);
       
-        await browser.close();
+    //     await browser.close();
         
-        return anchorTextAnalysis;
-    }
+    //     return anchorTextAnalysis;
+    // }
     
-    async getKeywordInImageAlts(url: string, keyword: string) {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+    // async getKeywordInImageAlts(url: string, keyword: string) {
+    //     const browser = await puppeteer.launch();
+    //     const page = await browser.newPage();
 
-        await page.goto(url);
+    //     await page.goto(url);
         
-        const imageAltAnalysis = await page.evaluate((keyword) => {
-            const images = document.querySelectorAll('img');
-            const totalImages = images.length;
-            let keywordInAltsCount = 0;
-            let keywordInSrcCount = 0;
+    //     const imageAltAnalysis = await page.evaluate((keyword) => {
+    //         const images = document.querySelectorAll('img');
+    //         const totalImages = images.length;
+    //         let keywordInAltsCount = 0;
+    //         let keywordInSrcCount = 0;
     
-            const imageDetails = Array.from(images).map(img => {
-                const alt = img.alt;
-                const src = img.src;
-                const containsKeywordInAlt = alt.includes(keyword);
-                const containsKeywordInSrc = src.includes(keyword);
+    //         const imageDetails = Array.from(images).map(img => {
+    //             const alt = img.alt;
+    //             const src = img.src;
+    //             const containsKeywordInAlt = alt.includes(keyword);
+    //             const containsKeywordInSrc = src.includes(keyword);
     
-                if (containsKeywordInAlt) keywordInAltsCount++;
-                if (containsKeywordInSrc) keywordInSrcCount++;
+    //             if (containsKeywordInAlt) keywordInAltsCount++;
+    //             if (containsKeywordInSrc) keywordInSrcCount++;
     
-                return {
-                    alt,
-                    src,
-                    containsKeywordInAlt,
-                    containsKeywordInSrc
-                };
-            });
+    //             return {
+    //                 alt,
+    //                 src,
+    //                 containsKeywordInAlt,
+    //                 containsKeywordInSrc
+    //             };
+    //         });
     
-            const percentageInAlts = totalImages > 0 ? ((keywordInAltsCount / totalImages) * 100).toFixed(2) : '0.00';
-            const percentageInSrcs = totalImages > 0 ? ((keywordInSrcCount / totalImages) * 100).toFixed(2) : '0.00';
+    //         const percentageInAlts = totalImages > 0 ? ((keywordInAltsCount / totalImages) * 100).toFixed(2) : '0.00';
+    //         const percentageInSrcs = totalImages > 0 ? ((keywordInSrcCount / totalImages) * 100).toFixed(2) : '0.00';
     
-            return { 
-                totalImages,
-                keywordInAltsCount,
-                keywordInSrcCount,
-                percentageInAlts,
-                percentageInSrcs,
-                imageDetails 
-            };
-        }, keyword);
+    //         return { 
+    //             totalImages,
+    //             keywordInAltsCount,
+    //             keywordInSrcCount,
+    //             percentageInAlts,
+    //             percentageInSrcs,
+    //             imageDetails 
+    //         };
+    //     }, keyword);
         
-        await browser.close();
+    //     await browser.close();
         
-        return imageAltAnalysis;
-    }
+    //     return imageAltAnalysis;
+    // }
 
 }
