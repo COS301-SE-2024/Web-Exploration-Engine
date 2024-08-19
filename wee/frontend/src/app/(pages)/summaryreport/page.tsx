@@ -417,17 +417,27 @@ export default function SummaryReport() {
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Metadata
                     </h3>
-                    {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
-                        <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
-                    ) : (<></>)}
+                    <span className='block sm:hidden'>
+                        Sorry, the metadata radar graph is not available on mobile devices
+                    </span>
+                    <span className='hidden sm:block'>
+                        {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
+                            <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                        ) : (<></>)}
+                    </span>
                 </div>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Domain
                     </h3>
-                    {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
-                        <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
-                    ) : (<></>)}
+                    <span className='block sm:hidden'>
+                        Sorry, the domain radar graph is not available on mobile devices
+                    </span>
+                    <span className='hidden sm:block'>
+                        {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
+                            <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                        ) : (<></>)}
+                    </span>
                 </div>
             </div>
 
