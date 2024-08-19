@@ -52,5 +52,5 @@ services:
       - "3000:3000"
     networks:
       - loki
-    volumes:
-      - ../grafana/grafana.ini:/etc/grafana/grafana.ini  # Mount your grafana.ini file
+    # volumes:
+    #   - ../grafana/grafana.ini:/etc/grafana/grafana.ini  # Mount your grafana.ini file
