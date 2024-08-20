@@ -28,6 +28,7 @@ import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 import { pollForResult } from '../../services/PubSubService';
 
+
 function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
 }
@@ -214,18 +215,21 @@ const getScrapingResults = async (url: string) => {
 
        let result = await pollForResult(url) as Result;
 
-       //if (apiUrl == 'http://localhost:3002/api' &&  !result ) {
-        if ( url.includes('mock.test.')) {
-      
-        if (url.includes('mock.test.wimpy'))
-          result = MockWimpyResult;
-        else if (url.includes('mock.test.github'))
-          result = MockGithubResult;
-        else if (url.includes('mock.test.steers'))
-          result = MockSteersResult;
-        else if (url.includes('mock.test.insecure'))
-          result = MockInsecureResult;
-      }
+       //if (apiUrl == 'http://localhost:3002/api' &&  !result process.env.TESTING_EVIRONMENT == "true") {
+        
+       //if ( url.includes('mock.test.') ) {
+       console.log(process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT)
+       if ( url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') ) {
+        console.log(process.env.Tes)
+          if (url.includes('mock.test.wimpy'))
+            result = MockWimpyResult;
+          else if (url.includes('mock.test.github'))
+            result = MockGithubResult;
+          else if (url.includes('mock.test.steers'))
+            result = MockSteersResult;
+          else if (url.includes('mock.test.insecure'))
+            result = MockInsecureResult;
+        }
 
   
       if ('errorStatus' in result) {
