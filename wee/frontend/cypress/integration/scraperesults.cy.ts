@@ -15,7 +15,7 @@ describe('scraping functionality', () => {
    it('Scrape 1 crawlable url - GitHub', () => {
     cy.visit('/');
 
-    cy.get('[data-testid="scraping-textarea-home"]').type('https://github.com');
+    cy.get('[data-testid="scraping-textarea-home"]').type('https://mock.test.github.com');
 
     cy.get('[data-testid="btn-start-scraping"]').click();
 
@@ -25,7 +25,7 @@ describe('scraping functionality', () => {
       .then((mock_scraper_github) => {
         cy.intercept(
           'GET',
-          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fgithub.com',
+          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.github.com',
           mock_scraper_github
         ).as('mock_scraper_github_done');
       });
@@ -35,7 +35,7 @@ describe('scraping functionality', () => {
       .then((mock_scraper_github) => {
         cy.intercept(
           'GET',
-          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fgithub.com',
+          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
           mock_scraper_github
         ).as('mock_scraper_github_check_job');
       });
