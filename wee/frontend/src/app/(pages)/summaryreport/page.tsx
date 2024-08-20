@@ -425,21 +425,31 @@ export default function SummaryReport() {
                     placement="right-end" 
                 />
             </h3>
-            <div className='gap-4 grid lg:grid-cols-2'>
+            <div  id="radar-chart" className='gap-4 grid lg:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Metadata
                     </h3>
+                    <span className='block sm:hidden'>
+                        Sorry, the metadata radar graph is not available on mobile devices
+                    </span>
                     {metaRadar && metaRadar.categories.length > 0 && metaRadar.series.length > 0 ? (
+                    <span data-testid="metaRadar" className='hidden sm:block'>
                         <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
+                    </span>
                     ) : (<></>)}
                 </div>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Domain
                     </h3>
+                    <span className='block sm:hidden'>
+                        Sorry, the domain radar graph is not available on mobile devices
+                    </span>
                     {domainRadar && domainRadar.categories.length > 0 && domainRadar.series.length > 0 ? (
+                    <span data-testid="domainRadar"  className='hidden sm:block'>
                         <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
+                    </span>
                     ) : (<></>)}
                 </div>
             </div>

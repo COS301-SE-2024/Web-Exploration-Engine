@@ -81,6 +81,39 @@ describe('SummaryReport Page', () => {
   const mockSummaryReport = {
     domainStatus: [200, 404],
     domainErrorStatus: 1,
+    domainRadar: {
+      categories: [
+        "Finance and Banking",
+        "Marine and Shipping",
+        "Logistics and Supply Chain Management",
+        "Entertainment and Media",
+        "Arts and Culture"
+      ],
+      series: [
+        {
+            name: "https://www.nedbank.co.za",
+            data: [
+                68.24797987937927,
+                15.913596749305725,
+                14.516602456569672,
+                0,
+                0
+            ],
+            group: "apexcharts-axis-0"
+        },
+        {
+            name: "https://www.readerswarehouse.co.za",
+            data: [
+                0,
+                0,
+                16.29459708929062,
+                23.511777818202972,
+                16.00102037191391
+            ],
+            group: "apexcharts-axis-0"
+        }
+      ]
+    },
     industryClassification: {
       unclassifiedUrls: ['https://www.example.com'],
       industryPercentages: {
@@ -109,6 +142,42 @@ describe('SummaryReport Page', () => {
     parkedUrls: ['https://www.example2.com'],
     scrapableUrls: 2,
     avgTime: 100,
+    metaRadar: {
+      categories: [
+        "Finance and Banking",
+        "Utilities",
+        "Marine Resources",
+        "Hospitality",
+        "Marine and Shipping",
+        "Telecommunications"
+      ],
+      series: [
+        {
+            name: "https://www.nedbank.co.za",
+            data: [
+                68.75752806663513,
+                18.95316243171692,
+                18.465912342071533,
+                0,
+                0,
+                0
+            ],
+            group: "apexcharts-axis-0"
+        },
+        {
+            name: "https://www.readerswarehouse.co.za",
+            data: [
+                0,
+                0,
+                0,
+                16.464106738567352,
+                15.834927558898926,
+                15.723402798175812
+            ],
+            group: "apexcharts-axis-0"
+        }
+      ]
+    }
   };
 
   const mockUser = {
@@ -139,6 +208,32 @@ describe('SummaryReport Page', () => {
     expect(screen.getByText('100 sec')).toBeInTheDocument(); // Average Time
   });
 
+  it("display radar graphs on bigger screens", () => {
+    render(<SummaryReport />);
+
+    expect(screen.queryByTestId('metaRadar')).toBeInTheDocument();
+    expect(screen.queryByTestId('domainRadar')).toBeInTheDocument();
+  });
+
+  it("don't display radar graphs on mobile phone", () => {
+    global.innerWidth = 150;
+    global.dispatchEvent(new Event('resize'));
+
+    render(<SummaryReport />);
+
+    expect(screen.getByText('Sorry, the metadata radar graph is not available on mobile devices')).toBeInTheDocument();
+    expect(screen.getByText('Sorry, the domain radar graph is not available on mobile devices')).toBeInTheDocument();
+
+    const metaRadar = screen.queryByTestId('metaRadar');
+    const domainRadar = screen.queryByTestId('domainRadar');
+
+    expect(metaRadar).toBeInTheDocument();
+    expect(domainRadar).toBeInTheDocument();
+
+    expect(metaRadar).toHaveClass('hidden');
+    expect(domainRadar).toHaveClass('hidden');
+  });
+
   it('should call jsPDF and download the PDF when download button is clicked', async () => {
     render(<SummaryReport />);
     const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
@@ -164,12 +259,19 @@ describe('SummaryReport Page', () => {
     radialChart.id = 'radial-chart';
     document.body.appendChild(radialChart);
 
-    // Simulate click on download button
+    const radarChart = document.createElement('div');
+    radialChart.id = 'radar-chart';
+    document.body.appendChild(radarChart);
+
+    const areaChart = document.createElement('div');
+    radialChart.id = 'area-chart';
+    document.body.appendChild(areaChart);
+
     fireEvent.click(downloadButton);
 
     await waitFor(() => {
       expect(jsPDF).toHaveBeenCalled();
-      expect(html2canvas).toHaveBeenCalledTimes(3);
+      expect(html2canvas).toHaveBeenCalledTimes(5);
     });
 
     // Cleanup mock elements
