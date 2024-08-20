@@ -167,6 +167,7 @@ export default function SummaryReport() {
                 <Button
                     className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={backToScrapeResults}
+                    data-testid="btn-back"
                 >
                     Back
                 </Button>
