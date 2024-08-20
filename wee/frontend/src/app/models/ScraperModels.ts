@@ -91,10 +91,10 @@ export interface SeoAnalysis {
   imageAnalysis: ImageAnalysis | SEOError; // on page (2)
   indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
   internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page (3)
-  lighthouseAnalysis: LightHouseAnalysis | SEOError;
+  lighthouseAnalysis: LightHouseAnalysis | SEOError; // tech
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page (4)
   mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
-  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError;
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError; // tech
   structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
   titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page (5)
   uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page (6)
