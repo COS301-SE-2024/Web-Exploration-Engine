@@ -39,6 +39,17 @@ export default function Home() {
       }
 
       const urlsToScrape = url.split(',').map(u => u.trim());
+
+      if (urlsToScrape.length > 10) {
+        setError('Maximum of 10 URLs can be scraped');
+  
+        const timer = setTimeout(() => {
+            setError('');
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      } 
+
       for (const singleUrl of urlsToScrape) {
 
           if (!isValidUrl(singleUrl)) {
