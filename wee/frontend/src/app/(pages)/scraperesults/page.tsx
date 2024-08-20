@@ -14,7 +14,7 @@ import {
   Chip,
   Button,
   Spinner,
-  Selection
+  Tooltip
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -424,9 +424,9 @@ const getScrapingResults = async (url: string) => {
             </h1>
             <Button
               data-testid="btn-report-summary"
-              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
               onClick={handleSummaryPage}
-              disabled={isLoading}
+              disabled={isLoading || results.length === 1}
             >
               View overall summary report
             </Button>
