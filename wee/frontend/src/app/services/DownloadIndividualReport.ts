@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -23,6 +23,7 @@ export const handleDownloadReport = (
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError | undefined,
   uniqueContentAnalysis: UniqueContentAnalysis | SEOError | undefined,
   sentimentAnalysis: SentimentAnalysis |undefined,
+  xMLSitemapAnalysis: XMLSitemapAnalysis | SEOError |undefined
 ) => {
   const doc = new jsPDF();
 
@@ -430,6 +431,59 @@ export const handleDownloadReport = (
     doc.setTextColor(0, 0, 0);
 
     uniqueContentAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//XML Sitemap
+  //uNIQUE cONtent Analysis
+  doc.addPage();
+  doc.setFontSize(20);
+  const title9 = 'XML Sitemap Analysis';
+  const titleWidth9 = doc.getStringUnitWidth(title9) * 20 / doc.internal.scaleFactor;
+  const x9 = (doc.internal.pageSize.width - titleWidth9) / 2;
+  doc.text(title9, x9, 20);
+  
+  
+  if (xMLSitemapAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+    const xMLSitemapAnalysisRows = [
+        ['Validated', xMLSitemapAnalysis && 'isSitemapValid' in xMLSitemapAnalysis ? `${xMLSitemapAnalysis.isSitemapValid}` : 'N/A'],
+        ['Recommendations', xMLSitemapAnalysis && 'recommendations' in xMLSitemapAnalysis ? xMLSitemapAnalysis.recommendations : 'N/A']
+    ];
+    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    xMLSitemapAnalysisRows.forEach(row => {
       const [category, info] = row;
       const categoryLines = splitText(String(category), columnWidth[0] - 4);
       const infoLines = splitText(String(info), columnWidth[1] - 4);
