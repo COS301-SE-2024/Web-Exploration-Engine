@@ -576,12 +576,10 @@ function ResultsComponent() {
 
                   {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,') 
                   ? (
-                      <div className="flex justify-center"
-                      data-testid="div-homepagescreenshot"
-                      >
+                      <div className="flex justify-center" data-testid="div-homepagescreenshot">
                         <div className="flex justify-center">
                           <Image
-                          data-testid="img-homepagescreenshot"
+                            data-testid="img-homepagescreenshot"
                             alt="HomePageScreenShot"
                             src={homePageScreenShot}
                             className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
@@ -719,7 +717,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                               <div>
-                                <div  data-testid="div-images-missing-alt"
+                                <div data-testid="div-images-missing-alt"
                                 className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.missingAltTextCount}
                                 </div>
@@ -731,7 +729,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                               <div>                             
-                                <div  data-testid="div-images-not-optimal"
+                                <div data-testid="div-images-not-optimal"
                                 className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.nonOptimizedCount}
                                 </div>

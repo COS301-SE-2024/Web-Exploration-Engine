@@ -72,8 +72,8 @@ export default function Comparison() {
                     label="Website 1"
                     className="w-1/2 pr-3 pb-3"
                     onChange={handleWebsiteOne}
-                    data-testid="website1-select"
-                >
+                    ="website1-select"
+                >data-testid
                     {results.map((item, index) => (
                         <SelectItem key={index} textValue={item.url} data-testid={`website1-option-${index}`}>{item.url}</SelectItem>
                     ))}
