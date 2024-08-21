@@ -7,11 +7,11 @@ import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
 
 // Models
-import { ScraperResult, Summary } from "../models/ScraperModels";
+import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
 
 
 export default function Home() {
-    const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport } = useScrapingContext();
+    const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');
@@ -60,6 +60,7 @@ export default function Home() {
       setProcessedUrls([]);
       setProcessingUrls([]);
       setResults((prevResults: ScraperResult[]) => []);
+      setErrorResults((prevResults: ErrorResponse[]) => []);
       setSummaryReport({} as Summary);
 
       // Navigate to Results page with the entered URL as query parameter
@@ -112,7 +113,7 @@ export default function Home() {
           <p className="mt-4 p-2 min-h-[3.5rem]"></p>
         )}
 
-        <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
+        {/* <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
             Scraping criteria
           </h3>
@@ -146,7 +147,7 @@ export default function Home() {
               Website status
             </Checkbox>
           </div>
-        </div>
+        </div> */}
       </div>
     );
 }

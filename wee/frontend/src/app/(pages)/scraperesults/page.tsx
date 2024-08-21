@@ -19,14 +19,21 @@ import {
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import { ScraperResult } from '../../models/ScraperModels';
+import { ScraperResult, Result, ErrorResponse} from '../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
+import { pollForResult } from '../../services/PubSubService';
+
+function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
+  return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
+}
 
 function ResultsComponent() {
   const {
     urls,
     setUrls,
+    errorResults, 
+    setErrorResults,
     results,
     setResults,
     setSummaryReport,
@@ -44,7 +51,7 @@ function ResultsComponent() {
     React.useState('');
   const router = useRouter();
 
-  const filteredItems = React.useMemo(() => {
+  const filteredResultItems = React.useMemo(() => {
     let filteredUrls = [...results];
 
     // Apply status filter
@@ -63,7 +70,7 @@ function ResultsComponent() {
       );
     } else if (selectedCrawlableFilter === 'No') {
       filteredUrls = filteredUrls.filter(
-        (url) => url.robots && 'isUrlScrapable' in url.robots && !url.robots.isUrlScrapable
+        (url) => url.robots && 'errorCode' in url.robots && url.robots.errorCode
       );
     }
 
@@ -77,13 +84,53 @@ function ResultsComponent() {
     return filteredUrls;
   }, [results, searchValue, selectedStatusFilter, selectedCrawlableFilter]);
 
+  const filteredErrorItems = React.useMemo(() => {
+    let filteredUrls = [...errorResults];
+
+    // Apply status filter
+    if (selectedStatusFilter === 'Parked') {
+      filteredUrls = filteredUrls.filter(
+        (url) => !url.errorCode
+      );
+    } else if (selectedStatusFilter === 'Live') {
+      filteredUrls = filteredUrls.filter(
+        (url) => !url.errorCode
+      );
+    }
+
+    // Apply crawlable filter
+    if (selectedCrawlableFilter === 'Yes') {
+      filteredUrls = filteredUrls.filter(
+        (error) => !error.errorCode
+      );
+    } else if (selectedCrawlableFilter === 'No') {
+      filteredUrls = filteredUrls.filter(
+        (error) => error.errorCode
+      );
+    }
+
+    // Apply search filter
+    if (hasSearchFilter) {
+      filteredUrls = filteredUrls.filter((url) =>
+        url.url?.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+    return filteredUrls;
+  }, [errorResults, searchValue, selectedStatusFilter, selectedCrawlableFilter])
+
+  const filteredItems = React.useMemo(() => {
+    // Combine filtered results and errors
+    return [...filteredResultItems, ...filteredErrorItems];
+  }, [filteredResultItems, filteredErrorItems]);
+
   const handleResultPage = (url: string) => {
     router.push(`/results?url=${encodeURIComponent(url)}`);
   };
 
   // Pagination
   const [page, setPage] = React.useState(1);
-  const [resultsPerPage, setResultsPerPage] = React.useState(5);
+  const [resultsPerPage, setResultsPerPage] = React.useState(10);
   const pages = Math.ceil(filteredItems.length / resultsPerPage);
 
   const handleResultsPerPageChange = (
@@ -103,14 +150,21 @@ function ResultsComponent() {
 
   useEffect(() => {
     console.log('urls length: ', urls.length);
-    if (urls && urls.length > 0 && urls.length !== results.length) {
+    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
           // add to array of urls still being processed
           processingUrls.push(url);
           console.log('API call for:', url);
-          getScrapingResults(url);
+          try {
+            getScrapingResults(url);
+          } catch (error) {
+            console.error('Error when scraping website:', error);
+          }
+
+          // remove from array of urls still being processed
           processingUrls.splice(processingUrls.indexOf(url), 1);
+          // add to array of urls that have been processed
           processedUrls.push(url);
         }
       });
@@ -119,6 +173,7 @@ function ResultsComponent() {
       if (processedUrls.length > 1) {
         // Generate summary report
         console.log('Results:', results);
+        console.log('ErrorResults:', errorResults);
         const summary = generateSummary(results);
         console.log('Summary:', summary);
         setSummaryReport(summary);
@@ -128,25 +183,51 @@ function ResultsComponent() {
   }, [urls.length]);
 
   useEffect(() => {
-    if (urls.length === results.length) {
+    if (urls.length === (results.length + errorResults.length)) {
       setIsLoading(false);
       // allows to navigate back to this page without rescraping the urls
       setUrls([]);
     }
-  }, [results]);
+  }, [results, errorResults]);
 
-  const getScrapingResults = async (url: string) => {
+// Function to initiate scraping and handle results
+const getScrapingResults = async (url: string) => {
+  try {
+    // CHANGE TO DEPLOYED VERSION
+    const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
+    console.log('API URL:', apiUrl);
+    const response = await fetch(
+      `${apiUrl}/scraper?url=${encodeURIComponent(url)}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error initiating scrape: ${response.statusText}`);
+    }
+    const initData = await response.json();
+    console.log('Scrape initiation response:', initData);
+
+    // Poll the API until the scraping is done
     try {
-      const response = await fetch(
-        `http://localhost:3000/api/scraper?url=${encodeURIComponent(url)}`
-      );
-      const data = (await response.json()) as ScraperResult;
-      console.log('Response', data);
-      setResults((prevResults: ScraperResult[]) => [...prevResults, data]);
+      const result = await pollForResult(url) as Result;
+
+      if ('errorStatus' in result) {
+        const errorResponse = { ...result, url };
+        setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])
+      }
+      else {
+        // Assuming setResults is a function to update the state or handle results
+        setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
+      }
+      console.log('Scraping result:', result);
+      
     } catch (error) {
       console.error('Error when scraping website:', error);
     }
-  };
+    
+  } catch (error) {
+    console.error('Error when scraping website:', error);
+  }
+};
+
 
   const onSearchChange = (value: string) => {
     if (value) {
@@ -203,8 +284,8 @@ function ResultsComponent() {
           onChange={handleStatusFilterChange}
           data-testid="status-filter"
         >
-          <SelectItem key={'Parked'}>Parked</SelectItem>
-          <SelectItem key={'Live'}>Live</SelectItem>
+          <SelectItem key={'Parked'} data-testid="status-filter-parked">Parked</SelectItem>
+          <SelectItem key={'Live'} data-testid="status-filter-live">Live</SelectItem>
         </WEESelect>
 
         <WEESelect
@@ -213,8 +294,8 @@ function ResultsComponent() {
           onChange={handleCrawlableFilterChange}
           data-testid="crawlable-filter"
         >
-          <SelectItem key={'Yes'}>Yes</SelectItem>
-          <SelectItem key={'No'}>No</SelectItem>
+          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Yes</SelectItem>
+          <SelectItem key={'No'} data-testid="crawlable-filter-no">No</SelectItem>
         </WEESelect>
       </div>
 
@@ -234,10 +315,9 @@ function ResultsComponent() {
             onChange={handleResultsPerPageChange}
             aria-label="Number of results per page"
           >
-            <option value="2">2</option>
-            <option value="5">5</option>
-            <option value="7">7</option>
-            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
           </select>
         </label>
       </div>
@@ -252,7 +332,7 @@ function ResultsComponent() {
               </div>
             ) : null}
 
-            {results.length > 0 && (
+            {((results.length + errorResults.length) > 0) && (
               <div className="flex w-full justify-center">
                 <WEEPagination
                   loop
@@ -288,29 +368,49 @@ function ResultsComponent() {
 
         <TableBody emptyContent={'There are no results to be displayed'}>
           {items.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Link href={`/results?url=${encodeURIComponent(item.url)}`}>
-                  {item.url}
-                </Link>
+            <TableRow key={index} data-testid="table-row">
+              <TableCell >
+                {isErrorResponse(item) ? (
+                  item.url ? item.url : 'Error'                  
+                ) : (
+                  item.url &&
+                    <Link href={`/results?url=${encodeURIComponent(item.url)}`} >
+                      {item.url}
+                    </Link>                  
+                )}
               </TableCell>
               <TableCell className="text-center hidden sm:table-cell">
-                <Chip
-                  radius="sm"
-                  color={item.domainStatus === 'live' ? 'success' : 'warning'}
-                  variant="flat"
-                >
-                  {item.domainStatus === 'live' ? 'Yes' : 'No'}
-                </Chip>
+                {isErrorResponse(item) ? (
+                  <Chip
+                    radius="sm"
+                    color="danger"
+                    variant="flat"
+                  >
+                    Error
+                  </Chip>
+                ) : (
+                  <Chip
+                    radius="sm"
+                    color={item.domainStatus === 'live' ? 'success' : 'warning'}
+                    variant="flat"
+                  >
+                    {item.domainStatus === 'live' ? 'Yes' : 'No'}
+                  </Chip>
+                )}
               </TableCell>
               <TableCell className="text-center hidden sm:table-cell">
-                <Button
-                  className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                  onClick={() => handleResultPage(item.url)}
-                  data-testid={'btnView' + index}
-                >
-                  View
-                </Button>
+                {isErrorResponse(item) ? (
+                  <></>                  
+                ) : (
+                  item.url &&
+                  <Button
+                    className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                    onClick={() => handleResultPage(item.url)}
+                    data-testid={'btnView' + index}
+                  >
+                    View
+                  </Button>           
+                )}
               </TableCell>
             </TableRow>
           ))}

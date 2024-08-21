@@ -1,7 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import logger from '../logging/webscraperlogger';
 import { Cache } from 'cache-manager';
+import * as puppeteer from 'puppeteer';
 
 // Services
+import { ProxyService } from './proxy/proxy.service';
+import { PubSubService } from './pub-sub/pub_sub.service';
 import { RobotsService } from './robots/robots.service';
 import { ScrapeMetadataService } from './scrape-metadata/scrape-metadata.service';
 import { ScrapeStatusService } from './scrape-status/scrape-status.service';
@@ -12,6 +17,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 
 // Models
 import {
@@ -19,12 +25,19 @@ import {
   RobotsResponse,
   Metadata,
   IndustryClassification,
+  SentimentClassification,
+  ScrapeResult
 } from './models/ServiceModels';
 
+const serviceName = "[ScraperService]";
+logger.info(`${serviceName}`);
 @Injectable()
-export class ScraperService {
+export class ScraperService implements OnModuleInit {
+  
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
+    private readonly pubsub: PubSubService,
+    private readonly proxyService: ProxyService,
     private readonly robotsService: RobotsService,
     private readonly metadataService: ScrapeMetadataService,
     private readonly scrapeStatusService: ScrapeStatusService,
@@ -35,26 +48,64 @@ export class ScraperService {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
+    private readonly sentimentAnalysisService: SentimentAnalysisService
   ) {}
 
+  onModuleInit() {
+    this.listenForScrapingTasks();
+  }
+
+  async scrapeWebsite(url: string, type: string) {
+    switch (type) {
+      case 'scrape':
+        return this.scrape(url);
+      case 'read-robots':
+        return this.readRobotsFile(url);
+      case 'scrape-metadata':
+        return this.scrapeMetadata(url);
+      case 'scrape-status':
+        return this.scrapeStatus(url);
+      case 'classify-industry':
+        return this.classifyIndustry(url);
+      case 'scrape-logo':
+        return this.scrapeLogo(url);
+      case 'scrape-images':
+        return this.scrapeImages(url);
+      case 'screenshot':
+        return this.getScreenshot(url);
+      case 'scrape-contact-info':
+        return this.scrapeContactInfo(url);
+      case 'scrape-addresses':
+        return this.scrapeAddress(url);
+      case 'seo-analysis':
+        return this.seoAnalysis(url);
+      default:
+        throw new Error(`Unknown scraping type: ${type}`);
+    }
+  }
+
   async scrape(url: string) {
+    console.log("Started scaping")
     const start = performance.now();
 
-    const cachedData:string = await this.cacheManager.get(url);
-    if (cachedData) {
-      const end = performance.now();
-      const times = (end - start) / 1000;
-      console.log('CACHE HIT', times);
-      const dataFromCache = JSON.parse(cachedData);
+    // create puppeteer instance
+    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser;
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); 
 
-      // update the time field of the object being returned from cache
-      dataFromCache.time = parseFloat(times.toFixed(4));      
-      return dataFromCache;
+      
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Failed to launch browser ${error}`,
+      } as ErrorResponse;
     }
-    
-    console.log('CACHE MISS - SCRAPE');
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const data = {
       url: '',
       domainStatus: '',
@@ -65,138 +116,101 @@ export class ScraperService {
       images: [],
       slogan: '',
       contactInfo: { emails: [], phones: [] },
-      time: 0,
       addresses: [],
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
-    };
-
-    // validate url
+      sentiment: null as SentimentClassification | null,
+      time: 0,
+    } as ScrapeResult;
 
     data.url = url;
 
-    // scrape robots.txt file & url validation
-    // scrape web status - live, parked, under construction
-    const robotsPromise = this.robotsService.readRobotsFile(data.url);
-    const statusPromise = this.scrapeStatusService.scrapeStatus(data.url);
+  // Scrape robots.txt status concurrently
+    const robotsPromise = this.robotsService.readRobotsFile(url);
+    const statusPromise = this.scrapeStatusService.scrapeStatus(url);
 
-    const [robotsResponse, status] = await Promise.all([
-      robotsPromise,
-      statusPromise,
-    ]);
-    data.domainStatus = status;
+    const [robots, domainStatus] = await Promise.all([robotsPromise, statusPromise]);
 
-    // blocking - check for error response
-    // some kind of retry mechanism here?
-    if ('errorStatus' in robotsResponse) {
-      data.robots = robotsResponse as ErrorResponse;
+    data.domainStatus = domainStatus;
+
+    if ('errorStatus' in robots) {
+      data.robots = robots as ErrorResponse;
+      // close browser
+      await browser.close();
+      // stop early if robots.txt scraping fails
+      const end = performance.now();
+      const time = (end - start) / 1000;
+      data.time = parseFloat(time.toFixed(4));
       return data;
     }
 
-    data.robots = robotsResponse as RobotsResponse;
+    data.robots = robots as RobotsResponse;
 
-    // scrape metadata & html - can we do this in parallel?
-    // metadata checks if url is allowed to be scraped
-    const metadataResponse = await this.metadataService.scrapeMetadata(
-      data.url,
-      data.robots
-    );
-    if ('errorStatus' in metadataResponse) {
-      data.metadata = {
-        title: null,
-        description: null,
-        keywords: null,
-        ogTitle: null,
-        ogDescription: null,
-        ogImage: null,
-      } as Metadata;
+
+  // Serially scrape metadata and all services that depend on only robots.txt
+    const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
+    const screenshotPromise = this.screenshotService.captureScreenshot(url, data.robots, browser);
+    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, browser);
+    const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
+    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
+
+    const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
+
+    if ('errorStatus' in screenshot) {
+      data.screenshot = screenshot as ErrorResponse;
     } else {
-      data.metadata = metadataResponse as Metadata;
+      data.screenshot = screenshot.screenshot;
     }
 
-    // classify industry based on metadata and domain name
-    const industryClassificationPromise =
-      this.industryClassificationService.classifyIndustry(
-        data.url,
-        data.metadata
-      );
-
-    // scrape logo
-    const logoPromise = this.scrapeLogoService.scrapeLogo(
-      data.url,
-      data.metadata,
-      data.robots
-    );
-
-    // scrape images - doesn't use metadata -- need to check if scraping images is allowed
-    const imagesPromise = this.scrapeImagesService.scrapeImages(
-      data.url,
-      data.robots
-    );
-    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(
-      data.url,
-      data.robots
-    );
-    const addressPromise = this.scrapeAddressService.scrapeAddress(
-      data.url,
-      data.robots
-    );
-
-    // get screenshot
-    const screenshotPromise = this.getScreenshot(data.url);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(data.url,data.robots);
-    const [
-      industryClassification,
-      logo,
-      images,
-      contactInfo,
-      addresses,
-      screenshot,
-      seoAnalysis,
-    ] = await Promise.all([
-      industryClassificationPromise,
-      logoPromise,
-      imagesPromise,
-      contactInfoPromise,
-      addressPromise,
-      screenshotPromise,
-      seoAnalysisPromise,
-    ]);
-    data.industryClassification = industryClassification;
-    data.logo = logo;
-    data.images = images;
+    // add error handling for contactInfo and addresses
     data.contactInfo = contactInfo;
+
     data.addresses = addresses.addresses;
-    
-    if ('errorStatus' in screenshot) {
-      data.screenshot = ''; // Handle error case appropriately
+
+    if ('errorStatus' in metadata) {
+      data.metadata = metadata as ErrorResponse;
+      // close browser
+      await browser.close();
+      const end = performance.now();
+      const time = (end - start) / 1000;
+      data.time = parseFloat(time.toFixed(4));
+      return data; // return early if metadata scraping fails
     } else {
-      data.screenshot = (screenshot as { screenshot: string }).screenshot; // Assign the screenshot URL
+      data.metadata = metadata as Metadata;
     }
 
     data.seoAnalysis = seoAnalysis;
-    // scrape slogan
 
-    // scrape images
+  // Scrape services dependent on metadata
+    const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
+    const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
+    const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
+    const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
-    // do we want to perform analysis in the scraper service? - probably not
+    const [industryClassification, logo, images, sentimentAnalysis] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise]);
+
+    // add error handling industryClassification
+    data.industryClassification = industryClassification as IndustryClassification;
+  
+    data.logo = logo;
+
+    data.images = images;
+
+    data.sentiment = sentimentAnalysis;
+
+    // close browser
+    await browser.close();
 
     const end = performance.now();
     const time = (end - start) / 1000;
     data.time = parseFloat(time.toFixed(4));
 
-    // set the data in the cache
-    await this.cacheManager.set(url, JSON.stringify(data));
     return data;
   }
 
-  scrapeUrls(urls: string[]) {
-    // scrape multiple urls in parallel
-    // return data
-  }
-
   async readRobotsFile(url: string) {
-    return this.robotsService.readRobotsFile(url);
+    const data = await this.robotsService.readRobotsFile(url);
+    return data;
   }
 
   async scrapeMetadata(url: string) {
@@ -205,25 +219,68 @@ export class ScraperService {
       return robotsResponse;
     }
 
-    return this.metadataService.scrapeMetadata(
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    try {
+      browser = await puppeteer.launch(); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
-      robotsResponse as RobotsResponse
+      robotsResponse as RobotsResponse,
+      browser
     );
+
+    await browser.close();
+    return metadataResponse;
   }
 
   async scrapeStatus(url: string) {
-    return this.scrapeStatusService.scrapeStatus(url);
+    const data = await this.scrapeStatusService.scrapeStatus(url);
+    return data;
   }
 
   async classifyIndustry(url: string) {
-    const metadataResponse = await this.scrapeMetadata(url);
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const metadataResponse = await this.metadataService.scrapeMetadata(
+      robotsResponse.baseUrl,
+      robotsResponse as RobotsResponse,
+      browser
+    );
+
     if ('errorStatus' in metadataResponse) {
+      await browser.close();
       return metadataResponse;
     }
-    return this.industryClassificationService.classifyIndustry(
-      url,
-      metadataResponse
-    );
+
+    const industryClassification = await this.industryClassificationService.classifyIndustry(url, metadataResponse as Metadata);
+    return industryClassification;
   }
 
   async scrapeLogo(url: string) {
@@ -231,18 +288,36 @@ export class ScraperService {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
+
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
-      robotsResponse as RobotsResponse
+      robotsResponse as RobotsResponse,
+      browser
     );
     if ('errorStatus' in metadataResponse) {
+      await browser.close();
       return metadataResponse;
     }
-    return this.scrapeLogoService.scrapeLogo(
-      url,
-      metadataResponse,
-      robotsResponse
-    );
+
+    const logo = await this.scrapeLogoService.scrapeLogo(url, metadataResponse as Metadata, robotsResponse, browser);
+    await browser.close();
+    return logo;
   }
 
   async scrapeImages(url: string) {
@@ -250,80 +325,260 @@ export class ScraperService {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
+
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); 
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
-      robotsResponse as RobotsResponse
+      robotsResponse as RobotsResponse,
+      browser
     );
     if ('errorStatus' in metadataResponse) {
+      await browser.close();
       return metadataResponse;
     }
-    return this.scrapeImagesService.scrapeImages(url, robotsResponse);
+    
+    const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, browser);
+    await browser.close();
+    return images;
   }
+
   //get screenshot of the homepage
   async getScreenshot(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    return this.screenshotService.captureScreenshot(url, robotsResponse);
+    
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); 
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const screenshot = await this.screenshotService.captureScreenshot(url, robotsResponse, browser);
+    await browser.close();
+    return screenshot;
   }
+
   async scrapeContactInfo(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
 
-    return this.scrapeContactInfoService.scrapeContactInfo(
-      url,
-      robotsResponse as RobotsResponse
-    );
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const contactInfo = await this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse, browser);
+    await browser.close();
+    return contactInfo;
   }
+
   async scrapeAddress(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    return this.scrapeAddressService.scrapeAddress(
-      url,
-      robotsResponse as RobotsResponse
-    );
+
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+    
+    const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, browser);
+    await browser.close();
+    return addresses;
   }
+
   async seoAnalysis(url: string) {
-    const htmlContent = await this.seoAnalysisService.fetchHtmlContent(url);
-    const [metaDescriptionAnalysis,titleTagsAnalysis,headingAnalysis,imageAnalysis,uniqueContentAnalysis
-      ,internalLinksAnalysis,siteSpeedAnalysis, mobileFriendlinessAnalysis,structuredDataAnalysis,
-      indexabilityAnalysis,XMLSitemapAnalysis,canonicalTagAnalysis,lighthouseAnalysis,
-    ] = await Promise.all([
-      this.seoAnalysisService.analyzeMetaDescription(htmlContent,url),
-      this.seoAnalysisService.analyzeTitleTag(htmlContent),
-      this.seoAnalysisService.analyzeHeadings(htmlContent),
-      this.seoAnalysisService.analyzeImageOptimization(url),
-      this.seoAnalysisService.analyzeContentQuality(htmlContent),
-      this.seoAnalysisService.analyzeInternalLinks(htmlContent),
-      this.seoAnalysisService.analyzeSiteSpeed(url),
-      this.seoAnalysisService.analyzeMobileFriendliness(url),
-      this.seoAnalysisService.analyzeStructuredData(htmlContent),
-      this.seoAnalysisService.analyzeIndexability(htmlContent),
-      this.seoAnalysisService.analyzeXmlSitemap(url),
-      this.seoAnalysisService.analyzeCanonicalTags(htmlContent),
-      this.seoAnalysisService.runLighthouse(url),
-    ]);
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+    
+    const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
+    await browser.close();
+    return seoAnalysis;
+  }
+
+  async classifySentiment(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const metadataResponse = await this.metadataService.scrapeMetadata(
+      robotsResponse.baseUrl,
+      robotsResponse as RobotsResponse,
+      browser
+    );
+    if ('errorStatus' in metadataResponse) {
+      await browser.close();
+      return metadataResponse;
+    }
+
+    const sentimentClassification = await this.sentimentAnalysisService.classifySentiment(url, metadataResponse as Metadata);
+    await browser.close();
+    return sentimentClassification;
+  }
+
+  async listenForScrapingTasks() {
+    const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
+
+    const messageHandler = async (message) => {
+      try {
+        await this.handleMessage(message);
+      } catch (error) {
+        console.error('Error handling message', error);
+      }
+    };
+
+    this.pubsub.subscribe(subscriptionName, messageHandler);
+  }
+
+  async handleMessage(message) {
+    const start = performance.now();
+    const { url, type } = JSON.parse(message.data.toString());
+    const cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape  
+
+    // Cache check and update logic
+    const cachedData = await this.getCachedData(cacheKey);
+    if (cachedData) {
+      // check if error status
+      if (cachedData.status !== 'error') {
+        // update time if cache proccessing is completed
+        if (cachedData.status === 'completed') {
+          const end = performance.now();
+          const times = (end - start) / 1000;
+          console.log('CACHE HIT', times);
+      
+          // Update time field
+          cachedData.result.time = parseFloat(times.toFixed(4));
+          await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
+        }
+
+        return;
+      }
+    }
   
-    return {
-      titleTagsAnalysis,
-      metaDescriptionAnalysis,
-      headingAnalysis,
-      imageAnalysis,
-      uniqueContentAnalysis,
-      internalLinksAnalysis,
-      siteSpeedAnalysis,
-      mobileFriendlinessAnalysis,
-      structuredDataAnalysis,
-      indexabilityAnalysis,
-      XMLSitemapAnalysis,
-      canonicalTagAnalysis,
-      lighthouseAnalysis,      
-   };
+    // Scrape if not in cache/already processing (CACHE MISS or error status)
+    console.log('CACHE MISS - SCRAPE');
+  
+    // Add to cache as processing
+    await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+    message.ack();
+  
+    try {
+      const result = await this.scrapeWebsite(url, type);
+      const completeData = {
+        status: 'completed',
+        result,
+      };
+      await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+      console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+      // console.log(`Result: ${result}`);
+    } catch (error) {
+      console.error(`Error scraping URL: ${url}`, error);
+      await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
+    } 
+  }
+
+  async getCachedData(url) {
+    const cachedDataString:string = await this.cacheManager.get(url);
+    if (cachedDataString) {
+      const data = JSON.parse(cachedDataString);
+      if (data.status === 'completed') {
+        return data;
+      } else if (data.status === 'processing') {
+        console.log(`Already processing URL: ${url}`);
+        return null;
+      } else if (data.status === 'error') {
+        console.error(`Error scraping URL: ${url}`, data.error);
+        return null;
+      }
+    }
+    return null;
   }
 }
 

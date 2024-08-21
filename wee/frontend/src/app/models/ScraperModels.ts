@@ -12,12 +12,37 @@ export interface ScraperResult {
   addresses: string[];
   screenshot: string;
   seoAnalysis: SeoAnalysis;
+  sentiment: SentimentAnalysis;
+}
+
+export interface SentimentAnalysis {
+  sentimentAnalysis: SentimentAnalysisCategories;
+  positiveWords: string[];
+  negativeWords: string[];
+  emotions: SentimentEmotions;
+}
+
+export interface SentimentAnalysisCategories {
+  positive: number;
+  negative: number;
+  neutral: number;
+}
+
+export interface SentimentEmotions {
+  neutral: number;
+  joy: number;
+  surprise: number;
+  anger: number;
+  disgust: number;
+  sadness: number;
+  fear: number;
 }
 
 export interface ErrorResponse {
   errorStatus: number;
   errorCode: string;
   errorMessage: string;
+  url?: string;
   details?: {
     timestamp: string;
     path: string;
@@ -42,14 +67,15 @@ export interface Metadata {
 }
 
 export interface IndustryClassification {
-  metadataClass: {
-    label: string;
-    score: number;
-  },
-  domainClass: {
-    label: string;
-    score: number;
-  }
+  metadataClass: IndustryClassificationCriteria;
+  domainClass: IndustryClassificationCriteria;
+  zeroShotMetaDataClassify: IndustryClassificationCriteria[];
+  zeroShotDomainClassify: IndustryClassificationCriteria[];
+}
+
+export interface IndustryClassificationCriteria {
+  label: string;
+  score: number;
 }
 
 export interface ContactInfo {
@@ -65,8 +91,10 @@ export interface SeoAnalysis {
   imageAnalysis: ImageAnalysis | SEOError; // on page (2)
   indexabilityAnalysis: IndexabilityAnalysis | SEOError; // tech
   internalLinksAnalysis: InternalLinksAnalysis | SEOError; // on page (3)
+  lighthouseAnalysis: LightHouseAnalysis | SEOError; // tech
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError; // on page (4)
   mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError; // tech
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError; // tech
   structuredDataAnalysis: StructuredDataAnalysis | SEOError; // tech
   titleTagsAnalysis: TitleTagsAnalysis | SEOError; // on page (5)
   uniqueContentAnalysis: UniqueContentAnalysis | SEOError; // on page (6)
@@ -115,6 +143,26 @@ export interface InternalLinksAnalysis {
   uniqueLinks: number;
 }
 
+export interface LightHouseAnalysis {
+  scores: LightHouseScore;
+  diagnostics: {
+    recommendations: LightHouseRecommendations[];
+  }
+}
+
+export interface LightHouseScore {
+  accessibility: number;
+  bestPractices: number;
+  performance: number;
+}
+
+export interface LightHouseRecommendations {
+  title: string;
+  description: string;
+  score: number;
+  displayValue?: number;
+}
+
 export interface MetaDescriptionAnalysis {
   length: number;
   recommendations: string;
@@ -123,6 +171,11 @@ export interface MetaDescriptionAnalysis {
 
 export interface MobileFriendlinessAnalysis {
   isResponsive: boolean;
+  recommendations: string;
+}
+
+export interface SiteSpeedAnalysis {
+  loadTime: number;
   recommendations: string;
 }
 
@@ -181,4 +234,25 @@ export interface Summary {
   parkedUrls: string[];
   scrapableUrls: number;
   avgTime:number;
+  metaRadar: {
+    categories: string[],
+    series: Graph[]
+  },
+  domainRadar: {
+    categories: string[],
+    series: Graph[]
+  },
+  emotionsArea: {
+    series: Graph[]
+  }
+}
+
+export interface Graph {
+  name: string,
+  data: number[]
+}
+
+export interface Result {
+  status: string;
+  result?: ScraperResult;
 }

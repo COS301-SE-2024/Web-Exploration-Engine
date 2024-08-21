@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
+import logger from '../../logging/webscraperlogger';
+const serviceName = "[ScrapeMetadataService]";
 
 @Injectable()
 export class ScrapeMetadataService {
-  async scrapeMetadata(
-    url: string, data: RobotsResponse
-  ): Promise<Metadata | ErrorResponse> {
-    // Possible improvement: first scrape given URL, if no metadata found, scrape root URL
 
+  async scrapeMetadata( url: string, data: RobotsResponse, browser: puppeteer.Browser): Promise<Metadata | ErrorResponse> {
+    logger.debug(`${serviceName}`);    
     const allowed = data.isBaseUrlAllowed;
 
     if (!allowed) {
+      logger.warn(`${serviceName} Not allowed to scrape root URL for metadata`)
       return {
         errorStatus: 403,
         errorCode: '403 Forbidden',
@@ -19,11 +20,28 @@ export class ScrapeMetadataService {
       } as ErrorResponse;
     }
 
-    let browser;
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Proxy username or password not set',
+      } as ErrorResponse;
+    }
+
+    let page
 
     try {
-      browser = await puppeteer.launch();
-      const page = await browser.newPage();
+      page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
 
       await page.goto(url, { waitUntil: 'domcontentloaded' });
 
@@ -63,14 +81,15 @@ export class ScrapeMetadataService {
       return { ...metadata };
 
     } catch (error) {
+      logger.error(`${serviceName} Error scraping metadata: ${error.message}`)
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
         errorMessage: `Error scraping metadata: ${error.message}`,
       } as ErrorResponse;
     } finally {
-      if (browser) {
-        await browser.close();
+      if (page) {
+        await page.close();
       }
     }
   }

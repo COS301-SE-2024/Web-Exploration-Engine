@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
+import * as puppeteer from 'puppeteer';
+import logger from '../../logging/webscraperlogger';
 
+const serviceName = "[ScrapeAddressService]";
 @Injectable()
 export class ScrapeAddressService {
   /**
@@ -10,15 +12,35 @@ export class ScrapeAddressService {
    * @param robots - The robots response to check if crawling is allowed.
    * @returns {Promise<{ addresses: string[] }>} 
    */
-  async scrapeAddress(url: string, robots: RobotsResponse): Promise<{ addresses: string[] }> {
-    try {
-      if (!robots.isBaseUrlAllowed) {
-        console.error('Crawling not allowed for this URL');
-        return { addresses: [] };
-      }
+  async scrapeAddress(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ addresses: string[] }> {
+    logger.debug(`${serviceName}`);
 
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
+    if (!robots.isBaseUrlAllowed) {
+      logger.warn(`${serviceName} Crawling not allowed for this URL`);
+      console.error('Crawling not allowed for this URL');
+      return { addresses: [] };
+    }
+
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return { addresses: [] };
+    };
+
+    let page: puppeteer.Page | null = null;
+
+    try {
+      page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
+      
       await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
 
       const addresses = await page.evaluate(() => {
@@ -26,8 +48,6 @@ export class ScrapeAddressService {
       const textContent = document.body.innerText;
       return Array.from(textContent.matchAll(addressPattern), match => match[0].trim());
       });
-
-      await browser.close();
 
       //newline removed
       const cleanAddresses = addresses.map(address => address.replace(/\n/g, ' '));
@@ -44,8 +64,13 @@ export class ScrapeAddressService {
 
       return { addresses: validAddresses };
     } catch (error) {
+      logger.error(`${serviceName} Failed to scrape addresses: ${error.message}`);
       console.error(`Failed to scrape addresses: ${error.message}`);
       return { addresses: [] };
+    } finally {
+      if (page) {
+        await page.close();
+      }
     }
   }
 }

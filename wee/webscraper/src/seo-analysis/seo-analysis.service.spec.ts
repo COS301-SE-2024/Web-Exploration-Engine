@@ -9,22 +9,8 @@ jest.mock('puppeteer');
 
 describe('SeoAnalysisService', () => {
     let service: SeoAnalysisService;
-    let mockBrowser: any;
-    let mockPage: any;
   
     beforeEach(async () => {
-      mockBrowser = {
-        newPage: jest.fn().mockResolvedValue(mockPage),
-        close: jest.fn(),
-      };
-      mockPage = {
-        goto: jest.fn(),
-        setViewport: jest.fn().mockResolvedValue(null), // Mock setViewport function
-        evaluate: jest.fn(),
-        close: jest.fn(),
-      };
-  
-      jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
   
       const module: TestingModule = await Test.createTestingModule({
         providers: [SeoAnalysisService],
@@ -43,7 +29,24 @@ describe('SeoAnalysisService', () => {
         isUrlScrapable: false,
       };
 
-      const result = await service.seoAnalysis('http://example.com', robots);
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn(),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+
+      const result = await service.seoAnalysis('http://example.com', robots, mockBrowser);
 
       expect(result).toEqual({ error: 'Crawling not allowed for this URL' });
     });
@@ -58,7 +61,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: 'Test description',
         length: 16,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 16 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
     it('should handle an empty meta description', async () => {
@@ -71,7 +74,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: '',
         length: 0,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 0 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
   
@@ -85,7 +88,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: '',
         length: 0,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 0 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
     it('should handle malformed HTML content', async () => {
@@ -98,7 +101,7 @@ describe('SeoAnalysisService', () => {
         metaDescription: 'Test description',
         length: 16,
         isUrlWordsInDescription: false,
-        recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: example.',
+        recommendations: `The meta description is short at 16 characters. Consider adding more details to reach the optimal length of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
       });
     });
   
@@ -109,6 +112,46 @@ describe('SeoAnalysisService', () => {
       jest.spyOn(service, 'analyzeMetaDescription').mockRejectedValue(new Error('Unexpected error'));
   
       await expect(service.analyzeMetaDescription(htmlContent, url)).rejects.toThrow('Unexpected error');
+    });
+    it('should handle a meta description over 160 characters', async () => {
+      const htmlContent = `<html><head><meta name="description" content="${'a'.repeat(161)}"></head></html>`;
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'a'.repeat(161),
+        length: 161,
+        isUrlWordsInDescription: false,
+        recommendations: `The meta description is 161 characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
+      });
+    });
+  
+    it('should handle a meta description within the optimal length range', async () => {
+      const htmlContent = `<html><head><meta name="description" content="${'a'.repeat(150)}"></head></html>`;
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+  
+      expect(result).toEqual({
+        metaDescription: 'a'.repeat(150),
+        length: 150,
+        isUrlWordsInDescription: false,
+        recommendations: `The meta description (150 characters long) is within the optimal length range of 120-160 characters. The words from the URL (example) aren't included in the meta description. Including these can help search engines better understand the relevance of your page.`,
+      });
+    });
+    it('should return correct analysis when key terms from URL are included in meta description', async () => {
+      const htmlContent = '<html><head><meta name="description" content="Example content with example keyword"></head></html>';
+      const url = 'http://example.com';
+      
+      const result = await service.analyzeMetaDescription(htmlContent, url);
+    
+      expect(result).toEqual({
+        metaDescription: 'Example content with example keyword',
+        length: 36,
+        isUrlWordsInDescription: true,  
+        recommendations: `The meta description is short at 36 characters. Consider adding more details to reach the optimal length of 120-160 characters. There is key terms included from the URL in the meta description.`
+      });
     });
   });
 
@@ -154,9 +197,14 @@ describe('SeoAnalysisService', () => {
             { src: 'http://example.com/image.jpg', alt: 'Test image' },
           ]),
           close: jest.fn(),
+          authenticate: jest.fn(),
         }),
         close: jest.fn(),
-      };
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
       jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
 
@@ -165,7 +213,7 @@ describe('SeoAnalysisService', () => {
         reasons: [],
       });
 
-      const result = await service.analyzeImageOptimization(url);
+      const result = await service.analyzeImageOptimization(url, browser);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -178,6 +226,154 @@ describe('SeoAnalysisService', () => {
         },
         recommendations: '',
         errorUrls: [],
+      });
+    });
+    it('should handle non-optimized images with format issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.png', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['format'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: ['http://example.com/image.png'],
+          size: [],
+          other: [],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. Some images are in non-optimized formats. Consider converting them to modern formats like WebP for better performance.',
+        errorUrls: ['Error optimizing image: http://example.com/image.png. format'],
+      });
+    });
+  
+    it('should handle non-optimized images with size issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.jpg', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['size'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: ['http://example.com/image.jpg'],
+          other: [],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. Some images are too large. Consider resizing them to fit the actual display size on the webpage to reduce load times.',
+        errorUrls: ['Error optimizing image: http://example.com/image.jpg. size'],
+      });
+    });
+  
+    it('should handle non-optimized images with other issues', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.gif', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockResolvedValue({
+        optimized: false,
+        reasons: ['other issue'],
+      });
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: [],
+          other: ['http://example.com/image.gif'],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial.',
+        errorUrls: ['Error optimizing image: http://example.com/image.gif. other issue'],
+      });
+    });
+  
+    it('should handle errors during image optimization', async () => {
+      const url = 'http://example.com';
+  
+      const browser = {
+        newPage: jest.fn().mockResolvedValue({
+          goto: jest.fn(),
+          $$eval: jest.fn().mockResolvedValue([
+            { src: 'http://example.com/image.jpg', alt: 'Test image' },
+          ]),
+          close: jest.fn(),
+          authenticate: jest.fn(),
+        }),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      jest.spyOn(puppeteer, 'launch').mockResolvedValue(browser as any);
+  
+      jest.spyOn(service, 'isImageOptimized').mockRejectedValue(new Error('Unexpected error'));
+  
+      const result = await service.analyzeImageOptimization(url, browser);
+  
+      expect(result).toEqual({
+        totalImages: 1,
+        missingAltTextCount: 0,
+        nonOptimizedCount: 1,
+        reasonsMap: {
+          format: [],
+          size: [],
+          other: ['http://example.com/image.jpg'],
+        },
+        recommendations: 'We detected 1 non-optimized images. Optimizing images can significantly improve page load times. There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial.',
+        errorUrls: ['Error checking optimization for image: http://example.com/image.jpg. Unexpected error'],
       });
     });
   });
@@ -206,7 +402,39 @@ describe('SeoAnalysisService', () => {
       expect(result).toEqual({
         titleTag: 'Test Title',
         length: 10,
-        recommendations: 'Title tag length should be between 50 and 60 characters.',
+        recommendations: 'Your title tag is too short (10 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+    it('should handle a title tag within the optimal length range', async () => {
+      const htmlContent = '<html><head><title>Optimal Length Title Tag</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'Optimal Length Title Tag',
+        length: 24,
+        recommendations: 'Your title tag is too short (24 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+  
+    it('should handle a title tag that is too short', async () => {
+      const htmlContent = '<html><head><title>Short</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'Short',
+        length: 5,
+        recommendations: 'Your title tag is too short (5 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
+      });
+    });
+  
+    it('should handle a title tag that is too long', async () => {
+      const htmlContent = '<html><head><title>This is a Very Long Title Tag That Exceeds the Optimal Length</title></head></html>';
+      const result = await service.analyzeTitleTag(htmlContent);
+  
+      expect(result).toEqual({
+        titleTag: 'This is a Very Long Title Tag That Exceeds the Optimal Length',
+        length: 61,
+        recommendations: 'Your title tag is too long (61 characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.',
       });
     });
 });
@@ -218,7 +446,7 @@ describe('analyzeHeadings', () => {
       expect(result).toEqual({
         headings: ['Heading 1', 'Heading 2'],
         count: 2,
-        recommendations: '',
+        recommendations: 'We found the following heading levels: H1, H2.',
       });
     });
     it('should handle pages with no headings', async () => {
@@ -227,7 +455,7 @@ describe('analyzeHeadings', () => {
   
       expect(result.headings).toEqual([]);
       expect(result.count).toBe(0);
-      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.');
     });
   });
   describe('analyzeContentQuality', () => {
@@ -238,27 +466,58 @@ describe('analyzeHeadings', () => {
       expect(result.textLength).toBe(8);
       expect(result.uniqueWordsPercentage).toBeCloseTo(50); 
       expect(result.repeatedWords.length).toBe(4);
-      expect(result.recommendations).toBe('Content length should ideally be more than 500 characters.');
+      expect(result.recommendations).toBe('The content is currently 8 words long. For better engagement and SEO performance, consider expanding your content to be more than 500 words. This allows you to cover topics more comprehensively and improves your chances of ranking higher in search results.');
     });
+    
   });
   describe('analyzeInternalLinks', () => {
-    it('should return internal links analysis', async () => {
+  
+    it('should return internal links analysis with recommendations for adding more links if unique links are less than 10', async () => {
       const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a></body></html>';
       const result = await service.analyzeInternalLinks(htmlContent);
-
-      expect(result.totalLinks).toBe(2); 
-      expect(result.uniqueLinks).toBe(2); 
-      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.'); 
+  
+      expect(result.totalLinks).toBe(2);
+      expect(result.uniqueLinks).toBe(2);
+      expect(result.recommendations).toBe('The site has 2 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
     });
+  
     it('should handle pages with no internal links', async () => {
       const htmlContent = '<html><body></body></html>';
       const result = await service.analyzeInternalLinks(htmlContent);
-  
+    
       expect(result.totalLinks).toBe(0);
       expect(result.uniqueLinks).toBe(0);
-      expect(result.recommendations).toBe('Internal linking is sparse. Consider adding more internal links to aid navigation and SEO.');
+      expect(result.recommendations).toBe('The site has 0 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
+    });
+  
+    it('should handle pages with duplicate internal links', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page1">Link 1</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(2);
+      expect(result.uniqueLinks).toBe(1);
+      expect(result.recommendations).toBe('The site has 1 unique internal links. Consider adding more to improve navigation and help users discover more of the content. There are 1 duplicate links. Consider reviewing these to avoid potential redundancy.');
+    });
+  
+    it('should handle pages with a solid internal linking structure when unique links are 10 or more', async () => {
+      const htmlContent = '<html><body>' + Array.from({ length: 10 }, (_, i) => `<a href="/page${i+1}">Link ${i+1}</a>`).join('') + '</body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(10);
+      expect(result.uniqueLinks).toBe(10);
+      expect(result.recommendations).toBe('The site has 10 unique internal links, the site has a solid internal linking structure.');
+    });
+    
+    it('should return internal links analysis when unique links are between 1 and 9', async () => {
+      const htmlContent = '<html><body><a href="/page1">Link 1</a><a href="/page2">Link 2</a><a href="/page3">Link 3</a></body></html>';
+      const result = await service.analyzeInternalLinks(htmlContent);
+  
+      expect(result.totalLinks).toBe(3);
+      expect(result.uniqueLinks).toBe(3);
+      expect(result.recommendations).toBe('The site has 3 unique internal links. Consider adding more to improve navigation and help users discover more of the content.');
     });
   });
+  
   describe('analyzeSiteSpeed', () => {
     it('should return site speed analysis with recommendations if load time is above 3 seconds', async () => {
         const url = 'http://example.com';
@@ -278,7 +537,7 @@ describe('analyzeHeadings', () => {
         const result = await service.analyzeSiteSpeed(url);
 
         expect(result.loadTime).toBe(4); 
-        expect(result.recommendations).toBe('Page load time is above 3 seconds. Consider optimizing resources to improve site speed.');
+        expect(result.recommendations).toBe('The page load time is 4.00 seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience.');
     });
 
     it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
@@ -300,18 +559,81 @@ describe('analyzeHeadings', () => {
         const result = await service.analyzeSiteSpeed(url);
 
         expect(result.loadTime).toBe(3); 
-        expect(result.recommendations).toBe(''); // No recommendations for load time <= 3 seconds
+        expect(result.recommendations).toBe('The page load time is 3.00 seconds, which is well within the recommended limits.'); 
     });
-
+    it('should return site speed analysis without recommendations if load time is 3 seconds or below', async () => {
+      const url = 'http://example.com';
+  
+      const mockApiResponse = {
+        lighthouseResult: {
+          audits: {
+            'speed-index': {
+              numericValue: 3000, 
+            },
+          },
+        },
+      };
+  
+      (axios.get as jest.Mock).mockResolvedValue({ data: mockApiResponse });
+  
+      const result = await service.analyzeSiteSpeed(url);
+  
+      expect(result.loadTime).toBe(3); 
+      expect(result.recommendations).toBe(
+        'The page load time is 3.00 seconds, which is well within the recommended limits.'
+      );
+    });
 });
 
   describe('analyzeMobileFriendliness', () => {
     it('should return mobile friendliness analysis', async () => {
       const url = 'http://example.com';
-      const result = await service.analyzeMobileFriendliness(url);
+
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn(),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+
+      const result = await service.analyzeMobileFriendliness(url, mockBrowser);
 
       expect(result.isResponsive).toBe(undefined); 
-      expect(result.recommendations).toBe('Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.'); 
+      expect(result.recommendations).toBe(`The site isn't fully responsive on a 375px viewport, which is a common width for smartphones. Review your CSS media queries and viewport meta tag to ensure better mobile compatibility.`); 
+    });
+    it('should return mobile friendliness analysis for a responsive site', async () => {
+      const url = 'http://example.com';
+  
+      const mockPage = {
+        goto: jest.fn(),
+        evaluate: jest.fn().mockResolvedValue(true), 
+        authenticate: jest.fn(),
+        close: jest.fn(),
+        setViewport: jest.fn(),
+      } as unknown as puppeteer.Page;
+    
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
+  
+      const result = await service.analyzeMobileFriendliness(url, mockBrowser);
+  
+      expect(result.isResponsive).toBe(true); 
+      expect(result.recommendations).toBe(`Your site is responsive on a 375px viewport, which is a common width for smartphones.`);
     });
   });
 
@@ -322,7 +644,7 @@ describe('analyzeHeadings', () => {
 
       expect(result.headings).toEqual([]);
       expect(result.count).toBe(0);
-      expect(result.recommendations).toBe('No headings (H1-H6) found. Add headings to improve structure.');
+      expect(result.recommendations).toBe('No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.');
     });
   });
   describe('extractWordsFromUrl', () => {
@@ -482,7 +804,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 1,
-            recommendations: '',
+            recommendations: 'Your site includes 1 structured data element.',
         });
     });
 
@@ -492,7 +814,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 0,
-            recommendations: 'No structured data found. Add structured data to improve SEO.',
+            recommendations: 'Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.',
         });
     });
 
@@ -510,7 +832,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             count: 2,
-            recommendations: '',
+            recommendations: 'Your site includes 2 structured data elements.',
         });
     });
   });
@@ -521,7 +843,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: true,
-            recommendations: '',
+            recommendations: 'Your page is currently set to be indexed by search engines, which is great for visibility.',
         });
     });
 
@@ -531,7 +853,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: false,
-            recommendations: 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.',
+            recommendations: `The page is marked as "noindex," meaning it won't be indexed by search engines. If you want this page to appear in search results, remove the "noindex" directive from the meta robots tag.`,
         });
     });
 
@@ -541,7 +863,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isIndexable: true,
-            recommendations: '',
+            recommendations: 'Your page is currently set to be indexed by search engines, which is great for visibility.',
         });
     });
   });
@@ -557,7 +879,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isSitemapValid: true,
-            recommendations: '',
+            recommendations: 'The XML sitemap at http://example.com/sitemap.xml is present and accessible.',
         });
     });
 
@@ -571,7 +893,7 @@ describe('analyzeHeadings', () => {
 
         expect(result).toEqual({
             isSitemapValid: false,
-            recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
+            recommendations: 'The XML sitemap at http://example.com/sitemap.xml is missing or inaccessible. Ensure it is present and accessible. If the problem persists, check the server configuration or permissions.',
         });
     });
 });
@@ -584,7 +906,7 @@ describe('analyzeCanonicalTags', () => {
       expect(result).toEqual({
           canonicalTag: 'http://example.com/canonical',
           isCanonicalTagPresent: true,
-          recommendations: '',
+          recommendations: 'The canonical tag for the page is set to http://example.com/canonical.',
       });
   });
 
@@ -596,7 +918,7 @@ describe('analyzeCanonicalTags', () => {
       expect(result).toEqual({
           canonicalTag: '',
           isCanonicalTagPresent: false,
-          recommendations: 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.',
+          recommendations: 'The page is missing a canonical tag. Adding a canonical tag helps avoid duplicate content issues and improves SEO.',
       });
   });
 });

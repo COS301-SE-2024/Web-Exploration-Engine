@@ -15,7 +15,90 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const industries: string[] = [];
   const industryPercentages: number[] = [];
   const weakClassification: { url: string; metadataClass: string; score: number }[] = [];
+
+  const metaRadarCategories: string[] = [];
+  const metaRadarSeries: { name: string; data: number[] }[] = [];
   
+  const domainRadarCategories: string[] = [];
+  const domainRadarSeries: { name: string; data: number[] }[] = [];
+
+  const emotionsAreaSeries: { name: string; data: number[] }[] = [];
+
+  // EMOTIONS AREA
+  for (const result of scraperResults) {
+    if (result.sentiment && JSON.stringify(result.sentiment.emotions) !== '{}') {
+      emotionsAreaSeries.push({
+        name: result.url, 
+        data: [
+          Math.round(result.sentiment.emotions.anger*100), 
+          Math.round(result.sentiment.emotions.disgust*100), 
+          Math.round(result.sentiment.emotions.fear*100), 
+          Math.round(result.sentiment.emotions.joy*100), 
+          Math.round(result.sentiment.emotions.neutral*100), 
+          Math.round(result.sentiment.emotions.sadness*100), 
+          Math.round(result.sentiment.emotions.surprise*100)
+        ]});
+    }
+  }
+
+  // META RADAR
+  // get all the categories in the scrape result page
+  for (const result of scraperResults) {
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify) {
+      for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+        if (!metaRadarCategories.includes(metaIndustry.label)) {
+          metaRadarCategories.push(metaIndustry.label);
+        }
+      }
+    }
+  }
+
+  // update scores for each corresponding category saved for each url
+  for (const result of scraperResults) {
+    metaRadarSeries.push({ name: result.url, data: new Array(metaRadarCategories.length).fill(0) });
+  }
+
+  for (const result of scraperResults) {
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify) {
+      for (const metaIndustry of result.industryClassification.zeroShotMetaDataClassify) {
+        const categoryIndex = metaRadarCategories.indexOf(metaIndustry.label);
+        if (categoryIndex !== -1) {
+          const seriesIndex = scraperResults.indexOf(result);
+          metaRadarSeries[seriesIndex].data[categoryIndex] = (metaIndustry.score * 100);
+        }
+      }
+    }
+  }
+
+  // DOMAIN RADAR
+  // get all the categories in the scrape result page
+  for (const result of scraperResults) {
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify) {
+      for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+        if (!domainRadarCategories.includes(domainIndustry.label)) {
+          domainRadarCategories.push(domainIndustry.label);
+        }
+      }
+    }
+  }
+
+  // update scores for each corresponding category saved for each url
+  for (const result of scraperResults) {
+    domainRadarSeries.push({ name: result.url, data: new Array(domainRadarCategories.length).fill(0) });
+  }
+
+  for (const result of scraperResults) {
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify) {
+      for (const domainIndustry of result.industryClassification.zeroShotDomainClassify) {
+        const categoryIndex = domainRadarCategories.indexOf(domainIndustry.label);
+        if (categoryIndex !== -1) {
+          const seriesIndex = scraperResults.indexOf(result);
+          domainRadarSeries[seriesIndex].data[categoryIndex] = (domainIndustry.score * 100);
+        }
+      }
+    }
+  }  
+
   // domain match classification
   let numMatched = 0;
   const mismatchedUrls: { url: string; metadataClass: string; domainClass: string }[] = [];
@@ -44,15 +127,15 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     
     // calculate industry classification percentages
     if (result.industryClassification && 
-      result.industryClassification.metadataClass.label && 
-      result.industryClassification.metadataClass.label !== 'Unknown') {
-      const industry = result.industryClassification.metadataClass.label;
+      result.industryClassification.zeroShotMetaDataClassify[0].label && 
+      result.industryClassification.zeroShotMetaDataClassify[0].label !== 'Unknown') {
+      const industry = result.industryClassification.zeroShotMetaDataClassify[0].label;
       industryCounts[industry] = (industryCounts[industry] || 0) + 1;
-      if (result.industryClassification.metadataClass.score < 0.5) {
+      if (result.industryClassification.zeroShotMetaDataClassify[0].score < 0.5) {
         weakClassification.push({
           url: result.url,
-          metadataClass: result.industryClassification.metadataClass.label,
-          score: result.industryClassification.metadataClass.score,
+          metadataClass: result.industryClassification.zeroShotMetaDataClassify[0].label,
+          score: result.industryClassification.zeroShotMetaDataClassify[0].score,
         });
       }
     } else {
@@ -62,10 +145,10 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
  
     // domain match classification
     if (result.industryClassification && 
-      result.industryClassification.domainClass.label && 
-      result.industryClassification.metadataClass.label) {
-      const domainClass = result.industryClassification.domainClass.label;
-      const metadataClass = result.industryClassification.metadataClass.label;
+      result.industryClassification.zeroShotDomainClassify[0].label && 
+      result.industryClassification.zeroShotMetaDataClassify[0].label) {
+      const domainClass = result.industryClassification.zeroShotDomainClassify[0].label;
+      const metadataClass = result.industryClassification.zeroShotMetaDataClassify[0].label;
       if (domainClass === metadataClass) {
         numMatched++;
       } else {
@@ -110,7 +193,6 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
         industries,
         percentages: industryPercentages,
       },
-
       weakClassification,
     },
     domainMatch: {
@@ -121,5 +203,16 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     parkedUrls,
     scrapableUrls: numScrapableUrls,
     avgTime:avgTime,
+    metaRadar: {
+      categories: metaRadarCategories,
+      series: metaRadarSeries,
+    },
+    domainRadar: {
+      categories: domainRadarCategories,
+      series: domainRadarSeries,
+    },
+    emotionsArea: {
+      series: emotionsAreaSeries,
+    }
   }
 }
