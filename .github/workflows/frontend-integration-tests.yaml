@@ -19,7 +19,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
       NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      TESTING_EVIRONMENT : true
+      NEXT_PUBLIC_TESTING_EVIRONMENT : true
 
     steps:
       - name: Checkout
