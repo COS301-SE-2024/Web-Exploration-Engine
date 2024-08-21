@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -26,7 +26,8 @@ export const handleDownloadReport = (
   xMLSitemapAnalysis: XMLSitemapAnalysis | SEOError |undefined,
   canonicalTagAnalysis: CanonicalTagAnalysis | SEOError |undefined,
   indexabilityAnalysis: IndexabilityAnalysis | SEOError |undefined,  
-  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError |undefined
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError |undefined,
+  structuredDataAnalysis: StructuredDataAnalysis | SEOError |undefined
 
 ) => {
   const doc = new jsPDF();
@@ -668,6 +669,59 @@ if (canonicalTagAnalysis) {
       }
     });
   }
+//
+//Structured data
+doc.addPage();
+doc.setFontSize(20);
+const title13 = 'Structured data Analysis';
+const titleWidth13 = doc.getStringUnitWidth(title13) * 20 / doc.internal.scaleFactor;
+const x13 = (doc.internal.pageSize.width - titleWidth13) / 2;
+doc.text(title13, x13, 20);
+
+
+if (structuredDataAnalysis) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  const structuredDataAnalysisRows = [
+      ['Count', structuredDataAnalysis && 'count' in structuredDataAnalysis ? `${structuredDataAnalysis.count}` : 'N/A'],
+      ['Recommendations', structuredDataAnalysis && 'recommendations' in structuredDataAnalysis ? structuredDataAnalysis.recommendations : 'N/A']
+  ];
+  
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  structuredDataAnalysisRows.forEach(row => {
+    const [category, info] = row;
+    const categoryLines = splitText(String(category), columnWidth[0] - 4);
+    const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+    categoryLines.forEach((line, i) => {
+      doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+    });
+    infoLines.forEach((line, i) => {
+      doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+    });
+
+    // Draw line after each row
+    drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+    y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+    if (y > 270) { // Check if the y position exceeds the page limit
+      doc.addPage();
+      y = 20; // Reset y position on the new page
+      doc.text('Category', margin + 2, y + 7);
+      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+      y += headerHeight;
+    }
+  });
+}
 ///Sentiment
 doc.addPage();
   doc.setFontSize(20);
