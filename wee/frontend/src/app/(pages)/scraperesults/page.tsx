@@ -215,10 +215,6 @@ const getScrapingResults = async (url: string) => {
 
        let result = await pollForResult(url) as Result;
 
-       //if (apiUrl == 'http://localhost:3002/api' &&  !result process.env.TESTING_EVIRONMENT == "true") {
-        
-       //if ( url.includes('mock.test.') ) {
-       console.log(process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT)
        if ( url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') ) {
         console.log(process.env.Tes)
           if (url.includes('mock.test.wimpy'))
