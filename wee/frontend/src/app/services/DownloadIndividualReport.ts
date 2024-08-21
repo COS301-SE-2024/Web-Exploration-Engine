@@ -155,7 +155,7 @@ export const handleDownloadReport = (
       ['Meta Description', titleTagAnalysis && 'metaDescription' in titleTagAnalysis ? titleTagAnalysis.metaDescription : 'N/A'],
       ['URL Words in Description', titleTagAnalysis && 'isUrlWordsInDescription' in titleTagAnalysis ? (titleTagAnalysis.isUrlWordsInDescription ? 'Yes' : 'No') : 'N/A'],
       ['Length', titleTagAnalysis && 'length' in titleTagAnalysis ? `${titleTagAnalysis.length}` : 'N/A'],
-      //['Recommendations', titleTagAnalysis && 'recommendations' in titleTagAnalysis ? titleTagAnalysis.recommendations : 'N/A']
+      ['Recommendations', titleTagAnalysis && 'recommendations' in titleTagAnalysis ? titleTagAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -209,7 +209,7 @@ export const handleDownloadReport = (
     const headingAnalysisRows = [
       ['Count', headingAnalysis && 'count' in headingAnalysis ? `${headingAnalysis.count}` : 'N/A'],
       ['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
-      //['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
+      ['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -264,7 +264,7 @@ export const handleDownloadReport = (
       ['Non-Optimized Count', imageAnalysis && 'nonOptimizedCount' in imageAnalysis ? `${imageAnalysis.nonOptimizedCount}` : 'N/A'],
       ['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
       //['Reasons Map', imageAnalysis && 'reasonsMap' in imageAnalysis ? JSON.stringify(imageAnalysis.reasonsMap) : 'N/A'],
-      //['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
+      ['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -318,7 +318,7 @@ export const handleDownloadReport = (
     const internalLinksAnalysisRows = [
       ['Total Links', internalLinksAnalysis && 'totalLinks' in internalLinksAnalysis ? `${internalLinksAnalysis.totalLinks}` : 'N/A'],
       ['Unique Links', internalLinksAnalysis && 'uniqueLinks' in internalLinksAnalysis ? `${internalLinksAnalysis.uniqueLinks}` : 'N/A'],
-      //['Recommendations', internalLinksAnalysis && 'recommendations' in internalLinksAnalysis ? internalLinksAnalysis.recommendations : 'N/A']
+      ['Recommendations', internalLinksAnalysis && 'recommendations' in internalLinksAnalysis ? internalLinksAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -372,7 +372,7 @@ export const handleDownloadReport = (
     const metaDescriptionAnalysisRows = [
       ['Title Tag', metaDescriptionAnalysis && 'titleTag' in metaDescriptionAnalysis ? metaDescriptionAnalysis.titleTag : 'N/A'],
       ['Length', metaDescriptionAnalysis && 'length' in metaDescriptionAnalysis ? `${metaDescriptionAnalysis.length}` : 'N/A'],
-      //['Recommendations', metaDescriptionAnalysis && 'recommendations' in metaDescriptionAnalysis ? metaDescriptionAnalysis.recommendations : 'N/A']
+      ['Recommendations', metaDescriptionAnalysis && 'recommendations' in metaDescriptionAnalysis ? metaDescriptionAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -427,7 +427,7 @@ export const handleDownloadReport = (
         ['Text Length', uniqueContentAnalysis && 'textLength' in uniqueContentAnalysis ? `${uniqueContentAnalysis.textLength}` : 'N/A'],
         ['Unique Words Percentage', uniqueContentAnalysis && 'uniqueWordsPercentage' in uniqueContentAnalysis ? `${uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2)}%` : 'N/A'],
         ['Repeated Words', uniqueContentAnalysis && 'repeatedWords' in uniqueContentAnalysis ? uniqueContentAnalysis.repeatedWords.map(word => `${word.word}: ${word.count}`).join(', ') : 'N/A'],
-      //['Recommendations', uniqueContentAnalysis && 'recommendations' in uniqueContentAnalysis ? uniqueContentAnalysis.recommendations : 'N/A'],
+      ['Recommendations', uniqueContentAnalysis && 'recommendations' in uniqueContentAnalysis ? uniqueContentAnalysis.recommendations : 'N/A'],
 
     ];
     
