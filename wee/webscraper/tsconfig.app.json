@@ -8,5 +8,5 @@
     "target": "es2021"
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "src/unit-tests/read-robots-txt.test.ts", "src/services/logger.js", "logging/webscraperlogger.ts"]
+  "include": ["src/**/*.ts", "src/unit-tests/read-robots-txt.test.ts"]
 }

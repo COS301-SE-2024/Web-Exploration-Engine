@@ -3,19 +3,12 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import logger from '../../logging/webscraperlogger';
-const serviceName = "[SeoAnalysisService]";
 @Injectable()
 export class SeoAnalysisService {
-  private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
+  private readonly API_KEY = process.env.api_key;
   async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
-  
-    logger.debug(`${serviceName}`);
-    
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
-      logger.warn(`${serviceName} Crawling not allowed for this URL`);
       return {
         error: 'Crawling not allowed for this URL',
       };
@@ -80,7 +73,6 @@ export class SeoAnalysisService {
   }
 
   async analyzeMetaDescription(htmlContent: string, url: string) {
-    
     const $ = cheerio.load(htmlContent);
     const metaDescription = $('meta[name="description"]').attr('content') || '';
     const length = metaDescription.length;
@@ -91,19 +83,10 @@ export class SeoAnalysisService {
 
     let recommendations = '';
     if (!isOptimized) {
-      if (length < 120) {
-        recommendations += `The meta description is short at ${length} characters. Consider adding more details to reach the optimal length of 120-160 characters. `;
-      } else if (length > 160) {
-        recommendations += `The meta description is ${length} characters long, which is over the optimal range. Trim it down a bit to keep it concise and within 120-160 characters. `;
-      }
-    } else {
-      recommendations += `The meta description (${length} characters long) is within the optimal length range of 120-160 characters. `;
+      recommendations += 'Meta description length should be between 120 and 160 characters. ';
     }
-  
     if (!isUrlWordsInDescription) {
-      recommendations += `The words from the URL (${urlWords.join(', ')}) aren't included in the meta description. Including these can help search engines better understand the relevance of your page. `;
-    } else {
-      recommendations += `There is key terms included from the URL in the meta description. `;
+      recommendations += `Consider including words from the URL in the meta description: ${urlWords.join(' ')}. `;
     }
 
     return {
@@ -130,33 +113,24 @@ export class SeoAnalysisService {
       const response = await axios.get(url);
       return response.data;
     } catch (error) {
-
       throw new Error(`Error fetching HTML from ${url}: ${error.message}`);
     }
   }
 
   async analyzeTitleTag(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const titleTag = $('title').text().trim();
+    const titleTag = $('title').text();
     const length = titleTag.length;
-    let recommendations;
-  
-    if (length >= 50 && length <= 60) {
-      recommendations = `Title tag length (${length} characters) is in the optimal range.`;
-    } else if (length < 50) {
-      recommendations = `Your title tag is too short (${length} characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.`;
-    } else {
-      recommendations = `Your title tag is too long (${length} characters). For better visibility and SEO, it should ideally be between 50 and 60 characters.`;
-    }
-  
+    const isOptimized = length >= 50 && length <= 60;
+    const recommendations = isOptimized ? '' : 'Title tag length should be between 50 and 60 characters.';
+
     return {
       titleTag,
       length,
+      //isOptimized,
       recommendations,
     };
   }
-  
-  
 
   async analyzeHeadings(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
@@ -166,44 +140,36 @@ export class SeoAnalysisService {
       .filter(text => text.length > 0);
     
     const count = headings.length;
-  
-    let recommendations;
-    if (count > 0) {
-      const headingTags = $('h1, h2, h3, h4, h5, h6').toArray().map(el => el.tagName.toUpperCase());
-      const uniqueTags = [...new Set(headingTags)];
-      recommendations = `We found the following heading levels: ${uniqueTags.join(', ')}.`;
-    } else {
-      recommendations = 'No headings (H1-H6) found. Consider adding headings to improve content structure and SEO.';
-    }
+    const recommendations = count > 0 ? '' : 'No headings (H1-H6) found. Add headings to improve structure.';
   
     return {
       headings,
       count,
       recommendations,
     };
-  }  
+  }
   async analyzeImageOptimization(url: string, browser: puppeteer.Browser) {    
     // proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
-  
+
     if (!username || !password) {
-      //console.error('Proxy username or password not set');
+      console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
     }
-  
-    let page: puppeteer.Page;
+
+    let page: puppeteer.Page;;
     try {
       page = await browser.newPage();
-  
+
       // authenticate page with proxy
       await page.authenticate({
         username,
         password
       });
-  
+
       await page.goto(url, { waitUntil: 'networkidle0' });
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
@@ -250,10 +216,7 @@ export class SeoAnalysisService {
             errorUrls.push(`Error optimizing image: ${img.src}. ${reasons.join(', ')}`);
           }
         } catch (error) {
-
-          //console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
-          logger.error(`${serviceName} Error checking optimization for image ${img.src}: ${error.message}`);
-
+          console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
           nonOptimizedCount++;
           reasonsMap.other.push(imageUrl);  // Categorize as "other"
           errorUrls.push(`Error checking optimization for image: ${img.src}. ${error.message}`);
@@ -262,20 +225,10 @@ export class SeoAnalysisService {
   
       let recommendations = '';
       if (missingAltTextCount > 0) {
-        recommendations += `We found ${missingAltTextCount} images without alt text. Adding descriptive alt text helps with accessibility and improves SEO. `;
+        recommendations += `${missingAltTextCount} images are missing alt text. `;
       }
       if (nonOptimizedCount > 0) {
-        recommendations += `We detected ${nonOptimizedCount} non-optimized images. Optimizing images can significantly improve page load times. `;
-  
-        if (reasonsMap.format.length > 0) {
-          recommendations += `Some images are in non-optimized formats. Consider converting them to modern formats like WebP for better performance. `;
-        }
-        if (reasonsMap.size.length > 0) {
-          recommendations += `Some images are too large. Consider resizing them to fit the actual display size on the webpage to reduce load times. `;
-        }
-        if (reasonsMap.other.length > 0) {
-          recommendations += `There are other issues with image optimization. Reviewing these images for potential improvements might be beneficial. `;
-        }
+        recommendations += `${nonOptimizedCount} images are not optimized. `;
       }
   
       return {
@@ -287,10 +240,7 @@ export class SeoAnalysisService {
         errorUrls,
       };
     } catch (error) {
-
-      logger.error(`${serviceName} Error analyzing images using Puppeteer: ${error.message}`);
-      //console.error(`Error analyzing images using Puppeteer: ${error.message}`);
-
+      console.error(`Error analyzing images using Puppeteer: ${error.message}`);
       return {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
       };
@@ -300,7 +250,6 @@ export class SeoAnalysisService {
       }
     }
   }
-  
 
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
     try {
@@ -340,22 +289,21 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
-      logger.error(`${serviceName} Error checking optimization for image ${imageUrl}: ${error.message}`);
       return {
         optimized: false,
         reasons: [],
       };
     }
   }
-  async analyzeContentQuality(htmlContent: string) {
+   async analyzeContentQuality(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-  
+
     const text = $('body').text();
     const textWords = text.split(/\s+/)
       .filter(word => /^[a-zA-Z]+$/.test(word)); 
     const textLength = textWords.length;
     const wordCounts = new Map<string, number>();
-  
+
     textWords.forEach(word => {
       const lowerCaseWord = word.toLowerCase();
       if (wordCounts.has(lowerCaseWord)) {
@@ -364,28 +312,23 @@ export class SeoAnalysisService {
         wordCounts.set(lowerCaseWord, 1);
       }
     });
-  
+
     const repeatedWords = [...wordCounts.entries()]
       .filter(([_, count]) => count > 1)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
       .map(([word, count]) => ({ word, count }));
-  
-    const uniqueWordsPercentage = new Set(textWords).size / textWords.length * 100;
-  
+
+    const uniqueWordsPercentage = new Set(textWords).size / textWords.length*100;
+
     let recommendations = '';
-  
     if (textLength < 500) {
-      recommendations += `The content is currently ${textLength} words long. For better engagement and SEO performance, consider expanding your content to be more than 500 words. This allows you to cover topics more comprehensively and improves your chances of ranking higher in search results. `;
-    }else {
-      recommendations += `The content is ${textLength} words long, which is ideal for covering topics comprehensively.`;
+      recommendations += 'Content length should ideally be more than 500 characters. ';
     }
-  
-    if (uniqueWordsPercentage < 50) {
-      recommendations += `The unique words percentage in your content is ${uniqueWordsPercentage.toFixed(2)}%, which indicates that your content may be repetitive. Try revising your content to introduce more variety in your language. `;
+    if (uniqueWordsPercentage < 0.5) {
+      recommendations += 'Unique words percentage is very low, consider revising your content to increase its uniqueness. ';
     }
 
-  
     return {
       textLength,
       uniqueWordsPercentage,
@@ -393,39 +336,25 @@ export class SeoAnalysisService {
       recommendations: recommendations.trim(),
     };
   }
-  
   async analyzeInternalLinks(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
-    const baseHref = $('base').attr('href') || '';
-    const internalLinks = $('a[href^="/"], a[href^="' + baseHref + '"]')
+    const internalLinks = $('a[href^="/"], a[href^="' + $('base').attr('href') + '"]')
       .toArray()
       .map(el => $(el).attr('href'));
-  
+
     const uniqueLinks = new Set(internalLinks).size;
-    const totalLinks = internalLinks.length;
-  
+
     let recommendations = '';
-    
     if (uniqueLinks < 5) {
-      recommendations += `The site has ${uniqueLinks} unique internal links. Consider adding more to improve navigation and help users discover more of the content. `;
-    } else if (uniqueLinks < 10) {
-      recommendations += `The site has ${uniqueLinks} unique internal links. Consider adding more to ensure a strong internal linking structure to further boost the site's SEO. `;
-    } else {
-      recommendations += `The site has ${uniqueLinks} unique internal links, the site has a solid internal linking structure. `;
+      recommendations += 'Internal linking is sparse. Consider adding more internal links to aid navigation and SEO. ';
     }
-  
-    if (totalLinks > uniqueLinks) {
-      const duplicateLinks = totalLinks - uniqueLinks;
-      recommendations += `There are ${duplicateLinks} duplicate links. Consider reviewing these to avoid potential redundancy. `;
-    }
-  
+
     return {
-      totalLinks,
+      totalLinks: internalLinks.length,
       uniqueLinks,
       recommendations: recommendations.trim(),
     };
   }
-  
   async analyzeSiteSpeed(url: string) {
     const apiUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}`;
   
@@ -436,13 +365,8 @@ export class SeoAnalysisService {
       const loadTime = data.lighthouseResult.audits['speed-index'].numericValue / 1000; // Convert milliseconds to seconds
   
       let recommendations = '';
-      
-      if (loadTime > 5) {
-        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is quite high. Users might experience noticeable delays. Consider optimizing images, reducing server response times, and leveraging browser caching to improve loading speed. `;
-      } else if (loadTime > 3) {
-        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is above the recommended 3 seconds. Try to streamline your page by minimizing the size of resources and improving server performance for a better user experience. `;
-      } else {
-        recommendations += `The page load time is ${loadTime.toFixed(2)} seconds, which is well within the recommended limits. `;
+      if (loadTime > 3) {
+        recommendations += 'Page load time is above 3 seconds. Consider optimizing resources to improve site speed.';
       }
   
       return {
@@ -451,30 +375,28 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       // console.error(`Error analyzing site speed: ${error.message}`);
-      logger.error(`${serviceName} Error analyzing site speed: ${error.message}`);
       // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
-  
   async analyzeMobileFriendliness(url: string, browser: puppeteer.Browser) {
-    // Proxy authentication
+    // proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
-  
+
     if (!username || !password) {
-      //console.error('Proxy username or password not set');
+      console.error('Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
     }
-  
+
     const page = await browser.newPage();
-    // Authenticate page with proxy
+    // authenticate page with proxy
     await page.authenticate({
       username,
       password,
     });
-  
+
     try {
       await page.setViewport({
         width: 375,
@@ -482,125 +404,89 @@ export class SeoAnalysisService {
         isMobile: true,
         hasTouch: true,
       });
-  
+
       await page.goto(url, { waitUntil: 'networkidle2' });
-  
+
       const isResponsive = await page.evaluate(() => {
         return window.innerWidth === 375;
       });
-  
+
       let recommendations = '';
       if (!isResponsive) {
-        recommendations += `The site isn't fully responsive on a 375px viewport, which is a common width for smartphones. `;
-        recommendations += `Review your CSS media queries and viewport meta tag to ensure better mobile compatibility. `;
-      } else {
-        recommendations += `Your site is responsive on a 375px viewport, which is a common width for smartphones.`;
-        //recommendations += `Keep up the good work and continue testing on different devices.`;
+        recommendations += 'Site is not fully responsive. Ensure that the site provides a good user experience on mobile devices.';
       }
-  
+
       return {
         isResponsive,
         recommendations: recommendations.trim(),
       };
     } catch (error) {
-      //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
-      logger.error(`${serviceName} Error analyzing mobile-friendliness: ${error.message}`);
-
-      //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
-      // return {
-      //   error: `Error analyzing mobile-friendliness: ${error.message}`,
-      // };
-
+      console.error(`Error analyzing mobile-friendliness: ${error.message}`);
     } finally {
       if (page) {
         await page.close();
       }
     }
   }
-  
   async analyzeStructuredData(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const structuredData = $('script[type="application/ld+json"]').toArray().map(el => $(el).html());
-  
+
     const count = structuredData.length;
-    let recommendations = '';
-  
-    if (count === 0) {
-      recommendations += `Your site currently lacks structured data, which can help search engines understand your content better. `;
-      recommendations += `Consider implementing structured data using Schema.org to enhance visibility and improve your SEO. `;
-    } else {
-      recommendations += `Your site includes ${count} ${count > 1 ? 'structured data elements' : 'structured data element'}. `;
-      //recommendations += `Review your structured data to ensure it's correctly implemented and covers relevant content types. `;
-      //recommendations += `Adding more detailed structured data can further improve your search engine results and rich snippets.`;
-    }
-  
+    const recommendations = count > 0 ? '' : 'No structured data found. Add structured data to improve SEO.';
+
     return {
+     // structuredData,
       count,
-      recommendations: recommendations.trim(),
+      recommendations,
     };
   }
+
   async analyzeIndexability(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const metaRobots = $('meta[name="robots"]').attr('content') || '';
     const isIndexable = !metaRobots.includes('noindex');
-  
-    let recommendations = '';
-  
-    if (isIndexable) {
-      recommendations += `Your page is currently set to be indexed by search engines, which is great for visibility. `;
-    } else {
-      recommendations += `The page is marked as "noindex," meaning it won't be indexed by search engines. `;
-      recommendations += `If you want this page to appear in search results, remove the "noindex" directive from the meta robots tag. `;
-    }
-  
+
+    const recommendations = isIndexable ? '' : 'Page is marked as noindex. Remove the noindex directive to ensure it is indexed by search engines.';
+
     return {
       isIndexable,
-      recommendations: recommendations.trim(),
+      recommendations,
     };
   }
-  
   async analyzeXmlSitemap(url: string) {
     try {
       const sitemapUrl = new URL('/sitemap.xml', url).toString();
       const response = await axios.get(sitemapUrl);
-  
+
       const isSitemapValid = response.status === 200;
-      const recommendations = isSitemapValid 
-        ? `The XML sitemap at ${sitemapUrl} is present and accessible.`
-        : `The XML sitemap at ${sitemapUrl} is missing or inaccessible. Ensure it is present and accessible.`;
-  
+      const recommendations = isSitemapValid ? '' : 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.';
+
       return {
         isSitemapValid,
         recommendations,
       };
     } catch (error) {
-
       //console.error(`Error fetching XML sitemap: ${error.message}`);
-      logger.error(`${serviceName} Error fetching XML sitemap: ${error.message}`);
-
       return {
         isSitemapValid: false,
-        recommendations: `The XML sitemap at ${url}/sitemap.xml is missing or inaccessible. Ensure it is present and accessible. If the problem persists, check the server configuration or permissions.`,
+        recommendations: 'XML sitemap is missing or inaccessible. Ensure it is present and accessible.',
       };
     }
   }
-  
   async analyzeCanonicalTags(htmlContent: string) {
     const $ = cheerio.load(htmlContent);
     const canonicalTag = $('link[rel="canonical"]').attr('href') || '';
-  
+
     const isCanonicalTagPresent = !!canonicalTag;
-    const recommendations = isCanonicalTagPresent 
-      ? `The canonical tag for the page is set to ${canonicalTag}.`
-      : `The page is missing a canonical tag. Adding a canonical tag helps avoid duplicate content issues and improves SEO.`;
-  
+    const recommendations = isCanonicalTagPresent ? '' : 'Canonical tag is missing. Add a canonical tag to avoid duplicate content issues.';
+
     return {
       canonicalTag,
       isCanonicalTagPresent,
       recommendations,
     };
   }
-  
   async runLighthouse(url: string) {
     try {
       const response = await axios.get(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${this.API_KEY}&category=performance&category=accessibility&category=best-practices&strategy=desktop`);
@@ -611,10 +497,7 @@ export class SeoAnalysisService {
         if (categoryData?.score !== undefined) {
           return categoryData.score * 100;
         } else {
-
-          //console.warn(`Category score for ${category} is not available.`);
-         logger.warn(`${serviceName} Category score for ${category} is not available.`);
-
+          console.warn(`Category score for ${category} is not available.`);
           return null;
         }
       };
@@ -657,7 +540,6 @@ export class SeoAnalysisService {
       return { scores, diagnostics }; 
     } catch (error) {
       // console.error(`Error fetching Lighthouse data: ${error.message}`);
-      logger.error(`${serviceName} Error fetching Lighthouse data: ${error.message}`);
       // throw new Error(`Error fetching Lighthouse data: ${error.message}`);
     }
   }

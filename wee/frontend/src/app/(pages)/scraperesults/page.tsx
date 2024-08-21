@@ -1,6 +1,10 @@
 'use client';
 import React, { useEffect, Suspense, useRef } from 'react';
 import { FiSearch } from 'react-icons/fi';
+import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
+import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
+import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
+import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
@@ -23,6 +27,7 @@ import { ScraperResult, Result, ErrorResponse} from '../../models/ScraperModels'
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 import { pollForResult } from '../../services/PubSubService';
+
 
 function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
@@ -207,8 +212,22 @@ const getScrapingResults = async (url: string) => {
 
     // Poll the API until the scraping is done
     try {
-      const result = await pollForResult(url) as Result;
 
+       let result = await pollForResult(url) as Result;
+
+       if ( url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') ) {
+        console.log(process.env.Tes)
+          if (url.includes('mock.test.wimpy'))
+            result = MockWimpyResult;
+          else if (url.includes('mock.test.github'))
+            result = MockGithubResult;
+          else if (url.includes('mock.test.steers'))
+            result = MockSteersResult;
+          else if (url.includes('mock.test.insecure'))
+            result = MockInsecureResult;
+        }
+
+  
       if ('errorStatus' in result) {
         const errorResponse = { ...result, url };
         setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])

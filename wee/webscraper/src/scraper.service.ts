@@ -1,6 +1,4 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import logger from '../logging/webscraperlogger';
 import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
 
@@ -29,8 +27,6 @@ import {
   ScrapeResult
 } from './models/ServiceModels';
 
-const serviceName = "[ScraperService]";
-logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService implements OnModuleInit {
   
