@@ -5,7 +5,7 @@ import { Cache } from 'cache-manager';
 import {
   ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
   ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
-  GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400,
+  GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400, GetJobStatusKeywordQuery,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
@@ -41,7 +41,7 @@ export class ScraperController {
       console.log("Publishing scraping task for url: ", url);
       const message = {
         type: 'scrape',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -81,7 +81,7 @@ export class ScraperController {
       console.log("Publishing read-robots task for url: ", url);
       const message = {
         type: 'read-robots',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -121,7 +121,7 @@ export class ScraperController {
       console.log("Publishing scrape-metadata task for url: ", url);
       const message = {
         type: 'scrape-metadata',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -161,7 +161,7 @@ export class ScraperController {
       console.log("Publishing scrape-metadata task for url: ", url);
       const message = {
         type: 'scrape-status',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -201,7 +201,7 @@ export class ScraperController {
       console.log("Publishing classify-industry task for url: ", url);
       const message = {
         type: 'classify-industry',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -241,7 +241,7 @@ export class ScraperController {
       console.log("Publishing scrape-images task for url: ", url);
       const message = {
         type: 'scrape-images',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -281,7 +281,7 @@ export class ScraperController {
       console.log("Publishing scrape-logo task for url: ", url);
       const message = {
         type: 'scrape-logo',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -321,7 +321,7 @@ export class ScraperController {
       console.log("Publishing screenshot task for url: ", url);
       const message = {
         type: 'screenshot',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -362,7 +362,7 @@ export class ScraperController {
       console.log("Publishing scrape-contact-info task for url: ", url);
       const message = {
         type: 'scrape-contact-info',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -402,7 +402,7 @@ export class ScraperController {
       console.log("Publishing scrape-addresses task for url: ", url);
       const message = {
         type: 'scrape-addresses',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -442,7 +442,7 @@ export class ScraperController {
       console.log("Publishing seo-analysis task for url: ", url);
       const message = {
         type: 'seo-analysis',
-        url,
+        data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
 
@@ -457,6 +457,46 @@ export class ScraperController {
         throw error;
       } else {
         console.error('Unhandled error in seoAnalysis method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
+  @SeoAnalysisOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('keyword-analysis')
+  async keywordAnalysis(@Query('url') url: string, @Query('keyword') keyword: string) {
+    try {
+      if (!url || !keyword) {
+        throw new HttpException('URL and keyword is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing keyword analysis task for url: ", url);
+      const message = {
+        type: 'keyword-analysis',
+        data: { url, keyword },
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Keyword analysis task published',
+        status: 'processing',
+        pollingUrl: `/status/keyword-analysis/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in keywordAnalysis method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in keywordAnalysis method:', error);
         throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
@@ -483,6 +523,7 @@ export class ScraperController {
         'scrape-contact-info',
         'scrape-addresses',
         'seo-analysis',
+        'keyword-analysis'
       ];
       if (!acceptedTypes.includes(type)) {
         throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
@@ -508,4 +549,31 @@ export class ScraperController {
       }
     }
   }
-}
+
+  @Get('keyword-status')
+  @GetJobStatusOperation
+  @GetJobStatusResponse200
+  @GetJobStatusResponse400
+  @GetJobStatusQuery
+  @GetJobStatusKeywordQuery
+  async getKeyWordAnalysis(@Query('url') url: string, @Query('keyword') keyword: string) {
+      const cacheKey = `${url}-keyword-${keyword}`;
+      const jobData:string = await this.cacheManager.get(cacheKey);
+      if (!jobData) {
+        return {
+          url,
+          message: 'Job not found',
+          data: null,
+        }
+      }
+      return JSON.parse(jobData);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in getJobStatus method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in getJobStatus method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }

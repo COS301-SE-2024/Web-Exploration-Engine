@@ -12,6 +12,8 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from "./sentiment-analysis/sentiment-analysis.service";
+import { KeywordAnalysisService } from "./keyword-analysis/keyword-analysis.service";
+
 import { PubSubService } from "./pub-sub/pub_sub.service";
 import { ProxyService } from "./proxy/proxy.service";
 import * as puppeteer from 'puppeteer';
@@ -37,6 +39,7 @@ describe('ScraperService', () => {
     let mockScrapeAddressService: ScrapeAddressService;
     let mockSeoAnalysisService: SeoAnalysisService;
     let mockSentimentAnalysisService: SentimentAnalysisService;
+    let mockKeywordAnalysisService: KeywordAnalysisService;
 
 
     beforeEach(async () => {
@@ -130,6 +133,12 @@ describe('ScraperService', () => {
                     useValue: {
                         classifySentiment: jest.fn(),
                         sentimentAnalysis: jest.fn(),
+                    },
+                },
+                {
+                    provide: KeywordAnalysisService,
+                    useValue: {
+                        getKeywordRanking: jest.fn(),
                     },
                 },
                 {
@@ -228,7 +237,7 @@ describe('ScraperService', () => {
         it('should hit the cache', async () => {
           const url = 'http://example.com';
           const type = 'scrape';
-          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ url, type }));
+          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ data: {url}, type }));
           jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify({ status: 'completed', result: {time: 90} }));
           await service.handleMessage(mockMessage);
           expect(cacheManager.get).toHaveBeenCalledWith(`${url}-${type}`);
@@ -257,7 +266,7 @@ describe('ScraperService', () => {
           const cachedDataProcessing = { status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` };
           jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null); // Cache miss
           jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
-          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ url, type }));
+          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ data: {url}, type }));
     
           await service.handleMessage(mockMessage);
     
@@ -302,7 +311,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(scrapeResult);
             expect(service.scrape).toHaveBeenCalledWith(url);
@@ -322,7 +331,7 @@ describe('ScraperService', () => {
             jest.spyOn(service, 'readRobotsFile').mockResolvedValueOnce(robotsResult);
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(robotsResult);
             expect(service.readRobotsFile).toHaveBeenCalledWith(url);
@@ -342,7 +351,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeMetadata').mockResolvedValue(metadataResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(metadataResult);
             expect(service.scrapeMetadata).toHaveBeenCalledWith(url);
@@ -355,7 +364,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeStatus').mockResolvedValue(statusResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(statusResult);
             expect(service.scrapeStatus).toHaveBeenCalledWith(url);
@@ -373,7 +382,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'classifyIndustry').mockResolvedValue(industryResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(industryResult);
             expect(service.classifyIndustry).toHaveBeenCalledWith(url);
@@ -386,7 +395,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeLogo').mockResolvedValue(logoResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(logoResult);
             expect(service.scrapeLogo).toHaveBeenCalledWith(url);
@@ -399,7 +408,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeImages').mockResolvedValue(imagesResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(imagesResult);
             expect(service.scrapeImages).toHaveBeenCalledWith(url);
@@ -412,7 +421,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'getScreenshot').mockResolvedValue({ screenshot: screenshotResult });
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual({ screenshot: screenshotResult });
             expect(service.getScreenshot).toHaveBeenCalledWith(url);
@@ -425,7 +434,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeContactInfo').mockResolvedValue(contactInfoResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(contactInfoResult);
             expect(service.scrapeContactInfo).toHaveBeenCalledWith(url);
@@ -438,7 +447,7 @@ describe('ScraperService', () => {
     
             jest.spyOn(service, 'scrapeAddress').mockResolvedValue(addressResult);
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
     
             expect(result).toEqual(addressResult);
             expect(service.scrapeAddress).toHaveBeenCalledWith(url);
@@ -519,7 +528,7 @@ describe('ScraperService', () => {
                 
             });
     
-            const result = await service.scrapeWebsite(url, type);
+            const result = await service.scrapeWebsite({url}, type);
 
             expect(service.seoAnalysis).toHaveBeenCalledWith(url);
 
@@ -530,7 +539,7 @@ describe('ScraperService', () => {
             const url = 'http://example.com';
             const type = 'unknownType';
     
-            await expect(service.scrapeWebsite(url, type)).rejects.toThrowError('Unknown scraping type: unknownType');
+            await expect(service.scrapeWebsite({url}, type)).rejects.toThrowError('Unknown scraping type: unknownType');
         });
     });
 

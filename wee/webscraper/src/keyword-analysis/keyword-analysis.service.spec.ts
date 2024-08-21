@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KeywordAnalysisService } from './keyword-analysis.service';
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
 
 jest.mock('puppeteer');
 
@@ -21,16 +21,23 @@ describe('KeywordAnalysisService', () => {
         { link: 'http://example2.com' },
       ];
 
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
+      const mockPage = {
+        goto: jest.fn().mockResolvedValueOnce(undefined),
+        evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+        authenticate: jest.fn(),
         close: jest.fn(),
-      });
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
+      const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
         ranking: 1,
@@ -44,16 +51,23 @@ describe('KeywordAnalysisService', () => {
         { link: 'http://example.com' },
       ];
 
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
+      const mockPage = {
+        goto: jest.fn().mockResolvedValueOnce(undefined),
+        evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+        authenticate: jest.fn(),
         close: jest.fn(),
-      });
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
+      const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
         ranking: 2,
@@ -67,16 +81,23 @@ describe('KeywordAnalysisService', () => {
         { link: 'http://example2.com' },
       ];
 
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
+      const mockPage = {
+        goto: jest.fn().mockResolvedValueOnce(undefined),
+        evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+        authenticate: jest.fn(),
         close: jest.fn(),
-      });
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword');
+      const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
         ranking: 'Not ranked in the top results',
@@ -86,13 +107,7 @@ describe('KeywordAnalysisService', () => {
 
     it('should handle invalid URLs gracefully', async () => {
       const invalidUrl = 'invalid-url';
-      await expect(service.getKeywordRanking(invalidUrl, 'test keyword')).rejects.toThrow('Invalid URL');
-    });
-
-    it('should handle errors during Puppeteer interactions', async () => {
-      (puppeteer.launch as jest.Mock).mockRejectedValueOnce(new Error('Puppeteer error'));
-
-      await expect(service.getKeywordRanking('http://example.com', 'test keyword')).rejects.toThrow('Puppeteer error');
+      await expect(service.getKeywordRanking(invalidUrl, 'test keyword', null)).rejects.toThrow('Invalid URL');
     });
 
     it('should handle edge cases with different URL formats', async () => {
@@ -101,16 +116,23 @@ describe('KeywordAnalysisService', () => {
         { link: 'http://example.com/page' },
       ];
 
-      (puppeteer.launch as jest.Mock).mockResolvedValueOnce({
-        newPage: jest.fn().mockResolvedValueOnce({
-          goto: jest.fn().mockResolvedValueOnce(undefined),
-          evaluate: jest.fn().mockResolvedValueOnce(mockResults),
-          close: jest.fn(),
-        }),
+      const mockPage = {
+        goto: jest.fn().mockResolvedValueOnce(undefined),
+        evaluate: jest.fn().mockResolvedValueOnce(mockResults),
+        authenticate: jest.fn(),
         close: jest.fn(),
-      });
+      } as unknown as puppeteer.Page;
+  
+      const mockBrowser = {
+        newPage: jest.fn().mockResolvedValue(mockPage),
+        close: jest.fn(),
+      } as unknown as puppeteer.Browser;
+  
+      // Mock environment variables
+      process.env.PROXY_USERNAME = 'username';
+      process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.getKeywordRanking('http://example.com', 'test keyword');
+      const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
         ranking: 1,
