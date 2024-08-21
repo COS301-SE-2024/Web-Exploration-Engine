@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -25,7 +25,9 @@ export const handleDownloadReport = (
   sentimentAnalysis: SentimentAnalysis |undefined,
   xMLSitemapAnalysis: XMLSitemapAnalysis | SEOError |undefined,
   canonicalTagAnalysis: CanonicalTagAnalysis | SEOError |undefined,
-  indexabilityAnalysis: IndexabilityAnalysis | SEOError |undefined
+  indexabilityAnalysis: IndexabilityAnalysis | SEOError |undefined,  
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError |undefined
+
 ) => {
   const doc = new jsPDF();
 
@@ -589,6 +591,58 @@ if (canonicalTagAnalysis) {
     doc.setTextColor(0, 0, 0);
 
     indexabilityAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//SiteSpeed
+  doc.addPage();
+  doc.setFontSize(20);
+  const title12 = 'Site Speed Analysis';
+  const titleWidth12 = doc.getStringUnitWidth(title12) * 20 / doc.internal.scaleFactor;
+  const x12 = (doc.internal.pageSize.width - titleWidth12) / 2;
+  doc.text(title12, x12, 20);
+  
+  
+  if (siteSpeedAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+    const siteSpeedAnalysisRows = [
+        ['Load Time', siteSpeedAnalysis && 'loadTime' in siteSpeedAnalysis ? `${siteSpeedAnalysis.loadTime}` : 'N/A'],
+        ['Recommendations', siteSpeedAnalysis && 'recommendations' in siteSpeedAnalysis ? siteSpeedAnalysis.recommendations : 'N/A']
+    ];
+    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    siteSpeedAnalysisRows.forEach(row => {
       const [category, info] = row;
       const categoryLines = splitText(String(category), columnWidth[0] - 4);
       const infoLines = splitText(String(info), columnWidth[1] - 4);
