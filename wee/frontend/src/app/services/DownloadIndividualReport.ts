@@ -262,7 +262,7 @@ export const handleDownloadReport = (
       ['Total Images', imageAnalysis && 'totalImages' in imageAnalysis ? `${imageAnalysis.totalImages}` : 'N/A'],
       ['Missing Alt Text Count', imageAnalysis && 'missingAltTextCount' in imageAnalysis ? `${imageAnalysis.missingAltTextCount}` : 'N/A'],
       ['Non-Optimized Count', imageAnalysis && 'nonOptimizedCount' in imageAnalysis ? `${imageAnalysis.nonOptimizedCount}` : 'N/A'],
-      ['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
+      //['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
       //['Reasons Map', imageAnalysis && 'reasonsMap' in imageAnalysis ? JSON.stringify(imageAnalysis.reasonsMap) : 'N/A'],
       ['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
     ];
