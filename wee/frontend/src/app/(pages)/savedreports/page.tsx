@@ -115,7 +115,7 @@ function ResultsComponent() {
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-4 min-h-screen">
         <div className="text-center">
           <h1 className="my-4 mx-9 font-poppins-bold text-3xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             My Reports
