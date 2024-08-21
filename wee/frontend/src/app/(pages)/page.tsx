@@ -14,9 +14,8 @@ export default function Home() {
     const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
-    const [error, setError] = useState('');
-
-        
+    const [error, setError] = useState('');     
+    const MAX_URL_LENGTH = 2048;   
    
     const isValidUrl = (urlString: string) => {
         try {
@@ -26,6 +25,10 @@ export default function Home() {
             return false;
         }
     };
+
+    const sanitizeURL = (url: string) => {
+      return url.replace(/[<>"'`;\(\)]/g, '');
+    }
 
     const handleScraping = () => {
       if (!url) {
@@ -51,16 +54,37 @@ export default function Home() {
       } 
 
       for (const singleUrl of urlsToScrape) {
+        const sanitizedURL = sanitizeURL(singleUrl);
 
-          if (!isValidUrl(singleUrl)) {
-              setError('Please enter valid URLs');
-  
-              const timer = setTimeout(() => {
-                  setError('');
-              }, 3000);
-  
-              return () => clearTimeout(timer);
-          }
+        if (sanitizedURL !== singleUrl) {
+          setError('URLs cannot contain special characters like <, >, ", \', `, ;, (, or )');
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (sanitizedURL.length >= MAX_URL_LENGTH) {
+          setError(`URL exceeds maximum length of ${MAX_URL_LENGTH} characters`);
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (!isValidUrl(sanitizedURL)) {
+            setError('Please enter valid URLs');
+
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
       }
       setError('');
 
@@ -95,7 +119,7 @@ export default function Home() {
             Ready to start scraping?
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-            Start by entering the URL of the website you wish to scrape
+            Start by entering the URLs of the websites you wish to scrape
           </h3>
         </div>
         <div className="flex flex-col sm:flex-row w-full justify-center items-center">
