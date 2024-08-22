@@ -43,6 +43,16 @@ export interface IndustryClassification {
     score: number;
   }[];
 }
+export interface SentimentClassification {
+  sentimentAnalysis: {
+    positive: number;
+    negative: number;
+    neutral: number;
+  };
+  positiveWords: string[];
+  negativeWords: string[];
+  emotions: { [emotion: string]: number };
+}
 
 export interface SentimentClassification {
   sentimentAnalysis: {

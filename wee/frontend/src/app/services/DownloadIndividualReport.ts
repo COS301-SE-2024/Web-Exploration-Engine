@@ -886,27 +886,8 @@ doc.addPage();
       const categoryLines = splitText(String(category), columnWidth[0] - 4);
       const infoLines = splitText(String(info), columnWidth[1] - 4);
 
-      categoryLines.forEach((line, i) => {
-        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
-      });
-      infoLines.forEach((line, i) => {
-        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
-      });
 
-      // Draw line after each row
-      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
 
-      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
-
-      if (y > 270) { // Check if the y position exceeds the page limit
-        doc.addPage();
-        y = 20; // Reset y position on the new page
-        doc.text('Category', margin + 2, y + 7);
-        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
-        y += headerHeight;
-      }
-    });
-  }
   //
   const cleanFilename = (url: string | null): string => {
     if (!url) return 'website-summary-report';

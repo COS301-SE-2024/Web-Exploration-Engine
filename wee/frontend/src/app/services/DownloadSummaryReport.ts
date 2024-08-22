@@ -104,47 +104,20 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
         const captureChart = async (chartId: string, title: string, yPosition: number) => {
             const chartElement = document.getElementById(chartId);
             if (chartElement) {
-
-                const elementWidth = chartElement.offsetWidth || 1920; 
-                const elementHeight = chartElement.offsetHeight || 1080;
-
-                const pageWidth = doc.internal.pageSize.width - 40; 
-                const pageHeight = doc.internal.pageSize.height - yPosition - 20; 
-        
-                const aspectRatio = elementWidth / elementHeight;
-        
-                let finalWidth, finalHeight;
-        
-                if (elementWidth > pageWidth || elementHeight > pageHeight) {
-                    if (pageWidth / aspectRatio <= pageHeight) {
-                        finalWidth = pageWidth;
-                        finalHeight = pageWidth / aspectRatio;
-                    } else {
-                        finalHeight = pageHeight;
-                        finalWidth = pageHeight * aspectRatio;
-                    }
-                } else {
-                    finalWidth = elementWidth;
-                    finalHeight = elementHeight;
-                }
-        
-                const canvas = await html2canvas(chartElement, {
-                    width: elementWidth,
-                    height: elementHeight,
-                    scale: 2, 
-                });
-        
+                const canvas = await html2canvas(chartElement);
                 const imgData = canvas.toDataURL('image/png');
-        
                 doc.addPage();
                 addPageNumber(++currentPage);
                 doc.setFontSize(18);
                 doc.text(title, 20, 20);
-        
-                doc.addImage(imgData, 'PNG', 20, yPosition, finalWidth, finalHeight);
+    
+                const width = doc.internal.pageSize.width - 40;
+                const height = canvas.height * (width / canvas.width);
+    
+                doc.addImage(imgData, 'PNG', 20, yPosition, width, height);
             }
         };
-             
+    
         await captureChart('pie-chart', 'Industry Classification Distribution', 30);
         if (weakClassification && weakClassification.length > 0) {
             const lowConfidenceUrls = weakClassification
@@ -208,8 +181,7 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
                 }
             });
         }
-        await captureChart('radar-chart', 'Industry and Domain Classification Distribution', 30);
-        await captureChart('area-chart', 'Emotion Confidence Classification Distribution', 30);
+
     };        
 
     await addChartToPDF();
