@@ -10,6 +10,7 @@ permissions:
   contents: read
 
 jobs:
+
   run-cypress-tests:
     name: Cypress Frontend Tests
     runs-on: ubuntu-latest
@@ -18,7 +19,6 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
       NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      NEXT_PUBLIC_TESTING_ENVIRONMENT: true
 
     steps:
       - name: Checkout

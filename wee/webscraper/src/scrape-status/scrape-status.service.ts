@@ -4,7 +4,7 @@ import { ErrorResponse } from '../models/ServiceModels';
 
 /**
  * Service for handling website status related functionality.
- */
+*/
 
 @Injectable()
 export class ScrapeStatusService {
