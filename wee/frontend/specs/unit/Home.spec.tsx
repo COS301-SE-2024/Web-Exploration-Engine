@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import Home from '../../src/app/(pages)/page';
 import { useRouter } from 'next/navigation';
 import { useScrapingContext } from '../../src/app/context/ScrapingContext'
@@ -57,6 +57,14 @@ describe('Home page', () => {
     await waitFor(() => {
       expect(screen.getByText('URL cannot be empty')).toBeDefined();
     });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 3000));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('URL cannot be empty')).toBeNull();
+    });
   });
 
   it('shows error for invalid URL', async () => {
@@ -71,6 +79,14 @@ describe('Home page', () => {
     await waitFor(() => {
       expect(screen.getByText('Please enter valid URLs')).toBeDefined();
     });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 3000));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Please enter valid URLs')).toBeNull();
+    });
   });
 
   it('shows error when URL contains special characters', async () => {
@@ -84,6 +100,14 @@ describe('Home page', () => {
 
     await waitFor(() => {
       expect(screen.getByText('URLs cannot contain special characters like <, >, ", \', `, ;, (, or )')).toBeDefined();
+    });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 3000));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('URLs cannot contain special characters like <, >, ", \', `, ;, (, or )')).toBeNull();
     });
   });
 
@@ -101,6 +125,14 @@ describe('Home page', () => {
     await waitFor(() => {
       expect(screen.getByText('Maximum of 10 URLs can be scraped')).toBeDefined();
     });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 3000));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('Maximum of 10 URLs can be scraped')).toBeNull();
+    });
   });
 
   it('shows error when URL exceeds maximum length', async () => {
@@ -115,7 +147,15 @@ describe('Home page', () => {
     fireEvent.click(screen.getByTestId('btn-start-scraping'));
 
     await waitFor(() => {
-      expect(screen.getByText(`URL exceeds maximum length of 2048 characters`)).toBeDefined();
+      expect(screen.getByText('URL exceeds maximum length of 2048 characters')).toBeDefined();
+    });
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 3000));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByText('URL exceeds maximum length of 2048 characters')).toBeNull();
     });
   });
 
