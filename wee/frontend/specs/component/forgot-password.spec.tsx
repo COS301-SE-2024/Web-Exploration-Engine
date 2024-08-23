@@ -19,5 +19,17 @@ describe('ForgotPassword Component', () => {
     expect(screen.getByText(/Send Password Reset Email/i)).toBeDefined();
   });
 
+  it('should display error if email field is empty', async () => {
+    render(<ForgotPassword />);
+
+    fireEvent.click(screen.getByText(/Send Password Reset Email/i));
+
+    expect(screen.queryByText(/Email is required/i)).toBeDefined();
+
+    await waitFor(() =>
+      expect(screen.queryByText(/Email is required/i)).toBeNull(),
+      { timeout: 3200 }
+    );
+  });
 
 });
