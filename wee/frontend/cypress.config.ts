@@ -11,7 +11,7 @@ export default defineConfig({
   retries: {
     experimentalStrategy: 'detect-flake-but-always-fail',
     experimentalOptions: {
-      maxRetries: 5,
+      maxRetries: 1,
       stopIfAnyPassed: true,
     },
     openMode: true,
