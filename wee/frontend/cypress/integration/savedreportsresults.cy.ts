@@ -9,7 +9,6 @@ describe('saved reports page', () => {
 
   it('summaries page content should be present', () => {
     cy.visit('/savedsummaries');
-    //cy.wait(10000);
 
     //Page Section : Save or Download Button
 

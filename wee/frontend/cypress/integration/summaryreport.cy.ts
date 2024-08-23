@@ -458,7 +458,7 @@ describe('summaryreport', () => {
       )
       .should('contain.text', 'Save');
 
-    cy.get('[data-testid="dropdown-item-download"]')
+    cy.get('[data-testid="download-report-button"]')
       .should('be.visible')
       .should('contain.text', 'Download the report to your device')
       .should('contain.text', 'Download');
