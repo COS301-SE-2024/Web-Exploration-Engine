@@ -44,7 +44,7 @@ describe('Home page', () => {
     render(<Home />);
   
     expect(screen.getByText('The Web Exploration Engine')).toBeDefined();
-    expect(screen.getByText('Ready to start scraping\?')).toBeDefined();
+    expect(screen.getByText('Ready to start scraping?')).toBeDefined();
     expect(screen.getByText('Start by entering the URLs of the websites you wish to scrape')).toBeDefined();
     expect(screen.getByText('Start scraping')).toBeDefined();
   });
