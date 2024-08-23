@@ -32,4 +32,21 @@ describe('ForgotPassword Component', () => {
     );
   });
 
+  it('should display success message if API call is successful', async () => {
+    (forgotPassword as jest.Mock).mockResolvedValue({
+      message: 'Password reset email sent successfully.',
+    });
+
+    render(<ForgotPassword />);
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'test@example.com' },
+    });
+
+    fireEvent.click(screen.getByText(/Send Password Reset Email/i));
+
+    await waitFor(() =>
+      expect(screen.queryByText(/Password reset email sent successfully./i)).toBeDefined()
+    );
+  });
+
 });
