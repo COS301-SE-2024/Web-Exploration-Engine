@@ -252,5 +252,38 @@ describe('Auth functions', () => {
     });
   });
 
-  
+  describe('resetPassword', () => {
+    it('should return success message when password is updated successfully', async () => {
+      const mockResponse = {
+        data: { id: 'mockUserId' },
+        error: null,
+      };
+
+      (supabase.auth.updateUser as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await resetPassword('newPassword123');
+
+      expect(result).toEqual({
+        message: 'Password reset successfully.',
+        user: { id: 'mockUserId' },
+      });
+    });
+
+    it('should return error code and message when password update fails', async () => {
+      const mockError = {
+        code: 'mockCode',
+        message: 'mockMessage',
+      };
+
+      (supabase.auth.updateUser as jest.Mock).mockResolvedValue({ error: mockError });
+
+      const result = await resetPassword('newPassword123');
+
+      expect(result).toEqual({
+        code: 'mockCode',
+        message: 'mockMessage',
+      });
+    });
+  });
+
 });
