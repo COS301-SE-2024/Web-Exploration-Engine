@@ -167,6 +167,7 @@ export default function SummaryReport() {
                 <Button
                     className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                     onClick={backToScrapeResults}
+                    data-testid="btn-back"
                 >
                     Back
                 </Button>
@@ -176,9 +177,10 @@ export default function SummaryReport() {
                         Summary Report
                     </h1>
                     <div className="mt-4 mr-4 flex justify-end">
-                        <Dropdown>
+                        <Dropdown data-testid="btn-dropdown">
                             <DropdownTrigger>
                                 <Button 
+                                id="btn-save-export"
                                 variant="flat" 
                                 startContent={<FiShare className={iconClasses}/>}
                                 >
@@ -210,6 +212,7 @@ export default function SummaryReport() {
                                 <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
                                 <DropdownItem
                                     key="save"
+                                    data-testid="dropdown-item-save"
                                     startContent={<FiSave className={iconClasses}/>}
                                     description="Sign up or log in to save the report on our website"
                                 >
@@ -239,7 +242,7 @@ export default function SummaryReport() {
                 <div className='gap-4 grid sm:grid-cols-3'>
 
                     {/* Scraped stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div data-testid="visual-scraped-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiSearch />
                         </div>
@@ -252,7 +255,7 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Crawlable stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div  data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiCheck />
                         </div>
@@ -265,7 +268,7 @@ export default function SummaryReport() {
                     </div>
 
                     {/* Avg scrape stats */}
-                    <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                    <div data-testid="visual-avg-scrape-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                         <div className='text-5xl flex justify-center'>
                             <FiClock />
                         </div>
@@ -282,7 +285,7 @@ export default function SummaryReport() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
-            <div className='gap-4 grid md:grid-cols-2'>
+            <div data-testid="visual-industry-classification"  className='gap-4 grid md:grid-cols-2'>
                     <div id="pie-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                             Classification Distribution
@@ -300,7 +303,7 @@ export default function SummaryReport() {
                             <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"}/>
                         </span>
                     </div>
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
+                <div data-testid="visual-weak-classifications" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Weak classifications
                         <InfoPopOver 
@@ -310,6 +313,7 @@ export default function SummaryReport() {
                         />
                     </h3>
                     <WEETable 
+                        data-testid="table-weak-classifications"
                         isHeaderSticky
                         className='max-h-[15rem]'
                         aria-label="Industry classification table"
@@ -351,7 +355,7 @@ export default function SummaryReport() {
                     placement="right-end" 
                 />
             </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
+            <div data-testid="visual-domain-match" className='gap-4 grid md:grid-cols-3'>
                 <div id="radial-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
                 </div>
@@ -361,6 +365,7 @@ export default function SummaryReport() {
                             Domain mismatch information
                         </h3>
                         <WEETable 
+                            data-testid="table-domain-match"
                             isHeaderSticky
                             className='max-h-[15rem]'
                             aria-label="Domain mismatch information table"

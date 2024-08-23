@@ -123,7 +123,7 @@ function ResultsComponent() {
         </div>
         <div className="flex flex-col">
           <WEETabs aria-label="Options" size="lg">
-            <Tab key="individual" title="Reports">
+            <Tab data-testid="tab-reports" key="individual" title="Reports">
               <Card>
                 <CardBody>
                   <div className="flex justify-between items-center mb-2">
@@ -146,7 +146,7 @@ function ResultsComponent() {
                     </label>
                   </div>
 
-                  <WEETable
+                  <WEETable data-testid="table-reports" 
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
@@ -227,7 +227,7 @@ function ResultsComponent() {
                 </CardBody>
               </Card>  
             </Tab>
-            <Tab key="summary" title="Summaries">
+            <Tab data-testid="tab-summaries" key="summary" title="Summaries">
               <Card>
                 <CardBody>
                   <div className="flex justify-between items-center mb-2">
@@ -250,7 +250,7 @@ function ResultsComponent() {
                     </label>
                   </div>
 
-                  <WEETable
+                  <WEETable data-testid="table-summaries"
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
