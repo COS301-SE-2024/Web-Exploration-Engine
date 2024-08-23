@@ -49,4 +49,22 @@ describe('ForgotPassword Component', () => {
     );
   });
 
+  it('should display error message if API call fails', async () => {
+    (forgotPassword as jest.Mock).mockResolvedValue({
+      code: 'error_code',
+      message: 'An error occurred.',
+    });
+
+    render(<ForgotPassword />);
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'test@example.com' },
+    });
+
+    fireEvent.click(screen.getByText(/Send Password Reset Email/i));
+
+    await waitFor(() =>
+      expect(screen.queryByText(/An error occurred./i)).toBeDefined()
+    );
+  });
+
 });
