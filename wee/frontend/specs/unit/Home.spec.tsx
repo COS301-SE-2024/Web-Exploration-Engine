@@ -103,6 +103,22 @@ describe('Home page', () => {
     });
   });
 
+  it('shows error when URL exceeds maximum length', async () => {
+    const longUrl = 'http://example.com/'.padEnd(2049, 'x');
+
+    render(<Home />);
+
+    fireEvent.change(screen.getByPlaceholderText(/Enter the URLs you want to scrape/i), {
+      target: { value: longUrl },
+    });
+
+    fireEvent.click(screen.getByTestId('btn-start-scraping'));
+
+    await waitFor(() => {
+      expect(screen.getByText(`URL exceeds maximum length of 2048 characters`)).toBeDefined();
+    });
+  });
+
   it('sanitizes URLs and proceeds with scraping', async () => {
     render(<Home />);
 
