@@ -17,6 +17,7 @@ import { KeywordAnalysisService } from "./keyword-analysis/keyword-analysis.serv
 import { PubSubService } from "./pub-sub/pub_sub.service";
 import { ProxyService } from "./proxy/proxy.service";
 import * as puppeteer from 'puppeteer';
+import { mock } from "node:test";
 
 jest.mock('puppeteer');
 
@@ -172,7 +173,7 @@ describe('ScraperService', () => {
         mockScrapeAddressService = module.get<ScrapeAddressService>(ScrapeAddressService);
         mockSeoAnalysisService = module.get<SeoAnalysisService>(SeoAnalysisService);
         mockSentimentAnalysisService = module.get<SentimentAnalysisService>(SentimentAnalysisService);
-
+        mockKeywordAnalysisService = module.get<KeywordAnalysisService>(KeywordAnalysisService);
 
         mockMessage = {
             data: { toString: jest.fn() },
@@ -230,6 +231,12 @@ describe('ScraperService', () => {
                 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub',
                 expect.any(Function)
             );
+        });
+
+        it('should be called on module init', async () => {
+            const listenForScrapingTasksSpy = jest.spyOn(service, 'listenForScrapingTasks');
+            await service.onModuleInit();
+            expect(listenForScrapingTasksSpy).toHaveBeenCalled();
         });
     });
 
@@ -533,6 +540,20 @@ describe('ScraperService', () => {
             expect(service.seoAnalysis).toHaveBeenCalledWith(url);
 
 
+        });
+
+        it('should call scrape method with type "keyword-analysis"', async () => {
+            const url = 'http://example.com';
+            const type = 'keyword-analysis';
+            const keyword = 'example';
+            const keywordResult = { ranking: 1, recommendation: 'Some recommendation' };
+    
+            jest.spyOn(service, 'keywordAnalysis').mockResolvedValue(keywordResult);
+    
+            const result = await service.scrapeWebsite({url, keyword}, type);
+    
+            expect(result).toEqual(keywordResult);
+            expect(service.keywordAnalysis).toHaveBeenCalledWith(url, keyword);
         });
     
         it('should throw an error for unknown scraping type', async () => {
@@ -1041,6 +1062,42 @@ describe('ScraperService', () => {
         });
     });
 
+    // describe('seoAnalysis', () => {
+    // });
 
+    describe('keywordAnalysis', () => {
+        it('should get keyword ranking and return the result', async () => {
+            const url = 'http://example.com';
+            const keyword = 'example';
+            const keywordResult = { ranking: 1, recommendation: 'Some recommendation' };
+
+            const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn(),
+                authenticate: jest.fn(),
+                close: jest.fn(),
+            } as unknown as puppeteer.Page;
+
+            const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+            } as unknown as puppeteer.Browser;
+
+            // Mock environment variables
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+
+            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+
+            jest.spyOn(mockKeywordAnalysisService, 'getKeywordRanking').mockResolvedValue(keywordResult);
+    
+            const result = await service.keywordAnalysis(url, keyword);
+    
+            expect(result).toEqual(keywordResult);
+            expect(mockKeywordAnalysisService.getKeywordRanking).toHaveBeenCalledWith(url, keyword, mockBrowser);
+        });
+
+        
+    });
 
 });

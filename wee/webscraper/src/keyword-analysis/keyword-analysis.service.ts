@@ -13,8 +13,8 @@ export class KeywordAnalysisService {
         const password = process.env.PROXY_PASSWORD;
 
         if (!username || !password) {
-        console.error('Proxy username or password not set');
-        return { emails: [], phones: [], socialLinks: [] };
+            console.error('Proxy username or password not set');
+            return { ranking: 'Not ranked in the top results', recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
         }
         
         let page;

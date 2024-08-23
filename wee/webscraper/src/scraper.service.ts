@@ -557,7 +557,7 @@ export class ScraperService implements OnModuleInit {
     console.log(`Received message for URL: ${data.url}, Type: ${type}, Data: ${data.keyword}`);
     const { url } = data;
     // separate implementation for keyword analysis
-    let cacheKey
+    let cacheKey: string;
     if (type === 'keyword-analysis') {
       const { keyword } = data;
       cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
@@ -607,17 +607,17 @@ export class ScraperService implements OnModuleInit {
     } 
   }
 
-  async getCachedData(url) {
-    const cachedDataString:string = await this.cacheManager.get(url);
+  async getCachedData(cacheKey: string) {
+    const cachedDataString:string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {
       const data = JSON.parse(cachedDataString);
       if (data.status === 'completed') {
         return data;
       } else if (data.status === 'processing') {
-        console.log(`Already processing URL: ${url}`);
+        console.log(`Already processing ojb: ${cacheKey}`);
         return null;
       } else if (data.status === 'error') {
-        console.error(`Error scraping URL: ${url}`, data.error);
+        console.error(`Error during scraping job: ${cacheKey}`, data.error);
         return null;
       }
     }
