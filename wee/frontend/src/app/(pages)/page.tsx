@@ -27,7 +27,7 @@ export default function Home() {
     };
 
     const sanitizeURL = (url: string) => {
-      return url.replace(/[<>"'`;\(\)]/g, '');
+      return url.replace(/[<>"'`;()]/g, '');
     }
 
     const handleScraping = () => {

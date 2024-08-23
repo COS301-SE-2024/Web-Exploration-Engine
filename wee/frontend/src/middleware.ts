@@ -10,7 +10,7 @@ const supabase = createClient(
 const protectedRoutes = ["/savedreports"];
 
 export default async function middleware(req: NextRequest) {
-    console.log('Middleware is running!');
+    // console.log('Middleware is running!');
     const { data: { session } } = await supabase.auth.getSession();
   
     if (!session && protectedRoutes.includes(req.nextUrl.pathname)) {
