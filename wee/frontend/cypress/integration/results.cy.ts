@@ -247,7 +247,7 @@ describe('results', () => {
       .should('be.visible')
       .should('contain.text', '2');
 
-    cy.get('[data-testid="div-images-not-optimal"]')
+    cy.get('[data-testid="nonOptimisedImages"]')
       .should('exist')
       .should('be.visible')
       .should('contain.text', '0');
@@ -279,7 +279,7 @@ describe('results', () => {
     //   )
 
     //Heading Analysis
-    cy.get('[data-testid="p-heading-count"]')
+    cy.get('[data-testid="headingscount"]')
       .should('exist')
       .should('be.visible')
       .should('contain.text', '1');
