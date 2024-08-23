@@ -532,44 +532,10 @@ describe('ScraperController', () => {
     });
   });
 
-  // describe('/GET scraper/keyword-status', () => {
-  //   it('should return keyword status successfully', async () => {
-  //     const url = 'https://example.com';
-  //     const response = await request(app.getHttpServer())
-  //       .get('/scraper/keyword-status?url=' + encodeURIComponent(url))
-  //       .expect(HttpStatus.OK);
+});
 
-  //     expect(response.body).toBeDefined();
-
-  //     // Check that the response contains the expected properties
-  //     expect(response.body).toHaveProperty('message');
-  //     expect(response.body).toHaveProperty('status');
-  //     expect(response.body).toHaveProperty('keywords');
-  //   });
-
-  //   it('should return an error if no URL is provided', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .get('/scraper/keyword-status')
-  //       .expect(HttpStatus.BAD_REQUEST);
-
-  //     expect(response.body).toBeDefined();
-  //     expect(response.body).toHaveProperty('message');
-  //     expect(response.body.message).toEqual('URL is required');
-  //   });
-
-  //   it('should return an error if the URL is invalid', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .get('/scraper/keyword-status?url=invalid-url')
-  //       .expect(HttpStatus.BAD_REQUEST);
-
-  //     expect(response.body).toBeDefined();
-  //     expect(response.body).toHaveProperty('message');
-  //     expect(response.body.message).toEqual('Invalid URL format');
-  //   });
-  // });
-
-
-  // describe('/GET read-robots', () => {
+// Tests before pubsub implementation
+// describe('/GET read-robots', () => {
   //   it('should read robots.txt successfully', async () => {
   //     const url = 'https://example.com';
   //     const response = await request(app.getHttpServer())
@@ -703,4 +669,3 @@ describe('ScraperController', () => {
   //     expect(response.body).toBeDefined();
   //   }, 60000);
   // });
-});
