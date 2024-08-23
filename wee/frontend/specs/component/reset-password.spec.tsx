@@ -29,3 +29,16 @@ beforeEach(() => {
   (useRouter as jest.Mock).mockReturnValue(mockRouter);
 });
 
+describe('ResetPassword Component', () => {
+  it('renders reset password form', () => {
+    render(<ResetPassword />);
+    const newPasswordFields = screen.getAllByLabelText(/New Password/i);
+    expect(newPasswordFields.length).toBeGreaterThanOrEqual(1);
+    expect(newPasswordFields[0]).toHaveAttribute('type', 'password');
+    const confirmPasswordFields = screen.getAllByLabelText(/Confirm New Password/i);
+    expect(confirmPasswordFields.length).toBeGreaterThanOrEqual(1);
+    expect(confirmPasswordFields[0]).toHaveAttribute('type', 'password');
+    expect(screen.getByText(/Reset Password/i)).toBeInTheDocument();
+  });
+
+  
