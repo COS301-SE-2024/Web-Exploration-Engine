@@ -562,6 +562,7 @@ export class ScraperController {
       if (!jobData) {
         return {
           url,
+          keyword,
           message: 'Job not found',
           data: null,
         }
