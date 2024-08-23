@@ -66,5 +66,14 @@ describe('ForgotPassword Component', () => {
       expect(screen.queryByText(/An error occurred./i)).toBeDefined()
     );
   });
+  it('should clear error and message when modal is closed', () => {
+    render(<ForgotPassword />);
+    fireEvent.click(screen.getByText(/send password reset email/i));
+    expect(screen.queryByText(/please check the email address and try again/i)).not.toBeInTheDocument();
 
+    fireEvent.click(screen.getByText(/send password reset email/i));
+    expect(screen.queryByText(/please check the email address and try again/i)).not.toBeInTheDocument();
+
+    expect(screen.queryByText(/email sent successfully/i)).not.toBeInTheDocument();
+  });
 });
