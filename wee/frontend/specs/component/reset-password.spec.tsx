@@ -40,5 +40,20 @@ describe('ResetPassword Component', () => {
     expect(confirmPasswordFields[0]).toHaveAttribute('type', 'password');
     expect(screen.getByText(/Reset Password/i)).toBeInTheDocument();
   });
+  it('handles successful password reset', async () => {
+    render(<ResetPassword />);
+    const [newPasswordInput] = screen.getAllByLabelText(/New Password/i);
+    const [confirmPasswordInput] = screen.getAllByLabelText(/Confirm New Password/i);
 
-  
+    fireEvent.change(newPasswordInput, { target: { value: 'NewPassword123!' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'NewPassword123!' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /Reset Password/i }));
+    await act(async () => {
+      await waitFor(() => {
+        expect(screen.getByText(/You can now log in with your new password./i)).toBeInTheDocument();
+      });
+    });
+  });
+});
+
