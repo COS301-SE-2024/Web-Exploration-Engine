@@ -103,6 +103,7 @@ function SummaryComponent() {
             <Button
                 className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                 onClick={backToScrapeResults}
+                data-testid="btn-back"
             >
                 Back
             </Button>
@@ -118,6 +119,7 @@ function SummaryComponent() {
                     <Dropdown>
                         <DropdownTrigger>
                             <Button 
+                            data-testid="dropdown-export"
                             variant="flat" 
                             startContent={<FiShare className={iconClasses}/>}
                             >
@@ -127,6 +129,7 @@ function SummaryComponent() {
                           <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
                             <DropdownItem
                                 key="download"
+                                data-testid="dropdown-save"
                                 startContent={<FiDownload className={iconClasses}/>}
                                 description="Download the report to your device"
                                 onAction={handleDownload}
@@ -146,7 +149,7 @@ function SummaryComponent() {
             <div className='gap-4 grid sm:grid-cols-3'>
 
                 {/* Scraped stats */}
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                <div data-testid="visual-scraped-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                     <div className='text-5xl flex justify-center'>
                         <FiSearch />
                     </div>
@@ -159,7 +162,7 @@ function SummaryComponent() {
                 </div>
 
                 {/* Crawlable stats */}
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                <div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                     <div className='text-5xl flex justify-center'>
                         <FiCheck />
                     </div>
@@ -172,7 +175,7 @@ function SummaryComponent() {
                 </div>
 
                 {/* Avg scrape stats */}
-                <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+                <div data-testid="visual-avg-scrape-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
                     <div className='text-5xl flex justify-center'>
                         <FiClock />
                     </div>
@@ -189,11 +192,12 @@ function SummaryComponent() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Industry classification
             </h3>
-            <div className='gap-4 grid md:grid-cols-2'>
+            <div data-testid="visual-industry-classification" className='gap-4 grid md:grid-cols-2'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Classification Distribution
                         <InfoPopOver 
+                            data-testid="popup-industry-classification"
                             heading="Industry classification" 
                             content="The classification of industries is based on machine learning models. WEE cannot guarantee the accuracy of the classifications." 
                             placement="top" 
@@ -212,6 +216,7 @@ function SummaryComponent() {
                     <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
                         Weak classifications
                         <InfoPopOver 
+                            data-testid="popup-weak-classification"
                             heading="Industry classification" 
                             content="Weak classifications are those that have a low confidence score (below 50%). WEE cannot guarantee the accuracy of the classifications." 
                             placement="top" 
@@ -254,12 +259,13 @@ function SummaryComponent() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Domain match
                 <InfoPopOver 
+                    data-testid="popup-domain-match"
                     heading="Domain Match" 
                     content="Domain match refers to the percentage of URLs that have the same domain classification as the metadata classification. WEE cannot guarantee the accuracy of the classifications." 
                     placement="right-end" 
                 />
             </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
+            <div data-testid="visual-domain-match" className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-1 flex flex-col justify-center'>
                     <RadialBar dataLabel={['Match']} dataSeries={[percentageMatch]}/>
                 </div>
@@ -311,7 +317,7 @@ function SummaryComponent() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
                 Website status
             </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
+            <div data-testid="visual-website-status" className='gap-4 grid md:grid-cols-3'>
                 <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
                     <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus}/> 
                 </div>

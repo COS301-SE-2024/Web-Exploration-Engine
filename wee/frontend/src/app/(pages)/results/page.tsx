@@ -295,6 +295,7 @@ function ResultsComponent() {
         <Button
           className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
           onClick={backToScrapeResults}
+          data-testid="btn-back"
         >
           Back
         </Button>
@@ -360,7 +361,7 @@ function ResultsComponent() {
         </div>
 
         {/* Tabs */}
-        <WEETabs aria-label="Options">
+        <WEETabs data-testid="tabs-results" aria-label="Options">
           <Tab key="general" data-testid="tab-general" title="General Overview">
             <Card>
               <CardBody>
@@ -379,8 +380,8 @@ function ResultsComponent() {
                   <Card shadow="sm" className="col-span-3 text-center bg-zinc-100 dark:bg-zinc-800">
                     <CardBody>
                       {(summaryInfo && (summaryInfo?.title || summaryInfo?.description)) ? (
-                        <div className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
-                          <p>
+                        <div data-testid="div-summary" className="text-center font-poppins-semibold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                          <p data-testid="p-title">
                             {summaryInfo?.title}
                           </p>
                           <br />
@@ -388,6 +389,7 @@ function ResultsComponent() {
                             <div className="flex justify-center">
                               <div className="flex justify-center">
                                 <Image
+                                  data-testid="img-logo"
                                   alt="Logo"
                                   src={logo}
                                   className="centered-image max-h-48 shadow-md shadow-zinc-150 dark:shadow-zinc-900"
@@ -402,7 +404,7 @@ function ResultsComponent() {
                             </p>
                           )}
                           <br />
-                          <p>
+                          <p data-testid="p-summary">
                             {summaryInfo?.description}
                           </p>
                         </div>
@@ -434,7 +436,7 @@ function ResultsComponent() {
                       placement="right-end"
                     />
                   </h3>
-                  <WEETable isStriped aria-label="Example static collection table">
+                  <WEETable data-testid="table-summary" isStriped aria-label="Example static collection table">
                     <TableHeader>
                       <TableColumn>SCRAPING CATEGORY</TableColumn>
                       <TableColumn>INFORMATION</TableColumn>
@@ -543,7 +545,7 @@ function ResultsComponent() {
                     Address and contact details
                   </h3>
 
-                  <WEETable isStriped aria-label="Address and contact info table">
+                  <WEETable data-testid="table-contact" isStriped aria-label="Address and contact info table">
                     <TableHeader>
                       <TableColumn>CONTACT DETAILS</TableColumn>
                       <TableColumn>INFORMATION</TableColumn>
@@ -616,9 +618,10 @@ function ResultsComponent() {
 
                   {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,')
                     ? (
-                      <div className="flex justify-center">
+                      <div className="flex justify-center" data-testid="div-homepagescreenshot">
                         <div className="flex justify-center">
                           <Image
+                            data-testid="img-homepagescreenshot"
                             alt="HomePageScreenShot"
                             src={homePageScreenShot}
                             className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
@@ -636,7 +639,7 @@ function ResultsComponent() {
 
                 {/* Pagination of Images */}
                 {imageList && imageList.length > 0 && (
-                  <div className="py-3">
+                  <div  data-testid="pagination-images" className="py-3">
                     <span className="flex justify-between">
                       <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
                         Images
@@ -744,7 +747,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-images-total" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.totalImages}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -755,7 +758,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-images-missing-alt" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {imagesAnalysis?.missingAltTextCount}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -784,7 +787,7 @@ function ResultsComponent() {
                                 The format of the following URLs are incorrect
                               </h5>
                               <div className='overflow-x-scroll'>
-                                <ScrollShadow hideScrollBar className="max-h-[400px]" size={75}>
+                                <ScrollShadow data-testid="scroll-format-urls" hideScrollBar className="max-h-[400px]" size={75}>
                                   {imagesAnalysis?.reasonsMap.format.map((formatUrl, index) => (
                                     <p key={index}>
                                       <Link href={formatUrl}>{formatUrl}</Link>
@@ -801,7 +804,7 @@ function ResultsComponent() {
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                 The size of the following URLs are to big
                               </h5>
-                              <div className='overflow-x-scroll'>
+                              <div data-testid="div-format-urls" className='overflow-x-scroll'>
                                 {imagesAnalysis?.reasonsMap.size.map((reasonUrl, index) => (
                                   <p key={index}>
                                     <Link href={reasonUrl}>{reasonUrl}</Link>
@@ -817,7 +820,7 @@ function ResultsComponent() {
                               <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                                 The following images have some other problems
                               </h5>
-                              <div className='overflow-x-scroll'>
+                              <div data-testid="div-other-urls" className='overflow-x-scroll'>
                                 {imagesAnalysis?.reasonsMap.other.map((otherUrl, index) => (
                                   <p key={index}>
                                     <Link href={otherUrl}>{otherUrl}</Link>
@@ -872,7 +875,7 @@ function ResultsComponent() {
                           <div className='gap-6 grid sm:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-links-total" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {internalLinkingAnalysis?.totalLinks}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -883,7 +886,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-links-unique" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {internalLinkingAnalysis?.uniqueLinks}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -945,7 +948,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               List of Headings
                             </h5>
-                            <ScrollShadow hideScrollBar className="max-h-[400px]" size={150}>
+                            <ScrollShadow data-testid="popup-headings" hideScrollBar className="max-h-[400px]" size={150}>
                               {headingAnalysis?.headings.map((heading, index) => (
                                 <p key={index}>{heading}</p>
                               ))}
@@ -997,14 +1000,14 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Title Tag
                             </h5>
-                            <p>{metaDescriptionAnalysis?.titleTag}</p>
+                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.titleTag}</p>
                           </div>
 
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Length
                             </h5>
-                            <p>{metaDescriptionAnalysis?.length}</p>
+                            <p data-testid="p-metadescription-length">{metaDescriptionAnalysis?.length}</p>
                           </div>
 
                           {
@@ -1052,14 +1055,14 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Metadata Description
                             </h5>
-                            <p>{titleTagsAnalysis?.metaDescription}</p>
+                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.metaDescription}</p>
                           </div>
 
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Length
                             </h5>
-                            <p>{titleTagsAnalysis?.length}</p>
+                            <p data-testid="p-titletag-length">{titleTagsAnalysis?.length}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1114,7 +1117,7 @@ function ResultsComponent() {
                           <div className='gap-6 grid sm:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-uniq-textlength" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {uniqContentAnalysis?.textLength}
                                 </div>
                                 <div className='font-poppins-semibold text-lg'>
@@ -1125,7 +1128,7 @@ function ResultsComponent() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                               <div>
-                                <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                <div data-testid="div-uniq-percentage" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                   {uniqContentAnalysis && uniqContentAnalysis.uniqueWordsPercentage
                                     ?
                                     (uniqContentAnalysis.uniqueWordsPercentage).toFixed(2) + '%'
@@ -1144,7 +1147,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Repeated words
                             </h5>
-                            <div>
+                            <div data-testid="div-uniq-rep-words">
                               {uniqContentAnalysis?.repeatedWords
                                 .filter((wordObj) => !excludedUniqueRepeatedWords.includes(wordObj.word))
                                 .map((wordObj, index) => (
