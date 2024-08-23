@@ -1,8 +1,15 @@
 'use client';
 import React, { useState } from 'react';
-import { Button, Input, Spacer, Modal, ModalContent, ModalBody, Divider } from '@nextui-org/react';
+import {
+  Button,
+  Input,
+  Spacer,
+  Modal,
+  ModalContent,
+  ModalBody,
+  Divider,
+} from '@nextui-org/react';
 import { forgotPassword } from '../../services/AuthService';
-
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -12,12 +19,6 @@ export default function ForgotPassword() {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!email) {
-      setError('Email is required');
-      const timer = setTimeout(() => setError(''), 3000);
-      return () => clearTimeout(timer);
-    }
 
     // Call API
     const response = await forgotPassword(email);
@@ -42,7 +43,11 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold mb-4">Forgot Your Password?</h1>
-      <form onSubmit={handleForgotPassword} className="w-full max-w-md">
+      <form
+        onSubmit={handleForgotPassword}
+        data-testid="forgot-password-form"
+        className="w-full max-w-md"
+      >
         <Input
           type="email"
           label="Email"
