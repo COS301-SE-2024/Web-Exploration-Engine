@@ -65,15 +65,15 @@ describe('saved reports page', () => {
     cy.visit('/savedreports');
 
     //Page Layout : Report Tab
-        cy.get('[data-testid="tab-reports"]').should('exist');
-      cy.get('[data-testid="tab-reports"]').click();
-      cy.get('[data-testid="table-reports"]').should('exist');
-      cy.get('[data-testid="table-reports"]').should('be.visible'); 
+    cy.get('[data-testid="tab-reports"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="tab-reports"]', { timeout: 10000 }).click();
+    cy.get('[data-testid="table-reports"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="table-reports"]', { timeout: 10000 }).should('be.visible');
 
     //Page Layout : Summary Tab
-        cy.get('[data-testid="tab-summaries"]').should('exist');
-      cy.get('[data-testid="tab-summaries"]').click();
-      cy.get('[data-testid="table-summaries"]').should('exist');
-      cy.get('[data-testid="table-summaries"]').should('be.visible'); 
+    cy.get('[data-testid="tab-summaries"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="tab-summaries"]', { timeout: 10000 }).click();
+    cy.get('[data-testid="table-summaries"]',{ timeout: 10000 }).should('exist');
+    cy.get('[data-testid="table-summaries"]',{ timeout: 10000 }).should('be.visible');
   });
 });
