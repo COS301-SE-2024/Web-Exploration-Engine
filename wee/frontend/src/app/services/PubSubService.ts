@@ -45,7 +45,7 @@ export async function checkKeywordJobStatus(url: string, keyword: string) {
     const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
     console.log('API URL:', apiUrl);
 
-    const response = await fetch(`${apiUrl}/scraper/keyword-status?url=${encodeURI(url)}&keyword=${encodeURI(keyword)}`);
+    const response = await fetch(`${apiUrl}/scraper/keyword-status?url=${encodeURIComponent(url)}&keyword=${encodeURIComponent(keyword)}`);
     if (!response.ok) {
       throw new Error(`Error fetching keyword job status: ${response.statusText}`);
     }
