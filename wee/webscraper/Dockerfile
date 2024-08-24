@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist app/logs
+RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist /app/logs
 
 COPY ../.editorconfig ./
 COPY ../.eslintignore ./
