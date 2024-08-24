@@ -5,7 +5,7 @@ import {
   Button, Tabs, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
+  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow, Spinner
 } from '@nextui-org/react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
@@ -28,6 +28,7 @@ import CircularProgressSentiment from '../../components/CircularProgressSentimen
 import CircularProgressComparison from "../../components/CircularProgressComparison";
 import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
+import { MdErrorOutline } from "react-icons/md";
 
 interface Classifications {
   label: string;
@@ -117,7 +118,11 @@ function ResultsComponent() {
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
 
-  const { results } = useScrapingContext();
+  const [keywordError, setKeywordError] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [isKeywordLoading, setKeywordLoading]= useState(false);
+
+  const { processedUrls, results } = useScrapingContext();
   const { user } = useUserContext();
 
   const router = useRouter();
@@ -290,11 +295,53 @@ function ResultsComponent() {
     }
   }, [isOpen]);
 
+  const sanitizeKeyword = (_keyword: string) => {
+    return _keyword.replace(/[<>"'`;()]/g, '');
+  }
+
   const handleKeyword = async () => {
+    // check the input box
+    // check that the url is there and valid (and make sure it is in the context)
+    if (!url || !processedUrls.includes(url.toString())) {
+      setKeywordError("URL is not valid");
+
+      const timer = setTimeout(() => {
+        setKeywordError('');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // check that the keyword is entered by the user
+    if (!keyword) {
+      setKeywordError("Keyword cannot be empty");
+
+      const timer = setTimeout(() => {
+        setKeywordError('');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // sanitize the keyword
+    const sanitizedKeyword = sanitizeKeyword(keyword);
+    if (sanitizedKeyword !== keyword) {
+      setKeywordError('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');
+
+      const timer = setTimeout(() => {
+        setKeywordError('');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+
+    // make API call to get information about the keyword
+    setKeywordLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
+      console.log("HIERRRRR", url, keyword);
       const response = await fetch(
-        `${apiUrl}/scraper/keyword-analysis?url=${encodeURI('https://www.spur.co.za')}&keyword=${encodeURI('fastfood')}`
+        `${apiUrl}/scraper/keyword-analysis?url=${encodeURIComponent(url)}&keyword=${encodeURIComponent(keyword)}`
       );
 
       if (!response.ok) {
@@ -305,8 +352,9 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        let result = await pollForKeyWordResult('https://www.spur.co.za', 'fastfood');
-        console.log('Keyword result after polling: ', result)
+        let result = await pollForKeyWordResult(url, keyword);
+        console.log('Keyword result after polling: ', result);
+        setKeywordLoading(false);
       } catch (error) {
         console.error('Error when fetching keyword resuls:', error);
       }
@@ -750,6 +798,8 @@ function ResultsComponent() {
                       <Input 
                         data-testid="keyword-input"
                         label="Keywords"
+                        value={keyword}
+                        onChange={(e) => setKeyword(e.target.value)}
                       />
                       <Button
                         data-testid="btn-seo-keyword"
@@ -759,6 +809,21 @@ function ResultsComponent() {
                         Lookup
                       </Button>
                     </div>
+                    {isKeywordLoading ? (
+                      <div className="flex w-full justify-center mt-2">
+                        <Spinner color="default" />
+                      </div>
+                    ) : null}
+
+                    {keywordError ? (
+                      <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+                        <MdErrorOutline className="m-auto mx-1" />
+                        <p>{keywordError}</p>
+                      </span>
+                    ) : (
+                      <p className="mt-4 p-2 min-h-[3.5rem]"></p>
+                    )}
+
                   </div>
                 </div> {/* EO Keyword Analysis */}
 

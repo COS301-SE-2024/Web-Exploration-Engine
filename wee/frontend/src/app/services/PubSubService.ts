@@ -43,7 +43,7 @@ export async function pollForResult(url: string) {
 export async function checkKeywordJobStatus(url: string, keyword: string) {
   try {
     const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-    console.log('API URL:', apiUrl);
+    console.log('API KEYWORD URL:', apiUrl, url, keyword);
 
     const response = await fetch(`${apiUrl}/scraper/keyword-status?url=${encodeURIComponent(url)}&keyword=${encodeURIComponent(keyword)}`);
     if (!response.ok) {
