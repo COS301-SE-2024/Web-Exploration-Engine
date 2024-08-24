@@ -45,6 +45,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
 
 WORKDIR /app
 RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist
+RUN mkdir -p /logs && chown -R webscraper:webscraper /logs
 
 COPY ../.editorconfig ./
 COPY ../.eslintignore ./
@@ -64,7 +65,6 @@ RUN npm install
 
 RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 RUN mkdir -p /home/webscraper && chown -R webscraper:webscraper /home/webscraper
-RUN mkdir -p /logs && chown -R webscraper:webscraper /logs
 
 RUN chown -R webscraper:webscraper /app
 
