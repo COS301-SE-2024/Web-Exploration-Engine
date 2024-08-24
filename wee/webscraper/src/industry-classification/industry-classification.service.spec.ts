@@ -38,12 +38,6 @@ describe('IndustryClassificationService', () => {
       // Mocking axios response for both metadata and domain classification
       mockedAxios.post
         .mockResolvedValueOnce({
-          data: [[{ label: 'Technology', score: 0.9 }]], // metadata classification
-        })
-        .mockResolvedValueOnce({
-          data: [[{ label: 'Web', score: 0.8 }]], // domain classification
-        })
-        .mockResolvedValueOnce({
           data: {
             labels: ["Technology", "Finance", "Healthcare"],
             scores: [0.9, 0.8, 0.7]
@@ -60,8 +54,8 @@ describe('IndustryClassificationService', () => {
       console.log('Result:', result);
 
       expect(result).toEqual({
-        metadataClass: { label: 'Technology', score: 0.9 },
-        domainClass: { label: 'Web', score: 0.8 },
+        // metadataClass: { label: 'Technology', score: 0.9 },
+        // domainClass: { label: 'Web', score: 0.8 },
         zeroShotMetaDataClassify: [
           { label: 'Technology', score: 0.9 },
           { label: 'Finance', score: 0.8 },
@@ -92,8 +86,8 @@ describe('IndustryClassificationService', () => {
       const result = await service.classifyIndustry(url, metadata);
 
       expect(result).toEqual({
-        metadataClass: { label: 'Unknown', score: 0 },
-        domainClass: { label: 'Unknown', score: 0 },
+        // metadataClass: { label: 'Unknown', score: 0 },
+        // domainClass: { label: 'Unknown', score: 0 },
         zeroShotMetaDataClassify: [
           { label: 'Unknown', score: 0 },
           { label: 'Unknown', score: 0 },
@@ -108,67 +102,67 @@ describe('IndustryClassificationService', () => {
     });
   });
 
-  describe('metadataClassify', () => {
-    it('should return classified metadata', async () => {
-      const metadata: Metadata = {
-        title: 'Test Title',
-        description: 'Test Description',
-        keywords: 'Test Keywords',
-        ogTitle: 'Test OG Title',
-        ogDescription: 'Test OG Description',
-        ogImage: 'http://test.com/image.png',
-      };
+  // describe('metadataClassify', () => {
+  //   it('should return classified metadata', async () => {
+  //     const metadata: Metadata = {
+  //       title: 'Test Title',
+  //       description: 'Test Description',
+  //       keywords: 'Test Keywords',
+  //       ogTitle: 'Test OG Title',
+  //       ogDescription: 'Test OG Description',
+  //       ogImage: 'http://test.com/image.png',
+  //     };
 
-      // Mocking axios response
-      mockedAxios.post.mockResolvedValue({
-        data: [[{ label: 'Technology', score: 0.9 }]],
-      });
+  //     // Mocking axios response
+  //     mockedAxios.post.mockResolvedValue({
+  //       data: [[{ label: 'Technology', score: 0.9 }]],
+  //     });
 
-      const result = await service.metadataClassify(metadata);
+  //     const result = await service.metadataClassify(metadata);
 
-      expect(result).toEqual({ label: 'Technology', score: 0.9 });
-    });
+  //     expect(result).toEqual({ label: 'Technology', score: 0.9 });
+  //   });
 
-    it('should handle errors gracefully', async () => {
-      const metadata: Metadata = {
-        title: 'Test Title',
-        description: 'Test Description',
-        keywords: 'Test Keywords',
-        ogTitle: 'Test OG Title',
-        ogDescription: 'Test OG Description',
-        ogImage: 'http://test.com/image.png',
-      };
+  //   it('should handle errors gracefully', async () => {
+  //     const metadata: Metadata = {
+  //       title: 'Test Title',
+  //       description: 'Test Description',
+  //       keywords: 'Test Keywords',
+  //       ogTitle: 'Test OG Title',
+  //       ogDescription: 'Test OG Description',
+  //       ogImage: 'http://test.com/image.png',
+  //     };
 
-      // Mocking axios to throw an error
-      mockedAxios.post.mockRejectedValue(new Error('Network error'));
+  //     // Mocking axios to throw an error
+  //     mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
-      await expect(service.metadataClassify(metadata)).rejects.toThrow('Error classifying industry: Network error');
-    });
-  });
+  //     await expect(service.metadataClassify(metadata)).rejects.toThrow('Error classifying industry: Network error');
+  //   });
+  // });
 
-  describe('domainClassify', () => {
-    it('should return classified domain', async () => {
-      const url = 'http://test.com';
+  // describe('domainClassify', () => {
+  //   it('should return classified domain', async () => {
+  //     const url = 'http://test.com';
 
-      // Mocking axios response
-      mockedAxios.post.mockResolvedValue({
-        data: [[{ label: 'Web', score: 0.8 }]],
-      });
+  //     // Mocking axios response
+  //     mockedAxios.post.mockResolvedValue({
+  //       data: [[{ label: 'Web', score: 0.8 }]],
+  //     });
 
-      const result = await service.domainClassify(url);
+  //     const result = await service.domainClassify(url);
 
-      expect(result).toEqual({ label: 'Web', score: 0.8 });
-    });
+  //     expect(result).toEqual({ label: 'Web', score: 0.8 });
+  //   });
 
-    it('should handle errors gracefully', async () => {
-      const url = 'http://test.com';
+  //   it('should handle errors gracefully', async () => {
+  //     const url = 'http://test.com';
 
-      // Mocking axios to throw an error
-      mockedAxios.post.mockRejectedValue(new Error('Network error'));
+  //     // Mocking axios to throw an error
+  //     mockedAxios.post.mockRejectedValue(new Error('Network error'));
 
-      await expect(service.domainClassify(url)).rejects.toThrow('Error classifying industry: Network error');
-    });
-  });
+  //     await expect(service.domainClassify(url)).rejects.toThrow('Error classifying industry: Network error');
+  //   });
+  // });
 
   describe('zeroShotMetaDataClassify', () => {
     it('should return zero-shot classified metadata', async () => {
@@ -254,6 +248,7 @@ describe('IndustryClassificationService', () => {
       await expect(service.zeroShotDomainClassify(url)).rejects.toThrow('Error classifying domain: Network error');
     });
   });
+  
   describe('createLabelBatches', () => {
     it('should create batches of labels with the specified batch size', () => {
       const labels = ['label1', 'label2', 'label3', 'label4', 'label5', 'label6', 'label7'];
