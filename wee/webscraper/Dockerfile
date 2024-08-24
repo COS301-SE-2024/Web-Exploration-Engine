@@ -56,7 +56,7 @@ COPY ../package*.json ./
 COPY ../tsconfig.base.json ./
 COPY ../webscraper ./webscraper
 COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
-COPY ../../logs ./logs
+COPY ../logs ./logs
 
 RUN npm cache clean --force
 RUN npm install -g npm@latest
