@@ -7,8 +7,8 @@ const serviceName = "[IndustryClassificationService]";
 @Injectable()
 export class IndustryClassificationService {
 
-  private readonly HUGGING_FACE_API_URL =
-    'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
+  // private readonly HUGGING_FACE_API_URL =
+  //   'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
   private readonly HUGGING_FACE_ZERO_SHOT_API_URL =
     'https://api-inference.huggingface.co/models/facebook/bart-large-mnli';
@@ -32,32 +32,32 @@ export class IndustryClassificationService {
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     // update: try and catch for each classification - doesn't return unknown if one fails
     logger.debug(`${serviceName}`);
-    let metadataClass;
-    let domainClass;
+    // let metadataClass;
+    // let domainClass;
     let zeroShotMetaDataClassify;
     let zeroShotDomainClassify;
 
-    try {
-      metadataClass = await this.metadataClassify(metadata);
+    // try {
+    //   metadataClass = await this.metadataClassify(metadata);
     
-    } catch (error) {
-      logger.error(`${serviceName} ${error}`);
-      console.log(error);
-      metadataClass = { 
-        label: 'Unknown',
-        score: 0,
-      };
-    }
+    // } catch (error) {
+    //   logger.error(`${serviceName} ${error}`);
+    //   console.log(error);
+    //   metadataClass = { 
+    //     label: 'Unknown',
+    //     score: 0,
+    //   };
+    // }
 
-    try {
-      domainClass = await this.domainClassify(url);
-    } catch (error) {
-      console.log(error);
-      domainClass = {
-        label: 'Unknown',
-        score: 0,
-      };
-    }
+    // try {
+    //   domainClass = await this.domainClassify(url);
+    // } catch (error) {
+    //   console.log(error);
+    //   domainClass = {
+    //     label: 'Unknown',
+    //     score: 0,
+    //   };
+    // }
 
     try {
       zeroShotMetaDataClassify = await this.zeroShotMetaDataClassify(metadata);
@@ -81,80 +81,81 @@ export class IndustryClassificationService {
       ];
     }
 
-    return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
+    // return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
+    return { zeroShotMetaDataClassify, zeroShotDomainClassify };
   }
 
-  async metadataClassify(metadata: Metadata): Promise<{label: string, score: number}> {
-    if (!metadata.title && !metadata.description && !metadata.keywords) {
-      return {
-        label: 'Unknown',
-        score: 0,
-      };
-    }
-    const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
+  // async metadataClassify(metadata: Metadata): Promise<{label: string, score: number}> {
+  //   if (!metadata.title && !metadata.description && !metadata.keywords) {
+  //     return {
+  //       label: 'Unknown',
+  //       score: 0,
+  //     };
+  //   }
+  //   const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
 
-    try {
-      const response = await axios.post(
-        this.HUGGING_FACE_API_URL,
-        { inputs: inputText },
-        {
-          headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-          },
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       this.HUGGING_FACE_API_URL,
+  //       { inputs: inputText },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+  //         },
+  //       }
+  //     );
 
-      if (response.data && response.data[0][0]) {
-        const res = {
-          label: response.data[0][0].label,
-          score: response.data[0][0].score,
-        };
-        return res;
-      } else {
-        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
-        throw new Error('Failed to classify industry using Hugging Face model');
-      }
-    } catch (error) {
-      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
-      throw new Error(`Error classifying industry: ${error.message}`);
-    }
-  }
+  //     if (response.data && response.data[0][0]) {
+  //       const res = {
+  //         label: response.data[0][0].label,
+  //         score: response.data[0][0].score,
+  //       };
+  //       return res;
+  //     } else {
+  //       logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
+  //       throw new Error('Failed to classify industry using Hugging Face model');
+  //     }
+  //   } catch (error) {
+  //     logger.error(`${serviceName} Error classifying industry: ${error.message}`);
+  //     throw new Error(`Error classifying industry: ${error.message}`);
+  //   }
+  // }
 
-  async domainClassify(url: string): Promise<{label: string, score: number}> {
-    if (!url) {
-      return {
-        label: 'Unknown',
-        score: 0,
-      };
-    }
-    const inputText = `${url}`;
+  // async domainClassify(url: string): Promise<{label: string, score: number}> {
+  //   if (!url) {
+  //     return {
+  //       label: 'Unknown',
+  //       score: 0,
+  //     };
+  //   }
+  //   const inputText = `${url}`;
     
-    try {
-      const response = await axios.post(
-        this.HUGGING_FACE_API_URL,
-        { inputs: inputText },
-        {
-          headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-          },
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       this.HUGGING_FACE_API_URL,
+  //       { inputs: inputText },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+  //         },
+  //       }
+  //     );
 
-      if (response.data && response.data[0][0]) {
-        const res = {
-          label: response.data[0][0].label,
-          score: response.data[0][0].score,
-        };
-        return res;
-      } else {
-        logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
-        throw new Error('Failed to classify industry using Hugging Face model');
-      }
-    } catch (error) {
-      logger.error(`${serviceName} Error classifying industry: ${error.message}`);
-      throw new Error(`Error classifying industry: ${error.message}`);
-    }
-  }
+  //     if (response.data && response.data[0][0]) {
+  //       const res = {
+  //         label: response.data[0][0].label,
+  //         score: response.data[0][0].score,
+  //       };
+  //       return res;
+  //     } else {
+  //       logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
+  //       throw new Error('Failed to classify industry using Hugging Face model');
+  //     }
+  //   } catch (error) {
+  //     logger.error(`${serviceName} Error classifying industry: ${error.message}`);
+  //     throw new Error(`Error classifying industry: ${error.message}`);
+  //   }
+  // }
 
   async zeroShotMetaDataClassify(metadata: Metadata): Promise<{label: string, score: number}[]> {
     if (!metadata.title && !metadata.description && !metadata.keywords) {
