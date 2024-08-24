@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master, config/deployed-hugging-face]
+    branches: [master]
 
 jobs:
   deploy:
