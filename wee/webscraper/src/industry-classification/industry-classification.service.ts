@@ -10,10 +10,9 @@ export class IndustryClassificationService {
   // private readonly HUGGING_FACE_API_URL =
   //   'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
-  private readonly HUGGING_FACE_ZERO_SHOT_API_URL =
-    'https://api-inference.huggingface.co/models/facebook/bart-large-mnli';
+  private readonly HUGGING_FACE_ZERO_SHOT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/zero-shot';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
+  // private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   private readonly CANDIDATE_LABELS = [
     'Mining and Minerals', 'Agriculture', 'Manufacturing', 'Finance and Banking',
@@ -176,14 +175,14 @@ export class IndustryClassificationService {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
           {
-            inputs: inputText,
-            parameters: { candidate_labels: batch }
+            text: inputText,
+            labels: batch,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-            },
-          }
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+          //   },
+          // }
         );
 
         // console.log('Response:', response);
@@ -232,14 +231,14 @@ export class IndustryClassificationService {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
           {
-            inputs: inputText,
-            parameters: { candidate_labels: batch },
+            text: inputText,
+            labels: batch,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
-            },
-          }
+          // {
+          //   headers: {
+          //     Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+          //   },
+          // }
         );
 
         // console.log('Response:', response);
