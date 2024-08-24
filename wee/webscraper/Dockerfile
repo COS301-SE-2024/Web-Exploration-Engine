@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist /logs
+RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist app/logs
 
 COPY ../.editorconfig ./
 COPY ../.eslintignore ./
@@ -56,7 +56,6 @@ COPY ../package*.json ./
 COPY ../tsconfig.base.json ./
 COPY ../webscraper ./webscraper
 COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
-COPY ../logs ./logs
 
 RUN npm cache clean --force
 RUN npm install -g npm@latest
