@@ -1,8 +1,11 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Input, Button, Spacer, Modal, ModalContent, ModalBody, Divider } from '@nextui-org/react';
+import { Button, Spacer, Modal, ModalContent, ModalBody, Divider } from '@nextui-org/react';
 import { getSupabase } from '../../utils/supabase_anon_client';
+import Link from 'next/link';;
+import WEEInput from '../../components/Util/Input';
+import ThemeSwitch from '../../components/ThemeSwitch';
 
 const supabase = getSupabase();
 
@@ -67,34 +70,57 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center">
-      <h1 className="text-2xl font-bold mb-4">Reset Your Password</h1>
-      <form onSubmit={handleResetPassword} className="w-full max-w-md">
-        <Input
-          type="password"
-          label="New Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mb-4"
-          required
-        />
-        <Input
-          type="password"
-          label="Confirm New Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mb-4"
-          required
-        />
-        <Button
-          type="submit"
-          className="w-full bg-jungleGreen-700"
-          disabled={isButtonDisabled}
+    <>
+      <div className='min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular'>
+        <div >
+          <ThemeSwitch />
+
+          <h1 className="text-center mt-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Change your password
+          </h1>
+
+          <h3 className="text-center font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+            Enter a new password below to change your password
+          </h3>
+        </div>
+
+        <form 
+          onSubmit={handleResetPassword} 
+          className="flex flex-col justify-center items-center"
         >
-          {isButtonDisabled ? `Please wait (${timer}s)` : 'Reset Password'}
-        </Button>
-        <Spacer y={2} />
-      </form>
+          <WEEInput
+            type="password"
+            label="New Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+            required
+          />
+          <WEEInput
+            type="password"
+            label="Confirm New Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
+            required
+          />
+          <Button
+            type="submit"
+            className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+            disabled={isButtonDisabled}
+          >
+            {isButtonDisabled ? `Please wait (${timer}s)` : 'Reset Password'}
+          </Button>
+          <Spacer y={2} />
+        </form>
+
+        <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          <span>Back to</span>
+          <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
+              <Link href={'/login'}>Log in</Link>
+          </span>
+        </div>
+      </div>
 
       {/* Success/Failure Modal */}
       <Modal
@@ -126,6 +152,6 @@ export default function ResetPassword() {
           </ModalBody>
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 }
