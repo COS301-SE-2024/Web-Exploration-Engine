@@ -29,6 +29,7 @@ import CircularProgressComparison from "../../components/CircularProgressCompari
 import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
+import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 
 interface Classifications {
   label: string;
@@ -158,6 +159,7 @@ function ResultsComponent() {
   const [canonicalTagAnalysis, setCanonicalTagAnalysis] = useState<CanonicalTagAnalysis | SEOError>();
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
+  const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
 
   useEffect(() => {
     if (url) {
@@ -352,7 +354,8 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        let result = await pollForKeyWordResult(url.toString(), keyword);
+        let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+        setSeoKeywordAnalysis(result);        
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
       } catch (error) {
@@ -821,8 +824,18 @@ function ResultsComponent() {
                         <p>{keywordError}</p>
                       </span>
                     ) : (
-                      <p className="mt-4 p-2 min-h-[3.5rem]"></p>
+                      <></>
                     )}
+
+                    {/* Keyword result */}
+                    <div>
+                      {seoKeywordAnalysis && (
+                        <>
+                          <p>{seoKeywordAnalysis.ranking}</p>
+                          <p>{seoKeywordAnalysis.recommendation}</p>
+                        </>
+                      )}
+                    </div>
 
                   </div>
                 </div> {/* EO Keyword Analysis */}
