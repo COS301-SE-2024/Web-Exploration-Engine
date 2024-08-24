@@ -339,9 +339,9 @@ function ResultsComponent() {
     setKeywordLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-      console.log("HIERRRRR", url, keyword);
+      console.log("HIERRRRR", url.toString(), keyword);
       const response = await fetch(
-        `${apiUrl}/scraper/keyword-analysis?url=${encodeURIComponent(url)}&keyword=${encodeURIComponent(keyword)}`
+        `${apiUrl}/scraper/keyword-analysis?url=${encodeURIComponent(url.toString())}&keyword=${encodeURIComponent(keyword)}`
       );
 
       if (!response.ok) {
@@ -352,7 +352,7 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        let result = await pollForKeyWordResult(url, keyword);
+        let result = await pollForKeyWordResult(url.toString(), keyword);
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
       } catch (error) {
