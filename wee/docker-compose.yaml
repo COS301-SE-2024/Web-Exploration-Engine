@@ -32,7 +32,7 @@ services:
     depends_on:
       - redis-cache
     volumes:
-      - /home/techodyssey/logs/webscraper:/wee/logs
+      - /home/techodyssey/logs/webscraper:/logs
 
   api-service:
     build:

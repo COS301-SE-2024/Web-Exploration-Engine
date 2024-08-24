@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install gnupg wget -y && \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist /app/logs
+RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist
 
 COPY ../.editorconfig ./
 COPY ../.eslintignore ./
@@ -63,9 +63,9 @@ RUN npm install
 
 RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 RUN mkdir -p /home/webscraper && chown -R webscraper:webscraper /home/webscraper
+RUN mkdir -p /logs && chown -R webscraper:webscraper /logs
 
-
-RUN chown -R webscraper:webscraper /app /app/logs
+RUN chown -R webscraper:webscraper /app 
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
