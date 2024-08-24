@@ -56,6 +56,7 @@ COPY ../package*.json ./
 COPY ../tsconfig.base.json ./
 COPY ../webscraper ./webscraper
 COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
+COPY ../../logs ./logs
 
 RUN npm cache clean --force
 RUN npm install -g npm@latest
@@ -63,7 +64,7 @@ RUN npm install
 
 RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscraper
 RUN mkdir -p /home/webscraper && chown -R webscraper:webscraper /home/webscraper
-
+RUN mkdir -p /logs && chown -R webscraper:webscraper /logs
 
 RUN chown -R webscraper:webscraper /app
 
