@@ -26,6 +26,8 @@ import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 import CircularProgressComparison from "../../components/CircularProgressComparison";
+import WEEInput from '../../components/Util/Input';
+import { pollForKeyWordResult } from '../../services/PubSubService';
 
 interface Classifications {
   label: string;
@@ -288,6 +290,31 @@ function ResultsComponent() {
     }
   }, [isOpen]);
 
+  const handleKeyword = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
+      const response = await fetch(
+        `${apiUrl}/scraper/keyword-analysis?url=${encodeURI('https://www.spur.co.za')}&keyword=${encodeURI('fastfood')}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error initiating scrape: ${response.statusText}`);
+      }
+      const initData = await response.json();
+      console.log('Scrape initiation response:', initData);
+
+      // Poll the API until the keyword is done
+      try {
+        let result = await pollForKeyWordResult('https://www.spur.co.za', 'fastfood');
+        console.log('Keyword result after polling: ', result)
+      } catch (error) {
+        console.error('Error when fetching keyword resuls:', error);
+      }
+
+    } catch (error) {
+      console.error('Error when fetching keyword resuls:', error);
+    }
+  }
 
   return (
     <>
@@ -711,6 +738,30 @@ function ResultsComponent() {
           <Tab key="seo" data-testid="tab-seo" title="SEO Analysis">
             <Card>
               <CardBody>
+                {/* Keyword Analysis */}
+                <div>
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Keyword Analysis
+                  </h3>
+
+                  {/* Enter keyword */}
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
+                    <div className='flex flex-col sm:flex-row w-full justify-center items-center'>
+                      <Input 
+                        data-testid="keyword-input"
+                        label="Keywords"
+                      />
+                      <Button
+                        data-testid="btn-seo-keyword"
+                        className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                        onClick={handleKeyword}
+                      >
+                        Lookup
+                      </Button>
+                    </div>
+                  </div>
+                </div> {/* EO Keyword Analysis */}
+
                 {/* Onpage Analysis */}
                 <div>
                   {/* Onpage Analysis Heading */}
