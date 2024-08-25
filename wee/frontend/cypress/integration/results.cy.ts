@@ -52,7 +52,7 @@ describe('results', () => {
 
   });
 
-  it('results of 2 urls - github, steers', () => {
+  it('scrape 2 urls - github, steers', () => {
     cy.visit('/');
     cy.get('[data-testid="scraping-textarea-home"]').type(
       'https://mock.test.github.com,https://mock.test.steers.co.za'
@@ -355,7 +355,113 @@ describe('results', () => {
     //     'contain.text','array'
     //   )
 
+    // Test Technical Analysis
+
+    cy.log('Testing Sentiment Analysis');
+    
+    cy.get('[data-testid="canonicalTagPresent"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'Yes');
+
+    cy.get('[data-testid="canonicalTag"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'https://steers.co.za');
+
+    // cy.get('[data-testid="canonical_recommendations"]')
+    //   .should('exist')
+    //   .should('be.visible')
+    //   .should('contain.text', '');
+
+    cy.get('[data-testid="siteSpeed"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', '0');
+
+    // cy.get('[data-testid="sitespeed_recommendations"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', '0');
+
+    cy.get('[data-testid="isSitemapvalid"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    // cy.get('[data-testid="xml_recommendation"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+
+    cy.get('[data-testid="mobile_friendliness"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    
+    // cy.get('[data-testid="mobile_recommendations"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+    
+    
+    cy.get('[data-testid="indexibilityAnalysis"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    
+    // cy.get('[data-testid="indexable_recommendation"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+    
+    
+    cy.get('[data-testid="structuredData"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', '0')
+    
+    
+    cy.get('[data-testid="structured_recommendations"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'No structured data found. Add structured data to improve SEO.')
+    
+    
+    // Testing Lighthouse analysis
+
+    // cy.get('[data-testid="lighthouse-performance"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+    // cy.get('[data-testid="lighthouse-performance"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+    // cy.get('[data-testid="lighthouse-bestpractices"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+    
+    // cy.get('[data-testid="lighthouse_recommendation_"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+
+    
     //  Tab : Sentiment Analysis
     cy.log('Testing Sentiment Analysis');
+
+
   });
+
+
 });
