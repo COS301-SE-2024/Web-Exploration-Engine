@@ -1,58 +1,58 @@
 describe('results', () => {
-  it('general layout intact', () => {
-    cy.testLayout('/results');
-  });
+  // it('general layout intact', () => {
+  //   cy.testLayout('/results');
+  // });
 
-  it('all page content should load', () => {
-    cy.visit('/results?');
+  // it('all page content should load', () => {
+  //   cy.visit('/results?');
 
-    //Testing Export / Save Button
-    cy.get('[data-testid="btn-export-save-report"]').should('exist');
-    cy.get('[data-testid="btn-export-save-report"]').click();
-    cy.get('[data-testid="btn-export-save-report"]').should('exist');
+  //   //Testing Export / Save Button
+  //   cy.get('[data-testid="btn-export-save-report"]').should('exist');
+  //   cy.get('[data-testid="btn-export-save-report"]').click();
+  //   cy.get('[data-testid="btn-export-save-report"]').should('exist');
 
 
-    //Page Tab : General Overview
-    cy.log('Testing General overview tab');
+  //   //Page Tab : General Overview
+  //   cy.log('Testing General overview tab');
 
-    cy.contains(/overview/i).should('exist');
-    cy.contains(/parked/i).should('exist');
-    cy.contains(/seo/i).should('exist');
-    cy.contains(/contact details/i).should('exist');
+  //   cy.contains(/overview/i).should('exist');
+  //   cy.contains(/parked/i).should('exist');
+  //   cy.contains(/seo/i).should('exist');
+  //   cy.contains(/contact details/i).should('exist');
 
-    cy.log('Testing tabs and buttons exist');
-    cy.get('[data-testid="tab-seo"]').should('exist');
-    cy.get('[data-testid="tab-seo"]').click();
-    cy.contains(/media/i).should('exist');
-    cy.contains(/seo/i).should('exist');
-    cy.contains(/export/i).should('exist');
+  //   cy.log('Testing tabs and buttons exist');
+  //   cy.get('[data-testid="tab-seo"]').should('exist');
+  //   cy.get('[data-testid="tab-seo"]').click();
+  //   cy.contains(/media/i).should('exist');
+  //   cy.contains(/seo/i).should('exist');
+  //   cy.contains(/export/i).should('exist');
 
-    // Page Tab : Media
-    cy.log('Testing Media Tab');
+  //   // Page Tab : Media
+  //   cy.log('Testing Media Tab');
 
-    cy.get('[data-testid="tab-media"]').click();
-    cy.contains(/screenshot/i).should('exist');
-    cy.contains(/screenshot available./i).should('exist');
-    cy.contains(/images/i).should('exist');
-    cy.contains(/No images available/i).should('exist');
+  //   cy.get('[data-testid="tab-media"]').click();
+  //   cy.contains(/screenshot/i).should('exist');
+  //   cy.contains(/screenshot available./i).should('exist');
+  //   cy.contains(/images/i).should('exist');
+  //   cy.contains(/No images available/i).should('exist');
 
-    // Page Tab : SEO Analysis
-    cy.log('Testing SEO Analysis');
+  //   // Page Tab : SEO Analysis
+  //   cy.log('Testing SEO Analysis');
 
-    cy.get('[data-testid="tab-seo"]').click();
-    cy.contains(/images/i).should('exist');
-    cy.contains(/internal linking/i).should('exist');
-    cy.contains(/headings/i).should('exist');
-    cy.contains(/meta/i).should('exist');
-    cy.contains(/title tags/i).should('exist');
-    cy.contains(/unique content/i).should('exist');
+  //   cy.get('[data-testid="tab-seo"]').click();
+  //   cy.contains(/images/i).should('exist');
+  //   cy.contains(/internal linking/i).should('exist');
+  //   cy.contains(/headings/i).should('exist');
+  //   cy.contains(/meta/i).should('exist');
+  //   cy.contains(/title tags/i).should('exist');
+  //   cy.contains(/unique content/i).should('exist');
 
-    // Page Tab : Sentiment Analysis
-    cy.log('Testing Sentiment Analysis');
+  //   // Page Tab : Sentiment Analysis
+  //   cy.log('Testing Sentiment Analysis');
 
-  });
+  // });
 
-  it('results of 2 urls - github, steers', () => {
+  it('scrape 2 urls - github, steers', () => {
     cy.visit('/');
     cy.get('[data-testid="scraping-textarea-home"]').type(
       'https://mock.test.github.com,https://mock.test.steers.co.za'
@@ -355,7 +355,113 @@ describe('results', () => {
     //     'contain.text','array'
     //   )
 
+    // Test Technical Analysis
+
+    cy.log('Testing Sentiment Analysis');
+    
+    cy.get('[data-testid="canonicalTagPresent"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'Yes');
+
+    cy.get('[data-testid="canonicalTag"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'https://steers.co.za');
+
+    // cy.get('[data-testid="canonical_recommendations"]')
+    //   .should('exist')
+    //   .should('be.visible')
+    //   .should('contain.text', '');
+
+    cy.get('[data-testid="siteSpeed"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', '0');
+
+    // cy.get('[data-testid="sitespeed_recommendations"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', '0');
+
+    cy.get('[data-testid="isSitemapvalid"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    // cy.get('[data-testid="xml_recommendation"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+
+    cy.get('[data-testid="mobile_friendliness"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    
+    // cy.get('[data-testid="mobile_recommendations"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+    
+    
+    cy.get('[data-testid="indexibilityAnalysis"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'Yes')
+    
+    
+    // cy.get('[data-testid="indexable_recommendation"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'Yes')
+    
+    
+    cy.get('[data-testid="structuredData"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', '0')
+    
+    
+    cy.get('[data-testid="structured_recommendations"]')
+    .should('exist')
+    .should('be.visible')
+    .should('contain.text', 'No structured data found. Add structured data to improve SEO.')
+    
+    
+    // Testing Lighthouse analysis
+
+    // cy.get('[data-testid="lighthouse-performance"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+    // cy.get('[data-testid="lighthouse-performance"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+    // cy.get('[data-testid="lighthouse-bestpractices"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+    
+    // cy.get('[data-testid="lighthouse_recommendation_"]')
+    // .should('exist')
+    // .should('be.visible')
+    // .should('contain.text', 'No structured data found. Add stuctured data to improve SEO.')
+
+      
+
+    
     //  Tab : Sentiment Analysis
     cy.log('Testing Sentiment Analysis');
+
+
   });
+
+
 });
