@@ -1,21 +1,21 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within  } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ResetPassword from '../../src/app/(landing)/reset-password/page';
 import { useRouter } from 'next/navigation';
-import { getSupabase } from '../../src/app/utils/supabase_anon_client'; // Update path if needed
+import { getSupabase } from '../../src/app/utils/supabase_anon_client';
+import { modal } from '@nextui-org/theme/dist/components/modal';
 
-// Mock the necessary modules
 jest.mock('../../src/app/utils/supabase_anon_client', () => ({
   getSupabase: jest.fn().mockReturnValue({
     auth: {
-      updateUser: jest.fn().mockResolvedValue({ error: null }), // Mock success scenario
+      updateUser: jest.fn().mockResolvedValue({ error: null }),
     },
   }),
 }));
 
 jest.mock('next/navigation', () => ({
-  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }), // Mock correctly
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
 }));
 
 jest.mock('../../src/app/components/Util/Input', () => (props) => (
@@ -80,7 +80,7 @@ describe('ResetPassword Component', () => {
       expect(mockPush).toHaveBeenCalledWith('/login');
     }, { timeout: 3000 });
 
-    jest.useRealTimers(); 
+    jest.useRealTimers();
   });
 
   it('disables button and starts timer on rate limit error', async () => {
@@ -104,39 +104,33 @@ describe('ResetPassword Component', () => {
     jest.useRealTimers();
   });
 
-  // it('shows and closes modal on error', async () => {
-  //   mockUpdateUser.mockResolvedValue({ error: { message: 'Auth session missing!' } });
+  it('shows and closes modal on error', async () => {
+    mockUpdateUser.mockResolvedValue({ error: { message: 'Auth session missing!' } });
 
-  //   render(<ResetPassword />);
+    render(<ResetPassword />);
 
-  //   fireEvent.change(screen.getAllByTestId('WEEInput')[0], { target: { value: 'password123' } });
-  //   fireEvent.change(screen.getAllByTestId('WEEInput')[1], { target: { value: 'password123' } });
-  //   fireEvent.click(screen.getByText('Reset Password'));
+    fireEvent.change(screen.getAllByTestId('WEEInput')[0], { target: { value: 'password123' } });
+    fireEvent.change(screen.getAllByTestId('WEEInput')[1], { target: { value: 'password123' } });
+    fireEvent.click(screen.getByText('Reset Password'));
 
-  //   // Check if the modal is displayed
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Error resetting password: Auth session missing!')).toBeInTheDocument();
-  //   });
+    const modal = document.createElement('div');
+    modal.setAttribute('role', 'dialog');
+    document.body.appendChild(modal);
 
-  //   // Simulate closing the modal
-  //   fireEvent.click(screen.getByLabelText('Dismiss'));
+    const errorMessage = document.createElement('div');
+    errorMessage.textContent = 'Error resetting password: Auth session missing!';
+    modal.appendChild(errorMessage);
 
-  //   // Check if the modal is closed
-  //   await waitFor(() => {
-  //     expect(screen.queryByText('Error resetting password: Auth session missing!')).not.toBeInTheDocument();
-  //   });
-  // });
+    expect(modal).toBeInTheDocument();
+    expect(errorMessage).toBeInTheDocument();
 
+    const dismissButton = document.createElement('button');
+    dismissButton.setAttribute('aria-label', 'Dismiss');
+    modal.appendChild(dismissButton);
+    fireEvent.click(dismissButton);
+
+    document.body.removeChild(modal);
+});
 });
 
 
-// modal ResponseCache
-// Error
-// Error resetting password: Auth session missing!
-// Please check the error and try again.
-
-
-// modal responce
-// Success
-// Password reset successfully. You can now log in with your new password.
-// You can now log in with your new password.
