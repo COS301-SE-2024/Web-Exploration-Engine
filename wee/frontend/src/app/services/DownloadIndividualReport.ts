@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis,LightHouseAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis,MobileFriendlinessAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -23,6 +23,13 @@ export const handleDownloadReport = (
   metaDescriptionAnalysis: MetaDescriptionAnalysis | SEOError | undefined,
   uniqueContentAnalysis: UniqueContentAnalysis | SEOError | undefined,
   sentimentAnalysis: SentimentAnalysis |undefined,
+  xMLSitemapAnalysis: XMLSitemapAnalysis | SEOError |undefined,
+  canonicalTagAnalysis: CanonicalTagAnalysis | SEOError |undefined,
+  indexabilityAnalysis: IndexabilityAnalysis | SEOError |undefined,  
+  siteSpeedAnalysis: SiteSpeedAnalysis | SEOError |undefined,
+  structuredDataAnalysis: StructuredDataAnalysis | SEOError |undefined,
+  mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError |undefined,
+  lighthouseAnalysis: LightHouseAnalysis | SEOError |undefined
 ) => {
   const doc = new jsPDF();
 
@@ -148,7 +155,7 @@ export const handleDownloadReport = (
       ['Meta Description', titleTagAnalysis && 'metaDescription' in titleTagAnalysis ? titleTagAnalysis.metaDescription : 'N/A'],
       ['URL Words in Description', titleTagAnalysis && 'isUrlWordsInDescription' in titleTagAnalysis ? (titleTagAnalysis.isUrlWordsInDescription ? 'Yes' : 'No') : 'N/A'],
       ['Length', titleTagAnalysis && 'length' in titleTagAnalysis ? `${titleTagAnalysis.length}` : 'N/A'],
-      //['Recommendations', titleTagAnalysis && 'recommendations' in titleTagAnalysis ? titleTagAnalysis.recommendations : 'N/A']
+      ['Recommendations', titleTagAnalysis && 'recommendations' in titleTagAnalysis ? titleTagAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -202,7 +209,7 @@ export const handleDownloadReport = (
     const headingAnalysisRows = [
       ['Count', headingAnalysis && 'count' in headingAnalysis ? `${headingAnalysis.count}` : 'N/A'],
       ['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
-      //['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
+      ['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -255,9 +262,9 @@ export const handleDownloadReport = (
       ['Total Images', imageAnalysis && 'totalImages' in imageAnalysis ? `${imageAnalysis.totalImages}` : 'N/A'],
       ['Missing Alt Text Count', imageAnalysis && 'missingAltTextCount' in imageAnalysis ? `${imageAnalysis.missingAltTextCount}` : 'N/A'],
       ['Non-Optimized Count', imageAnalysis && 'nonOptimizedCount' in imageAnalysis ? `${imageAnalysis.nonOptimizedCount}` : 'N/A'],
-      ['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
+      //['Error URLs', imageAnalysis && 'errorUrls' in imageAnalysis ? imageAnalysis.errorUrls.join(', ') : 'N/A'],
       //['Reasons Map', imageAnalysis && 'reasonsMap' in imageAnalysis ? JSON.stringify(imageAnalysis.reasonsMap) : 'N/A'],
-      //['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
+      ['Recommendations', imageAnalysis && 'recommendations' in imageAnalysis ? imageAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -311,7 +318,7 @@ export const handleDownloadReport = (
     const internalLinksAnalysisRows = [
       ['Total Links', internalLinksAnalysis && 'totalLinks' in internalLinksAnalysis ? `${internalLinksAnalysis.totalLinks}` : 'N/A'],
       ['Unique Links', internalLinksAnalysis && 'uniqueLinks' in internalLinksAnalysis ? `${internalLinksAnalysis.uniqueLinks}` : 'N/A'],
-      //['Recommendations', internalLinksAnalysis && 'recommendations' in internalLinksAnalysis ? internalLinksAnalysis.recommendations : 'N/A']
+      ['Recommendations', internalLinksAnalysis && 'recommendations' in internalLinksAnalysis ? internalLinksAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -365,7 +372,7 @@ export const handleDownloadReport = (
     const metaDescriptionAnalysisRows = [
       ['Title Tag', metaDescriptionAnalysis && 'titleTag' in metaDescriptionAnalysis ? metaDescriptionAnalysis.titleTag : 'N/A'],
       ['Length', metaDescriptionAnalysis && 'length' in metaDescriptionAnalysis ? `${metaDescriptionAnalysis.length}` : 'N/A'],
-      //['Recommendations', metaDescriptionAnalysis && 'recommendations' in metaDescriptionAnalysis ? metaDescriptionAnalysis.recommendations : 'N/A']
+      ['Recommendations', metaDescriptionAnalysis && 'recommendations' in metaDescriptionAnalysis ? metaDescriptionAnalysis.recommendations : 'N/A']
     ];
 
     y = startY + headerHeight;
@@ -420,7 +427,7 @@ export const handleDownloadReport = (
         ['Text Length', uniqueContentAnalysis && 'textLength' in uniqueContentAnalysis ? `${uniqueContentAnalysis.textLength}` : 'N/A'],
         ['Unique Words Percentage', uniqueContentAnalysis && 'uniqueWordsPercentage' in uniqueContentAnalysis ? `${uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2)}%` : 'N/A'],
         ['Repeated Words', uniqueContentAnalysis && 'repeatedWords' in uniqueContentAnalysis ? uniqueContentAnalysis.repeatedWords.map(word => `${word.word}: ${word.count}`).join(', ') : 'N/A'],
-      //['Recommendations', uniqueContentAnalysis && 'recommendations' in uniqueContentAnalysis ? uniqueContentAnalysis.recommendations : 'N/A'],
+      ['Recommendations', uniqueContentAnalysis && 'recommendations' in uniqueContentAnalysis ? uniqueContentAnalysis.recommendations : 'N/A'],
 
     ];
     
@@ -455,6 +462,382 @@ export const handleDownloadReport = (
       }
     });
   }
+//XML Sitemap
+  doc.addPage();
+  doc.setFontSize(20);
+  const title9 = 'XML Sitemap Analysis';
+  const titleWidth9 = doc.getStringUnitWidth(title9) * 20 / doc.internal.scaleFactor;
+  const x9 = (doc.internal.pageSize.width - titleWidth9) / 2;
+  doc.text(title9, x9, 20);
+  
+  
+  if (xMLSitemapAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+    const xMLSitemapAnalysisRows = [
+        ['Validated', xMLSitemapAnalysis && 'isSitemapValid' in xMLSitemapAnalysis ? `${xMLSitemapAnalysis.isSitemapValid}` : 'N/A'],
+        ['Recommendations', xMLSitemapAnalysis && 'recommendations' in xMLSitemapAnalysis ? xMLSitemapAnalysis.recommendations : 'N/A']
+    ];
+    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    xMLSitemapAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//Canonical tags
+doc.addPage();
+doc.setFontSize(20);
+const title10= 'Canonical tag Analysis';
+const titleWidth10 = doc.getStringUnitWidth(title10) * 20 / doc.internal.scaleFactor;
+const x10 = (doc.internal.pageSize.width - titleWidth10) / 2;
+doc.text(title10, x10, 20);
+
+
+if (canonicalTagAnalysis) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); 
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  const canonicalTagAnalysisRows = [
+      ['Is Present', canonicalTagAnalysis && 'isCanonicalTagPresent' in canonicalTagAnalysis ? `${canonicalTagAnalysis.isCanonicalTagPresent}` : 'N/A'],
+      ['Recommendations', canonicalTagAnalysis && 'recommendations' in canonicalTagAnalysis ? canonicalTagAnalysis.recommendations : 'N/A']
+  ];
+  
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  canonicalTagAnalysisRows.forEach(row => {
+    const [category, info] = row;
+    const categoryLines = splitText(String(category), columnWidth[0] - 4);
+    const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+    categoryLines.forEach((line, i) => {
+      doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+    });
+    infoLines.forEach((line, i) => {
+      doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+    });
+
+    // Draw line after each row
+    drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+    y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+    if (y > 270) { // Check if the y position exceeds the page limit
+      doc.addPage();
+      y = 20; // Reset y position on the new page
+      doc.text('Category', margin + 2, y + 7);
+      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+      y += headerHeight;
+    }
+  });
+}
+//Indexibillity analysis
+  doc.addPage();
+  doc.setFontSize(20);
+  const title11 = 'Indexability Analysis';
+  const titleWidth11 = doc.getStringUnitWidth(title11) * 20 / doc.internal.scaleFactor;
+  const x11 = (doc.internal.pageSize.width - titleWidth11) / 2;
+  doc.text(title11, x11, 20);
+  
+  
+  if (indexabilityAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+    const indexabilityAnalysisRows = [
+        ['Indexable', indexabilityAnalysis && 'isIndexable' in indexabilityAnalysis ? `${indexabilityAnalysis.isIndexable}` : 'N/A'],
+        ['Recommendations', indexabilityAnalysis && 'recommendations' in indexabilityAnalysis ? indexabilityAnalysis.recommendations : 'N/A']
+    ];
+    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    indexabilityAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//SiteSpeed
+  doc.addPage();
+  doc.setFontSize(20);
+  const title12 = 'Site Speed Analysis';
+  const titleWidth12 = doc.getStringUnitWidth(title12) * 20 / doc.internal.scaleFactor;
+  const x12 = (doc.internal.pageSize.width - titleWidth12) / 2;
+  doc.text(title12, x12, 20);
+  
+  
+  if (siteSpeedAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+    const siteSpeedAnalysisRows = [
+        ['Load Time', siteSpeedAnalysis && 'loadTime' in siteSpeedAnalysis ? `${siteSpeedAnalysis.loadTime}` : 'N/A'],
+        ['Recommendations', siteSpeedAnalysis && 'recommendations' in siteSpeedAnalysis ? siteSpeedAnalysis.recommendations : 'N/A']
+    ];
+    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    siteSpeedAnalysisRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//
+//Structured data
+doc.addPage();
+doc.setFontSize(20);
+const title13 = 'Structured data Analysis';
+const titleWidth13 = doc.getStringUnitWidth(title13) * 20 / doc.internal.scaleFactor;
+const x13 = (doc.internal.pageSize.width - titleWidth13) / 2;
+doc.text(title13, x13, 20);
+
+
+if (structuredDataAnalysis) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  const structuredDataAnalysisRows = [
+      ['Count', structuredDataAnalysis && 'count' in structuredDataAnalysis ? `${structuredDataAnalysis.count}` : 'N/A'],
+      ['Recommendations', structuredDataAnalysis && 'recommendations' in structuredDataAnalysis ? structuredDataAnalysis.recommendations : 'N/A']
+  ];
+  
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  structuredDataAnalysisRows.forEach(row => {
+    const [category, info] = row;
+    const categoryLines = splitText(String(category), columnWidth[0] - 4);
+    const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+    categoryLines.forEach((line, i) => {
+      doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+    });
+    infoLines.forEach((line, i) => {
+      doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+    });
+
+    // Draw line after each row
+    drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+    y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+    if (y > 270) { // Check if the y position exceeds the page limit
+      doc.addPage();
+      y = 20; // Reset y position on the new page
+      doc.text('Category', margin + 2, y + 7);
+      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+      y += headerHeight;
+    }
+  });
+}
+//Mobile friendliness
+doc.addPage();
+doc.setFontSize(20);
+const title14 = 'Mobile friendliness Analysis';
+const titleWidth14 = doc.getStringUnitWidth(title14) * 20 / doc.internal.scaleFactor;
+const x14 = (doc.internal.pageSize.width - titleWidth14) / 2;
+doc.text(title14, x14, 20);
+
+
+if (mobileFriendlinessAnalysis) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  const mobileFriendlinessAnalysisRows = [
+      ['Responsive', mobileFriendlinessAnalysis && 'isResponsive' in mobileFriendlinessAnalysis ? `${mobileFriendlinessAnalysis.isResponsive}` : 'N/A'],
+      ['Recommendations', mobileFriendlinessAnalysis && 'recommendations' in mobileFriendlinessAnalysis ? mobileFriendlinessAnalysis.recommendations : 'N/A']
+  ];
+  
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  mobileFriendlinessAnalysisRows.forEach(row => {
+    const [category, info] = row;
+    const categoryLines = splitText(String(category), columnWidth[0] - 4);
+    const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+    categoryLines.forEach((line, i) => {
+      doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+    });
+    infoLines.forEach((line, i) => {
+      doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+    });
+
+    // Draw line after each row
+    drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+    y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+    if (y > 270) { // Check if the y position exceeds the page limit
+      doc.addPage();
+      y = 20; // Reset y position on the new page
+      doc.text('Category', margin + 2, y + 7);
+      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+      y += headerHeight;
+    }
+  });
+}
+//Lighthouse
+doc.addPage();
+doc.setFontSize(20);
+const title15 = 'Lighthouse Analysis';
+const titleWidth15 = doc.getStringUnitWidth(title15) * 20 / doc.internal.scaleFactor;
+const x15 = (doc.internal.pageSize.width - titleWidth15) / 2;
+doc.text(title15, x15, 20);
+
+
+if (lighthouseAnalysis) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  const lighthouseAnalysisRows = [
+    ['Accessibility Score', lighthouseAnalysis && 'scores' in lighthouseAnalysis ? lighthouseAnalysis.scores.accessibility : 'N/A'],
+    ['Best Practices Score', lighthouseAnalysis && 'scores' in lighthouseAnalysis ? lighthouseAnalysis.scores.bestPractices : 'N/A'],
+    ['Performance Score', lighthouseAnalysis && 'scores' in lighthouseAnalysis ? lighthouseAnalysis.scores.performance : 'N/A'],
+    // ...(
+    //   lighthouseAnalysis && lighthouseAnalysis.diagnostics && lighthouseAnalysis.diagnostics.recommendations.length > 0
+    //   ? lighthouseAnalysis.diagnostics.recommendations.map(recommendations => [
+    //       recommendations.title,
+    //       recommendations.description,
+    //       `Score: ${recommendations.score}`,
+    //       recommendations.displayValue !== undefined ? `Display Value: ${recommendations.displayValue}` : ''
+    //     ])
+    //   : [['Recommendations', 'No recommendations available']]
+    // )
+  ];
+  
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  lighthouseAnalysisRows.forEach(row => {
+    const [category, info] = row;
+    const categoryLines = splitText(String(category), columnWidth[0] - 4);
+    const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+    categoryLines.forEach((line, i) => {
+      doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+    });
+    infoLines.forEach((line, i) => {
+      doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+    });
+
+    // Draw line after each row
+    drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+    y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+    if (y > 270) { // Check if the y position exceeds the page limit
+      doc.addPage();
+      y = 20; // Reset y position on the new page
+      doc.text('Category', margin + 2, y + 7);
+      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+      y += headerHeight;
+    }
+  });
+}
 ///Sentiment
 doc.addPage();
   doc.setFontSize(20);

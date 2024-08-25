@@ -73,7 +73,8 @@ jobs:
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
-
+      NEXT_PUBLIC_TESTING_ENVIRONMENT: true
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v2

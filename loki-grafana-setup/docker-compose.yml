@@ -17,7 +17,7 @@ services:
   promtail:
     image: grafana/promtail:2.9.2
     volumes:
-      - ../logs:/var/log
+      - /home/techodyssey/logs/webscraper:/var/log
       - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml
     command: -config.file=/etc/promtail/config.yml
     networks:
@@ -52,3 +52,5 @@ services:
       - "3000:3000"
     networks:
       - loki
+    volumes:
+      - ../grafana/grafana.ini:/etc/grafana/grafana.ini  # Mount your grafana.ini file

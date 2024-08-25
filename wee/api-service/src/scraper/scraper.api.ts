@@ -398,6 +398,8 @@ export const ScraperResponse500 = ApiResponse({ status: 500, description: 'Inter
 // });
 export const GetJobStatusQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
 export const GetJobStatusTypeQuery = ApiQuery({ name: 'type', required: true, description: 'Type of the job' });
+export const GetJobStatusKeywordQuery = ApiQuery({ name: 'keyword', required: true, description: 'The keyword to analyse' });
+
 
 export const GetJobStatusOperation = ApiOperation({ summary: 'Get the status of a job' });
 

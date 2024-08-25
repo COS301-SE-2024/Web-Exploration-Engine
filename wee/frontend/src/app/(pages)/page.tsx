@@ -14,9 +14,8 @@ export default function Home() {
     const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
-    const [error, setError] = useState('');
-
-        
+    const [error, setError] = useState('');     
+    const MAX_URL_LENGTH = 2048;   
    
     const isValidUrl = (urlString: string) => {
         try {
@@ -26,6 +25,10 @@ export default function Home() {
             return false;
         }
     };
+
+    const sanitizeURL = (url: string) => {
+      return url.replace(/[<>"'`;()]/g, '');
+    }
 
     const handleScraping = () => {
       if (!url) {
@@ -39,17 +42,49 @@ export default function Home() {
       }
 
       const urlsToScrape = url.split(',').map(u => u.trim());
-      for (const singleUrl of urlsToScrape) {
 
-          if (!isValidUrl(singleUrl)) {
-              setError('Please enter valid URLs');
+      if (urlsToScrape.length > 10) {
+        setError('Maximum of 10 URLs can be scraped');
   
-              const timer = setTimeout(() => {
-                  setError('');
-              }, 3000);
-  
-              return () => clearTimeout(timer);
-          }
+        const timer = setTimeout(() => {
+            setError('');
+        }, 3000);
+
+        return () => clearTimeout(timer);
+      } 
+
+      for (const singleUrl of urlsToScrape) {
+        const sanitizedURL = sanitizeURL(singleUrl);
+
+        if (sanitizedURL !== singleUrl) {
+          setError('URLs cannot contain special characters like <, >, ", \', `, ;, (, or )');
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (sanitizedURL.length >= MAX_URL_LENGTH) {
+          setError(`URL exceeds maximum length of ${MAX_URL_LENGTH} characters`);
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (!isValidUrl(sanitizedURL)) {
+            setError('Please enter valid URLs');
+
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
       }
       setError('');
 
@@ -84,7 +119,7 @@ export default function Home() {
             Ready to start scraping?
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
-            Start by entering the URL of the website you wish to scrape
+            Start by entering the URLs of the websites you wish to scrape
           </h3>
         </div>
         <div className="flex flex-col sm:flex-row w-full justify-center items-center">
@@ -112,42 +147,6 @@ export default function Home() {
         ) : (
           <p className="mt-4 p-2 min-h-[3.5rem]"></p>
         )}
-
-        {/* <div className="bg-zinc-200 dark:bg-zinc-700 w-full md:w-5/6 p-4 rounded-xl">
-          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4">
-            Scraping criteria
-          </h3>
-
-          <div className="gap-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <Checkbox radius="md" color={'default'}>
-              Addresses
-            </Checkbox>
-            <Checkbox radius="md" color={'default'}>
-              Fraud detection
-            </Checkbox>
-            <Checkbox defaultSelected radius="md" color={'default'}>
-              Images
-            </Checkbox>
-            <Checkbox defaultSelected radius="md" color={'default'}>
-              Industry classifications
-            </Checkbox>
-            <Checkbox radius="md" color={'default'}>
-              Locations
-            </Checkbox>
-            <Checkbox defaultSelected radius="md" color={'default'}>
-              Logo
-            </Checkbox>
-            <Checkbox radius="md" color={'default'}>
-              Sentiment analysis
-            </Checkbox>
-            <Checkbox radius="md" color={'default'}>
-              Slogans
-            </Checkbox>
-            <Checkbox defaultSelected radius="md" color={'default'}>
-              Website status
-            </Checkbox>
-          </div>
-        </div> */}
       </div>
     );
 }

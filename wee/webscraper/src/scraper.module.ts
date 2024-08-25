@@ -23,6 +23,7 @@ import { ScreenshotService } from './screenshot-homepage/screenshot.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { ProxyService } from './proxy/proxy.service';
+import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { ProxyService } from './proxy/proxy.service';
     ScreenshotService,
     SeoAnalysisService,
     SentimentAnalysisService,
+    KeywordAnalysisService,
     ProxyService,
   ],
 })
