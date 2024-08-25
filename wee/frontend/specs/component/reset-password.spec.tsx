@@ -1,59 +1,120 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ResetPassword from '../../src/app/(landing)/reset-password/page';
-import { resetPassword } from '../../src/app/services/AuthService';
 import { useRouter } from 'next/navigation';
-
-
-jest.mock('../../src/app/services/AuthService', () => ({
-  resetPassword: jest.fn(),
-}));
-
-jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
-}));
+import { getSupabase } from '../../src/app/utils/supabase_anon_client';
 
 jest.mock('../../src/app/utils/supabase_anon_client', () => ({
-  getSupabase: () => ({
+  getSupabase: jest.fn().mockReturnValue({
     auth: {
-      updateUser: jest.fn().mockResolvedValue({}),
+      updateUser: jest.fn().mockResolvedValue({ error: null }),
     },
   }),
 }));
 
-const mockRouter = {
-  push: jest.fn(),
-};
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
+}));
 
-beforeEach(() => {
-  (useRouter as jest.Mock).mockReturnValue(mockRouter);
-});
+jest.mock('../../src/app/components/Util/Input', () => (props) => (
+  <input data-testid="WEEInput" {...props} />
+));
+
+jest.mock('../../src/app/components/ThemeSwitch', () => () => <div data-testid="ThemeSwitch" />);
 
 describe('ResetPassword Component', () => {
-  it('renders reset password form', () => {
-    render(<ResetPassword />);
-    const newPasswordFields = screen.getAllByLabelText(/New Password/i);
-    expect(newPasswordFields.length).toBeGreaterThanOrEqual(1);
-    expect(newPasswordFields[0]).toHaveAttribute('type', 'password');
-    const confirmPasswordFields = screen.getAllByLabelText(/Confirm New Password/i);
-    expect(confirmPasswordFields.length).toBeGreaterThanOrEqual(1);
-    expect(confirmPasswordFields[0]).toHaveAttribute('type', 'password');
-    expect(screen.getByText(/Reset Password/i)).toBeInTheDocument();
-  });
-  it('handles successful password reset', async () => {
-    render(<ResetPassword />);
-    const [newPasswordInput] = screen.getAllByLabelText(/New Password/i);
-    const [confirmPasswordInput] = screen.getAllByLabelText(/Confirm New Password/i);
+  const mockUpdateUser = jest.fn();
+  const mockPush = jest.fn();
 
-    fireEvent.change(newPasswordInput, { target: { value: 'NewPassword123!' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'NewPassword123!' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /Reset Password/i }));
-    await act(async () => {
-      await waitFor(() => {
-        expect(screen.getByText(/You can now log in with your new password./i)).toBeInTheDocument();
-      });
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    (getSupabase as jest.Mock).mockReturnValue({
+      auth: {
+        updateUser: mockUpdateUser,
+      },
     });
   });
+
+  it('renders the component correctly', () => {
+    render(<ResetPassword />);
+    expect(screen.getByText('Change your password')).toBeInTheDocument();
+    expect(screen.getByTestId('ThemeSwitch')).toBeInTheDocument();
+    expect(screen.getByText('Reset Password')).toBeInTheDocument();
+  });
+
+  it('shows error when passwords do not match', async () => {
+    render(<ResetPassword />);
+
+    fireEvent.change(screen.getAllByTestId('WEEInput')[0], { target: { value: 'password123' } });
+    fireEvent.change(screen.getAllByTestId('WEEInput')[1], { target: { value: 'password456' } });
+
+    fireEvent.click(screen.getByText('Reset Password'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Passwords do not match or are empty')).toBeInTheDocument();
+      expect(screen.getByText('Please check the error and try again.')).toBeInTheDocument();
+    });
+  });
+
+
+  it('shows success modal and redirects on success', async () => {
+    mockUpdateUser.mockResolvedValue({ error: null });
+
+    render(<ResetPassword />);
+
+    fireEvent.change(screen.getAllByTestId('WEEInput')[0], { target: { value: 'password123' } });
+    fireEvent.change(screen.getAllByTestId('WEEInput')[1], { target: { value: 'password123' } });
+    fireEvent.click(screen.getByText('Reset Password'));
+
+
+    jest.useFakeTimers();
+    jest.runAllTimers();
+
+
+    await waitFor(() => {
+      expect(screen.getByText('Success')).toBeInTheDocument();
+      expect(screen.getByText('Password reset successfully. You can now log in with your new password.')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/login');
+    }, { timeout: 3000 });
+
+    jest.useRealTimers();
+  });
+
+
+ 
+
+  // it('closes modal when onModalClose is called', async () => {
+  //   render(<ResetPassword />);
+
+  //   fireEvent.change(screen.getAllByTestId('WEEInput')[0], { target: { value: 'password123' } });
+  //   fireEvent.change(screen.getAllByTestId('WEEInput')[1], { target: { value: 'password123' } });
+  //   fireEvent.click(screen.getByText('Reset Password'));
+
+  //   await waitFor(() => {
+  //     expect(screen.getByText('Passwords do not match or are empty')).toBeInTheDocument();
+  //   });
+
+  //   fireEvent.click(screen.getByText('Passwords do not match or are empty'));
+
+  //   await waitFor(() => {
+  //     expect(screen.queryByText('Passwords do not match or are empty')).not.toBeInTheDocument();
+  //   });
+  // });
 });
 
+
+// modal ResponseCache
+// Error
+// Error resetting password: Auth session missing!
+// Please check the error and try again.
+
+
+// modal responce
+// Success
+// Password reset successfully. You can now log in with your new password.
+// You can now log in with your new password.
