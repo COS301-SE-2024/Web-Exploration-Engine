@@ -384,4 +384,44 @@ describe('Result SEO Keyword', () => {
             expect(screen.queryByText('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )')).toBeNull();
         });
     });
+
+    it('Keyword SEO: api request', async () => {
+        const validUrl = 'https://www.example.com';
+        (useSearchParams as jest.Mock).mockReturnValue({
+            get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
+        });    
+        
+        (useScrapingContext as jest.Mock).mockReturnValue({
+            processedUrls: [validUrl, 'https://www.example2.com'],
+            results: mockResults,
+        });
+
+        const mockPollForKeyWordResult = jest.fn().mockResolvedValue(mockKeywordAnalysis);
+        (pollForKeyWordResult as jest.Mock).mockImplementation(mockPollForKeyWordResult);
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        const keywordInput = screen.getByTestId('keyword-input');
+        fireEvent.change(keywordInput, { target: { value: 'test keyword' } });
+
+        fireEvent.click(screen.getByTestId('btn-seo-keyword'));
+
+        await waitFor(() => {
+            expect(mockPollForKeyWordResult).toHaveBeenCalledWith(
+                "https%3A%2F%2Fwww.example.com",
+                "test keyword"
+            );
+        });
+
+        await waitFor(() => {
+            const recommendation = screen.queryByTestId('keyword_recommendations');
+            expect(recommendation).toBeInTheDocument();
+            expect(recommendation).toHaveTextContent('RecommendationsThis is an example of keyword analysis recommendations');
+        });
+    });
 });
