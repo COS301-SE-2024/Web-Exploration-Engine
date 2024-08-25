@@ -18,6 +18,7 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
+import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
 
 // Models
 import {
@@ -48,37 +49,40 @@ export class ScraperService implements OnModuleInit {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
-    private readonly sentimentAnalysisService: SentimentAnalysisService
+    private readonly sentimentAnalysisService: SentimentAnalysisService,
+    private readonly keywordAnalysisService: KeywordAnalysisService,
   ) {}
 
   onModuleInit() {
     this.listenForScrapingTasks();
   }
 
-  async scrapeWebsite(url: string, type: string) {
+  async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
     switch (type) {
       case 'scrape':
-        return this.scrape(url);
+        return this.scrape(data.url);
       case 'read-robots':
-        return this.readRobotsFile(url);
+        return this.readRobotsFile(data.url);
       case 'scrape-metadata':
-        return this.scrapeMetadata(url);
+        return this.scrapeMetadata(data.url);
       case 'scrape-status':
-        return this.scrapeStatus(url);
+        return this.scrapeStatus(data.url);
       case 'classify-industry':
-        return this.classifyIndustry(url);
+        return this.classifyIndustry(data.url);
       case 'scrape-logo':
-        return this.scrapeLogo(url);
+        return this.scrapeLogo(data.url);
       case 'scrape-images':
-        return this.scrapeImages(url);
+        return this.scrapeImages(data.url);
       case 'screenshot':
-        return this.getScreenshot(url);
+        return this.getScreenshot(data.url);
       case 'scrape-contact-info':
-        return this.scrapeContactInfo(url);
+        return this.scrapeContactInfo(data.url);
       case 'scrape-addresses':
-        return this.scrapeAddress(url);
+        return this.scrapeAddress(data.url);
       case 'seo-analysis':
-        return this.seoAnalysis(url);
+        return this.seoAnalysis(data.url);
+      case 'keyword-analysis':
+        return this.keywordAnalysis(data.url, data.keyword);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -503,6 +507,28 @@ export class ScraperService implements OnModuleInit {
     return sentimentClassification;
   }
 
+  async keywordAnalysis(url: string, keyword: string) {
+    // create puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); // add proxy here
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    const keywordAnalysis = await this.keywordAnalysisService.getKeywordRanking(url, keyword, browser);
+    await browser.close();
+    return keywordAnalysis;
+  }
+
   async listenForScrapingTasks() {
     const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
 
@@ -519,8 +545,25 @@ export class ScraperService implements OnModuleInit {
 
   async handleMessage(message) {
     const start = performance.now();
-    const { url, type } = JSON.parse(message.data.toString());
-    const cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape  
+    const { data, type } = JSON.parse(message.data.toString());
+    if (!data) {
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse
+    }
+    console.log(message.data.toString());
+    console.log(`Received message for URL: ${data.url}, Type: ${type}, Data: ${data.keyword}`);
+    const { url } = data;
+    // separate implementation for keyword analysis
+    let cacheKey: string;
+    if (type === 'keyword-analysis') {
+      const { keyword } = data;
+      cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
+    } else {
+      cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
+    }
 
     // Cache check and update logic
     const cachedData = await this.getCachedData(cacheKey);
@@ -550,7 +593,7 @@ export class ScraperService implements OnModuleInit {
     message.ack();
   
     try {
-      const result = await this.scrapeWebsite(url, type);
+      const result = await this.scrapeWebsite(data, type);
       const completeData = {
         status: 'completed',
         result,
@@ -564,17 +607,17 @@ export class ScraperService implements OnModuleInit {
     } 
   }
 
-  async getCachedData(url) {
-    const cachedDataString:string = await this.cacheManager.get(url);
+  async getCachedData(cacheKey: string) {
+    const cachedDataString:string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {
       const data = JSON.parse(cachedDataString);
       if (data.status === 'completed') {
         return data;
       } else if (data.status === 'processing') {
-        console.log(`Already processing URL: ${url}`);
+        console.log(`Already processing ojb: ${cacheKey}`);
         return null;
       } else if (data.status === 'error') {
-        console.error(`Error scraping URL: ${url}`, data.error);
+        console.error(`Error during scraping job: ${cacheKey}`, data.error);
         return null;
       }
     }
