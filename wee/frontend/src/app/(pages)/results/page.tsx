@@ -304,12 +304,15 @@ function ResultsComponent() {
   const handleKeyword = async () => {
     // check the input box
     // check that the url is there and valid (and make sure it is in the context)
-    if (!url || !processedUrls.includes(url.toString())) {
+    console.log('HEREEE', url, processedUrls)
+    let url_decoded = decodeURIComponent(url ? url : '');
+    console.log('HEREEE', url_decoded, processedUrls)
+    if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
       const timer = setTimeout(() => {
         setKeywordError('');
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -320,7 +323,7 @@ function ResultsComponent() {
 
       const timer = setTimeout(() => {
         setKeywordError('');
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -332,7 +335,7 @@ function ResultsComponent() {
 
       const timer = setTimeout(() => {
         setKeywordError('');
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -821,7 +824,7 @@ function ResultsComponent() {
                     {keywordError ? (
                       <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
                         <MdErrorOutline className="m-auto mx-1" />
-                        <p>{keywordError}</p>
+                        <p data-testid="keyword-error">{keywordError}</p>
                       </span>
                     ) : (
                       <></>
@@ -832,7 +835,12 @@ function ResultsComponent() {
                       {seoKeywordAnalysis && (
                         <>
                           <p>{seoKeywordAnalysis.ranking}</p>
-                          <p>{seoKeywordAnalysis.recommendation}</p>
+                          <div data-testid='images_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Recommendations
+                            </h5>
+                            <p>{seoKeywordAnalysis.recommendation}</p>
+                          </div>
                         </>
                       )}
                     </div>
