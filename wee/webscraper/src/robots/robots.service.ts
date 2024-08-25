@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, Logger } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
@@ -12,10 +13,10 @@ export class RobotsService {
   async extractAllowedPaths(
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
-    
+
     logger.debug(`${serviceName}`);
 
-   
+
     // Extract base URL
     const domain = this.extractDomain(baseUrl);
     // Construct the URL for the robots.txt file

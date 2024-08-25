@@ -77,9 +77,3 @@ describe('ForgotPassword Component', () => {
     expect(screen.queryByText(/email sent successfully/i)).not.toBeInTheDocument();
   });
 });
-
-
-//modal responce
-// Success
-// Password reset email sent. Please check your inbox.
-// If you did not receive the email, please check your spam folder or try again later.
