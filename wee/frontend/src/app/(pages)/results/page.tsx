@@ -304,9 +304,9 @@ function ResultsComponent() {
   const handleKeyword = async () => {
     // check the input box
     // check that the url is there and valid (and make sure it is in the context)
-    console.log('HEREEE', url, processedUrls)
+    console.log('HEREEE', url, processedUrls, keyword)
     let url_decoded = decodeURIComponent(url ? url : '');
-    console.log('HEREEE', url_decoded, processedUrls)
+    console.log('HEREEE', url_decoded, processedUrls, keyword)
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
@@ -329,6 +329,7 @@ function ResultsComponent() {
     }
 
     // sanitize the keyword
+    console.log('KEYWORD: ', keyword)
     const sanitizedKeyword = sanitizeKeyword(keyword);
     if (sanitizedKeyword !== keyword) {
       setKeywordError('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');

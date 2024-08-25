@@ -277,7 +277,7 @@ describe('Result SEO Keyword', () => {
             get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
         });    
         
-        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+        (useScrapingContext as jest.Mock).mockReturnValue({
             processedUrls: ['https://www.example.com', 'https://www.example2.com'],
             results: mockResults,
         });
@@ -315,7 +315,7 @@ describe('Result SEO Keyword', () => {
             get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
         });    
         
-        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+        (useScrapingContext as jest.Mock).mockReturnValue({
             processedUrls: [validUrl, 'https://www.example2.com'],
             results: mockResults,
         });
@@ -347,41 +347,41 @@ describe('Result SEO Keyword', () => {
         });
     });
 
-    // it('Keyword SEO: input box - invalid input', async () => {
-    //     const validUrl = 'https://www.example.com';
-    //     (useSearchParams as jest.Mock).mockReturnValue({
-    //         get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
-    //     });    
+    it('Keyword SEO: input box - invalid input', async () => {
+        const validUrl = 'https://www.example.com';
+        (useSearchParams as jest.Mock).mockReturnValue({
+            get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
+        });    
         
-    //     (useScrapingContext as jest.Mock).mockReturnValueOnce({
-    //         processedUrls: [validUrl, 'https://www.example2.com'],
-    //         results: mockResults,
-    //     });
+        (useScrapingContext as jest.Mock).mockReturnValue({
+            processedUrls: [validUrl, 'https://www.example2.com'],
+            results: mockResults,
+        });
 
-    //     await act(async () => {
-    //         render(<Results />);
-    //     });
+        await act(async () => {
+            render(<Results />);
+        });
 
-    //     const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
-    //     fireEvent.click(SEOTab);
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
 
-    //     const keywordInput = screen.getByTestId('keyword-input');
-    //     fireEvent.change(keywordInput, { target: { value: '<keyword)' } });
+        const keywordInput = screen.getByTestId('keyword-input');
+        fireEvent.change(keywordInput, { target: { value: '<keyword)' } });
 
-    //     fireEvent.click(screen.getByTestId('btn-seo-keyword'));
+        fireEvent.click(screen.getByTestId('btn-seo-keyword'));
 
-    //     await waitFor(() => {
-    //         const errorMessage = screen.queryByTestId('keyword-error');
-    //         expect(errorMessage).toBeInTheDocument();
-    //         expect(errorMessage).toHaveTextContent('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');
-    //     });
+        await waitFor(() => {
+            const errorMessage = screen.queryByTestId('keyword-error');
+            expect(errorMessage).toBeInTheDocument();
+            expect(errorMessage).toHaveTextContent('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');
+        });
 
-    //     await act(async () => {
-    //         await new Promise((r) => setTimeout(r, 3000));
-    //     });
+        await act(async () => {
+            await new Promise((r) => setTimeout(r, 3000));
+        });
     
-    //     await waitFor(() => {
-    //         expect(screen.queryByText('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )')).toBeNull();
-    //     });
-    // });
+        await waitFor(() => {
+            expect(screen.queryByText('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )')).toBeNull();
+        });
+    });
 });
