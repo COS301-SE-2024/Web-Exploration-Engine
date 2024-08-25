@@ -177,3 +177,23 @@ Use cy.debug() to print debug information to the console.
 ```javascript
 cy.get('input[name="username"]').type('user1').debug();
 ```
+
+## Frontend Cypress Folder Structure
+
+```bash
+├── fixtures # mock data
+│   ├── pub-sub # contains mock data for pub-sub setup
+│   └── etc # contains mock data for previous api versions
+├── integration # contains the cypress test files
+│   ├── results.cy.ts # 
+│   └── etc # folder contains other files of same format and purpose
+├── plugins 
+│   ├── codecov support
+│   └── etc # folder contains other files of same format and purpose
+├── support
+│   ├── commands.ts # file containing custom commands used by all cypress files
+│   └── etc # contains default config files for cypress
+└── templates # test templates - one for each page in **frontend/src/** folder
+    ├── results.ts # the full test template for results.tsx page
+    └── etc # folder contains other files of same format and purpose
+```
