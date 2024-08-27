@@ -807,17 +807,19 @@ function ResultsComponent() {
                         label="Keywords"
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
+                        className='my-2 sm:my-0'
                       />
                       <Button
                         data-testid="btn-seo-keyword"
-                        className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                        className="w-full sm:w-auto sm:ml-4 font-poppins-semibold text-lg  bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                         onClick={handleKeyword}
                       >
                         Lookup
                       </Button>
                     </div>
+
                     {isKeywordLoading ? (
-                      <div className="flex w-full justify-center mt-2">
+                      <div className="flex w-full justify-center my-2">
                         <Spinner color="default" />
                       </div>
                     ) : null}
@@ -832,10 +834,41 @@ function ResultsComponent() {
                     )}
 
                     {/* Keyword result */}
-                    <div>
+                    <div className='mt-2'>
                       {seoKeywordAnalysis && (
                         <>
-                          <p>{seoKeywordAnalysis.ranking}</p>
+                          <div className='gap-4 grid sm:grid-cols-2 md:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4 md:col-span-1'>
+                              <div>
+                                {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
+                                  ? <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                      Not ranked in top 10
+                                    </div>
+                                  : 
+                                    <>
+                                      <div className='font-poppins-semibold text-lg'>
+                                        Ranked
+                                      </div>
+                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        #{seoKeywordAnalysis.ranking}
+                                      </div>
+                                    </>
+                                }
+                              </div>
+                            </div>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:col-span-2'>
+                              {Array.isArray(seoKeywordAnalysis.topTen) ? (
+                                seoKeywordAnalysis.topTen.map((higherRankedUrl, index) => (
+                                  <div key={index}>
+                                    <span className='font-poppins-semibold'>{index + 1}. </span>
+                                    <span>{higherRankedUrl}</span>
+                                  </div>
+                                ))
+                              ) : (
+                                <div>No higher ranked URLs available.</div>
+                              )}
+                            </div>
+                          </div>
                           <div data-testid='keyword_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations

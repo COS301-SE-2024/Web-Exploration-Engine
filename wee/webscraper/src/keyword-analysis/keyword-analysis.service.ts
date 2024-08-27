@@ -14,7 +14,10 @@ export class KeywordAnalysisService {
 
         if (!username || !password) {
             console.error('Proxy username or password not set');
-            return { ranking: 'Not ranked in the top results', recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
+            return { 
+                ranking: 'Not ranked in the top results', 
+                topTen: {},
+                recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
         }
         
         let page;
@@ -46,6 +49,11 @@ export class KeywordAnalysisService {
                 return resultUrl.includes(normalizedUrl);
             }) + 1;
         
+            // get the top 10 search results
+            let topTenUrls = results.slice(0, 10).map((result) => {
+                return new URL(result.link).hostname;
+            });
+
             let recommendation = '';
             if (ranking > 1) { 
                 const higherRankedUrls = results.slice(0, ranking - 1).map(result => {
@@ -64,18 +72,21 @@ export class KeywordAnalysisService {
             }    
             return {
                 ranking: ranking > 0 ? ranking : 'Not ranked in the top results',
+                topTen: topTenUrls,
                 recommendation: recommendation
             };
         } catch (error) {
             console.error(`Failed to get keyword ranking: ${error.message}`);
-            return { ranking: 'Not ranked in the top results', recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
+            return { 
+                ranking: 'Not ranked in the top results', 
+                topTen: {},
+                recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
         } finally {
             if (page) {
                 await page.close();
             }
         }
-    }
-    
+    }    
 
     // async getKeywordDensity(url: string, keyword: string) {
     //     const browser = await puppeteer.launch();
