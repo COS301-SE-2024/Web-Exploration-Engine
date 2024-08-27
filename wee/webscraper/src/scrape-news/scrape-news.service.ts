@@ -7,8 +7,8 @@ const serviceName = "[NewsScraperService]";
 
 @Injectable()
 export class NewsScraperService {
-  
-  async fetchNewsArticles(url: string): Promise<{ title: string; link: string }[]> {
+
+  async fetchNewsArticles(url: string): Promise<{ title: string; link: string; snippet: string }[]> {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
 
@@ -34,20 +34,26 @@ export class NewsScraperService {
       const html = await response.text();
       console.log(`${serviceName} Successfully fetched HTML content.`);
 
+      console.log(`${serviceName} HTML content:`, html);
+
       const dom = new JSDOM(html);
       const document = dom.window.document;
-      const articles: { title: string; link: string }[] = [];
+      const articles: { title: string; link: string; snippet: string }[] = [];
 
       const articleElements = document.querySelectorAll('article h3 a');
       console.log(`${serviceName} Found ${articleElements.length} article elements.`);
 
       articleElements.forEach((element, index) => {
-        if (index < 10) {
+        if (index < 10) {  
           const title = element.textContent?.trim() || 'Untitled';
           const href = element.getAttribute('href');
           const link = href ? `https://news.google.com${href.replace('.', '')}` : '#';
-          articles.push({ title, link });
-          console.log(`${serviceName} Article added: Title - "${title}", Link - ${link}`);
+
+          const snippetElement = element.closest('article')?.querySelector('span[role="heading"]');
+          const snippet = snippetElement ? this.extractSnippetContainingWord(snippetElement.textContent, businessName) : 'No snippet available';
+
+          articles.push({ title, link, snippet });
+          console.log(`${serviceName} Article added: Title - "${title}", Link - ${link}, Snippet - "${snippet}"`);
         }
       });
 
@@ -61,11 +67,26 @@ export class NewsScraperService {
     }
   }
 
+
+  private extractSnippetContainingWord(text: string, word: string): string {
+    const regex = new RegExp(`([^.!?]*\\b${word}\\b[^.!?]*[.!?])`, 'i');  
+    const match = regex.exec(text);
+    return match ? match[0] : 'Snippet not found';
+  }
+
   private extractBusinessName(url: string): string | null {
     try {
       const parsedUrl = new URL(url);
       const domainParts = parsedUrl.hostname.split('.');
+      
       const filteredParts = domainParts.filter(part => part !== 'www');
+
+      const commonDomains = ['com', 'org', 'net', 'co', 'gov', 'edu'];
+
+
+      if (filteredParts.length > 2 && commonDomains.includes(filteredParts[filteredParts.length - 2])) {
+        return filteredParts[filteredParts.length - 3];
+      }
 
       const businessName = filteredParts.length > 1 ? filteredParts[filteredParts.length - 2] : filteredParts[0];
       console.log(`${serviceName} Business name extracted from URL: ${businessName}`);
