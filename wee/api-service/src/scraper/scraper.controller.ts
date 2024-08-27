@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
   ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
-  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
+  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500, NewsOperation,
   GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400, GetJobStatusKeywordQuery,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -523,7 +523,8 @@ export class ScraperController {
         'scrape-contact-info',
         'scrape-addresses',
         'seo-analysis',
-        'keyword-analysis'
+        'keyword-analysis',
+        'scrape-news'
       ];
       if (!acceptedTypes.includes(type)) {
         throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
@@ -577,4 +578,48 @@ export class ScraperController {
         throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
+
+
+@NewsOperation
+@ScraperQuery
+@ScraperResponse200
+@ScraperResponse400
+@ScraperResponse500
+@Get('scrape-news')
+async scrapeNews(@Query('url') url: string) {
+  try {
+    if (!url) {
+      throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+    }
+
+    const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+    if (!urlPattern.test(url)) {
+      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+    }
+
+    console.log("Publishing scrape-news task for url: ", url);
+    const message = {
+      type: 'scrape-news',
+      data: { url },
+    };
+    await this.pubsubService.publishMessage(this.topicName, message);
+
+    return {
+      message: 'Scrape news task published',
+      status: 'processing',
+      pollingUrl: `/status/scrape-news/${encodeURIComponent(url)}`,
+    };
+  } catch (error) {
+    if (error instanceof HttpException) {
+      console.warn('Handled error in scrapeNews method:', error.message);
+      throw error;
+    } else {
+      console.error('Unhandled error in scrapeNews method:', error);
+      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
+}
+
+  }
+
+  
