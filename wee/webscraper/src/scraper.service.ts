@@ -19,7 +19,7 @@ import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
-
+import {NewsScraperService} from './scrape-news/scrape-news.service';
 // Models
 import {
   ErrorResponse,
@@ -51,6 +51,7 @@ export class ScraperService implements OnModuleInit {
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
+    private readonly newsScraperService: NewsScraperService,
   ) {}
 
   onModuleInit() {
@@ -83,6 +84,8 @@ export class ScraperService implements OnModuleInit {
         return this.seoAnalysis(data.url);
       case 'keyword-analysis':
         return this.keywordAnalysis(data.url, data.keyword);
+      case 'scrape-news':
+        return this.scrapeNews(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -623,5 +626,45 @@ export class ScraperService implements OnModuleInit {
     }
     return null;
   }
+  async scrapeNews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse; 
+    }
+  
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+  
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+  
+    try {
+      const newsData = await this.newsScraperService.fetchNewsArticles(url);
+      return newsData;
+    } catch (error) {
+      logger.error(`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Error scraping news: ${error instanceof Error ? error.message : String(error)}`,
+      } as ErrorResponse;
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
+  }
+  
+  
 }
 

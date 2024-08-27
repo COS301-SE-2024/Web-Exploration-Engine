@@ -24,6 +24,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { ProxyService } from './proxy/proxy.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
+import {NewsScraperService} from './scrape-news/scrape-news.service';
 
 @Module({
   imports: [
@@ -65,6 +66,7 @@ import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.serv
     SentimentAnalysisService,
     KeywordAnalysisService,
     ProxyService,
+    NewsScraperService
   ],
 })
 export class ScraperModule {}
