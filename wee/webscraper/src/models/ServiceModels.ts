@@ -70,4 +70,5 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   time: number;
+  news :string;
 }
