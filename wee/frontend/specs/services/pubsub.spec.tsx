@@ -154,3 +154,53 @@ describe('pollForKeyWordResult', () => {
     await expect(resultPromise).rejects.toThrow('Network Error');
   });
 });
+
+describe('pollForKeyWordResult', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    fetch.mockClear();
+    jest.useRealTimers();
+  });
+
+  it('should resolve with the result when the job status is completed', async () => {
+    const mockData = { status: 'completed', result: 'some result' };
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    });
+
+    const resultPromise = pollForKeyWordResult('http://example.com', 'test keyword');
+
+    jest.advanceTimersByTime(5000);
+
+    await expect(resultPromise).resolves.toEqual('some result');
+  });
+
+  it('should stop polling and reject if an error occurs', async () => {
+    const errorMessage = 'Network Error';
+    fetch.mockRejectedValue(new Error(errorMessage));
+
+    const resultPromise = pollForKeyWordResult('http://example.com', 'test keyword');
+
+    jest.advanceTimersByTime(5000);
+
+    await expect(resultPromise).rejects.toThrow('Network Error');
+  });
+
+  it('should stop polling and reject when the job status is error', async () => {
+    const mockData = { status: 'error' };
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    });
+
+    const resultPromise = pollForKeyWordResult('http://example.com', 'test keyword');
+
+    jest.advanceTimersByTime(5000);
+
+    await expect(resultPromise).rejects.toThrow('Job failed');
+  });
+});
