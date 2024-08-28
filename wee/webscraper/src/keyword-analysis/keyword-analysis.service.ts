@@ -50,7 +50,7 @@ export class KeywordAnalysisService {
             }) + 1;
         
             // get the top 10 search results
-            let topTenUrls = results.slice(0, 10).map((result) => {
+            const topTenUrls = results.slice(0, 10).map((result) => {
                 return new URL(result.link).hostname;
             });
 
