@@ -4,15 +4,12 @@ import axios from 'axios';
 
 @Injectable()
 export class SentimentAnalysisService {
-  private readonly HUGGING_FACE_SENTIMENT_API_URL =
-    'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';
-  private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL =
-    'https://api-inference.huggingface.co/models/nlptown/bert-base-multilingual-uncased-sentiment';
+  private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative';
+  private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/sentiment';
   private readonly SCORE_THRESHOLD = 0.4;
-  private readonly HUGGING_FACE_EMOTION_API_URL =
-    'https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base';
+  private readonly HUGGING_FACE_EMOTION_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/emotion';
 
-  private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
+  // private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   async classifySentiment(url: string, metadata: Metadata): Promise<SentimentClassification> {
     try {
@@ -53,10 +50,10 @@ export class SentimentAnalysisService {
     try {
       const response = await axios.post(
         this.HUGGING_FACE_SENTIMENT_API_URL,
-        { inputs: inputText },
+        { text: inputText },
         {
           headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            // Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
             'Content-Type': 'application/json',
           },
         }
@@ -131,10 +128,10 @@ export class SentimentAnalysisService {
       for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL,
-          { inputs: batch },
+          { text: batch },
           {
             headers: {
-              Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+              // Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
               'Content-Type': 'application/json',
             },
           }
@@ -198,10 +195,10 @@ export class SentimentAnalysisService {
     try {
       const response = await axios.post(
         this.HUGGING_FACE_EMOTION_API_URL,
-        { inputs: inputText },
+        { text: inputText },
         {
           headers: {
-            Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
+            // Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
             'Content-Type': 'application/json',
           },
         }

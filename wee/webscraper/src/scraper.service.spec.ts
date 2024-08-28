@@ -597,8 +597,6 @@ describe('ScraperService', () => {
                 ogImage: 'http://example.com/image.jpg',
             });
             jest.spyOn(mockIndustryClassificationService, 'classifyIndustry').mockResolvedValue({
-                metadataClass: { label: 'Technology', score: 0.9 },
-                domainClass: { label: 'Technology', score: 0.9 },
                 zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
                 zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             });
@@ -826,8 +824,8 @@ describe('ScraperService', () => {
                 ogImage: 'http://example.com/image.jpg',
             };
             const industryResult = {
-                metadataClass: { label: 'Technology', score: 0.9 },
-                domainClass: { label: 'Technology', score: 0.9 },
+                // metadataClass: { label: 'Technology', score: 0.9 },
+                // domainClass: { label: 'Technology', score: 0.9 },
                 zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
                 zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             };
