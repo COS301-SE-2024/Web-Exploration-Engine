@@ -71,6 +71,8 @@ describe('ScraperController', () => {
     app = moduleFixture.createNestApplication();
     configService = moduleFixture.get<ConfigService>(ConfigService);
     await app.init();
+
+    process.env.GOOGLE_CLOUD_TOPIC = 'mock-topic';
   }, 60000); 
 
 
