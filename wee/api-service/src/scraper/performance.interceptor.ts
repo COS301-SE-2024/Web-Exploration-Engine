@@ -7,6 +7,9 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { performance } from 'perf_hooks';
+import logger from '../../../webscraper/logging/webscraperlogger';
+const serviceName = "[PerformanceInterceptor]";
+
 
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {
@@ -15,12 +18,20 @@ export class PerformanceInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(
-        tap(() =>
+        tap(() =>{
           console.log(
             `${context.getClass().name} - ${context.getHandler().name} executed in ${(
               performance.now() - now
             ).toFixed(2)}ms`,
-          ),
+          )
+
+          logger.info(
+            `${serviceName} ${context.getClass().name} - ${context.getHandler().name} executed in ${(
+              performance.now() - now
+            ).toFixed(2)}ms`,
+          );
+        
+        }
         ),
       );
   }
