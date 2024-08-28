@@ -62,7 +62,7 @@ export class SentimentAnalysisService {
         }
       );
 
-      console.log('Response from Hugging Face sentiment analysis API:', response.data);
+      // console.log('Response from Hugging Face sentiment analysis API:', response.data);
 
       if (response.data && Array.isArray(response.data)) {
         const sentimentScores = {
@@ -140,7 +140,7 @@ export class SentimentAnalysisService {
           }
         );
   
-        console.log(`Response for batch ${batch}:`, response.data);
+        // console.log(`Response for batch ${batch}:`, response.data);
   
         if (response.data && Array.isArray(response.data)) {
           for (const [index, tokenResponse] of response.data.entries()) {
@@ -207,14 +207,14 @@ export class SentimentAnalysisService {
         }
       );
   
-      console.log('Response from Hugging Face emotion analysis API:', response.data);
+      // console.log('Response from Hugging Face emotion analysis API:', response.data);
   
       if (response.data && Array.isArray(response.data)) {
         const emotions: { [emotion: string]: number } = {};
   
         response.data[0].forEach((result: any) => {
           if (result.label && result.score) {
-            console.log(`Emotion: ${result.label}, Score: ${result.score}`);
+            // console.log(`Emotion: ${result.label}, Score: ${result.score}`);
             emotions[result.label] = result.score;
           }
         });

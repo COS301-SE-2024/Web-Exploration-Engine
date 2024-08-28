@@ -530,7 +530,11 @@ export class ScraperService implements OnModuleInit {
   }
 
   async listenForScrapingTasks() {
-    const subscriptionName = 'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub'
+    const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
+    if (!subscriptionName) {
+      console.error('GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
+      return;
+    }
 
     const messageHandler = async (message) => {
       try {
@@ -540,71 +544,95 @@ export class ScraperService implements OnModuleInit {
       }
     };
 
-    this.pubsub.subscribe(subscriptionName, messageHandler);
+    await this.pubsub.subscribe(subscriptionName, messageHandler);
+    console.log('Subscribed to scraping tasks, listening for messages...');
   }
 
   async handleMessage(message) {
-    const start = performance.now();
-    const { data, type } = JSON.parse(message.data.toString());
-    if (!data) {
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
-      } as ErrorResponse
-    }
-    console.log(message.data.toString());
-    console.log(`Received message for URL: ${data.url}, Type: ${type}, Data: ${data.keyword}`);
-    const { url } = data;
-    // separate implementation for keyword analysis
-    let cacheKey: string;
-    if (type === 'keyword-analysis') {
-      const { keyword } = data;
-      cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
-    } else {
-      cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
-    }
+    // Get the publish time of the message - when message was originally published
+    const publishTime = message.publishTime; 
 
-    // Cache check and update logic
-    const cachedData = await this.getCachedData(cacheKey);
-    if (cachedData) {
-      // check if error status
-      if (cachedData.status !== 'error') {
-        // update time if cache proccessing is completed
-        if (cachedData.status === 'completed') {
-          const end = performance.now();
-          const times = (end - start) / 1000;
-          console.log('CACHE HIT', times);
-      
-          // Update time field
-          cachedData.result.time = parseFloat(times.toFixed(4));
-          await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
+    // Calculate the age of the message in milliseconds
+    const messageAge = Date.now() - publishTime.getTime();
+
+    // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
+    const maxAge = 5 * 60 * 1000; 
+
+    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms`);
+    console.log(`Message Age: ${messageAge} ms`);
+
+    if (messageAge > maxAge) {
+        console.log(`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`);
+        // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
+        message.nack();
+        // Return error response??
+    } else {
+        // Process the message if it is within acceptable age limits
+        console.log(`Processing message: ${message.data.toString()}`);
+        message.ack();
+
+        const start = performance.now();
+        const { data, type } = JSON.parse(message.data.toString());
+        if (!data) {
+          return {
+            errorStatus: 500,
+            errorCode: '500 Internal Server Error',
+            errorMessage: 'No data provided in message',
+          } as ErrorResponse
         }
 
-        return;
-      }
+        const { url } = data;
+        let cacheKey: string;
+
+        // separate cache key format for keyword analysis - need to account for key word input
+        if (type === 'keyword-analysis') {
+          const { keyword } = data;
+          cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
+        } else {
+          cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
+        }
+
+        // Cache check and update logic
+        const cachedData = await this.getCachedData(cacheKey);
+        if (cachedData) {
+          // check if error status
+          if (cachedData.status !== 'error') {
+            // update time if cache proccessing is completed
+            if (cachedData.status === 'completed') {
+              const end = performance.now();
+              const times = (end - start) / 1000;
+              console.log('CACHE HIT for url: ', url, " time: ", times);
+          
+              // Update time field
+              cachedData.result.time = parseFloat(times.toFixed(4));
+              await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
+            }
+
+            return;
+          }
+        }
+
+        // Scrape if not in cache/already processing (CACHE MISS or error status)
+        console.log('CACHE MISS - SCRAPE');
+      
+        // Add to cache as processing
+        await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+      
+        try {
+          const result = await this.scrapeWebsite(data, type);
+          const completeData = {
+            status: 'completed',
+            result,
+          };
+          await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+        } catch (error) {
+          console.error(`Error scraping URL: ${url}`, error);
+          await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
+        } 
+
+
     }
-  
-    // Scrape if not in cache/already processing (CACHE MISS or error status)
-    console.log('CACHE MISS - SCRAPE');
-  
-    // Add to cache as processing
-    await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
-    message.ack();
-  
-    try {
-      const result = await this.scrapeWebsite(data, type);
-      const completeData = {
-        status: 'completed',
-        result,
-      };
-      await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
-      console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
-      // console.log(`Result: ${result}`);
-    } catch (error) {
-      console.error(`Error scraping URL: ${url}`, error);
-      await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
-    } 
   }
 
   async getCachedData(cacheKey: string) {
