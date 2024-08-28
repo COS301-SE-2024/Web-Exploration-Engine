@@ -797,6 +797,12 @@ function ResultsComponent() {
                 <div>
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
                     Keyword Analysis
+                    <InfoPopOver
+                      data-testid="popup-keyword"
+                      heading="Keyword Analysis"
+                      content="The code normalises the URL by extracting its hostname, performs a Google search using Puppeteer, extracts search result titles and links, and checks if the hostname matches any search results to determine its ranking position."
+                      placement="bottom"
+                    />
                   </h3>
 
                   {/* Enter keyword */}
@@ -804,7 +810,7 @@ function ResultsComponent() {
                     <div className='flex flex-col sm:flex-row w-full justify-center items-center'>
                       <Input 
                         data-testid="keyword-input"
-                        label="Keywords"
+                        label="Enter keywords"
                         value={keyword}
                         onChange={(e) => setKeyword(e.target.value)}
                         className='my-2 sm:my-0'
@@ -837,11 +843,11 @@ function ResultsComponent() {
                     <div className='mt-2'>
                       {seoKeywordAnalysis && (
                         <>
-                          <div className='gap-4 grid sm:grid-cols-2 md:grid-cols-3'>
+                          <div className='gap-2 grid sm:grid-cols-2 md:grid-cols-3'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4 md:col-span-1'>
                               <div>
                                 {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
-                                  ? <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  ? <div className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                       Not ranked in top 10
                                     </div>
                                   : 
