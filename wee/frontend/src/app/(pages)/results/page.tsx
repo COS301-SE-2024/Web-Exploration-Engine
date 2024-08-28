@@ -847,7 +847,7 @@ function ResultsComponent() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4 md:col-span-1'>
                               <div>
                                 {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
-                                  ? <div className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                  ? <div data-testid="keyword_not_ranked" className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                       Not ranked in top 10
                                     </div>
                                   : 
@@ -855,14 +855,14 @@ function ResultsComponent() {
                                       <div className='font-poppins-semibold text-lg'>
                                         Ranked
                                       </div>
-                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
                                         #{seoKeywordAnalysis.ranking}
                                       </div>
                                     </>
                                 }
                               </div>
                             </div>
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:col-span-2'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:col-span-2' data-testid="keyword_top10">
                               {Array.isArray(seoKeywordAnalysis.topTen) ? (
                                 seoKeywordAnalysis.topTen.map((higherRankedUrl, index) => (
                                   <div key={index}>

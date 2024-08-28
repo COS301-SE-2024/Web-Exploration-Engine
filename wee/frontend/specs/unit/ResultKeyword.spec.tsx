@@ -62,6 +62,9 @@ describe('Result SEO Keyword', () => {
 
     const mockKeywordAnalysis = {
         ranking: 3,
+        topTen: [
+            'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+        ],
         recommendation: 'This is an example of keyword analysis recommendations',
     }
 
@@ -422,6 +425,165 @@ describe('Result SEO Keyword', () => {
             const recommendation = screen.queryByTestId('keyword_recommendations');
             expect(recommendation).toBeInTheDocument();
             expect(recommendation).toHaveTextContent('RecommendationsThis is an example of keyword analysis recommendations');
+        });
+    });
+
+    it('url not in top 10 results', async() => {
+        const validUrl = 'https://www.example.com';
+        (useSearchParams as jest.Mock).mockReturnValue({
+            get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
+        });    
+        
+        (useScrapingContext as jest.Mock).mockReturnValue({
+            processedUrls: [validUrl, 'https://www.example2.com'],
+            results: mockResults,
+        });
+
+        const mockPollForKeyWordResult = jest.fn().mockResolvedValue({
+            ranking: 'Not ranked in the top results',
+            topTen: [
+              'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+            ],
+            recommendation:'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com, example3.com, example4.com, example5.com, example6.com, example7.com, example8.com, example9.com, example10.com.'});
+        (pollForKeyWordResult as jest.Mock).mockImplementation(mockPollForKeyWordResult);
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        const keywordInput = screen.getByTestId('keyword-input');
+        fireEvent.change(keywordInput, { target: { value: 'test keyword' } });
+
+        fireEvent.click(screen.getByTestId('btn-seo-keyword'));
+
+        await waitFor(() => {
+            expect(mockPollForKeyWordResult).toHaveBeenCalledWith(
+                "https%3A%2F%2Fwww.example.com",
+                "test keyword"
+            );
+        });
+
+        await waitFor(() => {
+            const notRanked = screen.queryByTestId('keyword_not_ranked');
+            expect(notRanked).toBeInTheDocument();
+            expect(notRanked).toHaveTextContent('Not ranked in top 10');
+
+            const topTen = screen.queryByTestId('keyword_top10');
+            expect(topTen).toBeInTheDocument();
+            expect(topTen).toHaveTextContent('1. example.com2. example2.com3. example3.com4. example4.com5. example5.com6. example6.com7. example7.com8. example8.com9. example9.com10. example10.com');
+
+            const recommendation = screen.queryByTestId('keyword_recommendations');
+            expect(recommendation).toBeInTheDocument();
+            expect(recommendation).toHaveTextContent('RecommendationsThe URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com, example3.com, example4.com, example5.com, example6.com, example7.com, example8.com, example9.com, example10.com.');
+        });
+    });
+
+    it('url is in top 10 results - NOT first one', async() => {
+        const validUrl = 'https://www.example.com';
+        (useSearchParams as jest.Mock).mockReturnValue({
+            get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
+        });    
+        
+        (useScrapingContext as jest.Mock).mockReturnValue({
+            processedUrls: [validUrl, 'https://www.example2.com'],
+            results: mockResults,
+        });
+
+        const mockPollForKeyWordResult = jest.fn().mockResolvedValue({
+            ranking: 2,
+            topTen: [
+              'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+            ],
+            recommendation: 'The URL is ranked at position 2 for the keyword. However, the following URLs are ranked higher: example.com. Consider analyzing the content, backlinks, and SEO strategies of these competitors to improve the ranking.'});
+        (pollForKeyWordResult as jest.Mock).mockImplementation(mockPollForKeyWordResult);
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        const keywordInput = screen.getByTestId('keyword-input');
+        fireEvent.change(keywordInput, { target: { value: 'test keyword' } });
+
+        fireEvent.click(screen.getByTestId('btn-seo-keyword'));
+
+        await waitFor(() => {
+            expect(mockPollForKeyWordResult).toHaveBeenCalledWith(
+                "https%3A%2F%2Fwww.example.com",
+                "test keyword"
+            );
+        });
+
+        await waitFor(() => {
+            const ranked = screen.queryByTestId('keyword_ranked');
+            expect(ranked).toBeInTheDocument();
+            expect(ranked).toHaveTextContent('#2');
+
+            const topTen = screen.queryByTestId('keyword_top10');
+            expect(topTen).toBeInTheDocument();
+            expect(topTen).toHaveTextContent('1. example.com2. example2.com3. example3.com4. example4.com5. example5.com6. example6.com7. example7.com8. example8.com9. example9.com10. example10.com');
+
+            const recommendation = screen.queryByTestId('keyword_recommendations');
+            expect(recommendation).toBeInTheDocument();
+            expect(recommendation).toHaveTextContent('RecommendationsThe URL is ranked at position 2 for the keyword. However, the following URLs are ranked higher: example.com. Consider analyzing the content, backlinks, and SEO strategies of these competitors to improve the ranking.');
+        });
+    });
+
+    it('url is FIRST in top 10 results', async() => {
+        const validUrl = 'https://www.example.com';
+        (useSearchParams as jest.Mock).mockReturnValue({
+            get: jest.fn().mockReturnValue(encodeURIComponent(validUrl)),
+        });    
+        
+        (useScrapingContext as jest.Mock).mockReturnValue({
+            processedUrls: [validUrl, 'https://www.example2.com'],
+            results: mockResults,
+        });
+
+        const mockPollForKeyWordResult = jest.fn().mockResolvedValue({
+            ranking: 1,
+            topTen: [
+              'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+            ],
+            recommendation: 'The URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.',});
+        (pollForKeyWordResult as jest.Mock).mockImplementation(mockPollForKeyWordResult);
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const SEOTab = screen.getByRole('tab', { name: /SEO Analysis/i });
+        fireEvent.click(SEOTab);
+
+        const keywordInput = screen.getByTestId('keyword-input');
+        fireEvent.change(keywordInput, { target: { value: 'test keyword' } });
+
+        fireEvent.click(screen.getByTestId('btn-seo-keyword'));
+
+        await waitFor(() => {
+            expect(mockPollForKeyWordResult).toHaveBeenCalledWith(
+                "https%3A%2F%2Fwww.example.com",
+                "test keyword"
+            );
+        });
+
+        await waitFor(() => {
+            const ranked = screen.queryByTestId('keyword_ranked');
+            expect(ranked).toBeInTheDocument();
+            expect(ranked).toHaveTextContent('#1');
+
+            const topTen = screen.queryByTestId('keyword_top10');
+            expect(topTen).toBeInTheDocument();
+            expect(topTen).toHaveTextContent('1. example.com2. example2.com3. example3.com4. example4.com5. example5.com6. example6.com7. example7.com8. example8.com9. example9.com10. example10.com');
+
+            const recommendation = screen.queryByTestId('keyword_recommendations');
+            expect(recommendation).toBeInTheDocument();
+            expect(recommendation).toHaveTextContent('RecommendationsThe URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.');
         });
     });
 });
