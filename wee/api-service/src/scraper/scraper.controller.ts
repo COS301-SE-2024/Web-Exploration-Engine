@@ -3,7 +3,7 @@ import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
-  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
+  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,socialAnalyticsOperation,
   ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
   GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400, GetJobStatusKeywordQuery,
 } from './scraper.api';
@@ -512,8 +512,8 @@ export class ScraperController {
     console.log(url, type);
     try {
       const acceptedTypes = [
-        'scrape', 
-        'read-robots', 
+        'scrape',
+        'read-robots',
         'scrape-metadata',
         'scrape-status',
         'classify-industry',
@@ -523,7 +523,8 @@ export class ScraperController {
         'scrape-contact-info',
         'scrape-addresses',
         'seo-analysis',
-        'keyword-analysis'
+        'keyword-analysis',
+        'social-analytics',
       ];
       if (!acceptedTypes.includes(type)) {
         throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
@@ -575,6 +576,47 @@ export class ScraperController {
       } else {
         console.error('Unhandled error in getJobStatus method:', error);
         throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+
+
+    @socialAnalyticsOperation
+    @ScraperQuery
+    @ScraperResponse200
+    @ScraperResponse400
+    @ScraperResponse500
+    @Get('social-analytics')
+    async socialAnalytics(@Query('url') url: string) {
+      try {
+        if (!url) {
+          throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+        }
+
+        const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+        if (!urlPattern.test(url)) {
+          throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+        }
+
+        console.log("Publishing ShareCount Social Media analytics task for url: ", url);
+        const message = {
+          type: 'social-analytics',
+          data: { url },
+        };
+        await this.pubsubService.publishMessage(this.topicName, message);
+
+        return {
+          message: 'Social analytics task published',
+          status: 'processing',
+          pollingUrl: `/status/social-analytics/${encodeURIComponent(url)}`,
+        };
+      } catch (error) {
+        if (error instanceof HttpException) {
+          console.warn('Handled error in social analytics method:', error.message);
+          throw error;
+        } else {
+          console.error('Unhandled error in social analytics method:', error);
+          throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
       }
     }
   }
