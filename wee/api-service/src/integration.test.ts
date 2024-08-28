@@ -33,6 +33,10 @@ describe('ScraperController', () => {
   let configService: ConfigService;
   let cacheManager: Cache;
 
+  beforeAll(async () => {
+    process.env.GOOGLE_CLOUD_TOPIC = 'mock-project';
+  });
+
   beforeEach(async () => {
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -72,7 +76,6 @@ describe('ScraperController', () => {
     configService = moduleFixture.get<ConfigService>(ConfigService);
     await app.init();
 
-    process.env.GOOGLE_CLOUD_TOPIC = 'mock-topic';
   }, 60000); 
 
 
