@@ -21,7 +21,7 @@ import { PubSubModule } from '../pub-sub/pub_sub.module';
       imports: [ConfigModule],
       useFactory: async (config) => {
         const store = await redisStore({
-          ttl: 60 * 60 * 1000 * 24, // 60 minutes in cache
+          ttl: 60 * 60 * 1000, // 60 minutes in cache
           socket: {
             host: config.get('redis.host'),
             port: config.get('redis.port')
