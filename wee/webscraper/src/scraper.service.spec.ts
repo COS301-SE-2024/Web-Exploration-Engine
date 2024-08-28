@@ -545,7 +545,13 @@ describe('ScraperService', () => {
             const url = 'http://example.com';
             const type = 'keyword-analysis';
             const keyword = 'example';
-            const keywordResult = { ranking: 1, recommendation: 'Some recommendation' };
+            const keywordResult = { 
+                ranking: 1, 
+                topTen: [
+                    'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+                ],
+                recommendation: 'Some recommendation' 
+            };
     
             jest.spyOn(service, 'keywordAnalysis').mockResolvedValue(keywordResult);
     
@@ -1068,7 +1074,13 @@ describe('ScraperService', () => {
         it('should get keyword ranking and return the result', async () => {
             const url = 'http://example.com';
             const keyword = 'example';
-            const keywordResult = { ranking: 1, recommendation: 'Some recommendation' };
+            const keywordResult = { 
+                ranking: 1, 
+                topTen: [
+                    'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+                ],
+                recommendation: 'Some recommendation' 
+            };
 
             const mockPage = {
                 goto: jest.fn(),
