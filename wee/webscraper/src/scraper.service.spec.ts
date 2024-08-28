@@ -17,8 +17,6 @@ import { KeywordAnalysisService } from "./keyword-analysis/keyword-analysis.serv
 import { PubSubService } from "./pub-sub/pub_sub.service";
 import { ProxyService } from "./proxy/proxy.service";
 import * as puppeteer from 'puppeteer';
-import { mock } from "node:test";
-import { data } from "cheerio/lib/api/attributes";
 
 jest.mock('puppeteer');
 
