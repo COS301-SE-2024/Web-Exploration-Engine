@@ -558,7 +558,7 @@ export class ScraperService implements OnModuleInit {
     // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
     const maxAge = 5 * 60 * 1000; 
 
-    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms`);
+    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`);
     console.log(`Message Age: ${messageAge} ms`);
 
     if (messageAge > maxAge) {
@@ -572,6 +572,7 @@ export class ScraperService implements OnModuleInit {
         message.ack();
 
         const start = performance.now();
+        console.log(message.data, message.data.toString());
         const { data, type } = JSON.parse(message.data.toString());
         if (!data) {
           return {
