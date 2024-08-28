@@ -305,7 +305,7 @@ function ResultsComponent() {
     // check the input box
     // check that the url is there and valid (and make sure it is in the context)
     console.log('HEREEE', url, processedUrls, keyword)
-    let url_decoded = decodeURIComponent(url ? url : '');
+    const url_decoded = decodeURIComponent(url ? url : '');
     console.log('HEREEE', url_decoded, processedUrls, keyword)
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
@@ -358,7 +358,7 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+        const result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
         setSeoKeywordAnalysis(result);        
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
