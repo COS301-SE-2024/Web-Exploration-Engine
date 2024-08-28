@@ -19,6 +19,7 @@ import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
+import { ShareCountService } from './share-count-analytics/share-count-analytics.service';
 
 // Models
 import {
@@ -34,7 +35,7 @@ const serviceName = "[ScraperService]";
 logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService implements OnModuleInit {
-  
+
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsub: PubSubService,
@@ -51,6 +52,7 @@ export class ScraperService implements OnModuleInit {
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
+    private readonly shareCountService: ShareCountService,
   ) {}
 
   onModuleInit() {
@@ -83,6 +85,8 @@ export class ScraperService implements OnModuleInit {
         return this.seoAnalysis(data.url);
       case 'keyword-analysis':
         return this.keywordAnalysis(data.url, data.keyword);
+      case 'socialAnalytics':
+        return this.getShareCount(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -98,9 +102,9 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
 
-      
+
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -109,7 +113,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: `Failed to launch browser ${error}`,
       } as ErrorResponse;
     }
-     
+
     const data = {
       url: '',
       domainStatus: '',
@@ -149,7 +153,9 @@ export class ScraperService implements OnModuleInit {
     }
 
     data.robots = robots as RobotsResponse;
+   //shareCount service it uses the ShareCount api
 
+   const shareCountPromise = this.shareCountService.getShareCount(url);
 
   // Serially scrape metadata and all services that depend on only robots.txt
     const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
@@ -195,7 +201,7 @@ export class ScraperService implements OnModuleInit {
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
-  
+
     data.logo = logo;
 
     data.images = images;
@@ -336,7 +342,7 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -355,7 +361,7 @@ export class ScraperService implements OnModuleInit {
       await browser.close();
       return metadataResponse;
     }
-    
+
     const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, browser);
     await browser.close();
     return images;
@@ -367,14 +373,14 @@ export class ScraperService implements OnModuleInit {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    
+
     // create puppeteer instance
     let browser: puppeteer.Browser;
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -437,7 +443,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
+
     const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, browser);
     await browser.close();
     return addresses;
@@ -464,7 +470,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
+
     const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
     await browser.close();
     return seoAnalysis;
@@ -575,7 +581,7 @@ export class ScraperService implements OnModuleInit {
           const end = performance.now();
           const times = (end - start) / 1000;
           console.log('CACHE HIT', times);
-      
+
           // Update time field
           cachedData.result.time = parseFloat(times.toFixed(4));
           await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
@@ -584,14 +590,14 @@ export class ScraperService implements OnModuleInit {
         return;
       }
     }
-  
+
     // Scrape if not in cache/already processing (CACHE MISS or error status)
     console.log('CACHE MISS - SCRAPE');
-  
+
     // Add to cache as processing
     await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
     message.ack();
-  
+
     try {
       const result = await this.scrapeWebsite(data, type);
       const completeData = {
@@ -604,9 +610,22 @@ export class ScraperService implements OnModuleInit {
     } catch (error) {
       console.error(`Error scraping URL: ${url}`, error);
       await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
-    } 
+    }
   }
 
+  async getShareCount(url: string) {
+    try {
+      const shareCount = await this.shareCountService.getShareCount(url);
+      return shareCount;
+    } catch (error) {
+      logger.error(`${serviceName} Failed to get share count for ${url}: ${error}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Failed to get share count for ${url}: ${error}`,
+      } as ErrorResponse;
+    }
+  }
   async getCachedData(cacheKey: string) {
     const cachedDataString:string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {
