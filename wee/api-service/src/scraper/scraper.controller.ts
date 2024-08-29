@@ -14,12 +14,16 @@ import { PerformanceInterceptor } from './performance.interceptor';
 @Controller('scraper')
 @UseInterceptors(PerformanceInterceptor)
 export class ScraperController {
+  topicName: string;
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsubService : PubSubService,
-  ) {}
-
-  topicName = 'projects/alien-grove-429815-s9/topics/scraping-tasks'
+  ) {
+    this.topicName = process.env.GOOGLE_CLOUD_TOPIC;
+    if (!this.topicName) {
+      throw new Error('GOOGLE_CLOUD_TOPIC env variable is required');
+    }
+  } 
 
   @ScrapeOperation
   @ScraperQuery
