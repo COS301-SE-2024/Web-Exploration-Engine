@@ -45,8 +45,10 @@ export class NewsScraperService {
         link: item.link[0],
       }));
 
-      console.log(`${serviceName} Total articles fetched: ${articles.length}`);
-      return articles;
+      // Limit to first 10 articles
+      const limitedArticles = articles.slice(0, 10);
+      console.log(`${serviceName} Total articles fetched: ${limitedArticles.length}`);
+      return limitedArticles;
 
     } catch (error) {
       logger.error(`${serviceName} Error fetching news articles: ${error.message}`);
@@ -76,6 +78,3 @@ export class NewsScraperService {
     }
   }
 }
-
-
-
