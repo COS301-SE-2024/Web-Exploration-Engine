@@ -43,6 +43,8 @@ export class NewsScraperService {
       const articles = parsedData.rss.channel[0].item.map((item: any) => ({
         title: item.title[0],
         link: item.link[0],
+        source: item.source[0],
+        pubDate:item.pubDate[0]
       }));
 
       const limitedArticles = articles.slice(0, 10);
@@ -52,6 +54,8 @@ export class NewsScraperService {
         console.log(`Article ${index + 1}:`);
         console.log(`Title: ${article.title}`);
         console.log(`Link: ${article.link}`);
+        console.log(`Source: ${article.source}`);
+        console.log(`PubDate: ${article.pubDate}`);
         console.log('-----------------------------');
       });
 
