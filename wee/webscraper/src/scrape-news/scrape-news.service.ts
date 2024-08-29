@@ -4,11 +4,11 @@ import xml2js from 'xml2js';
 import logger from '../../logging/webscraperlogger';
 
 const serviceName = "[NewsScraperService]";
-
+//https://news.google.com/rss/search?q=BUSINESSNAME
 @Injectable()
 export class NewsScraperService {
 
-  async fetchNewsArticles(url: string): Promise<{ title: string; link: string }[]> {
+  async fetchNewsArticles(url: string): Promise<{ title: string; link: string; source: string; pubDate: string }[]> {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
 
@@ -20,17 +20,14 @@ export class NewsScraperService {
         throw new Error('Could not extract business name from URL');
       }
 
-
       const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(businessName)}`;
       console.log(`${serviceName} Constructed Google News RSS feed URL: ${rssUrl}`);
-
 
       const response = await fetch(rssUrl);
       if (!response.ok) {
         logger.error(`${serviceName} Failed to fetch Google News RSS feed for ${businessName}`);
         throw new Error(`Failed to fetch news for ${businessName}`);
       }
-
 
       const xmlData = await response.text();
       console.log(`${serviceName} Successfully fetched RSS feed.`);
@@ -39,12 +36,11 @@ export class NewsScraperService {
       const parsedData = await parser.parseStringPromise(xmlData);
       console.log(`${serviceName} RSS feed parsed successfully.`);
 
-
       const articles = parsedData.rss.channel[0].item.map((item: any) => ({
         title: item.title[0],
         link: item.link[0],
-        source: item.source[0],
-        pubDate:item.pubDate[0]
+        source: item.source[0]._,
+        pubDate: item.pubDate[0]
       }));
 
       const limitedArticles = articles.slice(0, 10);
