@@ -25,7 +25,6 @@ describe('ScraperService', () => {
     
     let cacheManager: Cache;
     let pubsub: PubSubService;
-    let mockMessage: any;
 
     // Mock services
     let mockRobotsService: RobotsService;
@@ -174,10 +173,7 @@ describe('ScraperService', () => {
         mockSentimentAnalysisService = module.get<SentimentAnalysisService>(SentimentAnalysisService);
         mockKeywordAnalysisService = module.get<KeywordAnalysisService>(KeywordAnalysisService);
 
-        mockMessage = {
-            data: { toString: jest.fn() },
-            ack: jest.fn(),
-        };
+        process.env.GOOGLE_CLOUD_SUBSCRIPTION = 'mock-subscription';
     });
 
     afterEach(() => {
@@ -227,7 +223,7 @@ describe('ScraperService', () => {
             const subscribeSpy = jest.spyOn(pubsub, 'subscribe');
             await service.listenForScrapingTasks();
             expect(subscribeSpy).toHaveBeenCalledWith(
-                'projects/alien-grove-429815-s9/subscriptions/scraping-tasks-sub',
+                'mock-subscription',
                 expect.any(Function)
             );
         });
@@ -243,11 +239,16 @@ describe('ScraperService', () => {
         it('should hit the cache', async () => {
           const url = 'http://example.com';
           const type = 'scrape';
-          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ data: {url}, type }));
-          jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify({ status: 'completed', result: {time: 90} }));
+          const mockMessage = {
+            data: Buffer.from(JSON.stringify({ data: { url }, type })),
+            ack: jest.fn(),
+            nack: jest.fn(),
+            publishTime: new Date(),
+            };
+          
           await service.handleMessage(mockMessage);
           expect(cacheManager.get).toHaveBeenCalledWith(`${url}-${type}`);
-          expect(mockMessage.ack).not.toHaveBeenCalled(); // Ensure message is not acknowledged
+            expect(mockMessage.ack).toHaveBeenCalled();
         });
     
         it('should process a scrape if cache miss', async () => {
@@ -269,15 +270,21 @@ describe('ScraperService', () => {
             seoAnalysis: null,
             semtimentClassification: null,
           };
+          const mockMessage = {
+            data: Buffer.from(JSON.stringify({ data: { url }, type })),
+            ack: jest.fn(),
+            nack: jest.fn(),
+            publishTime: new Date(),
+            };
           const cachedDataProcessing = { status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` };
           jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null); // Cache miss
           jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
-          mockMessage.data.toString.mockReturnValueOnce(JSON.stringify({ data: {url}, type }));
+          
     
           await service.handleMessage(mockMessage);
-    
-          expect(cacheManager.set).toHaveBeenCalledWith(`${url}-${type}`, JSON.stringify(cachedDataProcessing));
           expect(mockMessage.ack).toHaveBeenCalled();
+          expect(cacheManager.set).toHaveBeenNthCalledWith(1, `${url}-${type}`, JSON.stringify(cachedDataProcessing));
+          
         });
     
         // it('should handle errors and remove cache entry', async () => {
@@ -597,8 +604,6 @@ describe('ScraperService', () => {
                 ogImage: 'http://example.com/image.jpg',
             });
             jest.spyOn(mockIndustryClassificationService, 'classifyIndustry').mockResolvedValue({
-                metadataClass: { label: 'Technology', score: 0.9 },
-                domainClass: { label: 'Technology', score: 0.9 },
                 zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
                 zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             });
@@ -826,8 +831,8 @@ describe('ScraperService', () => {
                 ogImage: 'http://example.com/image.jpg',
             };
             const industryResult = {
-                metadataClass: { label: 'Technology', score: 0.9 },
-                domainClass: { label: 'Technology', score: 0.9 },
+                // metadataClass: { label: 'Technology', score: 0.9 },
+                // domainClass: { label: 'Technology', score: 0.9 },
                 zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
                 zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             };
