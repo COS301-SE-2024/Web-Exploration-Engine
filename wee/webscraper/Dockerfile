@@ -56,7 +56,6 @@ COPY ../package*.json ./
 COPY ../tsconfig.base.json ./
 COPY ../webscraper ./webscraper
 COPY ../webscraper/.eslintrc.json ./webscraper/.eslintrc.json
-COPY ../../logs ./logs
 
 RUN npm cache clean --force
 RUN npm install -g npm@latest
@@ -66,7 +65,7 @@ RUN addgroup --system webscraper && adduser --system --ingroup webscraper webscr
 RUN mkdir -p /home/webscraper && chown -R webscraper:webscraper /home/webscraper
 RUN mkdir -p /logs && chown -R webscraper:webscraper /logs
 
-RUN chown -R webscraper:webscraper /app
+RUN chown -R webscraper:webscraper /app 
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
