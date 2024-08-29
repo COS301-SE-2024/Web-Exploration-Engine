@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import fetch from 'node-fetch';
-import { JSDOM } from 'jsdom';
+import xml2js from 'xml2js';
 import logger from '../../logging/webscraperlogger';
 
 const serviceName = "[NewsScraperService]";
@@ -8,7 +8,7 @@ const serviceName = "[NewsScraperService]";
 @Injectable()
 export class NewsScraperService {
 
-  async fetchNewsArticles(url: string): Promise<{ title: string; link: string; snippet: string }[]> {
+  async fetchNewsArticles(url: string): Promise<{ title: string; link: string }[]> {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
 
@@ -20,42 +20,30 @@ export class NewsScraperService {
         throw new Error('Could not extract business name from URL');
       }
 
-      const searchUrl = `https://news.google.com/search?q=${encodeURIComponent(businessName)}`;
-      console.log(`${serviceName} Constructed Google News search URL: ${searchUrl}`);
+      // Construct RSS feed URL
+      const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(businessName)}`;
+      console.log(`${serviceName} Constructed Google News RSS feed URL: ${rssUrl}`);
 
-      const response = await fetch(searchUrl);
-      console.log(`${serviceName} Fetched response status: ${response.status}`);
-
+      // Fetch RSS feed
+      const response = await fetch(rssUrl);
       if (!response.ok) {
-        logger.error(`${serviceName} Failed to fetch Google News for ${businessName}`);
+        logger.error(`${serviceName} Failed to fetch Google News RSS feed for ${businessName}`);
         throw new Error(`Failed to fetch news for ${businessName}`);
       }
 
-      const html = await response.text();
-      console.log(`${serviceName} Successfully fetched HTML content.`);
+      // Parse RSS feed
+      const xmlData = await response.text();
+      console.log(`${serviceName} Successfully fetched RSS feed.`);
 
-      console.log(`${serviceName} HTML content:`, html);
+      const parser = new xml2js.Parser();
+      const parsedData = await parser.parseStringPromise(xmlData);
+      console.log(`${serviceName} RSS feed parsed successfully.`);
 
-      const dom = new JSDOM(html);
-      const document = dom.window.document;
-      const articles: { title: string; link: string; snippet: string }[] = [];
-
-      const articleElements = document.querySelectorAll('article h3 a');
-      console.log(`${serviceName} Found ${articleElements.length} article elements.`);
-
-      articleElements.forEach((element, index) => {
-        if (index < 10) {  
-          const title = element.textContent?.trim() || 'Untitled';
-          const href = element.getAttribute('href');
-          const link = href ? `https://news.google.com${href.replace('.', '')}` : '#';
-
-          const snippetElement = element.closest('article')?.querySelector('span[role="heading"]');
-          const snippet = snippetElement ? this.extractSnippetContainingWord(snippetElement.textContent, businessName) : 'No snippet available';
-
-          articles.push({ title, link, snippet });
-          console.log(`${serviceName} Article added: Title - "${title}", Link - ${link}, Snippet - "${snippet}"`);
-        }
-      });
+      // Extract titles and links
+      const articles = parsedData.rss.channel[0].item.map((item: any) => ({
+        title: item.title[0],
+        link: item.link[0],
+      }));
 
       console.log(`${serviceName} Total articles fetched: ${articles.length}`);
       return articles;
@@ -67,22 +55,12 @@ export class NewsScraperService {
     }
   }
 
-
-  private extractSnippetContainingWord(text: string, word: string): string {
-    const regex = new RegExp(`([^.!?]*\\b${word}\\b[^.!?]*[.!?])`, 'i');  
-    const match = regex.exec(text);
-    return match ? match[0] : 'Snippet not found';
-  }
-
   private extractBusinessName(url: string): string | null {
     try {
       const parsedUrl = new URL(url);
       const domainParts = parsedUrl.hostname.split('.');
-      
       const filteredParts = domainParts.filter(part => part !== 'www');
-
       const commonDomains = ['com', 'org', 'net', 'co', 'gov', 'edu'];
-
 
       if (filteredParts.length > 2 && commonDomains.includes(filteredParts[filteredParts.length - 2])) {
         return filteredParts[filteredParts.length - 3];
@@ -98,3 +76,6 @@ export class NewsScraperService {
     }
   }
 }
+
+
+
