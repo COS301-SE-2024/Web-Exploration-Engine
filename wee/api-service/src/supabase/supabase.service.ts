@@ -9,15 +9,15 @@ export class SupabaseService {
   private readonly supabaseClient = createClient(this.supabaseURL, this.serviceKey);
 
   async createSchedule(scheduleData: ScheduleTask) {
-    const { user_id, url, frequency, next_scrape } = scheduleData;
+    const { user_id, url, frequency } = scheduleData;
     const { data, error } = await this.supabaseClient
-      .from('scraping_schedules')
+      .from('scheduled_tasks')
       .insert([
-        { user_id, url, frequency, next_scrape },
+        { user_id, url, frequency, next_scrape: new Date().toISOString(), result_history: [] },
       ]);
 
     if (error) {
-      throw new Error(`Failed to create schedule: ${error.message}`);
+      throw new Error(`Failed to create schedule: ${error}`);
     }
     return data;
   }
@@ -25,7 +25,7 @@ export class SupabaseService {
   async updateSchedule(scheduleData: UpdateScheduleTask) {
     const { id, next_scrape, updated_at, result_history } = scheduleData;
     const { data, error } = await this.supabaseClient
-      .from('scraping_schedules')
+      .from('scheduled_tasks')
       .update({ next_scrape, result_history, updated_at })
       .eq('id', id);
 

@@ -3,7 +3,7 @@ import * as cron from 'node-cron';
 import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
-import { ScheduleTaskResponse } from '../models/scheduleTaskModels';
+import { ScheduleTask, ScheduleTaskResponse } from '../models/scheduleTaskModels';
 
 
 @Injectable()
@@ -18,6 +18,11 @@ export class SchedulerService {
 
     // Schedule the cron job to run every minute
     cron.schedule('* * * * *', () => this.checkSchedules());
+  }
+
+  async createSchedule(schedule: ScheduleTask) {
+    // Create a new schedule in Supabase
+    await this.supabaseService.createSchedule(schedule);
   }
 
   async checkSchedules() {
