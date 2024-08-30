@@ -1,11 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger,UseInterceptors } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../logging/webscraperlogger';
 import fetch from 'node-fetch';
+import { PerformanceInterceptor } from '../performance.interceptor';
+
 
 const serviceName = "[RobotsService]";
+@UseInterceptors(PerformanceInterceptor)
 @Injectable()
 export class RobotsService {
   // Returns all the paths user agent can scrape in the form of an array
@@ -14,7 +17,6 @@ export class RobotsService {
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
     
     logger.debug(`${serviceName}`);
-
    
     // Extract base URL
     const domain = this.extractDomain(baseUrl);

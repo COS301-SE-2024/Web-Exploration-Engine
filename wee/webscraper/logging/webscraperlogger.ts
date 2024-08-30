@@ -1,4 +1,4 @@
-import { createLogger, format, transports } from 'winston';
+import winston, { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 
 const getLogger = (fileName = 'application') => {
@@ -13,29 +13,32 @@ const getLogger = (fileName = 'application') => {
   const consoleTransport = new transports.Console({
     handleExceptions: false,
     format: format.combine(
-      format.colorize(), // Adds colour to console output
-      format.printf((i) => `${i.message} ${i.servicename} `)
+      format.colorize(),
+      format.printf(({ level, message, ...meta }) => {
+       // const metaString = Object.keys(meta).length ? JSON.stringify(meta) : '';
+        return `${message} ${meta}`;
+      })
     ),
   });
 
   const logger = createLogger({
     level: 'info',
-    format: format.combine(
+    format: winston.format.combine(
       format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss.SSS',
       }),
       format.errors({ stack: true }),
       format.splat(),
       format.printf(
-        ({ level, message, servicename, label = process.env.NODE_ENV, timestamp }) =>
-          `${timestamp} [${label}] ${level}: ${message}, ${servicename}`
+        ({ level, message, servicename, label = process.env.NODE_ENV, timestamp, ...meta }) => {
+          //const metaString = Object.keys(meta).length ? JSON.stringify(meta) : '';
+          return `${timestamp} [${label}] ${level}: ${message}, ${servicename} ${meta}`;
+        }
       )
     ),
-    defaultMeta: { service: 'my-app' },
     transports: [consoleTransport],
   });
 
-  // Add to file regardless of environment
   logger.add(fileLogTransport);
 
   return logger;

@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable , UseInterceptors} from '@nestjs/common';
 import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 import logger from '../../logging/webscraperlogger';
+import { PerformanceInterceptor } from '../performance.interceptor';
 
 const serviceName = "[ScrapeAddressService]";
+@UseInterceptors(PerformanceInterceptor)
 @Injectable()
 export class ScrapeAddressService {
   /**

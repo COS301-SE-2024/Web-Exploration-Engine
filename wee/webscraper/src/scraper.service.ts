@@ -603,6 +603,7 @@ export class ScraperService implements OnModuleInit {
               const end = performance.now();
               const times = (end - start) / 1000;
               console.log('CACHE HIT for url: ', url, " time: ", times);
+              logger.info('CACHE HIT for url: ', url, " time: ", times);
           
               // Update time field
               cachedData.result.time = parseFloat(times.toFixed(4));
@@ -615,6 +616,7 @@ export class ScraperService implements OnModuleInit {
 
         // Scrape if not in cache/already processing (CACHE MISS or error status)
         console.log('CACHE MISS - SCRAPE');
+        logger.info(`Cache Miss - scraper service`)
       
         // Add to cache as processing
         await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
