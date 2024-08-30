@@ -25,3 +25,15 @@ export interface UpdateScheduleTask {
   result_history: SavedResult[];
 }
 
+export interface ScheduleTaskResponse {
+  id: string
+  user_id: string;
+  url: string;
+  frequency: string;
+  next_scrape: string; // timestamp
+  updated_at: string; // timestamp
+  created_at: string; // timestamp
+  result_history: SavedResult[];
+}
+  
+

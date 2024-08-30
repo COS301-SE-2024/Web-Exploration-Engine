@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
-import { ScheduleTask, UpdateScheduleTask } from '../models/scheduleTaskModels';
+import { ScheduleTask, UpdateScheduleTask, ScheduleTaskResponse } from '../models/scheduleTaskModels';
 
 @Injectable()
 export class SupabaseService {
@@ -33,5 +33,17 @@ export class SupabaseService {
       throw new Error(`Failed to update schedule: ${error.message}`);
     }
     return data;
+  }
+
+  async getDueSchedules() {
+    const { data, error } = await this.supabaseClient
+      .from('scraping_schedules')
+      .select('*')
+      .lte('next_scrape', new Date().toISOString());
+
+    if (error) {
+      throw new Error(`Failed to get due schedules: ${error.message}`);
+    }
+    return data as ScheduleTaskResponse[];
   }
 }
