@@ -1,9 +1,11 @@
+'use server'
+import { create } from 'cypress/types/lodash';
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
-import { getSupabase } from '../utils/supabase_anon_client';
+import { createClient } from '../utils/supabase/server';
 
-const supabase = getSupabase();
 
 export async function login(req: LoginRequest) {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: req.email,
     password: req.password,
@@ -27,6 +29,7 @@ export async function login(req: LoginRequest) {
 
 export async function signUp(req: SignUpRequest) {
   // check if email is already taken
+  const supabase = createClient();
   const { data: users, error: usersError } = await supabase
     .from('profiles')
     .select('*')
@@ -74,6 +77,7 @@ export async function signUp(req: SignUpRequest) {
 }
 
 export async function googleLogin() {
+  const supabase = createClient();
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
   });
