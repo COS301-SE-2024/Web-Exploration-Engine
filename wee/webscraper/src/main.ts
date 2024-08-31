@@ -36,8 +36,7 @@ async function bootstrap() {
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
 
-  logger.info('the app is starting','serving FACE','honey what is happening','maria mariaaa');
-  logger.info('the app is starting','serving FACE');
+  logger.info('the app is starting',globalPrefix,'honey what is happening','maria mariaaa');
 }
 
 bootstrap();
