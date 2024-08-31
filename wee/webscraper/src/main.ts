@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '@nestjs/common';
+import logger from "../logging/webscraperlogger"
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
@@ -34,6 +35,9 @@ async function bootstrap() {
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
+
+  logger.info('the app is starting','serving FACE','honey what is happening','maria mariaaa');
+  logger.info('the app is starting','serving FACE');
 }
 
 bootstrap();
