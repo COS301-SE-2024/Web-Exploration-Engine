@@ -18,7 +18,7 @@ export async function login(req: LoginRequest) {
   const user = data?.user;
   const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.name || user?.email || '';
 
-  return { 
+  return {
     uuid: data?.user?.id,
     emailVerified: data?.user?.email_confirmed_at ? true : false,
     name: userName
@@ -31,7 +31,7 @@ export async function signUp(req: SignUpRequest) {
     .from('profiles')
     .select('*')
     .eq('email', req.email)
-  
+
 
   if (usersError) {
     return {
@@ -67,7 +67,7 @@ export async function signUp(req: SignUpRequest) {
     }
   }
 
-  return { 
+  return {
     uuid: data?.user?.id,
     emailVerified: data?.user?.email_confirmed_at ? true : false,
   }
@@ -88,9 +88,45 @@ export async function googleLogin() {
   // get user data
   const { data: { user } } = await supabase.auth.getUser();
   const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.fullname || user?.email || '';
-  return { 
+  return {
     uuid: user?.id,
     emailVerified: user?.email_confirmed_at ? true : false,
     name: userName ,
   }
+}
+
+export async function forgotPassword(email: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:3000/reset-password',
+    // redirectTo:'https://capstone-wee.dns.net.za/reset-password', add this when deployed
+  });
+
+  if (error) {
+    return {
+      code: error.code,
+      message: error.message,
+    };
+  }
+
+  return {
+    message: 'Password reset email sent. Please check your inbox.',
+  };
+}
+
+export async function resetPassword(newPassword: string) {
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (error) {
+    return {
+      code: error.code,
+      message: error.message,
+    };
+  }
+
+  return {
+    message: 'Password reset successfully.',
+    user: data,
+  };
 }
