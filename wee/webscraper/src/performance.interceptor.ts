@@ -27,14 +27,10 @@ export class PerformanceInterceptor implements NestInterceptor {
           );
 
           logger.info(
-            serviceName,context.getClass().name,context.getHandler().name, `{(performance.now() - now).toFixed(2)}ms`);
-     
-
-          // logger.info(
-          //   `${serviceName} ${context.getClass().name} - ${context.getHandler().name} executed in ${(
-          //     performance.now() - now
-          //   ).toFixed(2)}ms`,
-          // );
+            `${serviceName} ${context.getClass().name} - ${context.getHandler().name} executed in ${(
+              performance.now() - now
+            ).toFixed(2)}ms`,
+          );
      
         }
         ),
