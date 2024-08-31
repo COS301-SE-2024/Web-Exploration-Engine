@@ -3,17 +3,19 @@ import * as cron from 'node-cron';
 import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
-import { ScheduleTask, ScheduleTaskResponse } from '../models/scheduleTaskModels';
+import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask } from '../models/scheduleTaskModels';
 
 
 @Injectable()
 export class SchedulerService {
   topicName: string;
+  isRunning = false; // Lock variable to track if a job is running
 
   constructor(
     private readonly supabaseService: SupabaseService,
     private readonly pubsubService: PubSubService
   ) {
+    console.log('Scheduler service initialized');
     this.topicName = process.env.GOOGLE_CLOUD_TOPIC;
 
     // Schedule the cron job to run every minute
@@ -25,30 +27,46 @@ export class SchedulerService {
     await this.supabaseService.createSchedule(schedule);
   }
 
+  async getSchedule(id: string) {
+    // Get a schedule by ID from Supabase
+    return await this.supabaseService.getScheduleById(id);
+  }
+
   async checkSchedules() {
-    // Fetch all schedules that are due for scraping
-    const dueSchedules = await this.supabaseService.getDueSchedules() as ScheduleTaskResponse[];
+    if (this.isRunning) {
+      console.log('Job already running, skipping...');
+      return; // Prevent new job if one is already running
+    }
 
-    for (const schedule of dueSchedules) {
-      const message = {
-        type: 'scrape',
-        data: { url: schedule.url }
-      };
+    this.isRunning = true; // Set lock
 
-      // Publish scraping tasks to Pub/Sub
-      this.pubsubService.publishMessage(this.topicName, message);
+    try {
+      console.log('Checking schedules...');
+      const dueSchedules = await this.supabaseService.getDueSchedules() as ScheduleTaskResponse[];
+      console.log('Number of due schedules:', dueSchedules.length);
 
-      // Poll the API endpoint until results are available
-      this.pollApiEndpoint(schedule.url, schedule);
-      
-      // Update next scrape time after publishing
-      // await this.supabaseService.updateNextScrapeTime(schedule);
+      for (const schedule of dueSchedules) {
+        const message = {
+          type: 'scrape',
+          data: { url: schedule.url }
+        };
+
+        await this.pubsubService.publishMessage(this.topicName, message);
+        console.log('Updating next scrape time for:', schedule.url);
+        await this.supabaseService.updateNextScrapeTime(schedule);
+
+        await this.pollApiEndpoint(schedule.url, schedule); // Poll the API
+      }
+    } catch (error) {
+      console.error('Error during job execution:', error);
+    } finally {
+      this.isRunning = false; // Release lock
     }
   }
 
   async pollApiEndpoint(url: string, schedule: ScheduleTaskResponse) {
-    const maxRetries = 10;
-    const retryDelay = 5000; // 5 seconds
+    const maxRetries = 20;
+    const retryDelay = 10000; // 10 seconds
     const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -56,18 +74,19 @@ export class SchedulerService {
         // this.logger.log(`Polling ${url}, attempt ${attempt + 1}`);
 
         // Make HTTP request to the API endpoint
+        console.log('Polling API endpoint:', `${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
         const response = await axios.get(`${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
-        console.log('Response:', response);
-        
-        if (response.data && response.data.results) {
-          // Handle successful response
-          
-          this.handleApiResults(response.data.results, schedule);
+
+
+        if(response.data && response.data.status === 'completed') {
+          this.handleApiResults(response.data.result, schedule);
           break;
         } else {
           // this.logger.warn('No results yet, retrying...');
           await this.delay(retryDelay);
         }
+        
+        
       } catch (error) {
         // this.logger.error('Error polling API', error);
         await this.delay(retryDelay);
@@ -82,19 +101,21 @@ export class SchedulerService {
     // calculate next scrape time based on frequency
 
     // append results to result_history
-    schedule.result_history.push({ result: results });
+    schedule.result_history.push({ 
+      timestamp: new Date().toISOString(),
+      result: results 
+    });
 
     // Example of updating Supabase with the results
     const updateMessage = {
       id: schedule.id,
-      user_id: schedule.user_id,
-      url: schedule.url,
-      frequency: schedule.frequency,
-      next_scrape: schedule.next_scrape,
-      updated_at: new Date().toISOString(),
-      result_history: schedule.result_history
-    };
-    await this.supabaseService.updateSchedule(results);
+      result_history: schedule.result_history,
+      newResults: results,
+    } as UpdateScheduleTask;
+
+    console.log('Updating results');
+    await this.supabaseService.updateSchedule(updateMessage);
+
   }
 
   delay(ms: number) {
