@@ -9,8 +9,7 @@ import { createClient } from "../utils/supabase/client";
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const { user, setUser } = useUserContext();
-    const supabase = createClient(); 
-    
+    const supabase = createClient();    
 
     const router = useRouter();
 
