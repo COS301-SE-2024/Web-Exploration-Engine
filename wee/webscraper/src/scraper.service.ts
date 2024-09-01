@@ -85,7 +85,7 @@ export class ScraperService implements OnModuleInit {
         return this.seoAnalysis(data.url);
       case 'keyword-analysis':
         return this.keywordAnalysis(data.url, data.keyword);
-      case 'socialAnalytics':
+      case 'shareCount':
         return this.getShareCount(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
