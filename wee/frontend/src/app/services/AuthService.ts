@@ -1,8 +1,6 @@
 'use server'
-import { create } from 'cypress/types/lodash';
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
 import { createClient } from '../utils/supabase/server';
-
 
 export async function login(req: LoginRequest) {
   const supabase = createClient();
@@ -76,29 +74,8 @@ export async function signUp(req: SignUpRequest) {
   }
 }
 
-export async function googleLogin() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-  });
-  if (error) {
-    console.error('Error logging in with Google:', error.message);
-    return {
-      code: error.code,
-      message: error.message,
-    }
-  }
-
-  // get user data
-  const { data: { user } } = await supabase.auth.getUser();
-  const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.fullname || user?.email || '';
-  return {
-    uuid: user?.id,
-    emailVerified: user?.email_confirmed_at ? true : false,
-    name: userName ,
-  }
-}
-
 export async function forgotPassword(email: string) {
+  const supabase = createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: 'http://localhost:3000/reset-password',
     // redirectTo:'https://capstone-wee.dns.net.za/reset-password', add this when deployed
@@ -117,6 +94,7 @@ export async function forgotPassword(email: string) {
 }
 
 export async function resetPassword(newPassword: string) {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.updateUser({
     password: newPassword,
   });
