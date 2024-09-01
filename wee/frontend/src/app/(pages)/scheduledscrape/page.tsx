@@ -1,9 +1,10 @@
 'use client'
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker } from '@nextui-org/react';
+import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
-import { FiPlus, FiTrash } from "react-icons/fi";
+import WEETable from '../../components/Util/Table';
+import { FiPlus, FiTrash, FiMoreVertical } from "react-icons/fi";
 import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 
@@ -71,8 +72,8 @@ export default function ScheduledScrape() {
       errorMessage = "Please select a scraping frequency";
     }
     else {
-      const now = new Date(); 
-      if (!scrapeStartDate || new Date(scrapeStartDate) < now) {   
+      const now = new Date();
+      if (!scrapeStartDate || new Date(scrapeStartDate) < now) {
         errorMessage = "The start date and time cannot be in the past";
       }
     }
@@ -96,7 +97,7 @@ export default function ScheduledScrape() {
         <h1 className="my-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-center text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Scheduled Scraping Tasks
         </h1>
-        <div className='flex justify-end'>
+        <div className='flex justify-end mb-3'>
           <Button
             data-testid="btn-add-scraping-task"
             startContent={<FiPlus />}
@@ -106,8 +107,35 @@ export default function ScheduledScrape() {
             Add Scraping Task
           </Button>
         </div>
+
+        {/* Table */}
+        <WEETable data-testid="scheduled-scrape-table" isStriped aria-label="Scheduled scrape table">
+          <TableHeader>
+            <TableColumn>URL</TableColumn>
+            <TableColumn>NEXT SCHEDULED SCRAPE</TableColumn>
+            <TableColumn>OPTIONS</TableColumn>
+            <TableColumn>DASHBOARD</TableColumn>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>https://takealot.com</TableCell>
+              <TableCell>09/01/2024, 04:54 PM</TableCell>
+              <TableCell><FiMoreVertical /></TableCell>
+              <TableCell>
+                <Button
+                  className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                  // onClick={() => handleResultPage(item.url)}
+                  // data-testid={'btnView' + index}
+                >
+                  View
+                </Button>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </WEETable>
       </div>
 
+      {/* Modal */}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='center'>
         <ModalContent>
           {(onClose) => (
@@ -118,7 +146,6 @@ export default function ScheduledScrape() {
                 <WEEInput
                   type="text"
                   label="Url to scrape"
-                  className="sm:w-4/5 md:w-full lg:w-4/5"
                   value={urlToAdd}
                   onChange={(e) => setUrlToAdd(e.target.value)}
                 />
