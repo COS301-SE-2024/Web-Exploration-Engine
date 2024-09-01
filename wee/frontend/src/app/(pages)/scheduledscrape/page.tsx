@@ -8,7 +8,10 @@ import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 
 export default function ScheduledScrape() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [urlToAdd, setUrlToAdd] = React.useState('');
+  const [scrapingFrequency, setScrapingFrequency] = React.useState<string>('');
+  const [scrapeStartDate, setScrapeStartDate] = React.useState(new Date());
   const [keyword, setKeyword] = React.useState('');
   const [keywordList, setKeywordList] = React.useState(['keywordOne', 'keyword phrase two']);
   const [modalError, setModalError] = React.useState('');
@@ -38,8 +41,53 @@ export default function ScheduledScrape() {
     setKeywordList(updatedKeywords); // Remove the keyword from the list
   };
 
+  const isValidUrl = (urlString: string) => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  const sanitizeURL = (url: string) => {
+    return url.replace(/[<>"'`;()]/g, '');
+  }
+
   const handleScheduledScrapeTaskAdd = () => {
-    alert('Here');
+    let errorMessage = '';
+
+    // error handling for url field
+    if (!urlToAdd) {
+      errorMessage = "URL cannot be empty";
+    }
+    else if (urlToAdd !== sanitizeURL(urlToAdd)) {
+      errorMessage = 'URLs cannot contain special characters like <, >, ", \', `, ;, (, or )';
+    }
+    else if (!isValidUrl(urlToAdd)) {
+      errorMessage = "Please enter a valid URL";
+    }
+    else if (!scrapingFrequency) {
+      errorMessage = "Please select a scraping frequency";
+    }
+    else {
+      const now = new Date(); 
+      if (!scrapeStartDate || new Date(scrapeStartDate) < now) {   
+        errorMessage = "The start date and time cannot be in the past";
+      }
+    }
+
+    // display error message
+    if (errorMessage) {
+      setModalError(errorMessage);
+      const timer = setTimeout(() => {
+        setModalError('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+
+    // close the modal once successful
+    onClose();
   };
 
   return (
@@ -71,12 +119,16 @@ export default function ScheduledScrape() {
                   type="text"
                   label="Url to scrape"
                   className="sm:w-4/5 md:w-full lg:w-4/5"
+                  value={urlToAdd}
+                  onChange={(e) => setUrlToAdd(e.target.value)}
                 />
 
                 {/* Frequency */}
                 <WEESelect
                   label="Scraping Frequency"
                   data-testid="frequency-select"
+                  value={scrapingFrequency}
+                  onChange={(event) => setScrapingFrequency(event.target.value)}
                 >
                   <SelectItem key='0' textValue='Daily'>Daily</SelectItem>
                   <SelectItem key='1' textValue='Biweekly'>Biweekly</SelectItem>
@@ -87,10 +139,10 @@ export default function ScheduledScrape() {
                 {/* Start scraping */}
                 <DatePicker
                   label="Start scraping date and time"
-                  // variant="bordered"
                   hideTimeZone
                   showMonthAndYearPickers
                   defaultValue={now(getLocalTimeZone())}
+                  onChange={(value: any) => setScrapeStartDate(value)}
                 />
 
                 {/* Add keyword or phrase */}
@@ -139,7 +191,7 @@ export default function ScheduledScrape() {
               <ModalFooter>
                 <Button
                   className='font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor'
-                  onPress={onClose}
+                  // onPress={onClose}
                   onClick={handleScheduledScrapeTaskAdd}
                 >
                   Add Task
