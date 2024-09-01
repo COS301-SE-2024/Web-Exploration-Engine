@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
@@ -45,7 +46,7 @@ export class ScreenshotService {
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
-      console.log("Screenshot", url, typeof screenshotBase64); 
+      console.log("Screenshot", url, typeof screenshotBase64);
 
       return { screenshot: screenshotBase64 };
 
@@ -53,7 +54,7 @@ export class ScreenshotService {
       console.error('Failed to capture screenshot', error);
       return {
         screenshot: '',
-      } 
+      }
     } finally {
       if (page) {
         await page.close();

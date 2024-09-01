@@ -1,4 +1,4 @@
-import { login, signUp } from '../../src/app/services/AuthService';
+import { login, signUp,forgotPassword, resetPassword  } from '../../src/app/services/AuthService';
 import { createClient } from '../../src/app/utils/supabase/server';
 
 jest.mock('../../src/app/utils/supabase/server', () => ({
@@ -15,6 +15,8 @@ const mockSupabaseClient = {
     signInWithOAuth: jest.fn(),
     signUp: jest.fn(),
     getUser: jest.fn(),
+    resetPasswordForEmail: jest.fn(),
+    updateUser: jest.fn(),
   },
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
@@ -134,10 +136,155 @@ describe('Auth functions', () => {
       };
       const result = await signUp(req);
 
+    expect(result).toEqual({
+      code: 'auth/email-already-in-use',
+      message: 'Email already in use',
+    });
+
+
+    });
+  });
+
+  describe('googleLogin', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should handle successful Google login and return user data', async () => {
+      // Mock successful OAuth sign-in
+      supabase?.auth.signInWithOAuth.mockResolvedValue({ error: null });
+
+      // Mock user data
+      supabase?.auth.getUser.mockResolvedValue({
+        data: {
+          user: {
+            id: '123',
+            email: 'test@example.com',
+            user_metadata: {
+              first_name: 'John',
+              name: 'John Doe',
+              fullname: 'John Doe'
+            },
+            email_confirmed_at: '2024-07-31T00:00:00Z',
+          },
+        },
+      });
+
+      const result = await googleLogin();
+
       expect(result).toEqual({
-        code: 'auth/email-already-in-use',
-        message: 'Email already in use',
+        uuid: '123',
+        emailVerified: true,
+        name: 'John',
+      });
+    });
+
+    it('should handle Google login errors', async () => {
+      // Mock OAuth sign-in error
+      supabase?.auth.signInWithOAuth.mockResolvedValue({
+        error: {
+          code: 'auth/error',
+          message: 'Login failed',
+        },
+      });
+
+      const result = await googleLogin();
+
+      expect(result).toEqual({
+        code: 'auth/error',
+        message: 'Login failed',
+      });
+    });
+
+    it('should return an empty name if no user metadata is available', async () => {
+      // Mock successful OAuth sign-in
+      supabase?.auth.signInWithOAuth.mockResolvedValue({ error: null });
+
+      // Mock user data without name metadata
+      supabase?.auth.getUser.mockResolvedValue({
+        data: {
+          user: {
+            id: '123',
+            email: 'test@example.com',
+            user_metadata: {},
+            email_confirmed_at: '2024-07-31T00:00:00Z',
+          },
+        },
+      });
+
+      const result = await googleLogin();
+
+      expect(result).toEqual({
+        uuid: '123',
+        emailVerified: true,
+        name: 'test@example.com',
       });
     });
   });
+  describe('forgotPassword', () => {
+    it('should return success message when email is valid', async () => {
+      const mockResponse = {
+        error: null,
+      };
+
+      (supabase.auth.resetPasswordForEmail as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await forgotPassword('test@example.com');
+
+      expect(result).toEqual({
+        message: 'Password reset email sent. Please check your inbox.',
+      });
+    });
+
+    it('should return error code and message when email is invalid', async () => {
+      const mockError = {
+        code: 'mockCode',
+        message: 'mockMessage',
+      };
+
+      (supabase.auth.resetPasswordForEmail as jest.Mock).mockResolvedValue({ error: mockError });
+
+      const result = await forgotPassword('test@example.com');
+
+      expect(result).toEqual({
+        code: 'mockCode',
+        message: 'mockMessage',
+      });
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should return success message when password is updated successfully', async () => {
+      const mockResponse = {
+        data: { id: 'mockUserId' },
+        error: null,
+      };
+
+      (supabase.auth.updateUser as jest.Mock).mockResolvedValue(mockResponse);
+
+      const result = await resetPassword('newPassword123');
+
+      expect(result).toEqual({
+        message: 'Password reset successfully.',
+        user: { id: 'mockUserId' },
+      });
+    });
+
+    it('should return error code and message when password update fails', async () => {
+      const mockError = {
+        code: 'mockCode',
+        message: 'mockMessage',
+      };
+
+      (supabase.auth.updateUser as jest.Mock).mockResolvedValue({ error: mockError });
+
+      const result = await resetPassword('newPassword123');
+
+      expect(result).toEqual({
+        code: 'mockCode',
+        message: 'mockMessage',
+      });
+    });
+  });
+
 });

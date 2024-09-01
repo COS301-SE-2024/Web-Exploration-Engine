@@ -4,6 +4,12 @@
   "plugins": ["@nx"],
   "overrides": [
     {
+      "files": ["*spec.tsx"], 
+      "rules": {
+        "react/display-name": "off"
+      }
+    },
+    {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nx/enforce-module-boundaries": [
