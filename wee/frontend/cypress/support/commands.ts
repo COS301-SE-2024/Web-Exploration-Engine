@@ -26,6 +26,7 @@ declare namespace Cypress {
     scrape3Websites(): void;
     scrape2Websites(): void;
     scrapeGithub(): void;
+    scrapeCisco(): void;
     scrapeWimpy(): void;
     scrapeInsecure(): void;
     scrapeSteers(): void;
@@ -584,78 +585,136 @@ cy.fixture('/pub-sub/wimpy-waiting')
   // Cypress Waits
   //======================================================
 
-
-  //Wait for steers to finish
-   cy.wait('@mock_scraper_mocksteers_done');
-
-  //Wait for wimpy to finish
-  cy.wait('@mock_scraper_mockwimpy_done');
-
-  cy.url().should('include', 'scraperesults');
-
 });
 
 
 Cypress.Commands.add('scrapeGithub', () => {
+    cy.visit('/');
 
-  cy.visit('/');
-  cy.get('[data-testid="scraping-textarea-home"]').type('https://mock.test.github.com');
-  cy.get('[data-testid="btn-start-scraping"]').click();
+    cy.get('[data-testid="scraping-textarea-home"]').type('https://mock.test.github.com');
 
-  //======================================================
-  // GitHub Mock
-  //======================================================
+    cy.get('[data-testid="btn-start-scraping"]').click();
 
-  //Full response
+      
     cy.fixture('/pub-sub/github-done')
-    .as('mock_scraper_mockgithub_done')
-    .then((mock_scraper_mockgithub_done) => {
-      cy.intercept(
-        'GET',
-        'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.github.com',//mock.test.github.com
-        mock_scraper_mockgithub_done
-      ).as('mock_scraper_mockgithub_done');
-    });
+      .as('mock_scraper_github')
+      .then((mock_scraper_github) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_github
+        ).as('mock_scraper_github_done');
+      });
 
-  //Pub Sub - Publish Event
-  cy.fixture('/pub-sub/github-waiting')
-    .as('mock_scraper_mockgithub_waiting')
-    .then((mock_scraper_mockgithub_waiting) => {
-      cy.intercept(
-        'GET',
-        'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.github.com',
-        mock_scraper_mockgithub_waiting
-      ).as('mock_scraper_mockgithub_waiting');
-    });
-
-  //Pub Sub - Get Event Status
-   cy.fixture('/pub-sub/github-status')
-   .as('mock_scraper_mockgithub_status')
-   .then((mock_scraper_mockgithub_status) => {
-     cy.intercept(
-       'GET',
-       'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
-       mock_scraper_mockgithub_status
-     ).as('mock_scraper_mockgithub_status');
-   });
+    cy.fixture('/pub-sub/github-status')
+      .as('mock_scraper_github')
+      .then((mock_scraper_github) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_github
+        ).as('mock_scraper_github_check_job');
+      });
 
 
+    cy.fixture('/pub-sub/github-waiting')
+      .as('mock_scraper_github')
+      .then((mock_scraper_github) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_github
+        ).as('mock_scraper_github_check_job');
+      });
 
-  //======================================================
-  // Cypress Waits
-  //======================================================
-    
-  //Wait for github to finish
-  cy.wait('@mock_scraper_mockgithub_done');
-
-  //Wait for steers to finish
-   //cy.wait('@mock_scraper_mocksteers_done');
-
-  //Wait for wimpy to finish
-  //cy.wait('@mock_scraper_mockwimpy_done');
-
-  cy.url().should('include', 'scraperesults');
   
+});
+
+Cypress.Commands.add('scrapeCisco', () => {
+    cy.visit('/');
+
+    cy.get('[data-testid="scraping-textarea-home"]').type('https://mock.test.cisco.com');
+
+    cy.get('[data-testid="btn-start-scraping"]').click();
+
+      
+    cy.fixture('/pub-sub/cisco-done')
+      .as('mock_scraper_cisco')
+      .then((mock_scraper_cisco) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper?url=https%3A%2F%2Fmock.test.cisco.com',
+          mock_scraper_cisco
+        ).as('mock_scraper_cisco_done');
+      });
+
+    cy.fixture('/pub-sub/cisco-status')
+      .as('mock_scraper_cisco')
+      .then((mock_scraper_cisco) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.cisco.com',
+          mock_scraper_cisco
+        ).as('mock_scraper_cisco_check_job');
+      });
+
+
+    cy.fixture('/pub-sub/cisco-waiting')
+      .as('mock_scraper_cisco')
+      .then((mock_scraper_cisco) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.cisco.com',
+          mock_scraper_cisco
+        ).as('mock_scraper_cisco_check_job');
+      });
+
+    // Key word analysis mocks
+
+    // Mocking the results - ie keyword-status
+    cy.fixture('/pub-sub/cisco-keyword-cisco-analysis-poll')
+      .as('mock_scraper_cisco_keyword_cisco_check_job')
+      .then((mock_scraper_cisco_keyword_cisco_check_job) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/keyword-status?url=https%3A%2F%2Fmeraki.cisco.com%2F&keyword=cisco',
+          mock_scraper_cisco_keyword_cisco_check_job
+        ).as('mock_scraper_cisco_keyword_cisco_check_job');
+      });
+
+    cy.fixture('/pub-sub/cisco-keyword-meraki-analysis-poll')
+      .as('mock_scraper_cisco_keyword_meraki_check_job')
+      .then((mock_scraper_cisco_keyword_meraki_check_job) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/keyword-status?url=https%3A%2F%2Fmeraki.cisco.com%2F&keyword=cisco',
+          mock_scraper_cisco_keyword_meraki_check_job
+        ).as('mock_scraper_cisco_keyword_meraki_check_job');
+      });
+
+      
+      //Mocking polling ie keyword-analysis?url=...
+      cy.fixture('/pub-sub/cisco-keyword-cisco-analysis-result')
+        .as('mock_scraper_cisco_keyword_cisco_result')
+        .then((mock_scraper_cisco_keyword_cisco_result) => {
+          cy.intercept(
+            'GET',
+            'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fmock.test.cisco.com%2F&keyword=cisco',
+            mock_scraper_cisco_keyword_cisco_result
+          ).as('mock_scraper_cisco_keyword_cisco_result');
+        });
+  
+      cy.fixture('/pub-sub/cisco-keyword-meraki-analysis-result')
+        .as('mock_scraper_cisco_keyword_meraki_result')
+        .then((mock_scraper_cisco_keyword_meraki_result) => {
+          cy.intercept(
+            'GET',
+            'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fmeraki.cisco.com%2F&keyword=meraki',
+            mock_scraper_cisco_keyword_meraki_result
+          ).as('mock_scraper_cisco_keyword_meraki_result');
+        });
+
+
 });
 
 
@@ -705,20 +764,6 @@ cy.fixture('/pub-sub/steers-waiting')
  });
 
 
-  //======================================================
-  // Cypress Waits
-  //======================================================
-    
-  //Wait for github to finish
-  //cy.wait('@mock_scraper_mockgithub_done');
-
-  //Wait for steers to finish
-  cy.wait('@mock_scraper_mocksteers_done');
-
-  //Wait for wimpy to finish
-  //cy.wait('@mock_scraper_mockwimpy_done');
-
-  cy.url().should('include', 'scraperesults');
   
 });
 
@@ -769,20 +814,6 @@ cy.fixture('/pub-sub/steers-waiting')
  });
 
 
-  //======================================================
-  // Cypress Waits
-  //======================================================
-    
-  //Wait for github to finish
-  //cy.wait('@mock_scraper_mockgithub_done');
-
-  //Wait for steers to finish
-  cy.wait('@mock_scraper_mocksteers_done');
-
-  //Wait for wimpy to finish
-  //cy.wait('@mock_scraper_mockwimpy_done');
-
-  cy.url().should('include', 'scraperesults');
   
 });
 
@@ -833,32 +864,7 @@ Cypress.Commands.add('scrapeWimpy', () => {
    });
 
 
-   
-  //======================================================
-  // Cypress Waits
-  //======================================================
-    
-  //Wait for github to finish
-  //cy.wait('@mock_scraper_mockgithub_done');
-
-  //Wait for steers to finish
-  //cy.wait('@mock_scraper_mocksteers_done');
-
-  //Wait for wimpy to finish
-  cy.wait('@mock_scraper_mockwimpy_done');
-
-  cy.url().should('include', 'scraperesults');
   
 });
 
 
-
-
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
