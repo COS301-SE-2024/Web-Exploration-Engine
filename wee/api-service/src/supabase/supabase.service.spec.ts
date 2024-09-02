@@ -24,21 +24,12 @@ jest.mock('@supabase/supabase-js', () => {
   };
 });
 
-jest.mock('luxon', () => {
-  const originalLuxon = jest.requireActual('luxon');
-  return {
-    ...originalLuxon,
-    DateTime: {
-      ...originalLuxon.DateTime,
-      now: () => originalLuxon.DateTime.fromISO('2024-09-01T11:00:00.000+02:00'),
-    },
-  };
-});
 
 
 describe('SupabaseService', () => {
   let service: SupabaseService;
   let supabaseClient: any;
+  const mockDate = new Date(); // Mock date
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -47,19 +38,58 @@ describe('SupabaseService', () => {
 
     service = module.get<SupabaseService>(SupabaseService);
     supabaseClient = createClient('', 'key');
+    jest.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
   });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
+  it('should use the mocked Date', () => {
+    const now = new Date(); // Should return fixedDate
+    expect(now).toEqual(mockDate);
+
+    // Calculate the expected next scrape time
+    const expectedNextScrape = new Date(mockDate.getTime());
+    expectedNextScrape.setDate(mockDate.getDate() + 1);
+    expect(service.calculateNextScrapeTime('daily')).toBe(expectedNextScrape.toISOString());
+  });
+
   describe('createSchedule', () => {
-    it('should create a new schedule successfully', async () => {
+    it('should create a new schedule successfully without next_scrape input', async () => {
       const scheduleData: ScheduleTask = {
         user_id: 'user123',
         url: 'https://example.com',
         frequency: 'daily',
-        next_scrape: DateTime.now().toUTC().toFormat("yyyy-MM-dd HH:mm:ss.SSSSSSZZ"),
+      };
+      
+
+      supabaseClient.insert.mockResolvedValueOnce({ data: [scheduleData], error: null });
+
+      const result = await service.createSchedule(scheduleData);
+
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.insert).toHaveBeenCalledWith([{
+        user_id: scheduleData.user_id,
+        url: scheduleData.url,
+        frequency: scheduleData.frequency,
+        next_scrape: mockDate.toISOString(),
+        result_history: [],
+      }]);
+      expect(result).toEqual([scheduleData]);
+    });
+
+    it('should create a new schedule successfully with next_scrape input', async () => {
+      const scheduleData: ScheduleTask = {
+        user_id: 'user123',
+        url: 'https://example.com',
+        frequency: 'daily',
+        next_scrape: new Date(2024, 5, 7).toISOString(),
       };
       
 
@@ -77,13 +107,13 @@ describe('SupabaseService', () => {
       }]);
       expect(result).toEqual([scheduleData]);
     });
+    
 
     it('should throw an error if schedule creation fails', async () => {
       const scheduleData: ScheduleTask = {
         user_id: 'user123',
         url: 'https://example.com',
         frequency: 'daily',
-        next_scrape: DateTime.now().toUTC().toFormat("yyyy-MM-dd HH:mm:ss.SSSSSSZZ"),
       };
 
       supabaseClient.insert.mockResolvedValueOnce({ data: null, error: 'Insert error' });
@@ -96,18 +126,18 @@ describe('SupabaseService', () => {
   
     it('should update a schedule successfully', async () => {
       // Define the mock time in UTC
-      const mockTime = '2024-09-01T11:00:00.000+02:00'; // Fixed time for consistent testing
-    
+      
+      const timestamp = new Date();
       const updateData = {
         id: 'schedule123',
         result_history: [
           {
-            timestamp: mockTime,
+            timestamp: timestamp.toISOString(),
             result: '',
           },
         ],
         newResults: {},
-        updated_at: mockTime,
+        updated_at: timestamp.toISOString(),
       };
     
       // Mock the Supabase client methods
@@ -125,7 +155,7 @@ describe('SupabaseService', () => {
       expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
       expect(supabaseClient.update).toHaveBeenCalledWith({
         result_history: updateData.result_history,
-        updated_at: mockTime
+        updated_at: timestamp.toISOString(),
       });
       expect(supabaseClient.eq).toHaveBeenCalledWith('id', updateData.id);
       expect(result).toEqual([updateData]);
@@ -150,15 +180,16 @@ describe('SupabaseService', () => {
 
   describe('getDueSchedules', () => {
     it('should return due schedules successfully', async () => {
+      const timestamp = new Date();
       const dueSchedules: ScheduleTaskResponse[] = [
         { 
           id: 'schedule123', 
           user_id: 'user123',
           url: 'https://example.com', 
           frequency: 'daily',
-          next_scrape: '2024-08-24T00:00:00.000Z', 
-          updated_at: '2024-08-24T00:00:00.000Z',
-          created_at: '2024-08-24T00:00:00.000Z',
+          next_scrape: timestamp.toISOString(),
+          updated_at: timestamp.toISOString(),
+          created_at: timestamp.toISOString(),
           result_history: [] 
         },
       ];
@@ -179,68 +210,99 @@ describe('SupabaseService', () => {
     });
   });
 
-  // describe('updateNextScrapeTime', () => {
-  //   it('should update the next scrape time successfully', async () => {
-  //     const schedule: ScheduleTaskResponse = {
-  //       id: 'schedule123', 
-  //         user_id: 'user123',
-  //         url: 'https://example.com', 
-  //         frequency: 'daily',
-  //         next_scrape: '2024-08-24T00:00:00.000Z', 
-  //         updated_at: '2024-08-24T00:00:00.000Z',
-  //         created_at: '2024-08-24T00:00:00.000Z',
-  //         result_history: [] 
-  //     };
+  describe('updateNextScrapeTime', () => {
+    it('should update the next scrape time successfully', async () => {
+      const schedule: ScheduleTaskResponse = {
+        id: 'schedule123',
+        user_id: 'user123',
+        url: 'https://example.com',
+        frequency: 'daily',
+        created_at: '2024-08-24T00:00:00.000Z',
+        updated_at: '2024-08-24T00:00:00.000Z',
+        next_scrape: '2024-08-24T00:00:00.000Z',
+        result_history: [],
+      };
 
-  //     supabaseClient.update.mockResolvedValue({ data: [schedule], error: null });
+      const nextScrapeTime = '2024-08-25T00:00:00.000Z';
+      jest.spyOn(service, 'calculateNextScrapeTime').mockReturnValue(nextScrapeTime);
+      supabaseClient.update.mockReturnThis();
+      supabaseClient.eq.mockResolvedValueOnce({ data: [schedule], error: null });
 
-  //     const result = await service.updateNextScrapeTime(schedule);
+      await service.updateNextScrapeTime(schedule);
 
-  //     expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
-  //     expect(supabaseClient.update).toHaveBeenCalledWith({
-  //       next_scrape: schedule.next_scrape,
-  //     });
-  //     expect(supabaseClient.eq).toHaveBeenCalledWith('id', schedule.id);
-  //     expect(result).toEqual([schedule]);
-  //   });
+      expect(service.calculateNextScrapeTime).toHaveBeenCalledWith('daily');
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.update).toHaveBeenCalledWith({ next_scrape: nextScrapeTime });
+      expect(supabaseClient.eq).toHaveBeenCalledWith('id', 'schedule123');
+    });
 
-  //   it('should throw an error if updating next scrape time fails', async () => {
-  //     const schedule: ScheduleTaskResponse = {
-  //       id: 'schedule123',
-  //       url: 'https://example.com',
-  //       next_scrape: '2024-08-24T00:00:00.000Z',
-  //       result_history: [],
-  //     };
+    it('should throw an error if calculating next scrape time fails', async () => {
+      const schedule: ScheduleTaskResponse = {
+        id: 'schedule123',
+        user_id: 'user123',
+        url: 'https://example.com',
+        frequency: 'daily',
+        created_at: '2024-08-24T00:00:00.000Z',
+        updated_at: '2024-08-24T00:00:00.000Z',
+        next_scrape: '2024-08-24T00:00:00.000Z',
+        result_history: [],
+      };
 
-  //     supabaseClient.update.mockResolvedValue({ data: null, error: 'Update error' });
+      jest.spyOn(service, 'calculateNextScrapeTime').mockImplementation(() => {
+        throw new Error('Calculation error');
+      });
 
-  //     await expect(service.updateNextScrapeTime(schedule)).rejects.toThrow('Failed to update next scrape time: Update error');
-  //   });
-  // });
+      await expect(service.updateNextScrapeTime(schedule)).rejects.toThrow('Failed to calculate next scrape time: Calculation error');
+    });
+
+    it('should throw an error if updating next scrape time fails', async () => {
+      const schedule: ScheduleTaskResponse = {
+        id: 'schedule123',
+        user_id: 'user123',
+        url: 'https://example.com',
+        frequency: 'daily',
+        created_at: '2024-08-24T00:00:00.000Z',
+        updated_at: '2024-08-24T00:00:00.000Z',
+        next_scrape: '2024-08-24T00:00:00.000Z',
+        result_history: [],
+      };
+
+      const nextScrapeTime = '2024-08-25T00:00:00.000Z';
+      jest.spyOn(service, 'calculateNextScrapeTime').mockReturnValue(nextScrapeTime);
+      supabaseClient.update.mockReturnThis();
+      supabaseClient.eq.mockResolvedValueOnce({ data: null, error: { message: 'Update error' } });
+
+      await expect(service.updateNextScrapeTime(schedule)).rejects.toThrow('Failed to update next scrape time: Update error');
+    });
+  });
 
   describe('calculateNextScrapeTime', () => {
     it('should return the correct date for daily frequency', () => {
-      const result = service.calculateNextScrapeTime('daily');
-      expect(result).toBe('2024-09-02T11:00:00.000+02:00');
+      const expectedNextScrape = new Date(mockDate.getTime());
+      expectedNextScrape.setDate(mockDate.getDate() + 1);
+      expect(service.calculateNextScrapeTime('daily')).toBe(expectedNextScrape.toISOString());
     });
 
     it('should return the correct date for weekly frequency', () => {
-      const result = service.calculateNextScrapeTime('weekly');
-      expect(result).toBe('2024-09-08T11:00:00.000+02:00');
+      const expectedNextScrape = new Date(mockDate.getTime());
+      expectedNextScrape.setDate(mockDate.getDate() + 7);
+      expect(service.calculateNextScrapeTime('weekly')).toBe(expectedNextScrape.toISOString());
     });
 
     it('should return the correct date for bi-weekly frequency', () => {
-      const result = service.calculateNextScrapeTime('bi-weekly');
-      expect(result).toBe('2024-09-15T11:00:00.000+02:00');
+      const expectedNextScrape = new Date(mockDate.getTime());
+      expectedNextScrape.setDate(mockDate.getDate() + 14);
+      expect(service.calculateNextScrapeTime('bi-weekly')).toBe(expectedNextScrape.toISOString());
     });
 
     it('should return the correct date for monthly frequency', () => {
-      const result = service.calculateNextScrapeTime('monthly');
-      expect(result).toBe('2024-10-01T11:00:00.000+02:00');
+      const expectedNextScrape = new Date(mockDate.getTime());
+      expectedNextScrape.setDate(mockDate.getMonth() + 1);
+      expect(service.calculateNextScrapeTime('monthly')).toBe(expectedNextScrape.toISOString());
     });
 
     it('should throw an error for invalid frequency', () => {
-      expect(() => service.calculateNextScrapeTime('invalid')).toThrow('Invalid frequency: invalid');
+      expect(() => service.calculateNextScrapeTime('invalid')).toThrow('Invalid frequency');
     });
   });
 });

@@ -101,31 +101,35 @@ export class SupabaseService {
     
   }
 
-  calculateNextScrapeTime(frequency: string) {
+  calculateNextScrapeTime(frequency: string): string {
     // Get the current date and time
     const now = new Date();
     
-    // Calculate the next scrape time based
-    // on the frequency
-    let nextScrape: Date;
+    // Create a new Date object to avoid mutating the original now object
+    const nextScrape: Date = new Date(now.getTime());
+    
+    // Calculate the next scrape time based on the frequency
     switch (frequency) {
       case 'daily':
-        nextScrape = new Date(now.setDate(now.getDate() + 1));
+        nextScrape.setDate(nextScrape.getDate() + 1);
         break;
       case 'weekly':
-        nextScrape = new Date(now.setDate(now.getDate() + 7));
+        nextScrape.setDate(nextScrape.getDate() + 7);
+        break;
+      case 'bi-weekly':
+        nextScrape.setDate(nextScrape.getDate() + 14);
         break;
       case 'monthly':
-        nextScrape = new Date(now.setMonth(now.getMonth() + 1));
+        nextScrape.setMonth(nextScrape.getMonth() + 1);
         break;
       default:
         throw new Error('Invalid frequency');
     }
-
+  
     // Return the next scrape time in ISO format
     return nextScrape.toISOString();
   }
-
+  
   // async getScheduleById(id: string) {
   //   const { data, error } = await this.supabaseClient
   //     .from('scheduled_tasks')
