@@ -44,6 +44,10 @@ export class SchedulerService {
     try {
       console.log('Checking schedules...');
       const dueSchedules = await this.supabaseService.getDueSchedules() as ScheduleTaskResponse[];
+      if (!dueSchedules || dueSchedules.length === 0) {
+        console.log('No due schedules found');
+        return;
+      }
       console.log('Number of due schedules:', dueSchedules.length);
 
       for (const schedule of dueSchedules) {
