@@ -1,11 +1,16 @@
-import { NextResponse } from "next/server";
-import { NextRequest } from "next/server";
-import { createServerClient } from '@supabase/ssr'
-import { updateSession } from "../../src/app/utils/supabase/middleware";
-import { update } from "cypress/types/lodash";
+import { createServerClient } from '@supabase/ssr';
+import { updateSession } from '../../src/app/utils/supabase/middleware';
+import { NextRequest, NextResponse } from 'next/server';
 
+// jest.mock('@supabase/ssr', () => ({
+//   createServerClient: jest.fn(),
+// }));
 jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(),
+  createServerClient: jest.fn().mockReturnValue({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: {} } }),
+    },
+  }),
 }));
 
 // Mock NextResponse
@@ -109,63 +114,65 @@ describe("Utils_middleware", () => {
     expect(NextResponse.redirect).toHaveBeenCalledWith(expectedUrl);
     expect(response).toBe(NextResponse.redirect(expectedUrl));
   });
+  
+});
 
-  it('should retrieve and set cookies correctly using supabase client', async () => {
-    const mockGetAllCookies = jest.fn().mockReturnValue([
-      { name: 'cookie1', value: 'value1' },
-      { name: 'cookie2', value: 'value2' },
-    ]);
-    const mockSetCookie = jest.fn();
+describe('updateSession', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-    const request = {
+  it('should interact with cookieStore correctly', async () => {
+    const mockRequest = {
       cookies: {
-        getAll: mockGetAllCookies,
-        set: mockSetCookie,
+        getAll: jest.fn().mockReturnValue([]),
+        set: jest.fn(),
+      },
+      nextUrl: {
+        pathname: '/some-path',
       },
     } as unknown as NextRequest;
 
-    let supabaseResponse = NextResponse.next();
+    await updateSession(mockRequest);
 
-    (createServerClient as jest.Mock).mockReturnValue({
+    const { getAll, setAll } = createServerClient.mock.calls[0][2].cookies;
+
+    const cookies = getAll();
+    expect(cookies).toEqual([]);
+    expect(mockRequest.cookies.getAll).toHaveBeenCalled();
+
+    setAll([{ name: 'test', value: 'value', options: {} }]);
+    expect(mockRequest.cookies.set).toHaveBeenCalledWith('test', 'value');
+    expect(NextResponse.cookies.set).toHaveBeenCalledWith('test', 'value', {});
+  });
+
+  it('should call createServerClient with the correct arguments', async () => {
+    const mockUrl = 'https://your-supabase-url.supabase.co';
+    const mockKey = 'your-supabase-key';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = mockUrl;
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY = mockKey;
+
+    const mockRequest = {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet: any) {
-          cookiesToSet.forEach(({ name, value }: { name: string, value: string }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }: { name: string, value: string, options?: object }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
-        },
+        getAll: jest.fn(),
+        set: jest.fn(),
       },
-    });
+      nextUrl: {
+        pathname: '/some-path',
+      },
+    } as unknown as NextRequest;
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY!,
+    await updateSession(mockRequest);
+
+    expect(createServerClient).toHaveBeenCalledWith(
+      mockUrl,
+      mockKey,
       {
         cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet: any) {
-            cookiesToSet.forEach(({ name, value }: { name: string, value: string }) => request.cookies.set(name, value));
-            supabaseResponse = NextResponse.next({ request });
-            cookiesToSet.forEach(({ name, value, options }: { name: string, value: string, options?: object }) =>
-              supabaseResponse.cookies.set(name, value, options)
-            );
-          },
+          getAll: expect.any(Function),
+          setAll: expect.any(Function),
         },
       }
     );
-
-    supabase.cookies.setAll([
-      { name: 'newCookie', value: 'newValue', options: {} },
-    ]);
-
-    expect(mockSetCookie).toHaveBeenCalledWith('newCookie', 'newValue');
-    expect(NextResponse.cookies.set).toHaveBeenCalledWith('newCookie', 'newValue', {});
   });
-  
 });
