@@ -2,9 +2,6 @@ import { createServerClient } from '@supabase/ssr';
 import { updateSession } from '../../src/app/utils/supabase/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 
-// jest.mock('@supabase/ssr', () => ({
-//   createServerClient: jest.fn(),
-// }));
 jest.mock('@supabase/ssr', () => ({
   createServerClient: jest.fn().mockReturnValue({
     auth: {
@@ -36,7 +33,7 @@ const mockNextRequest = (url: string) => {
     nextUrl: {
       href: url,
       pathname: new URL(url).pathname,
-      clone: jest.fn().mockImplementation(function() {
+      clone: jest.fn().mockImplementation(function () {
         return new URL(this.href); // Return a new URL object as a clone
       })
     },
@@ -86,26 +83,26 @@ describe("Utils_middleware", () => {
         getUser: mockGetUser,
       },
     });
-    
+
     const req = mockNextRequest("http://localhost/unprotected");
     const response = await updateSession(req);
 
     expect(response).toBe(NextResponse.next());
   });
 
-  it("should redirect unauthenticated users trying to access protected routes", async () => {    
+  it("should redirect unauthenticated users trying to access protected routes", async () => {
     const mockGetUser = jest.fn().mockResolvedValue({
       data: {
         user: null,
       },
     });
-    
+
     (createServerClient as jest.Mock).mockReturnValue({
       auth: {
         getUser: mockGetUser,
       },
     });
-    
+
     const req = mockNextRequest("http://localhost/savedreports");
     const response = await updateSession(req);
 
@@ -114,7 +111,7 @@ describe("Utils_middleware", () => {
     expect(NextResponse.redirect).toHaveBeenCalledWith(expectedUrl);
     expect(response).toBe(NextResponse.redirect(expectedUrl));
   });
-  
+
 });
 
 describe('updateSession', () => {
