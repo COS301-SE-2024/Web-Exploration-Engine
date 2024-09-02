@@ -17,7 +17,7 @@ export default function NavBar() {
     const menuItems = [
       "Home",
       "Help",
-      "Saved Reports"
+      ...(user ? ["Saved Reports"] : [])
       // "Profile",
       // "Analytics",
       // "Log Out",
