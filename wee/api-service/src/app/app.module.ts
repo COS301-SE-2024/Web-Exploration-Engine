@@ -5,7 +5,7 @@ import { SchedulerModule } from '../scheduler/scheduler.module';
 
 @Module({
   imports: [
-    // ScraperModule, 
+    ScraperModule, 
     PubSubModule, 
     SchedulerModule
   ],
