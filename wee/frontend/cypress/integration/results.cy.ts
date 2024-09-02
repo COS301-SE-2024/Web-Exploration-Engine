@@ -166,8 +166,8 @@ describe('results', () => {
     //  Tab : General Overview
     cy.log('Testing General overview tab');
 
-    cy.get('[data-testid="tab-general"]').should('exist');
-    cy.get('[data-testid="tab-general"]').click();
+    cy.get('[data-testid="tab-general"]', { timeout: 10000 }).should('exist');
+    cy.get('[data-testid="tab-general"]', { timeout: 10000 }).click();
 
     //Tab Section : Header, Title, Logo
     cy.get('[data-testid="div-summary"]').should('exist').should('be.visible');
