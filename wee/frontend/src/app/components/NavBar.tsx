@@ -32,7 +32,7 @@ export default function NavBar() {
               setUser({
                   uuid: user.id,
                   emailVerified: user?.email_confirmed_at ? true : false,
-                  name: user?.user_metadata?.first_name + ' ' + user?.user_metadata?.last_name ,
+                  name: user?.user_metadata?.name ? user?.user_metadata?.name : user?.user_metadata?.fullname,
               });
           } catch (error) {
               console.error("Error fetching user data:", error);
