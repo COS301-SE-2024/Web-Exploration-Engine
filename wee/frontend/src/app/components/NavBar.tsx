@@ -16,7 +16,8 @@ export default function NavBar() {
 
     const menuItems = [
       "Home",
-      "Help"
+      "Help",
+      "Saved Reports"
       // "Profile",
       // "Analytics",
       // "Log Out",
@@ -165,7 +166,7 @@ export default function NavBar() {
             <Link
               className="w-full"
               color="foreground"                
-              href={item == 'Home' ? `/` : `/${item.toLowerCase()}`}
+              href={item == 'Home' ? `/` : `/${item.trim().replace(/\s+/g, '').toLowerCase()}`}
               size="lg"
             >
               {item}
