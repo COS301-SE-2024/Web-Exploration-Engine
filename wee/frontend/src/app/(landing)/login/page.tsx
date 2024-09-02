@@ -3,7 +3,6 @@ import React from 'react';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
-// import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
@@ -11,7 +10,6 @@ import { login, googleLogin } from '../../services/AuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
-
 
 export default function Login() {
   const router = useRouter();
@@ -92,7 +90,6 @@ export default function Login() {
     }
   }
 
-
   return (
     <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
       <div >
@@ -123,17 +120,19 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
+        <div className='w-full sm:w-4/5 md:w-full lg:w-4/5 flex justify-end'>
+          <span className="text-sm font-poppins-medium hover:cursor-pointer dark:text-jungleGreen-150">
+            <Link href={'/forgot-password'}>Forgot Password?</Link>
+          </span>
+        </div>
         <Button
           data-testid="login-button"
           onClick={handleLogin}
-          className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+          className="my-3 mt-[2rem] font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
         >
           Login
         </Button>
-      </div>
-
-      <div className="flex flex-col justify-center items-center">
-        <Divider className='mb-6'/>
+        <Divider className='my-4'/>
         <Button
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
           variant="bordered"
@@ -165,24 +164,12 @@ export default function Login() {
           }>
             Login with Google
         </Button>
-        {/* <Button
-          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
-          variant="bordered"
-          startContent={
-            <BsApple />
-          }>
-            Login with Apple
-        </Button> */}
       </div>
 
       <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">
         <span>Don&apos;t have an account?</span>
         <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
             <Link href={'/signup'}>Sign up</Link>
-        </span>
-        <br />
-        <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
-          <Link href={'/forgot-password'}>Forgot Password?</Link>
         </span>
       </div>
   </div>
