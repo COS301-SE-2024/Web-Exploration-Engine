@@ -4,6 +4,10 @@ import { PubSubModule } from '../pub-sub/pub_sub.module';
 import { SchedulerModule } from '../scheduler/scheduler.module';
 
 @Module({
-  imports: [ScraperModule, PubSubModule, SchedulerModule],
+  imports: [
+    // ScraperModule, 
+    PubSubModule, 
+    SchedulerModule
+  ],
 })
 export class AppModule {}

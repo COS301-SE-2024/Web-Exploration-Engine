@@ -13,8 +13,9 @@ export class SchedulerController {
     return await this.schedulerService.createSchedule(scheduleTask);
   }
 
-  @Get('getByScheduleId') 
-  async getSchedule(@Query('id') id: string) {
-    return await this.schedulerService.getSchedule(id);
-  }
+  // @Get('getByScheduleId') 
+  // async getSchedule(@Query('id') id: string) {
+  //   return await this.schedulerService.getSchedule(id);
+  // }
+
 }

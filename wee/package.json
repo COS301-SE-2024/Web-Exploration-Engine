@@ -50,7 +50,6 @@
     "jspdf-autotable": "^3.8.2",
     "leaflet": "^1.9.4",
     "lighthouse": "^12.1.0",
-    "luxon": "^3.5.0",
     "next": "14.2.3",
     "next-themes": "^0.3.0",
     "node-cron": "^3.0.3",

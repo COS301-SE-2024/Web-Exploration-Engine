@@ -27,10 +27,11 @@ export class SchedulerService {
     await this.supabaseService.createSchedule(schedule);
   }
 
-  async getSchedule(id: string) {
-    // Get a schedule by ID from Supabase
-    return await this.supabaseService.getScheduleById(id);
-  }
+  // async getSchedule(id: string) {
+  //   // Get a schedule by ID from Supabase
+  //   return await this.supabaseService.getScheduleById(id);
+  // }
+
 
   async checkSchedules() {
     if (this.isRunning) {
