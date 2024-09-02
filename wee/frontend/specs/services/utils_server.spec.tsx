@@ -52,9 +52,13 @@ describe('server utils - createClient', () => {
 
     createClient();
 
-    const { setAll } = createServerClient.mock.calls[0][2].cookies;
-    setAll([{ name: 'test', value: 'value', options: {} }]);
+    const { getAll, setAll } = createServerClient.mock.calls[0][2].cookies;
 
+    const result = getAll();
+    expect(result).toEqual([]);
+    expect(mockGetAll).toHaveBeenCalled();
+
+    setAll([{ name: 'test', value: 'value', options: {} }]);
     expect(mockSetAll).toHaveBeenCalledWith('test', 'value', {});
   });
 
