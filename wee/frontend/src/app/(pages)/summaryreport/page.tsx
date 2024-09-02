@@ -513,7 +513,7 @@ export default function SummaryReport() {
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange}
-        placement="top-center"
+        placement="center"
         data-testid="save-report-modal"
       >
         <ModalContent>
@@ -553,7 +553,12 @@ export default function SummaryReport() {
       </Modal>
 
        {/* successfull save */}
-       <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
+       <Modal 
+            isOpen={isSuccessOpen} 
+            onOpenChange={onSuccessOpenChange} 
+            className="font-poppins-regular"
+            placement="center"
+        >
           <ModalContent>
               <ModalBody>
                   <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
