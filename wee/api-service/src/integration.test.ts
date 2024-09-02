@@ -76,7 +76,7 @@ describe('ScraperController', () => {
     configService = moduleFixture.get<ConfigService>(ConfigService);
     await app.init();
 
-  }, 60000); 
+  }, 60000);
 
 
   afterEach(async () => {
@@ -87,7 +87,7 @@ describe('ScraperController', () => {
   describe('/GET scraper', () => {
     it('should publsih a scrape task successfully', async () => {
       const url = 'https://example.com';
-      
+
       // Make a request to the scraper endpoint
       const response = await request(app.getHttpServer())
         .get('/scraper?url=' + (url))
@@ -100,7 +100,7 @@ describe('ScraperController', () => {
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('status');
       expect(response.body).toHaveProperty('pollingUrl');
-      expect(response.body.pollingUrl).toMatch(/^\/status\?type=scrape(&.*)?$/); 
+      expect(response.body.pollingUrl).toMatch(/^\/status\?type=scrape(&.*)?$/);
     });
 
     it('should return an error if no URL is provided', async () => {
@@ -506,7 +506,7 @@ describe('ScraperController', () => {
   describe('/GET scraper/keyword-analysis', () => {
     it('should perform keyword analysis successfully', async () => {
       const url = 'https://example.com';
-      const keyword = 'example';  
+      const keyword = 'example';
       const response = await request(app.getHttpServer())
         .get('/scraper/keyword-analysis?url=' + encodeURIComponent(url) + '&keyword=' + keyword)
         .expect(HttpStatus.OK)
@@ -557,16 +557,16 @@ describe('ScraperController', () => {
     it('should return job status successfully', async () => {
       const url = 'https://example.com';
       const type = 'scrape';
-  
+
       // Mock cacheManager.get to return a job data
       const jobData = JSON.stringify({ status: 'completed', result: {} });
       jest.spyOn(cacheManager, 'get').mockResolvedValue(jobData);
-  
+
       // Make a request to the getJobStatus endpoint
       const response = await request(app.getHttpServer())
         .get(`/scraper/status?url=${url}&type=${type}`)
         .expect(HttpStatus.OK);
-  
+
       // Check that the response is defined
       expect(response.body).toBeDefined();
       expect(response.body.status).toBe('completed');
@@ -583,20 +583,53 @@ describe('ScraperController', () => {
     // Additional test cases for error handling and other scenarios...
   });
 
+
+  describe('ShareCount', () => {
+
+    it('should return shareCount analytics status successfully', async () => {
+      const url = 'https://example.com';
+
+      // Make the request to start the shareCount analytics task
+      const startResponse = await request(app.getHttpServer())
+        .get(`/scraper/shareCount?url=${url}`)
+        .expect(200);
+      expect(startResponse.body).toBeDefined();
+      expect(startResponse.body.status).toBe('processing');
+      expect(startResponse.body.pollingUrl).toBeDefined();
+
+    });
+
+    it('should handle cache miss for shareCount analytics', async () => {
+      const url = 'https://nonexistent.com';
+
+      // Simulate a cache miss
+      const response = await request(app.getHttpServer())
+        .get(`/scraper/shareCount?url=${url}`)
+        .expect(200);
+
+      expect(response.body).toBeDefined();
+      expect(response.body.status).toBe('processing');
+      expect(response.body.message).toBe('shareCount analytics task published');
+      expect(response.body.pollingUrl).toBeDefined();
+    });
+
+  });
+
+
   describe('getKeyWordAnalysis', () => {
     it ('should return keyword analysis status successfully', async () => {
       const url = 'https://example.com';
       const keyword = 'example-keyword';
-  
+
       // Mock cacheManager.get to return a job data
       const jobData = JSON.stringify({ status: 'completed', result: {} });
       jest.spyOn(cacheManager, 'get').mockResolvedValue(jobData);
-  
+
       // Make a request to the getJobStatus endpoint
       const response = await request(app.getHttpServer())
         .get(`/scraper/keyword-status?url=${url}&keyword=${keyword}`)
         .expect(HttpStatus.OK);
-  
+
       // Check that the response is defined
       expect(response.body).toBeDefined();
       expect(response.body.status).toBe('completed');
@@ -606,7 +639,7 @@ describe('ScraperController', () => {
       const url = 'https://example.com';
       const keyword = 'example-keyword';
 
-      
+
 
       // Simulate cache miss
       const response = await request(app.getHttpServer()).get(`/scraper/keyword-status?url=${url}&keyword=${keyword}`);
@@ -615,7 +648,7 @@ describe('ScraperController', () => {
 
     // Additional test cases for error handling and other scenarios...
   });
-  
+
 
 });
 
@@ -670,7 +703,7 @@ describe('ScraperController', () => {
   //         .expect(HttpStatus.OK)
   //         .expect('Content-Type', /json/)
   //         .timeout(60000);
-  
+
   //       expect(response.body).toBeDefined();
   //     } catch (error) {
   //       console.error('Error in scrape-images test:', error.message);
