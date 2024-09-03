@@ -14,8 +14,8 @@ const customFormat = winston.format((info) => {
   ) {
     const splat = info[Symbol.for('splat')];
     if (splat.length > 0 && typeof splat[0] === 'string') {
-      info.message = splat[0]; // Assign the fist argument as the message
-      info.service = splat[1]; // Assign the second argument as the service
+      info.service = splat[0]; // Assign the second argument as the service
+      info.message = splat[1]; // Assign the fist argument as the message
       info.meta = splat; // Keep the original message
     }
   }
@@ -32,7 +32,6 @@ const getLogger = (fileName = 'application') => {
     maxFiles: '100d',
   });
 
-  const winston = require('winston');
 
   // Create the logger instance
   const logger = winston.createLogger({
