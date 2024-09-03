@@ -1157,6 +1157,39 @@ describe('ScraperService', () => {
 
         
     });
-    
+    describe('newsScraping', () => {
+        it('should return the news articles with sentiment scores for the given URL', async () => {
+          const url = 'http://example.com';
+      
+          const expectedNewsArticles: NewsItem[] = [
+            {
+              title: 'Example News 1',
+              link: 'http://example.com/news1',
+              source: 'Example Source 1',
+              pubDate: '2024-09-01',
+              sentimentScores: {
+                positive: 0.8,
+                negative: 0.1,
+                neutral: 0.1,
+              },
+            },
+            {
+              title: 'Example News 2',
+              link: 'http://example.com/news2',
+              source: 'Example Source 2',
+              pubDate: '2024-09-02',
+              sentimentScores: {
+                positive: 0.3,
+                negative: 0.3,
+                neutral: 0.4,
+              },
+            },
+          ];
+      
+          jest.spyOn(mockScrapeNewsService, 'fetchNewsArticles').mockResolvedValue(expectedNewsArticles);
+      
+        });
+      });
+      
     
 });
