@@ -3,12 +3,16 @@ import { Injectable } from '@nestjs/common';
 import { RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 import logger from '../../logging/webscraperlogger';
+import { performance } from 'perf_hooks';
 import * as fs from 'fs/promises';
 const serviceName = "[ScreenshotService]";
+
 @Injectable()
 export class ScreenshotService {
   async captureScreenshot(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ screenshot: string } | ErrorResponse> {
     logger.debug(`${serviceName}`);
+    const start = performance.now();
+
     if (!robots.isUrlScrapable) {
       logger.warn('${serviceName} Crawling not allowed for this URL');
       return {
@@ -56,6 +60,10 @@ export class ScreenshotService {
         screenshot: '',
       }
     } finally {
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
       if (page) {
         await page.close();
       }

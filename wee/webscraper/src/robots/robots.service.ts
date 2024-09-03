@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { performance } from 'perf_hooks';
 import logger from '../../logging/webscraperlogger';
 import fetch from 'node-fetch';
 
@@ -15,7 +16,7 @@ export class RobotsService {
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
 
     logger.debug(`${serviceName}`);
-
+    const start = performance.now();
 
     // Extract base URL
     const domain = this.extractDomain(baseUrl);
@@ -29,6 +30,11 @@ export class RobotsService {
       if (response.status === 404) {
         console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
         logger.warn(`${serviceName}  robots.txt does not exist for ${robotstxtUrl}`);
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -54,6 +60,11 @@ export class RobotsService {
       if (!robotstxt) {
         console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
         logger.warn(`${serviceName} robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+        
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -89,6 +100,10 @@ export class RobotsService {
           }
         }
       });
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
 
       return {
         allowedPaths: Array.from(allowedPaths),
