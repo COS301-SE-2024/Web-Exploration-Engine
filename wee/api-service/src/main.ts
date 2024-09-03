@@ -5,7 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-
+import { PerformanceInterceptor } from '../src/scraper/performance.interceptor';
 import { AppModule } from './app/app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -15,6 +15,9 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3002;
+
+    // Use Interceptor Globally
+    app.useGlobalInterceptors(new PerformanceInterceptor());
 
    // Enable CORS with specific origin
   app.enableCors({
