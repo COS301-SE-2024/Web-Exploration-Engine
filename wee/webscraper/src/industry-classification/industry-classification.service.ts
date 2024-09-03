@@ -3,33 +3,66 @@ import { IndustryClassification, Metadata } from '../models/ServiceModels';
 import logger from '../../logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 import axios from 'axios';
-const serviceName = "[IndustryClassificationService]";
+const serviceName = '[IndustryClassificationService]';
 
 @Injectable()
 export class IndustryClassificationService {
-
   // private readonly HUGGING_FACE_API_URL =
   //   'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
 
-  private readonly HUGGING_FACE_ZERO_SHOT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/zero-shot';
+  private readonly HUGGING_FACE_ZERO_SHOT_API_URL =
+    'https://capstone-wee.dns.net.za/hugging-face/zero-shot';
 
   // private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
   private readonly CANDIDATE_LABELS = [
-    'Mining and Minerals', 'Agriculture', 'Manufacturing', 'Finance and Banking',
-    'Information Technology', 'Construction', 'Transportation and Logistics',
-    'Health Care', 'Education', 'Entertainment and Media', 'Forestry and Paper',
-    'Biotechnology', 'Aerospace', 'Marine and Shipping', 'Chemicals',
-    'Textiles and Apparel', 'Petroleum and Gas', 'Agribusiness', 'Sports and Recreation',
-    'Retail and Consumer Goods', 'Environmental Services', 'Real Estate and Property Development',
-    'Telecommunications', 'Utilities', 'Defense and Security', 'Automotive', 'Pharmaceuticals',
-    'Hospitality', 'Construction Materials', 'Renewable Energy', 'Marine Resources',
-    'Logistics and Supply Chain Management', 'Arts and Culture', 'Social Services', 'Travel and Tourism','Restaurants',
-    'Insurance','Legal Services','Fitness and Wellness','Jewelry','Entertainment and Recreation'
+    'Mining and Minerals',
+    'Agriculture',
+    'Manufacturing',
+    'Finance and Banking',
+    'Information Technology',
+    'Construction',
+    'Transportation and Logistics',
+    'Health Care',
+    'Education',
+    'Entertainment and Media',
+    'Forestry and Paper',
+    'Biotechnology',
+    'Aerospace',
+    'Marine and Shipping',
+    'Chemicals',
+    'Textiles and Apparel',
+    'Petroleum and Gas',
+    'Agribusiness',
+    'Sports and Recreation',
+    'Retail and Consumer Goods',
+    'Environmental Services',
+    'Real Estate and Property Development',
+    'Telecommunications',
+    'Utilities',
+    'Defense and Security',
+    'Automotive',
+    'Pharmaceuticals',
+    'Hospitality',
+    'Construction Materials',
+    'Renewable Energy',
+    'Marine Resources',
+    'Logistics and Supply Chain Management',
+    'Arts and Culture',
+    'Social Services',
+    'Travel and Tourism',
+    'Restaurants',
+    'Insurance',
+    'Legal Services',
+    'Fitness and Wellness',
+    'Jewelry',
+    'Entertainment and Recreation',
   ];
 
- 
-  async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
+  async classifyIndustry(
+    url: string,
+    metadata: Metadata
+  ): Promise<IndustryClassification> {
     // update: try and catch for each classification - doesn't return unknown if one fails
     logger.debug(`${serviceName}`);
     const start = performance.now();
@@ -41,11 +74,11 @@ export class IndustryClassificationService {
 
     // try {
     //   metadataClass = await this.metadataClassify(metadata);
-    
+
     // } catch (error) {
-    //   logger.error(`${serviceName} ${error}`);
+    //   logger.error(serviceName,` ${error}`);
     //   console.log(error);
-    //   metadataClass = { 
+    //   metadataClass = {
     //     label: 'Unknown',
     //     score: 0,
     //   };
@@ -83,11 +116,11 @@ export class IndustryClassificationService {
       ];
     }
 
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
-          
+    // Performance Logging
+    const duration = performance.now() - start;
+    console.log(`Duration of ${serviceName} : ${duration}`);
+    logger.info(`Duration of ${serviceName} : ${duration}`);
+
     // return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
     return { zeroShotMetaDataClassify, zeroShotDomainClassify };
   }
@@ -119,11 +152,11 @@ export class IndustryClassificationService {
   //       };
   //       return res;
   //     } else {
-  //       logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
+  //       logger.error(serviceName,` Failed to classify industry using Hugging Face model`);
   //       throw new Error('Failed to classify industry using Hugging Face model');
   //     }
   //   } catch (error) {
-  //     logger.error(`${serviceName} Error classifying industry: ${error.message}`);
+  //     logger.error(serviceName,` Error classifying industry: ${error.message}`);
   //     throw new Error(`Error classifying industry: ${error.message}`);
   //   }
   // }
@@ -136,7 +169,7 @@ export class IndustryClassificationService {
   //     };
   //   }
   //   const inputText = `${url}`;
-    
+
   //   try {
   //     const response = await axios.post(
   //       this.HUGGING_FACE_API_URL,
@@ -155,16 +188,18 @@ export class IndustryClassificationService {
   //       };
   //       return res;
   //     } else {
-  //       logger.error(`${serviceName} Failed to classify industry using Hugging Face model`);
+  //       logger.error(serviceName,` Failed to classify industry using Hugging Face model`);
   //       throw new Error('Failed to classify industry using Hugging Face model');
   //     }
   //   } catch (error) {
-  //     logger.error(`${serviceName} Error classifying industry: ${error.message}`);
+  //     logger.error(serviceName,` Error classifying industry: ${error.message}`);
   //     throw new Error(`Error classifying industry: ${error.message}`);
   //   }
   // }
 
-  async zeroShotMetaDataClassify(metadata: Metadata): Promise<{label: string, score: number}[]> {
+  async zeroShotMetaDataClassify(
+    metadata: Metadata
+  ): Promise<{ label: string; score: number }[]> {
     if (!metadata.title && !metadata.description && !metadata.keywords) {
       return [
         { label: 'Unknown', score: 0 },
@@ -172,20 +207,20 @@ export class IndustryClassificationService {
         { label: 'Unknown', score: 0 },
       ];
     }
-  
+
     const inputText = `${metadata.title} ${metadata.description} ${metadata.keywords}`;
     const batches = this.createLabelBatches(this.CANDIDATE_LABELS, 10);
-  
+
     try {
       const allResults = [];
-  
+
       for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
           {
             text: inputText,
             labels: batch,
-          },
+          }
           // {
           //   headers: {
           //     Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
@@ -194,33 +229,39 @@ export class IndustryClassificationService {
         );
 
         // console.log('Response:', response);
-  
+
         if (response.data && response.data.labels && response.data.scores) {
-          const results = response.data.labels.map((label: string, index: number) => ({
-            label,
-            score: response.data.scores[index]
-          }));
+          const results = response.data.labels.map(
+            (label: string, index: number) => ({
+              label,
+              score: response.data.scores[index],
+            })
+          );
           allResults.push(...results);
         }
-  
+
         // console.log('Batch results:', allResults);
       }
-  
-      // Determine the top 3 
+
+      // Determine the top 3
       const topResults = allResults
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
-  
+
       // console.log('Top 3 results:', topResults);
-  
+
       return topResults;
     } catch (error) {
-      logger.debug(`${serviceName} Error classifying industry: ${error.message}`);
+      logger.debug(
+        `${serviceName} Error classifying industry: ${error.message}`
+      );
       throw new Error(`Error classifying industry: ${error.message}`);
     }
   }
 
-  async zeroShotDomainClassify(url: string): Promise<{ label: string, score: number }[]> {
+  async zeroShotDomainClassify(
+    url: string
+  ): Promise<{ label: string; score: number }[]> {
     if (!url) {
       return [
         { label: 'Unknown', score: 0 },
@@ -228,20 +269,20 @@ export class IndustryClassificationService {
         { label: 'Unknown', score: 0 },
       ];
     }
-  
+
     const inputText = `${url}`;
     const batches = this.createLabelBatches(this.CANDIDATE_LABELS, 10);
-  
+
     try {
       const allResults = [];
-  
+
       for (const batch of batches) {
         const response = await axios.post(
           this.HUGGING_FACE_ZERO_SHOT_API_URL,
           {
             text: inputText,
             labels: batch,
-          },
+          }
           // {
           //   headers: {
           //     Authorization: `Bearer ${this.HUGGING_FACE_API_TOKEN}`,
@@ -250,28 +291,33 @@ export class IndustryClassificationService {
         );
 
         // console.log('Response:', response);
-  
+
         if (response.data && response.data.labels && response.data.scores) {
-          const results = response.data.labels.map((label: string, index: number) => ({
-            label,
-            score: response.data.scores[index],
-          }));
+          const results = response.data.labels.map(
+            (label: string, index: number) => ({
+              label,
+              score: response.data.scores[index],
+            })
+          );
           allResults.push(...results);
         }
       }
-  
-      // Determine the top 3 
+
+      // Determine the top 3
       const topResults = allResults
         .sort((a, b) => b.score - a.score)
         .slice(0, 3);
-  
+
       return topResults;
     } catch (error) {
-      logger.error(`${serviceName} Error classifying industry: ${error.message}`);      
+      logger.error(
+        serviceName,
+        ` Error classifying industry: ${error.message}`
+      );
       throw new Error(`Error classifying domain: ${error.message}`);
     }
   }
-  
+
   createLabelBatches(labels: string[], batchSize: number): string[][] {
     const batches = [];
     for (let i = 0; i < labels.length; i += batchSize) {

@@ -28,14 +28,13 @@ import {
   Metadata,
   IndustryClassification,
   SentimentClassification,
-  ScrapeResult
+  ScrapeResult,
 } from './models/ServiceModels';
 
-const serviceName = "[ScraperService]";
+const serviceName = '[ScraperService]';
 logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService implements OnModuleInit {
-  
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsub: PubSubService,
@@ -51,15 +50,14 @@ export class ScraperService implements OnModuleInit {
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
-    private readonly keywordAnalysisService: KeywordAnalysisService,
+    private readonly keywordAnalysisService: KeywordAnalysisService
   ) {}
 
   onModuleInit() {
     this.listenForScrapingTasks();
   }
 
-  async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
-
+  async scrapeWebsite(data: { url: string; keyword?: string }, type: string) {
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -91,7 +89,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrape(url: string) {
-    console.log("Started scaping")
+    console.log('Started scaping');
     const start = performance.now();
 
     // create puppeteer instance
@@ -99,9 +97,12 @@ export class ScraperService implements OnModuleInit {
     let browser: puppeteer.Browser;
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
-      
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -110,7 +111,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: `Failed to launch browser ${error}`,
       } as ErrorResponse;
     }
-     
+
     const data = {
       url: '',
       domainStatus: '',
@@ -122,7 +123,7 @@ export class ScraperService implements OnModuleInit {
       slogan: '',
       contactInfo: { emails: [], phones: [] },
       addresses: [],
-      screenshot:'' as string | ErrorResponse,
+      screenshot: '' as string | ErrorResponse,
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
       time: 0,
@@ -130,11 +131,14 @@ export class ScraperService implements OnModuleInit {
 
     data.url = url;
 
-  // Scrape robots.txt status concurrently
+    // Scrape robots.txt status concurrently
     const robotsPromise = this.robotsService.readRobotsFile(url);
     const statusPromise = this.scrapeStatusService.scrapeStatus(url);
 
-    const [robots, domainStatus] = await Promise.all([robotsPromise, statusPromise]);
+    const [robots, domainStatus] = await Promise.all([
+      robotsPromise,
+      statusPromise,
+    ]);
 
     data.domainStatus = domainStatus;
 
@@ -151,15 +155,41 @@ export class ScraperService implements OnModuleInit {
 
     data.robots = robots as RobotsResponse;
 
+    // Serially scrape metadata and all services that depend on only robots.txt
+    const metadataPromise = this.metadataService.scrapeMetadata(
+      data.robots.baseUrl,
+      data.robots,
+      browser
+    );
+    const screenshotPromise = this.screenshotService.captureScreenshot(
+      url,
+      data.robots,
+      browser
+    );
+    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(
+      url,
+      data.robots,
+      browser
+    );
+    const addressPromise = this.scrapeAddressService.scrapeAddress(
+      url,
+      data.robots,
+      browser
+    );
+    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(
+      url,
+      data.robots,
+      browser
+    );
 
-  // Serially scrape metadata and all services that depend on only robots.txt
-    const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
-    const screenshotPromise = this.screenshotService.captureScreenshot(url, data.robots, browser);
-    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, browser);
-    const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
-
-    const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
+    const [metadata, screenshot, contactInfo, addresses, seoAnalysis] =
+      await Promise.all([
+        metadataPromise,
+        screenshotPromise,
+        contactInfoPromise,
+        addressPromise,
+        seoAnalysisPromise,
+      ]);
 
     if ('errorStatus' in screenshot) {
       data.screenshot = screenshot as ErrorResponse;
@@ -186,17 +216,35 @@ export class ScraperService implements OnModuleInit {
 
     data.seoAnalysis = seoAnalysis;
 
-  // Scrape services dependent on metadata
-    const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
-    const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
-    const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
-    const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
+    // Scrape services dependent on metadata
+    const industryClassificationPromise =
+      this.industryClassificationService.classifyIndustry(url, data.metadata);
+    const logoPromise = this.scrapeLogoService.scrapeLogo(
+      url,
+      data.metadata,
+      data.robots,
+      browser
+    );
+    const imagesPromise = this.scrapeImagesService.scrapeImages(
+      url,
+      data.robots,
+      browser
+    );
+    const sentimentClassificationPromise =
+      this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
-    const [industryClassification, logo, images, sentimentAnalysis] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise]);
+    const [industryClassification, logo, images, sentimentAnalysis] =
+      await Promise.all([
+        industryClassificationPromise,
+        logoPromise,
+        imagesPromise,
+        sentimentClassificationPromise,
+      ]);
 
     // add error handling industryClassification
-    data.industryClassification = industryClassification as IndustryClassification;
-  
+    data.industryClassification =
+      industryClassification as IndustryClassification;
+
     data.logo = logo;
 
     data.images = images;
@@ -262,7 +310,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -284,7 +336,11 @@ export class ScraperService implements OnModuleInit {
       return metadataResponse;
     }
 
-    const industryClassification = await this.industryClassificationService.classifyIndustry(url, metadataResponse as Metadata);
+    const industryClassification =
+      await this.industryClassificationService.classifyIndustry(
+        url,
+        metadataResponse as Metadata
+      );
     return industryClassification;
   }
 
@@ -299,7 +355,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -320,7 +380,12 @@ export class ScraperService implements OnModuleInit {
       return metadataResponse;
     }
 
-    const logo = await this.scrapeLogoService.scrapeLogo(url, metadataResponse as Metadata, robotsResponse, browser);
+    const logo = await this.scrapeLogoService.scrapeLogo(
+      url,
+      metadataResponse as Metadata,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return logo;
   }
@@ -336,8 +401,12 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -356,8 +425,12 @@ export class ScraperService implements OnModuleInit {
       await browser.close();
       return metadataResponse;
     }
-    
-    const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, browser);
+
+    const images = await this.scrapeImagesService.scrapeImages(
+      url,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return images;
   }
@@ -368,14 +441,18 @@ export class ScraperService implements OnModuleInit {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    
+
     // create puppeteer instance
     let browser: puppeteer.Browser;
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -385,7 +462,11 @@ export class ScraperService implements OnModuleInit {
       } as ErrorResponse;
     }
 
-    const screenshot = await this.screenshotService.captureScreenshot(url, robotsResponse, browser);
+    const screenshot = await this.screenshotService.captureScreenshot(
+      url,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return screenshot;
   }
@@ -401,7 +482,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -412,7 +497,11 @@ export class ScraperService implements OnModuleInit {
       } as ErrorResponse;
     }
 
-    const contactInfo = await this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse, browser);
+    const contactInfo = await this.scrapeContactInfoService.scrapeContactInfo(
+      url,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return contactInfo;
   }
@@ -428,7 +517,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -438,8 +531,12 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
-    const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, browser);
+
+    const addresses = await this.scrapeAddressService.scrapeAddress(
+      url,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return addresses;
   }
@@ -455,7 +552,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -465,8 +566,12 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
-    const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
+
+    const seoAnalysis = await this.seoAnalysisService.seoAnalysis(
+      url,
+      robotsResponse,
+      browser
+    );
     await browser.close();
     return seoAnalysis;
   }
@@ -482,7 +587,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -503,7 +612,11 @@ export class ScraperService implements OnModuleInit {
       return metadataResponse;
     }
 
-    const sentimentClassification = await this.sentimentAnalysisService.classifySentiment(url, metadataResponse as Metadata);
+    const sentimentClassification =
+      await this.sentimentAnalysisService.classifySentiment(
+        url,
+        metadataResponse as Metadata
+      );
     await browser.close();
     return sentimentClassification;
   }
@@ -514,7 +627,11 @@ export class ScraperService implements OnModuleInit {
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+        args: [
+          `--proxy-server=${proxy}`,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+        ],
       }); // add proxy here
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -525,7 +642,11 @@ export class ScraperService implements OnModuleInit {
       } as ErrorResponse;
     }
 
-    const keywordAnalysis = await this.keywordAnalysisService.getKeywordRanking(url, keyword, browser);
+    const keywordAnalysis = await this.keywordAnalysisService.getKeywordRanking(
+      url,
+      keyword,
+      browser
+    );
     await browser.close();
     return keywordAnalysis;
   }
@@ -551,106 +672,116 @@ export class ScraperService implements OnModuleInit {
 
   async handleMessage(message) {
     // Get the publish time of the message - when message was originally published
-    const publishTime = message.publishTime; 
+    const publishTime = message.publishTime;
 
     // Calculate the age of the message in milliseconds
     const messageAge = Date.now() - publishTime.getTime();
 
     // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
-    const maxAge = 5 * 60 * 1000; 
+    const maxAge = 5 * 60 * 1000;
 
-    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`);
+    console.log(
+      `Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`
+    );
     console.log(`Message Age: ${messageAge} ms`);
 
     if (messageAge > maxAge) {
-        console.log(`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`);
-        // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
-        message.nack();
-        // Return error response??
+      console.log(
+        `Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`
+      );
+      // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
+      message.nack();
+      // Return error response??
     } else {
-        // Process the message if it is within acceptable age limits
-        console.log(`Processing message: ${message.data.toString()}`);
-        message.ack();
+      // Process the message if it is within acceptable age limits
+      console.log(`Processing message: ${message.data.toString()}`);
+      message.ack();
 
-        const start = performance.now();
-        console.log(message.data, message.data.toString());
-        const { data, type } = JSON.parse(message.data.toString());
-        if (!data) {
-          return {
-            errorStatus: 500,
-            errorCode: '500 Internal Server Error',
-            errorMessage: 'No data provided in message',
-          } as ErrorResponse
-        }
+      const start = performance.now();
+      console.log(message.data, message.data.toString());
+      const { data, type } = JSON.parse(message.data.toString());
+      if (!data) {
+        return {
+          errorStatus: 500,
+          errorCode: '500 Internal Server Error',
+          errorMessage: 'No data provided in message',
+        } as ErrorResponse;
+      }
 
-        const { url } = data;
-        let cacheKey: string;
+      const { url } = data;
+      let cacheKey: string;
 
-        // separate cache key format for keyword analysis - need to account for key word input
-        if (type === 'keyword-analysis') {
-          const { keyword } = data;
-          cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
-        } else {
-          cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
-        }
+      // separate cache key format for keyword analysis - need to account for key word input
+      if (type === 'keyword-analysis') {
+        const { keyword } = data;
+        cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
+      } else {
+        cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
+      }
 
-        // Cache check and update logic
-        const cachedData = await this.getCachedData(cacheKey);
-        if (cachedData) {
-          // check if error status
-          if (cachedData.status !== 'error') {
-            // update time if cache proccessing is completed
-            if (cachedData.status === 'completed') {
-              const end = performance.now();
-              const times = (end - start) / 1000;
-              console.log('CACHE HIT for url: ', url, " time: ", times);
-              logger.info('CACHE HIT for url: ', url, " time: ", times);
-          
-              // Update time field
-              cachedData.result.time = parseFloat(times.toFixed(4));
-              await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
-            }
+      // Cache check and update logic
+      const cachedData = await this.getCachedData(cacheKey);
+      if (cachedData) {
+        // check if error status
+        if (cachedData.status !== 'error') {
+          // update time if cache proccessing is completed
+          if (cachedData.status === 'completed') {
+            const end = performance.now();
+            const times = (end - start) / 1000;
+            console.log('CACHE HIT for url: ', url, ' time: ', times);
+            logger.info('CACHE HIT for url: ', url, ' time: ', times);
+
+            // Update time field
+            cachedData.result.time = parseFloat(times.toFixed(4));
+            await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
+          }
 
           // Performance Logging
           const duration = performance.now() - start;
           console.log(`Duration of ${serviceName} : ${duration}, cache-hit`);
           logger.info(`Duration of ${serviceName} : ${duration}, cache-hit`);
-            return;
-          }
+          return;
         }
+      }
 
-        // Scrape if not in cache/already processing (CACHE MISS or error status)
-        console.log('CACHE MISS - SCRAPE');
-        logger.info(`Cache Miss - scraper service`)
-      
-        // Add to cache as processing
-        await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
-      
-        try {
-          const result = await this.scrapeWebsite(data, type);
-          const completeData = {
-            status: 'completed',
-            result,
-          };
-          await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+      // Scrape if not in cache/already processing (CACHE MISS or error status)
+      console.log('CACHE MISS - SCRAPE');
+      logger.info(`Cache Miss - scraper service`);
 
-          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
-          // Performance Logging
-          const duration = performance.now() - start;
-          console.log(`Duration of ${serviceName} : ${duration}`);
-          logger.info(`Duration of ${serviceName} : ${duration}`);
-          
-        } catch (error) {
-          console.error(`Error scraping URL: ${url}`, error);
-          await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
-        } 
+      // Add to cache as processing
+      await this.cacheManager.set(
+        cacheKey,
+        JSON.stringify({
+          status: 'processing',
+          pollingURL: `/scraper/status/${encodeURIComponent(url)}`,
+        })
+      );
 
+      try {
+        const result = await this.scrapeWebsite(data, type);
+        const completeData = {
+          status: 'completed',
+          result,
+        };
+        await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
 
+        console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+        // Performance Logging
+        const duration = performance.now() - start;
+        console.log(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName, 'duration', duration);
+      } catch (error) {
+        console.error(`Error scraping URL: ${url}`, error);
+        await this.cacheManager.set(
+          cacheKey,
+          JSON.stringify({ status: 'error' })
+        );
+      }
     }
   }
 
   async getCachedData(cacheKey: string) {
-    const cachedDataString:string = await this.cacheManager.get(cacheKey);
+    const cachedDataString: string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {
       const data = JSON.parse(cachedDataString);
       if (data.status === 'completed') {
@@ -666,4 +797,3 @@ export class ScraperService implements OnModuleInit {
     return null;
   }
 }
-

@@ -1,20 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
+import {
+  Metadata,
+  RobotsResponse,
+  ErrorResponse,
+} from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 import logger from '../../logging/webscraperlogger';
 import { performance } from 'perf_hooks';
-const serviceName = "[ScrapeMetadataService]";
+const serviceName = '[ScrapeMetadataService]';
 
 @Injectable()
 export class ScrapeMetadataService {
-
-  async scrapeMetadata( url: string, data: RobotsResponse, browser: puppeteer.Browser): Promise<Metadata | ErrorResponse> {
-    logger.debug(`${serviceName}`);    
+  async scrapeMetadata(
+    url: string,
+    data: RobotsResponse,
+    browser: puppeteer.Browser
+  ): Promise<Metadata | ErrorResponse> {
+    logger.debug(`${serviceName}`);
     const start = performance.now();
     const allowed = data.isBaseUrlAllowed;
 
     if (!allowed) {
-      logger.warn(`${serviceName} Not allowed to scrape root URL for metadata`)
+      logger.warn(serviceName, ` Not allowed to scrape root URL for metadata`);
       return {
         errorStatus: 403,
         errorCode: '403 Forbidden',
@@ -34,7 +41,7 @@ export class ScrapeMetadataService {
       } as ErrorResponse;
     }
 
-    let page
+    let page;
 
     try {
       page = await browser.newPage();
@@ -57,7 +64,9 @@ export class ScrapeMetadataService {
       const getMetaTagContentString = getMetaTagContent.toString();
 
       const metadata = await page.evaluate((getMetaTagContentStr) => {
-        const getMetaTagContent = new Function('return ' + getMetaTagContentStr)();
+        const getMetaTagContent = new Function(
+          'return ' + getMetaTagContentStr
+        )();
 
         return {
           title: document.title,
@@ -81,9 +90,8 @@ export class ScrapeMetadataService {
       }
 
       return { ...metadata };
-
     } catch (error) {
-      logger.error(`${serviceName} Error scraping metadata: ${error.message}`)
+      logger.error(serviceName, `Error scraping metadata: ${error.message}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -93,7 +101,7 @@ export class ScrapeMetadataService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName, 'duration', duration);
 
       if (page) {
         await page.close();

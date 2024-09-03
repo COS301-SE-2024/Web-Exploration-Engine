@@ -5,11 +5,15 @@ import * as puppeteer from 'puppeteer';
 import logger from '../../logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 import * as fs from 'fs/promises';
-const serviceName = "[ScreenshotService]";
+const serviceName = '[ScreenshotService]';
 
 @Injectable()
 export class ScreenshotService {
-  async captureScreenshot(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ screenshot: string } | ErrorResponse> {
+  async captureScreenshot(
+    url: string,
+    robots: RobotsResponse,
+    browser: puppeteer.Browser
+  ): Promise<{ screenshot: string } | ErrorResponse> {
     logger.debug(`${serviceName}`);
     const start = performance.now();
 
@@ -50,20 +54,19 @@ export class ScreenshotService {
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
-      console.log("Screenshot", url, typeof screenshotBase64);
+      console.log('Screenshot', url, typeof screenshotBase64);
 
       return { screenshot: screenshotBase64 };
-
     } catch (error) {
       console.error('Failed to capture screenshot', error);
       return {
         screenshot: '',
-      }
+      };
     } finally {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName, 'duration', duration);
       if (page) {
         await page.close();
       }
