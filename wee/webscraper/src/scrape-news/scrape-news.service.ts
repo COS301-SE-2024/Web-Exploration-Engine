@@ -6,6 +6,7 @@ import logger from '../../logging/webscraperlogger';
 const serviceName = "[NewsScraperService]";
 
 //remember: changed to deployed version
+//private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative'
 const HUGGING_FACE_SENTIMENT_API_URL = 'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';
 const HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
