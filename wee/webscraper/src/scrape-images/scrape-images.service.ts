@@ -64,14 +64,14 @@ export class ScrapeImagesService {
 
         return [];
     } finally {
+        // Performance Logging
+        const duration = performance.now() - start;
+        console.log(`Duration of ${serviceName} : ${duration}`);
+        logger.info(`Duration of ${serviceName} : ${duration}`);
+        
         if (page) {
             await page.close();
         }
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
-
     }
 }
 }

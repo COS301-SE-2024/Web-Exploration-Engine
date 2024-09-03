@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
 import logger from '../../logging/webscraperlogger';
+import { performance } from 'perf_hooks';
 import axios from 'axios';
 const serviceName = "[IndustryClassificationService]";
 
@@ -31,6 +32,8 @@ export class IndustryClassificationService {
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     // update: try and catch for each classification - doesn't return unknown if one fails
     logger.debug(`${serviceName}`);
+    const start = performance.now();
+
     // let metadataClass;
     // let domainClass;
     let zeroShotMetaDataClassify;
@@ -80,6 +83,11 @@ export class IndustryClassificationService {
       ];
     }
 
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+          
     // return { metadataClass, domainClass, zeroShotMetaDataClassify, zeroShotDomainClassify };
     return { zeroShotMetaDataClassify, zeroShotDomainClassify };
   }
