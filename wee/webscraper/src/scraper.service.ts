@@ -127,6 +127,7 @@ export class ScraperService implements OnModuleInit {
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
+      scrapeNews: [],
       time: 0,
     } as ScrapeResult;
 
@@ -161,6 +162,8 @@ export class ScraperService implements OnModuleInit {
     const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
     const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
 
+
+    
     const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
 
     if ('errorStatus' in screenshot) {
@@ -194,7 +197,11 @@ export class ScraperService implements OnModuleInit {
     const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
     const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
-    const [industryClassification, logo, images, sentimentAnalysis] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise]);
+    const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
+
+    const [industryClassification, logo, images, sentimentAnalysis, newsScraping] = await Promise.all([
+      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise
+  ]);
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
@@ -205,6 +212,7 @@ export class ScraperService implements OnModuleInit {
 
     data.sentiment = sentimentAnalysis;
 
+    data.scrapeNews = newsScraping;
     // close browser
     await browser.close();
 
