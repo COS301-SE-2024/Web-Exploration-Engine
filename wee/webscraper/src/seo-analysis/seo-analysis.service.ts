@@ -5,14 +5,17 @@ import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../logging/webscraperlogger';
+import { performance } from 'perf_hooks';
 const serviceName = "[SeoAnalysisService]";
+
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
   async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
   
     logger.debug(`${serviceName}`);
-    
+    const start = performance.now();
+
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
       logger.warn(`${serviceName} Crawling not allowed for this URL`);
@@ -62,6 +65,11 @@ export class SeoAnalysisService {
       this.runLighthouse(url),
     ]);
 
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+      
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,

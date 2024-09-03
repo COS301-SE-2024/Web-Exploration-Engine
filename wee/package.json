@@ -86,7 +86,7 @@
     "@swc-node/register": "~1.9.1",
     "@swc/core": "^1.5.24",
     "@swc/helpers": "~0.5.11",
-    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^15.0.6",
     "@types/jest": "^29.4.0",
     "@types/jspdf": "^2.0.0",

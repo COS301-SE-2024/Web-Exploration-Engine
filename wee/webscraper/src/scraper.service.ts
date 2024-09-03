@@ -1,5 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { performance } from 'perf_hooks';
 import logger from '../logging/webscraperlogger';
 import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
@@ -58,6 +59,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
+
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -99,7 +101,6 @@ export class ScraperService implements OnModuleInit {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); 
-
       
     } catch (error) {
       console.error('Failed to launch browser', error);
@@ -610,6 +611,10 @@ export class ScraperService implements OnModuleInit {
               await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
             }
 
+          // Performance Logging
+          const duration = performance.now() - start;
+          console.log(`Duration of ${serviceName} : ${duration}, cache-hit`);
+          logger.info(`Duration of ${serviceName} : ${duration}, cache-hit`);
             return;
           }
         }
@@ -628,7 +633,13 @@ export class ScraperService implements OnModuleInit {
             result,
           };
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+
           console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+          // Performance Logging
+          const duration = performance.now() - start;
+          console.log(`Duration of ${serviceName} : ${duration}`);
+          logger.info(`Duration of ${serviceName} : ${duration}`);
+          
         } catch (error) {
           console.error(`Error scraping URL: ${url}`, error);
           await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
