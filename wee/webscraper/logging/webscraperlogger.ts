@@ -14,20 +14,12 @@ const customFormat = winston.format((info) => {
   ) {
     const splat = info[Symbol.for('splat')];
     if (splat.length > 0 && typeof splat[0] === 'string') {
-      info.service = splat[0]; // Assign the second argument as the service
-      /*
-      
-      if info.service has text interceptor, create 
-      info.performance = splat[2]
-      info.meta = splat
-      */
-      info.message = splat[1]; // Assign the second argument as the service
+      info.message = splat[0]; // Assign the fist argument as the message
+      info.service = splat[1]; // Assign the second argument as the service
       info.meta = splat; // Keep the original message
     }
   }
-  // console.log(info.message) == the app is starting x 2
   console.log(info);
-  //looop for all elements in variables
   return info;
 })();
 
@@ -45,7 +37,7 @@ const getLogger = (fileName = 'application') => {
   // Create the logger instance
   const logger = winston.createLogger({
     format: winston.format.combine(
-      winston.format.timestamp(), // Adds a timestamp to the logs
+      winston.format.timestamp(),  
       customFormat,
       winston.format.json() // Output the logs in JSON format
     ),
