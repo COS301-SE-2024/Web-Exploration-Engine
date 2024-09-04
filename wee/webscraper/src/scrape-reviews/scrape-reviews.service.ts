@@ -74,30 +74,44 @@ export class ScrapeReviewsService {
 
   private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<string[]> {
     try {
-      // Wait for the review content and review count elements to be available
+      // Wait for the elements to be available
       await page.waitForSelector('span.has-text-weight-bold', { timeout: 15000 });
-      console.log('Review content and review count loaded.');
-  
-      // Extract rating and number of reviews
-      const { rating, reviewCount } = await page.evaluate(() => {
+      console.log('Review content and elements loaded.');
+
+      // Extract rating, number of reviews, Trustindex rating, NPS, and recommendation status
+      const { rating, reviewCount, trustindexRating, nps, recommendationStatus } = await page.evaluate(() => {
         const ratingElement = document.querySelector('span.has-text-weight-bold'); // Adjust if needed
         const reviewCountElement = document.querySelectorAll('span.has-text-weight-bold')[1]; // Assuming it's the second one for review count
-  
+        const trustindexRatingElement = document.querySelector('div.perf-card__head'); // Adjust if needed
+        const npsElement = document.querySelector('div.perf-card__head'); // Adjust to target the NPS element
+        const recommendationStatusElement = document.querySelector('span.has-text-weight-bold.color-blue-v2'); // Adjust to target the recommendation status element
+
         const rating = ratingElement ? (ratingElement as HTMLElement).innerText.trim() : 'No rating found';
         const reviewCount = reviewCountElement ? (reviewCountElement as HTMLElement).innerText.trim() : 'No review count found';
-  
-        return { rating, reviewCount };
+        const trustindexRating = trustindexRatingElement ? (trustindexRatingElement as HTMLElement).innerText.trim() : 'No Trustindex rating found';
+        const nps = npsElement ? (npsElement as HTMLElement).innerText.trim() : 'No NPS found';
+        const recommendationStatus = recommendationStatusElement ? (recommendationStatusElement as HTMLElement).innerText.trim() : 'No recommendation status found';
+
+        return { rating, reviewCount, trustindexRating, nps, recommendationStatus };
       });
-  
+
       console.log(`Extracted rating from Hello Peter: ${rating}`);
       console.log(`Extracted review count from Hello Peter: ${reviewCount}`);
-  
-      return [`Rating: ${rating}`, `Number of reviews: ${reviewCount}`];
+      console.log(`Extracted Trustindex rating from Hello Peter: ${trustindexRating}`);
+      console.log(`Extracted NPS from Hello Peter: ${nps}`);
+      console.log(`Extracted recommendation status from Hello Peter: ${recommendationStatus}`);
+
+      return [
+        `Rating: ${rating}`,
+        `Number of reviews: ${reviewCount}`,
+        `Trustindex rating: ${trustindexRating}`,
+        `NPS: ${nps}`,
+        `Recommendation status: ${recommendationStatus}`
+      ];
     } catch (error) {
       throw new Error(`Failed to scrape reviews from Hello Peter: ${error.message}`);
     }
   }
-  
 
   private async scrapeReviewsFromTrustpilot(page: puppeteer.Page): Promise<string[]> {
     try {
