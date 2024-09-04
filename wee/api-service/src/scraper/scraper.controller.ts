@@ -3,7 +3,7 @@ import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
-  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
+  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,ReviewsOperation,
   ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500,
   GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400,
 } from './scraper.api';
@@ -508,4 +508,45 @@ export class ScraperController {
       }
     }
   }
+
+  @ReviewsOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-reviews')
+  async scrapeReviews(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+
+      console.log("Publishing scrape-reviews task for url: ", url);
+      const message = {
+        type: 'scrape-reviews',
+        url,
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+
+      return {
+        message: 'Scrape reviews task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-reviews/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeReviews method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeReviews method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+
 }

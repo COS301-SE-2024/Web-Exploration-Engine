@@ -16,7 +16,7 @@ import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-i
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
-
+import { ScrapeReviewsService } from './scrape-reviews/scrape-reviews.service';
 // Models
 import {
   ErrorResponse,
@@ -44,7 +44,8 @@ export class ScraperService implements OnModuleInit {
     private readonly scrapeContactInfoService: ScrapeContactInfoService,
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
-    private readonly sentimentAnalysisService: SentimentAnalysisService
+    private readonly sentimentAnalysisService: SentimentAnalysisService,
+    private readonly reviewsService: ScrapeReviewsService
   ) {}
 
   onModuleInit() {
@@ -75,6 +76,8 @@ export class ScraperService implements OnModuleInit {
         return this.scrapeAddress(url);
       case 'seo-analysis':
         return this.seoAnalysis(url);
+      case 'scrape-reviews':
+        return this.scrapeReviews(url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -117,6 +120,7 @@ export class ScraperService implements OnModuleInit {
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
       time: 0,
+      reviews:[],
     } as ScrapeResult;
 
     data.url = url;
@@ -576,5 +580,33 @@ export class ScraperService implements OnModuleInit {
     }
     return null;
   }
+
+  async scrapeReviews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+  
+    // Create a Puppeteer instance
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      }); 
+    } catch (error) {
+      console.error('Failed to launch browser', error);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+  
+    const reviews = await this.reviewsService.scrapeReviews(url);
+    await browser.close();
+    return reviews;
+  }
+  
 }
 

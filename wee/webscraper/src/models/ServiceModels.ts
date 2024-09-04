@@ -80,4 +80,5 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   time: number;
+  reviews:string[];
 }
