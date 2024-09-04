@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, {Suspense} from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import { useSearchParams } from 'next/navigation';
@@ -7,6 +7,14 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 
 export default function Dashboard() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+		  <DashboardPage />
+		</Suspense>
+	  );
+}
+
+function DashboardPage() {
 	const searchParams = useSearchParams();
 	const url = searchParams.get('url');
 	const router = useRouter();
