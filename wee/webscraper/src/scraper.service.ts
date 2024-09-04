@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { performance } from 'perf_hooks';
@@ -129,6 +130,7 @@ export class ScraperService implements OnModuleInit {
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
+      shareCountdata: null as any,
       time: 0,
     } as ScrapeResult;
 
@@ -155,8 +157,6 @@ export class ScraperService implements OnModuleInit {
 
     data.robots = robots as RobotsResponse;
    //shareCount service it uses the ShareCount api
-
-   const shareCountPromise = this.shareCountService.getShareCount(url);
 
   // Serially scrape metadata and all services that depend on only robots.txt
     const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
@@ -208,6 +208,9 @@ export class ScraperService implements OnModuleInit {
     data.images = images;
 
     data.sentiment = sentimentAnalysis;
+
+    //shareCount data or results
+     data.shareCountdata = this.shareCountService.getShareCount(url);
 
     // close browser
     await browser.close();
