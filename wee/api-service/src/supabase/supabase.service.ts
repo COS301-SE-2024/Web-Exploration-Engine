@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
-import { ScheduleTask, UpdateScheduleTask, ScheduleTaskResponse } from '../models/scheduleTaskModels';
+import { ScheduleTask, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
 
 @Injectable()
 export class SupabaseService {
@@ -59,6 +59,27 @@ export class SupabaseService {
     }
     return data;
   }
+
+  async updateKeywordResult(scheduleData: updateKeywordResult) {
+    const { id, keyword, timestampArr, newResult, resultArr} = scheduleData;
+
+    // append to necessary fields
+    timestampArr.push(new Date().toISOString());
+    // append result to resultArr
+
+    const { data, error } = await this.supabaseClient
+      .from('scheduled_tasks')
+      .update({ 
+        keyword_results: { keyword, timestampArr, resultArr } 
+      })
+      .eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to update keyword result: ${error.message}`);
+    }
+    return data;
+  }
+
 
   async getDueSchedules() {
     console.log('Getting due schedules...');

@@ -31,6 +31,24 @@ export interface ScheduleTaskResponse {
   updated_at: string; // timestamp
   created_at: string; // timestamp
   result_history: SavedResult[];
+  keywords: string[];
+  keyword_results: KeywordResult[];
 }
-  
+
+export interface KeywordResult {
+  keyword: string;
+  timestampArr: string[];
+  resultArr: string[];
+}
+
+export interface updateKeywordResult {
+  id: string;
+  keyword: string;
+  timestampArr: string[];
+  resultArr: string[];
+  newResult: any;
+}
+
+
+
 
