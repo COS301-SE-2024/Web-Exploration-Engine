@@ -8,6 +8,7 @@ import { SignUpRequest } from "../../models/AuthModels";
 import { signUp } from "../../services/AuthService";
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
+import { googleLogin } from '../../services/OAuthService';
 
 export default function SignUp() {
     const { isOpen, onOpenChange } = useDisclosure();
@@ -90,6 +91,18 @@ export default function SignUp() {
 
     };
 
+    const handleGoogleSignUp = async () => {
+        const response = await googleLogin();
+        if ('code' in response) {
+            setError('An error occurred. Please try again later');
+            const timer = setTimeout(() => {
+                setError('');
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }
+
 
     return (
         <>
@@ -137,11 +150,11 @@ export default function SignUp() {
                     <Button type="submit" className="mb-0 md:mb-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5">
                         Create Account
                     </Button>
-                    <Divider className='hidden md:block my-4'/>
+                    <Divider className='hidden md:block my-4' />
                     <Button
                         className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
                         variant="bordered"
-                        //   onClick={handleGoogleLogin}
+                          onClick={handleGoogleSignUp}
                         startContent={
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
