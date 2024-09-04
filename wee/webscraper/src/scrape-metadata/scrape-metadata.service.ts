@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 import logger from '../../logging/webscraperlogger';
+import { performance } from 'perf_hooks';
 const serviceName = "[ScrapeMetadataService]";
 
 @Injectable()
@@ -9,6 +10,7 @@ export class ScrapeMetadataService {
 
   async scrapeMetadata( url: string, data: RobotsResponse, browser: puppeteer.Browser): Promise<Metadata | ErrorResponse> {
     logger.debug(`${serviceName}`);    
+    const start = performance.now();
     const allowed = data.isBaseUrlAllowed;
 
     if (!allowed) {
@@ -88,6 +90,11 @@ export class ScrapeMetadataService {
         errorMessage: `Error scraping metadata: ${error.message}`,
       } as ErrorResponse;
     } finally {
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+
       if (page) {
         await page.close();
       }
