@@ -7,6 +7,8 @@ import WEETable from '../../components/Util/Table';
 import { FiPlus, FiTrash, FiMoreVertical } from "react-icons/fi";
 import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ScheduledScrape() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -16,6 +18,7 @@ export default function ScheduledScrape() {
   const [keyword, setKeyword] = React.useState('');
   const [keywordList, setKeywordList] = React.useState(['keywordOne', 'keyword phrase two']);
   const [modalError, setModalError] = React.useState('');
+  const router = useRouter();
 
   // Add keyword to keyword list
   const handleAddKeyword = () => {
@@ -91,6 +94,10 @@ export default function ScheduledScrape() {
     onClose();
   };
 
+  const handleDashboardPage = (url:string) => {
+    router.push(`/dashboard?url=${encodeURIComponent(url)}`);
+  }
+
   return (
     <>
       <div className="p-4 min-h-screen">
@@ -118,14 +125,18 @@ export default function ScheduledScrape() {
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>https://takealot.com</TableCell>
+              <TableCell>
+                <Link href={`/dashboard?url=${encodeURIComponent('https://takealot.com')}`}>
+                  https://takealot.com
+                </Link>
+              </TableCell>
               <TableCell>09/01/2024, 04:54 PM</TableCell>
               <TableCell><FiMoreVertical /></TableCell>
               <TableCell>
                 <Button
                   className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                  // onClick={() => handleResultPage(item.url)}
-                  // data-testid={'btnView' + index}
+                  onClick={() => handleDashboardPage('https://takealot.com')}
+                  // data-testid={'btnDashboard' + index}
                 >
                   View
                 </Button>

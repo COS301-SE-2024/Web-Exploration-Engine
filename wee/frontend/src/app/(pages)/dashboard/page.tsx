@@ -2,10 +2,35 @@
 import React from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { AreaChart } from '../../components/Graphs/AreaChart';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { Button } from '@nextui-org/react';
 
 export default function Dashboard() {
+	const searchParams = useSearchParams();
+	const url = searchParams.get('url');
+	const router = useRouter();
+
+	const backToScheduledScrape = () => {
+		router.back();
+	};
+
 	return (
 		<div className='p-4 min-h-screen'>
+			<Button
+				className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+				onClick={backToScheduledScrape}
+				data-testid="btn-back"
+			>
+				Back
+			</Button>
+
+			<div className='mb-8 text-center'>
+				<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+					Dashboard of {url}
+				</h1>
+			</div>
+
 			{/* Keyword tracking */}
 			<div>
 				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
