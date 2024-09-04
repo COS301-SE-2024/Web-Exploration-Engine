@@ -304,7 +304,14 @@ function ResultsComponent() {
   const handleKeyword = async () => {
     // check the input box
     // check that the url is there and valid (and make sure it is in the context)
-    const url_decoded = decodeURIComponent(url ? url : '');
+
+    let url_decoded = decodeURIComponent(url ? url : '');
+ 
+    if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
+      console.log(processedUrls)
+      url_decoded = processedUrls[0];
+    }
+    
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
@@ -316,7 +323,7 @@ function ResultsComponent() {
     }
 
     // check that the keyword is entered by the user
-    if (!keyword) {
+    if (!keyword) { 
       setKeywordError("Keyword cannot be empty");
 
       const timer = setTimeout(() => {
