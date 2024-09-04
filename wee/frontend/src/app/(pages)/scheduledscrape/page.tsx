@@ -4,14 +4,15 @@ import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, Mod
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEETable from '../../components/Util/Table';
-import { FiPlus, FiTrash, FiMoreVertical } from "react-icons/fi";
+import { FiPlus, FiTrash, FiEdit2 } from "react-icons/fi";
 import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function ScheduledScrape() {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
+  const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onOpenChange: onSecondModalOpenChange, onClose: onSecondModalClose } = useDisclosure();
   const [urlToAdd, setUrlToAdd] = React.useState('');
   const [scrapingFrequency, setScrapingFrequency] = React.useState<string>('');
   const [scrapeStartDate, setScrapeStartDate] = React.useState(new Date());
@@ -91,10 +92,14 @@ export default function ScheduledScrape() {
     }
 
     // close the modal once successful
-    onClose();
+    onFirstModalClose();
   };
 
-  const handleDashboardPage = (url:string) => {
+  const handleScheduledScrapeTaskEdit = () => {
+    onSecondModalClose();
+  }
+
+  const handleDashboardPage = (url: string) => {
     router.push(`/dashboard?url=${encodeURIComponent(url)}`);
   }
 
@@ -108,7 +113,7 @@ export default function ScheduledScrape() {
           <Button
             data-testid="btn-add-scraping-task"
             startContent={<FiPlus />}
-            onPress={onOpen}
+            onPress={onFirstModalOpen}
             className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
           >
             Add Scraping Task
@@ -120,7 +125,7 @@ export default function ScheduledScrape() {
           <TableHeader>
             <TableColumn>URL</TableColumn>
             <TableColumn>NEXT SCHEDULED SCRAPE</TableColumn>
-            <TableColumn>OPTIONS</TableColumn>
+            <TableColumn>ACTIONS</TableColumn>
             <TableColumn>DASHBOARD</TableColumn>
           </TableHeader>
           <TableBody>
@@ -131,12 +136,17 @@ export default function ScheduledScrape() {
                 </Link>
               </TableCell>
               <TableCell>09/01/2024, 04:54 PM</TableCell>
-              <TableCell><FiMoreVertical /></TableCell>
+              <TableCell>
+                <div className='flex'>
+                  <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={onSecondModalOpen}><FiEdit2 /></span>
+                  <span className='text-red-600 hover:cursor-pointer'><FiTrash /></span>                
+                </div>
+              </TableCell>
               <TableCell>
                 <Button
                   className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                   onClick={() => handleDashboardPage('https://takealot.com')}
-                  // data-testid={'btnDashboard' + index}
+                // data-testid={'btnDashboard' + index}
                 >
                   View
                 </Button>
@@ -147,9 +157,10 @@ export default function ScheduledScrape() {
       </div>
 
       {/* Modal */}
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement='center'>
+      {/* Add Scheduled Scraping Task */}
+      <Modal isOpen={isFirstModalOpen} onOpenChange={onFirstModalOpenChange} placement='center'>
         <ModalContent>
-          {(onClose) => (
+          {(onFirstModalClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 text-jungleGreen-800 dark:text-dark-primaryTextColor">Add Scheduled Scraping Task</ModalHeader>
               <ModalBody>
@@ -233,6 +244,71 @@ export default function ScheduledScrape() {
                   onClick={handleScheduledScrapeTaskAdd}
                 >
                   Add Task
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Edit Scraping Task (Keyword) */}
+      <Modal isOpen={isSecondModalOpen} onOpenChange={onSecondModalOpenChange} placement='center'>
+        <ModalContent>
+          {(onSecondModalClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-jungleGreen-800 dark:text-dark-primaryTextColor">Edit Scheduled Scraping Task</ModalHeader>
+              <ModalBody>
+
+                {/* Add keyword or phrase */}
+                <div className='flex'>
+                  <WEEInput
+                    type="text"
+                    label="Keyword or phrase"
+                    className='pr-2'
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
+                  <Button
+                    isIconOnly
+                    onClick={handleAddKeyword}
+                    className='my-auto font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor'
+                  >
+                    <FiPlus />
+                  </Button>
+                </div>
+
+                {/* List of added keywords or phrases */}
+                <div>
+                  {keywordList.map((kw, index) => (
+                    <div key={index} className='flex justify-between'>
+                      <span className='hover:cursor-default'>{kw}</span>
+                      <span
+                        className='my-auto text-red-600 hover:cursor-pointer'
+                        onClick={() => handleDeleteKeyword(index)}
+                      >
+                        <FiTrash />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {modalError ? (
+                  <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+                    <MdErrorOutline className="m-auto mx-1" />
+                    <p data-testid="keyword-error">{modalError}</p>
+                  </span>
+                ) : (
+                  <></>
+                )}
+
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  className='font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor'
+                  // onPress={onClose}
+                  onClick={handleScheduledScrapeTaskEdit}
+                >
+                  Edit Task
                 </Button>
               </ModalFooter>
             </>
