@@ -344,7 +344,8 @@ export default function ScheduledScrape() {
                   Cancel
                 </Button>
                 <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                  onPress={() => { handleDeleteScrapingTask(1); onThirdModalClose(); }}
+                  // onPress={() => { handleDeleteScrapingTask(1); onThirdModalClose(); }}
+                  onPress={() => { onThirdModalClose(); }}
                 >
                   Yes
                 </Button>
