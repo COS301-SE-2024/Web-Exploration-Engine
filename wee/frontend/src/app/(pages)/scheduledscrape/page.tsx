@@ -104,9 +104,9 @@ export default function ScheduledScrape() {
     router.push(`/dashboard?url=${encodeURIComponent(url)}`);
   }
 
-  const handleDeleteScrapingTask = (taskId: number) => {
+  // const handleDeleteScrapingTask = (taskId: number) => {
 
-  }
+  // }
 
   return (
     <>
