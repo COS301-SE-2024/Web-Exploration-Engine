@@ -636,7 +636,7 @@ export class ScraperService implements OnModuleInit {
           // Performance Logging
           const duration = performance.now() - start;
           console.log(`Duration of ${serviceName} : ${duration}`);
-          logger.info(`Duration of ${serviceName} : ${duration}`);
+          logger.info(serviceName,'duration',duration);
           
         } catch (error) {
           console.error(`Error scraping URL: ${url}`, error);

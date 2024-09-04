@@ -65,7 +65,7 @@ export class ScrapeLogoService {
 
         return imageUrls.length > 0 ? imageUrls[0] : '';
     } catch (error) {
-      logger.error(`${serviceName} Failed to scrape logo: ${error.message}`);
+      logger.error(serviceName,` Failed to scrape logo: ${error.message}`);
       console.error(`Failed to scrape logo: ${error.message}`);
         return '';
     } finally {
@@ -75,7 +75,7 @@ export class ScrapeLogoService {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
 
     }
  }
