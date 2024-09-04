@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 export default function ScheduledScrape() {
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
   const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onOpenChange: onSecondModalOpenChange, onClose: onSecondModalClose } = useDisclosure();
+  const { isOpen: isThirdModalOpen, onOpen: onThirdModalOpen, onOpenChange: onThirdModalOpenChange, onClose: onThirdModalClose } = useDisclosure();
   const [urlToAdd, setUrlToAdd] = React.useState('');
   const [scrapingFrequency, setScrapingFrequency] = React.useState<string>('');
   const [scrapeStartDate, setScrapeStartDate] = React.useState(new Date());
@@ -103,6 +104,10 @@ export default function ScheduledScrape() {
     router.push(`/dashboard?url=${encodeURIComponent(url)}`);
   }
 
+  const handleDeleteScrapingTask = (taskId: number) => {
+
+  }
+
   return (
     <>
       <div className="p-4 min-h-screen">
@@ -139,7 +144,7 @@ export default function ScheduledScrape() {
               <TableCell>
                 <div className='flex'>
                   <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={onSecondModalOpen}><FiEdit2 /></span>
-                  <span className='text-red-600 hover:cursor-pointer'><FiTrash /></span>                
+                  <span className='text-red-600 hover:cursor-pointer' onClick={onThirdModalOpen}><FiTrash /></span>
                 </div>
               </TableCell>
               <TableCell>
@@ -309,6 +314,39 @@ export default function ScheduledScrape() {
                   onClick={handleScheduledScrapeTaskEdit}
                 >
                   Edit Task
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Confirm delete */}
+      <Modal
+        isOpen={isThirdModalOpen}
+        onOpenChange={onThirdModalOpenChange}
+        placement="top-center"
+      >
+        <ModalContent>
+          {(onThirdModalClose) => (
+            <>
+              <ModalBody>
+                <h1 className="text-center my-4 font-poppins-bold text-lg text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                  Are you sure you want to delete this scheduled scraping task?
+                </h1>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  className="text-md font-poppins-semibold text-jungleGreen-700 border-jungleGreen-700 dark:text-jungleGreen-400 dark:border-text-jungleGreen-400"
+                  onPress={onThirdModalClose}
+                  variant="bordered"
+                >
+                  Cancel
+                </Button>
+                <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                  onPress={() => { handleDeleteScrapingTask(1); onThirdModalClose(); }}
+                >
+                  Yes
                 </Button>
               </ModalFooter>
             </>
