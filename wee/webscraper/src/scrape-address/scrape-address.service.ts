@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
+import { performance } from 'perf_hooks';
 import logger from '../../logging/webscraperlogger';
 
 const serviceName = "[ScrapeAddressService]";
@@ -14,6 +15,7 @@ export class ScrapeAddressService {
    */
   async scrapeAddress(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ addresses: string[] }> {
     logger.debug(`${serviceName}`);
+    const start = performance.now();
 
     if (!robots.isBaseUrlAllowed) {
       logger.warn(`${serviceName} Crawling not allowed for this URL`);
@@ -68,6 +70,11 @@ export class ScrapeAddressService {
       console.error(`Failed to scrape addresses: ${error.message}`);
       return { addresses: [] };
     } finally {
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(`Duration of ${serviceName} : ${duration}`);
+
       if (page) {
         await page.close();
       }

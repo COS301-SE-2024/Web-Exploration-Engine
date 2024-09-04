@@ -3,15 +3,23 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import ResetPassword from '../../src/app/(landing)/reset-password/page';
 import { useRouter } from 'next/navigation';
-import { getSupabase } from '../../src/app/utils/supabase_anon_client';
+import { createClient } from '../../src/app/utils/supabase/client';
 
-jest.mock('../../src/app/utils/supabase_anon_client', () => ({
-  getSupabase: jest.fn().mockReturnValue({
-    auth: {
-      updateUser: jest.fn().mockResolvedValue({ error: null }),
-    },
-  }),
+jest.mock('../../src/app/utils/supabase/client', () => ({
+	createClient: jest.fn(), 
 }));
+
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(),
+}));
+
+const mockSupabaseClient = {
+  auth: {
+    updateUser: jest.fn(),
+  },
+};
+
+(createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
@@ -24,7 +32,7 @@ jest.mock('../../src/app/components/Util/Input', () => (props) => (
 jest.mock('../../src/app/components/ThemeSwitch', () => () => <div data-testid="ThemeSwitch" />);
 
 describe('ResetPassword Component', () => {
-  const mockUpdateUser = getSupabase().auth.updateUser;
+  const mockUpdateUser = mockSupabaseClient.auth.updateUser;
   const mockPush = useRouter().push;
 
   beforeEach(() => {

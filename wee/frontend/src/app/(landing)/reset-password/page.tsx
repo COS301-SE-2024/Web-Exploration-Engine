@@ -1,16 +1,17 @@
 'use client';
 import React, { useState } from 'react';
 import { Button, Spacer } from '@nextui-org/react';
-import { getSupabase } from '../../utils/supabase_anon_client';
 import Link from 'next/link';
 import WEEInput from '../../components/Util/Input';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
-const supabase = getSupabase();
+import { createClient } from '../../utils/supabase/client';
+
 
 export default function ResetPassword() {
   const router = useRouter();
+  const supabase = createClient();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');

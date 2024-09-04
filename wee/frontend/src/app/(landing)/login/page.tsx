@@ -7,7 +7,8 @@ import { Button } from '@nextui-org/react';
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
-import { login, googleLogin } from '../../services/AuthService';
+import { login } from '../../services/AuthService';
+import { googleLogin } from '../../services/OAuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
