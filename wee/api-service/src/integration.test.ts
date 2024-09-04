@@ -584,7 +584,7 @@ describe('ScraperController', () => {
   });
 
 
-  describe('ShareCount', () => {
+  describe('/GET scraper/shareCount', () => {
 
     it('should return shareCount analytics status successfully', async () => {
       const url = 'https://example.com';
