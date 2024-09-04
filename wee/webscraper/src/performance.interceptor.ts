@@ -26,10 +26,8 @@ export class PerformanceInterceptor implements NestInterceptor {
               performance.now() - now
             ).toFixed(2)}ms`,
           );
-
-          logger.info(context.getClass().name ,'duration', performance.now() - now , context.getHandler().name
-            
-          );
+          
+          logger.info(context.getClass().name, 'duration' , (performance.now() - now) , context.getHandler().name);
 
         }
         ),
