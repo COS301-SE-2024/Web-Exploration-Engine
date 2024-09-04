@@ -74,27 +74,30 @@ export class ScrapeReviewsService {
 
   private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<string[]> {
     try {
-    //   await page.waitForSelector('.review-content', { timeout: 15000 });
-    //   console.log('Review content loaded.');
-
-    //   const reviews = await page.evaluate(() => {
-    //     const reviewElements = document.querySelectorAll('.review-content'); // Adjust based on actual review class
-    //     return Array.from(reviewElements).map(review => (review as HTMLElement).innerText.trim());
-    //   });
-
-      // Extract rating if available
-      const rating = await page.evaluate(() => {
-        const ratingElement = document.querySelector('span.has-text-weight-bold'); // Adjust based on actual class or selector
-        return ratingElement ? (ratingElement as HTMLElement).innerText.trim() : 'No rating found';
+      // Wait for the review content and review count elements to be available
+      await page.waitForSelector('span.has-text-weight-bold', { timeout: 15000 });
+      console.log('Review content and review count loaded.');
+  
+      // Extract rating and number of reviews
+      const { rating, reviewCount } = await page.evaluate(() => {
+        const ratingElement = document.querySelector('span.has-text-weight-bold'); // Adjust if needed
+        const reviewCountElement = document.querySelectorAll('span.has-text-weight-bold')[1]; // Assuming it's the second one for review count
+  
+        const rating = ratingElement ? (ratingElement as HTMLElement).innerText.trim() : 'No rating found';
+        const reviewCount = reviewCountElement ? (reviewCountElement as HTMLElement).innerText.trim() : 'No review count found';
+  
+        return { rating, reviewCount };
       });
-
+  
       console.log(`Extracted rating from Hello Peter: ${rating}`);
-
-      return [ `Rating: ${rating}`];
+      console.log(`Extracted review count from Hello Peter: ${reviewCount}`);
+  
+      return [`Rating: ${rating}`, `Number of reviews: ${reviewCount}`];
     } catch (error) {
       throw new Error(`Failed to scrape reviews from Hello Peter: ${error.message}`);
     }
   }
+  
 
   private async scrapeReviewsFromTrustpilot(page: puppeteer.Page): Promise<string[]> {
     try {
