@@ -7,6 +7,32 @@ import { getReports, deleteReport } from '../../src/app/services/SaveReportServi
 import { useRouter } from 'next/navigation';
 import '@testing-library/jest-dom';
 
+import { createClient } from '../../src/app/utils/supabase/client';
+
+jest.mock('../../src/app/utils/supabase/client', () => ({
+  createClient: jest.fn(),
+}));
+
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(),
+}));
+
+const mockSupabaseClient = {
+  auth: {
+    signInWithPassword: jest.fn(),
+    signInWithOAuth: jest.fn(),
+    signUp: jest.fn(),
+    getUser: jest.fn(),
+    resetPasswordForEmail: jest.fn(),
+    updateUser: jest.fn(),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+  })),
+};
+
+(createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
 jest.mock('../../src/app/services/SaveReportService');
 jest.mock('../../src/app/context/UserContext');

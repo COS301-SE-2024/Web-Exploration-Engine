@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, act ,waitFor} from '@testing-library/react';
 import Login from '../../src/app/(landing)/login/page';
-import { googleLogin, login } from '../../src/app/services/AuthService';
+import { login } from '../../src/app/services/AuthService';
+import { googleLogin } from '../../src/app/services/OAuthService';
 import { useRouter } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({
@@ -11,6 +12,9 @@ jest.mock('next/navigation', () => ({
 // Mocking login function
 jest.mock('../../src/app/services/AuthService', () => ({
   login: jest.fn(),
+}));
+
+jest.mock('../../src/app/services/OAuthService', () => ({
   googleLogin: jest.fn(),
 }));
 
