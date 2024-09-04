@@ -30,6 +30,11 @@ declare namespace Cypress {
     scrapeWimpy(): void;
     scrapeInsecure(): void;
     scrapeSteers(): void;
+    analyseGithubKeyword(): void;
+    analyseCiscoKeyword(): void;
+    analyseWimpyKeyword(): void;
+    analyseInsecureKeyword(): void;
+    analyseSteersKeyword(): void;
 
     importAllMocks(page: string): void;
   }
@@ -172,6 +177,8 @@ Cypress.Commands.add('importAllMocks', () => {
       ).as('mock_status_github');
     });
 });
+
+
 
 
 Cypress.Commands.add('scrape4Websites', () => {
@@ -868,3 +875,57 @@ Cypress.Commands.add('scrapeWimpy', () => {
 });
 
 
+
+//=================================================================
+// FUNCTIONS: KEYWORD ANALYSIS
+//=================================================================
+
+// analyseGithubKeyword(): void;
+// analyseCiscoKeyword(): void;
+// analyseWimpyKeyword(): void;
+// analyseInsecureKeyword(): void;
+// analyseSteersKeyword(): void;
+
+Cypress.Commands.add('analyseGithubKeyword',() => {
+
+  //select textbox  and type steers 
+  cy.get('[data-testid="keyword-input"]').type(
+    'github'
+  );
+  cy.get('[data-testid="btn-seo-keyword"]').click();
+    // Intercepts
+
+    //Full response
+    cy.fixture('/pub-sub/cisco-keyword-cisco-status-result')
+    .as('mock_scraper_mockgithub_done')
+    .then((mock_scraper_mockgithub_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fsteers.co.za&keyword=github',
+        mock_scraper_mockgithub_done
+      ).as('mock_scraper_mockgithub_done');
+    });
+    
+})
+
+Cypress.Commands.add('analyseCiscoKeyword',() => {
+
+  //select textbox  and type steers 
+  cy.get('[data-testid="keyword-input"]').type(
+    'github'
+  );
+  cy.get('[data-testid="btn-seo-keyword"]').click();
+    // Intercepts
+
+    //Full response
+    cy.fixture('/pub-sub/cisco-done')
+    .as('mock_scraper_mockcisco_done')
+    .then((mock_scraper_mockcisco_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fsteers.co.za&keyword=github',
+        mock_scraper_mockcisco_done
+      ).as('mock_scraper_mockcisco_done');
+    });
+
+})
