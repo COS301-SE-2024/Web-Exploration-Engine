@@ -102,11 +102,10 @@ describe('NewsScraperService', () => {
 
       expect(sentimentScores).toEqual({ positive: 0.8, negative: 0.1, neutral: 0.1 });
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis',
-        { inputs: inputText },
+        'https://capstone-wee.dns.net.za/hugging-face/Positive-negative',
+        { text: inputText },
         {
           headers: {
-            Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
             'Content-Type': 'application/json',
           },
         }

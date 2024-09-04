@@ -6,12 +6,13 @@ import logger from '../../logging/webscraperlogger';
 const serviceName = "[NewsScraperService]";
 
 //remember: changed to deployed version
-//private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative'
-const HUGGING_FACE_SENTIMENT_API_URL = 'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';
-const HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
+// const HUGGING_FACE_SENTIMENT_API_URL = 'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';
+// const HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
 @Injectable()
 export class NewsScraperService {
+  private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative'
+
   async fetchNewsArticles(url: string): Promise<{ title: string; link: string; source: string; pubDate: string; sentimentScores?: { positive: number; negative: number; neutral: number } }[]> {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
@@ -98,11 +99,11 @@ export class NewsScraperService {
   private async getSentiment(inputText: string): Promise<{ positive: number; negative: number; neutral: number }> {
     try {
       const response = await axios.post(
-        HUGGING_FACE_SENTIMENT_API_URL,
-        { inputs: inputText },
+        this.HUGGING_FACE_SENTIMENT_API_URL,
+        { text: inputText },
         {
           headers: {
-            Authorization: `Bearer ${HUGGING_FACE_API_TOKEN}`,
+            // Authorization: `Bearer ${HUGGING_FACE_API_TOKEN}`,
             'Content-Type': 'application/json',
           },
         }
