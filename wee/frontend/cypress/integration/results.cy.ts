@@ -237,6 +237,28 @@ describe('results', () => {
     cy.contains(/title tags/i).should('exist');
     cy.contains(/unique content/i).should('exist');
 
+    //Testing Keyword Analysis
+
+    //select textbox  and type steers 
+     //select textbox  and type steers 
+  cy.get('[data-testid="keyword-input"]').type(
+    'github'
+  );
+  cy.get('[data-testid="btn-seo-keyword"]').click();
+    // Intercepts
+
+    //Full response
+    cy.fixture('/pub-sub/cisco-keyword-cisco-status-result')
+    .as('mock_scraper_mockgithub_done')
+    .then((mock_scraper_mockgithub_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fsteers.co.za&keyword=github',
+        mock_scraper_mockgithub_done
+      ).as('mock_scraper_mockgithub_done');
+    });
+    
+    //first section
     cy.get('[data-testid="div-images-total"]')
       .should('exist')
       .should('be.visible')
