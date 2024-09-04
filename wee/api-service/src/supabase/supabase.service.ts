@@ -61,16 +61,32 @@ export class SupabaseService {
   }
 
   async updateKeywordResult(scheduleData: updateKeywordResult) {
-    const { id, keyword, timestampArr, newResult, resultArr} = scheduleData;
+    const { id, keyword, newRank, newTopTen, results} = scheduleData;
 
     // append to necessary fields
-    timestampArr.push(new Date().toISOString());
-    // append result to resultArr
-
+    const timestamp = new Date().toISOString();
+    
+    // find the keyword result object
+    const keywordResult = results.find(result => result.keyword === keyword);
+    // if the keyword result object does not exist, create a new one
+    if (!keywordResult) {
+      results.push({
+        keyword,
+        timestampArr: [timestamp],
+        rankArr: [newRank],
+        topTenArr: [newTopTen]
+      });
+    } else {
+      // if the keyword result object exists, update the arrays
+      keywordResult.timestampArr.push(timestamp);
+      keywordResult.rankArr.push(newRank);
+      keywordResult.topTenArr.push(newTopTen);
+    }
+    
     const { data, error } = await this.supabaseClient
       .from('scheduled_tasks')
       .update({ 
-        keyword_results: { keyword, timestampArr, resultArr } 
+        keyword_results: results,
       })
       .eq('id', id);
 

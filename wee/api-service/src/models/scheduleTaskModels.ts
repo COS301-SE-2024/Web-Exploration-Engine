@@ -38,15 +38,16 @@ export interface ScheduleTaskResponse {
 export interface KeywordResult {
   keyword: string;
   timestampArr: string[];
-  resultArr: string[];
+  rankArr: string[];
+  topTenArr: string[][];
 }
 
 export interface updateKeywordResult {
   id: string;
   keyword: string;
-  timestampArr: string[];
-  resultArr: string[];
-  newResult: any;
+  results: KeywordResult[];
+  newRank: string;
+  newTopTen: string[];
 }
 
 

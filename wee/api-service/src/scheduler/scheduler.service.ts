@@ -4,8 +4,6 @@ import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
-import { timestamp } from 'rxjs';
-
 
 @Injectable()
 export class SchedulerService {
@@ -65,8 +63,6 @@ export class SchedulerService {
         await this.pubsubService.publishMessage(this.topicName, message);
         pollEndpoints.push(`${pollScrapeEndpoint}&url=${encodeURIComponent(schedule.url)}`);
 
-
-
         // publish keyword tasks
         const keywords = schedule.keywords;
         for (const keyword of keywords) {
@@ -93,121 +89,6 @@ export class SchedulerService {
       this.isRunning = false; // Release lock
     }
   }
-
-  // async pollApiEndpoint(url: string, schedule: ScheduleTaskResponse) {
-  //   const maxRetries = 20;
-  //   const retryDelay = 10000; // 10 seconds
-  //   const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-
-  //   for (let attempt = 0; attempt < maxRetries; attempt++) {
-  //     try {
-  //       // this.logger.log(`Polling ${url}, attempt ${attempt + 1}`);
-
-  //       // Make HTTP request to the API endpoint
-  //       console.log('Polling API endpoint:', `${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
-  //       const response = await axios.get(`${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
-
-
-  //       if(response.data && response.data.status === 'completed') {
-  //         this.handleApiResults(response.data.result, schedule);
-  //         break;
-  //       } else {
-  //         // this.logger.warn('No results yet, retrying...');
-  //         await this.delay(retryDelay);
-  //       }
-        
-        
-  //     } catch (error) {
-  //       // this.logger.error('Error polling API', error);
-  //       await this.delay(retryDelay);
-  //     }
-  //   }
-  // }
-
-  // async pollForResults(url: string, schedule: ScheduleTaskResponse, keywords: string[]) {
-  //   const maxRetries = 20;
-  //   const retryDelay = 10000; // 10 seconds
-  //   const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-
-  //   for (let attempt = 0; attempt < maxRetries; attempt++) {
-  //     try {
-  //       // this.logger.log(`Polling ${url}, attempt ${attempt + 1}`);
-
-  //       // Make HTTP request to the API endpoint
-  //       console.log('Polling API endpoint:', `${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
-  //       const response = await axios.get(`${apiUrl}/scraper/status?type=scrape&url=${encodeURIComponent(url)}`);
-
-
-  //       if(response.data && response.data.status === 'completed') {
-  //         this.handleApiResults(response.data.result, schedule);
-  //         break;
-  //       } else {
-  //         // this.logger.warn('No results yet, retrying...');
-  //         await this.delay(retryDelay);
-  //       }
-        
-        
-  //     } catch (error) {
-  //       // this.logger.error('Error polling API', error);
-  //       await this.delay(retryDelay);
-  //     }
-  //   }
-  // }
-
-  // async pollKeywordEndpoint(url: string, schedule: ScheduleTaskResponse, keyword: string) {
-  //   const maxRetries = 20;
-  //   const retryDelay = 10000; // 10 seconds
-  //   const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-
-  //   for (let attempt = 0; attempt < maxRetries; attempt++) {
-  //     try {
-  //       // this.logger.log(`Polling ${url}, attempt ${attempt + 1}`);
-
-  //       // Make HTTP request to the API endpoint
-  //       const pollApiEndpoint = `${apiUrl}/scraper/keyword-status?url=${encodeURIComponent(url)}&keyword=${encodeURIComponent(keyword)}`;
-  //       console.log('Polling API endpoint: ', pollApiEndpoint);
-  //       const response = await axios.get(pollApiEndpoint);
-
-
-  //       if(response.data && response.data.status === 'completed') {
-  //         this.handleKeywordResults(response.data.result, schedule);
-  //         break;
-  //       } else {
-  //         // this.logger.warn('No results yet, retrying...');
-  //         await this.delay(retryDelay);
-  //       }
-        
-        
-  //     } catch (error) {
-  //       // this.logger.error('Error polling API', error);
-  //       await this.delay(retryDelay);
-  //     }
-  //   }
-  // }
-
-  // async handleApiResults(results: any, schedule: ScheduleTaskResponse) {
-  //   // Process results and update Supabase or take further actions
-  //   // this.logger.log('Received results:', results);
-
-  //   // calculate next scrape time based on frequency
-
-  //   // append results to result_history
-  //   schedule.result_history.push({ 
-  //     timestamp: new Date().toISOString(),
-  //     result: results 
-  //   });
-
-  //   // Example of updating Supabase with the results
-  //   const updateMessage = {
-  //     id: schedule.id,
-  //     result_history: schedule.result_history,
-  //     newResults: results,
-  //   } as UpdateScheduleTask;
-
-  //   console.log('Updating results');
-  //   await this.supabaseService.updateSchedule(updateMessage);
-
-  // }
 
   async pollForResults(endpoints: string[], schedule: ScheduleTaskResponse) {
     const maxRetries = 20;
@@ -242,16 +123,16 @@ export class SchedulerService {
 
   async handleApiResults(results: any, schedule: ScheduleTaskResponse) {
     // Check if its scrape or keyword analysis
-    if (results.url) {
-      await this.handleScrapeResults(results, schedule);
-    } else {
+    if (results.keyword) {
       await this.handleKeywordResults(results, schedule);
+    } else {
+      await this.handleScrapeResults(results, schedule);
     }
   }
 
   async handleScrapeResults(results: any, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
-    console.log('Received scrape results:', results);
+    console.log('Received scrape results for URL:', schedule.url);
 
     // Example of updating Supabase with the results
     const updateMessage = {
@@ -266,21 +147,19 @@ export class SchedulerService {
 
   async handleKeywordResults(results: any, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
-    console.log('Received keyword results:', results);
+    console.log('Received keyword results for url and keyword:', results.url, results.keyword);
 
     const updateKeywordResult = {
       id: schedule.id,
       keyword: results.keyword,
-      timestampArr: schedule.keyword_results.find(kw => kw.keyword === results.keyword)?.timestampArr || [],
-      resultArr: schedule.keyword_results.find(kw => kw.keyword === results.keyword)?.resultArr || [],
-      newResult: results
+      results: schedule.keyword_results,
+      newRank: results.ranking,
+      newTopTen: results.topTen,
     } as updateKeywordResult;
 
     console.log('Updating keyword results');
     await this.supabaseService.updateKeywordResult(updateKeywordResult);
   }
-
-
   
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
