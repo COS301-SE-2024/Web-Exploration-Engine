@@ -156,7 +156,7 @@ export class ScraperService implements OnModuleInit {
     }
 
     data.robots = robots as RobotsResponse;
-   //shareCount service it uses the ShareCount api
+
 
   // Serially scrape metadata and all services that depend on only robots.txt
     const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
