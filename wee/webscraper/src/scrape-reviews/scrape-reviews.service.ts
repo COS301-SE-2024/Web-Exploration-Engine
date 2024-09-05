@@ -14,9 +14,9 @@ export class ScrapeReviewsService {
     console.log(`Extracted business name: ${businessName}`);
 
     const reviews = await this.scrapeReviewsViaGoogle(businessName);
-    console.log(`Scraped ${reviews.length} reviews.`);
+    //console.log(`Scraped ${reviews.length} reviews.`);
 
-    return reviews.slice(0, 50); // Limit to the first 50 reviews
+    return reviews;
   }
 
   private async scrapeReviewsViaGoogle(businessName: string): Promise<string[]> {
@@ -25,22 +25,19 @@ export class ScrapeReviewsService {
     const reviews: string[] = [];
 
     try {
-      // Perform Google search with a direct URL
       const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(businessName)}+reviews`;
       await page.goto(searchUrl, { waitUntil: 'networkidle2' });
       console.log(`Navigated to Google search results for "${businessName} reviews".`);
 
-      // Extract URLs from search results
       const reviewUrls = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll('a'));
         return links
           .map(link => link.href)
-          .filter(href => href.includes('hellopeter.com') || href.includes('trustpilot.com') || href.includes('reddit.com'));
+          .filter(href => href.includes('hellopeter.com'));
       });
 
       console.log(`Found review URLs: ${reviewUrls}`);
 
-      // Scrape reviews from extracted URLs
       for (const url of reviewUrls) {
         try {
           const reviewPage = await browser.newPage();
@@ -49,12 +46,7 @@ export class ScrapeReviewsService {
           let pageReviews: string[] = [];
           if (url.includes('hellopeter.com')) {
             pageReviews = await this.scrapeReviewsFromHelloPeter(reviewPage);
-          } else if (url.includes('trustpilot.com')) {
-            pageReviews = await this.scrapeReviewsFromTrustpilot(reviewPage);
-          } else if (url.includes('reddit.com')) {
-            pageReviews = await this.scrapeReviewsFromReddit(reviewPage);
           }
-
           reviews.push(...pageReviews);
           await reviewPage.close();
         } catch (error) {
@@ -71,81 +63,50 @@ export class ScrapeReviewsService {
       await browser.close();
     }
   }
-
   private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<string[]> {
     try {
-      // Wait for the elements to be available
       await page.waitForSelector('span.has-text-weight-bold', { timeout: 15000 });
       console.log('Review content and elements loaded.');
-
-      // Extract rating, number of reviews, Trustindex rating, NPS, and recommendation status
-      const { rating, reviewCount, trustindexRating, nps, recommendationStatus } = await page.evaluate(() => {
+  
+      const { rating, reviewCount, trustindexRating, nps, recommendationStatus, reviewNumbers } = await page.evaluate(() => {
         const elements = Array.from(document.querySelectorAll('div.perf-card__head'));
-        const ratingElement = document.querySelector('span.has-text-weight-bold'); // Adjust if needed
-        const reviewCountElement = document.querySelectorAll('span.has-text-weight-bold')[1]; // Assuming it's the second one for review count
-        const trustindexRatingElement = document.querySelector('div.perf-card__head'); // Adjust if needed
-        const npsElement = elements.find(el => el.textContent.includes('NPS'));//(el => el.textContent.includes('NPS'));
-        const recommendationStatusElement = document.querySelector('span.has-text-weight-bold.color-blue-v2'); // Adjust to target the recommendation status element
-
+        const ratingElement = document.querySelector('span.has-text-weight-bold'); 
+        const reviewCountElement = document.querySelectorAll('span.has-text-weight-bold')[1]; 
+        const trustindexRatingElement = document.querySelector('div.perf-card__head');
+        const npsElement = elements.find(el => el?.textContent?.includes('NPS'));
+        const recommendationStatusElement = document.querySelector('span.has-text-weight-bold.color-blue-v2'); 
+        
+        const reviewNumbersElements = Array.from(document.querySelectorAll('div.is-flex.falign-center.margin-bottom-10 span.fb__breakdown'));
+        const reviewNumbers = reviewNumbersElements.map(el => (el as HTMLElement).innerText.trim());
         const rating = ratingElement ? (ratingElement as HTMLElement).innerText.trim() : 'No rating found';
         const reviewCount = reviewCountElement ? (reviewCountElement as HTMLElement).innerText.trim() : 'No review count found';
         const trustindexRating = trustindexRatingElement ? (trustindexRatingElement as HTMLElement).innerText.trim() : 'No Trustindex rating found';
         const nps = npsElement ? (npsElement as HTMLElement).innerText.trim() : 'No NPS found';
         const recommendationStatus = recommendationStatusElement ? (recommendationStatusElement as HTMLElement).innerText.trim() : 'No recommendation status found';
-
-        return { rating, reviewCount, trustindexRating, nps, recommendationStatus };
+  
+        return { rating, reviewCount, trustindexRating, nps, recommendationStatus, reviewNumbers };
       });
-
+  
       console.log(`Extracted rating from Hello Peter: ${rating}`);
       console.log(`Extracted review count from Hello Peter: ${reviewCount}`);
       console.log(`Extracted Trustindex rating from Hello Peter: ${trustindexRating}`);
       console.log(`Extracted NPS from Hello Peter: ${nps}`);
       console.log(`Extracted recommendation status from Hello Peter: ${recommendationStatus}`);
-
+      console.log(`Extracted review numbers from Hello Peter: ${reviewNumbers.join(', ')}`);
+  
       return [
         `Rating: ${rating}`,
         `Number of reviews: ${reviewCount}`,
         `Trustindex rating: ${trustindexRating}`,
         `NPS: ${nps}`,
-        `Recommendation status: ${recommendationStatus}`
+        `Recommendation status: ${recommendationStatus}`,
+        `Review breakdown: ${reviewNumbers.join('; ')}`
       ];
     } catch (error) {
       throw new Error(`Failed to scrape reviews from Hello Peter: ${error.message}`);
     }
   }
-
-  private async scrapeReviewsFromTrustpilot(page: puppeteer.Page): Promise<string[]> {
-    try {
-      await page.waitForSelector('.review-content', { timeout: 15000 });
-      console.log('Review content loaded.');
-
-      const reviews = await page.evaluate(() => {
-        const reviewElements = document.querySelectorAll('.review-content'); // Adjust based on actual review class
-        return Array.from(reviewElements).map(review => (review as HTMLElement).innerText.trim());
-      });
-
-      return reviews;
-    } catch (error) {
-      throw new Error(`Failed to scrape reviews from Trustpilot: ${error.message}`);
-    }
-  }
-
-  private async scrapeReviewsFromReddit(page: puppeteer.Page): Promise<string[]> {
-    try {
-      await page.waitForSelector('div[data-test-id="comment"]', { timeout: 15000 });
-      console.log('Review content loaded.');
-
-      const reviews = await page.evaluate(() => {
-        const reviewElements = document.querySelectorAll('div[data-test-id="comment"]'); // Adjust based on actual review class
-        return Array.from(reviewElements).map(review => (review as HTMLElement).innerText.trim());
-      });
-
-      return reviews;
-    } catch (error) {
-      throw new Error(`Failed to scrape reviews from Reddit: ${error.message}`);
-    }
-  }
-
+  
   private extractBusinessNameFromUrl(url: string): string {
     try {
       const hostname = new URL(url).hostname;
