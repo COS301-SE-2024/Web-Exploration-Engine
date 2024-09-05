@@ -30,6 +30,12 @@ import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
 import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
+import MockCiscoKeywordCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-status-result.json'
+import MockCiscoKeywordMerakiFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-frontend-result.json'
+import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-frontend-result.json'
+import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
+import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
+import { result } from 'cypress/types/lodash';
 
 interface Classifications {
   label: string;
@@ -362,7 +368,16 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        const result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+        let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+
+        if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
+          if (keyword && keyword =="meraki"){
+          result = MockCiscoKeywordMerakiFrontendResult;
+        }
+        else {
+          result = MockCiscoKeywordCiscoFrontendResult
+        }
+        }
         setSeoKeywordAnalysis(result);        
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
@@ -879,11 +894,11 @@ function ResultsComponent() {
                               )}
                             </div>
                           </div>
-                          <div data-testid='keyword_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations
                             </h5>
-                            <p>{seoKeywordAnalysis.recommendation}</p>
+                            <p  data-testid='keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
                           </div>
                         </>
                       )}
