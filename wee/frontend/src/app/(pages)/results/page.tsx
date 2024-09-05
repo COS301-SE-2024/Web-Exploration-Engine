@@ -123,6 +123,8 @@ function ResultsComponent() {
   const [keyword, setKeyword] = useState('');
   const [isKeywordLoading, setKeywordLoading]= useState(false);
 
+  const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
+
   const { processedUrls, results } = useScrapingContext();
   const { user } = useUserContext();
 
@@ -221,7 +223,16 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+    setIsDownloadInProgress(true);
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
+
+    try {
+      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+    }
+    finally {
+      setIsDownloadInProgress(false);
+    }
   };
 
   // Pagination Logic
@@ -387,9 +398,32 @@ function ResultsComponent() {
             <Dropdown>
               <DropdownTrigger>
                 <Button
+                  isLoading={isDownloadInProgress}
                   variant="flat"
                   data-testid="btn-export-save-report"
-                  startContent={<FiShare className={iconClasses} />}
+                  startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
+                  spinner={
+                    <svg
+                      className="animate-spin h-5 w-5 text-current"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  }
                 >
                   Export/Save
                 </Button>
@@ -1888,7 +1922,7 @@ function ResultsComponent() {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="top-center"
+        placement="center"
         data-testid="save-report-modal"
       >
         <ModalContent>
@@ -1931,7 +1965,12 @@ function ResultsComponent() {
       </Modal>
 
       {/* successfull save */}
-      <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
+      <Modal 
+        isOpen={isSuccessOpen} 
+        onOpenChange={onSuccessOpenChange} 
+        className="font-poppins-regular"
+        placement="center"
+      >
         <ModalContent>
           <ModalBody>
             <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">

@@ -13,14 +13,6 @@ export default function NavBar() {
 
     const router = useRouter();
 
-    const menuItems = [
-      "Home",
-      "Help"
-      // "Profile",
-      // "Analytics",
-      // "Log Out",
-    ];
-
     useEffect(() => {
       const fetchUserData = async () => {
           try {
@@ -57,6 +49,7 @@ export default function NavBar() {
   }
 
   const handleHome = () => {
+    console.log('Handle home');
     router.push('/');
   }
 
@@ -159,18 +152,34 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
+        <NavbarMenuItem>
+          <Link 
+            onClick={() => {handleHome(); setIsMenuOpen(false)}} 
+            className="w-full"
+            color="foreground"                
+            size="lg"
+          >
+            Home
+          </Link>
+          <Link 
+            onClick={() => {handleHelp(); setIsMenuOpen(false)}} 
+            className="w-full"
+            color="foreground"                
+            size="lg"
+          >
+            Help
+          </Link>
+          {user &&           
+            <Link 
+              onClick={() => {handleSavedReports(); setIsMenuOpen(false)}} 
               className="w-full"
               color="foreground"                
-              href={item == 'Home' ? `/` : `/${item.toLowerCase()}`}
               size="lg"
             >
-              {item}
+                Saved Reports
             </Link>
-          </NavbarMenuItem>
-        ))}
+          }
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   )
