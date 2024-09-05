@@ -14,7 +14,7 @@ export class ScrapeMetadataService {
     const allowed = data.isBaseUrlAllowed;
 
     if (!allowed) {
-      logger.warn(`${serviceName} Not allowed to scrape root URL for metadata`)
+      logger.warn(serviceName,`Not allowed to scrape root URL for metadata`)
       return {
         errorStatus: 403,
         errorCode: '403 Forbidden',
@@ -83,7 +83,7 @@ export class ScrapeMetadataService {
       return { ...metadata };
 
     } catch (error) {
-      logger.error(`${serviceName} Error scraping metadata: ${error.message}`)
+      logger.error(serviceName,` Error scraping metadata: ${error.message}`)
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -93,7 +93,7 @@ export class ScrapeMetadataService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
 
       if (page) {
         await page.close();

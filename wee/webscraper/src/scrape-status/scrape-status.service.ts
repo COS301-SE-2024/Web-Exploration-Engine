@@ -34,7 +34,7 @@ export class ScrapeStatusService {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
         return state ? 'live' : 'parked';
     } catch (error) {
         if (error.response) {
@@ -50,13 +50,13 @@ export class ScrapeStatusService {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
             return 'parked';
         } else {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
             return 'error';
         }
     }

@@ -29,11 +29,11 @@ export class RobotsService {
       // Check if website has a robots.txt file -- if not, return an empty set
       if (response.status === 404) {
         console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
-        logger.warn(`${serviceName}  robots.txt does not exist for ${robotstxtUrl}`);
+        logger.warn(serviceName,` robots.txt does not exist for ${robotstxtUrl}`);
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
 
         return {
           allowedPaths: [],
@@ -43,8 +43,8 @@ export class RobotsService {
 
       // Check if error occured
       if (!response.ok) {
-        logger.error(
-          `${serviceName} An error occurred while fetching robots.txt from ${robotstxtUrl}`
+        logger.error(serviceName,
+          `An error occurred while fetching robots.txt from ${robotstxtUrl}`,robotstxtUrl
         );
 
         throw new Error(
@@ -59,11 +59,11 @@ export class RobotsService {
 
       if (!robotstxt) {
         console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
-        logger.warn(`${serviceName} robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
+        logger.warn(serviceName,`robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
         
         return {
           allowedPaths: [],
@@ -103,7 +103,7 @@ export class RobotsService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
 
       return {
         allowedPaths: Array.from(allowedPaths),
@@ -121,7 +121,7 @@ export class RobotsService {
 
       return parsedUrl.origin;
     } catch (error) {
-      logger.error(`${serviceName} Extracting Domain Error ${error}`);
+      logger.error(serviceName,` Extracting Domain Error ${error}`);
       throw new Error('Invalid URL');
     }
   }
@@ -206,7 +206,7 @@ export class RobotsService {
       } as RobotsResponse;
     } catch (error) {
       // return error response if error encountered
-      logger.error(`${serviceName} 500 Internal Server Error ${error.message}`)
+      logger.error(serviceName,` 500 Internal Server Error ${error.message}`)
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',

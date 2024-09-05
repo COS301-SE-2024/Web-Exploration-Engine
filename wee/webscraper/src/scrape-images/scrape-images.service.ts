@@ -19,7 +19,7 @@ export class ScrapeImagesService {
     // Possible improvement: scrape current URL first, if no images found, scrape root URL
     // Check if the URL is allowed to be scraped
     if (!robots.isUrlScrapable) {
-        logger.error(`${serviceName} Crawling not allowed for this URL`);  
+        logger.error(serviceName,` Crawling not allowed for this URL`);  
         console.error('Crawling not allowed for this URL, cannot scrape images');
         return [];
     }
@@ -29,7 +29,7 @@ export class ScrapeImagesService {
     const password = process.env.PROXY_PASSWORD;
 
     if (!username || !password) {
-        logger.error(`${serviceName} Proxy username or password not set`);  
+        logger.error(serviceName,` Proxy username or password not set`);  
         console.error('Proxy username or password not set');
         return [];
     }
@@ -52,13 +52,13 @@ export class ScrapeImagesService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
             return Array.from(images).map((img: HTMLImageElement) => img.src);
         });
 
         return imageUrls.slice(0, 50);
     } catch (error) {
-      logger.error(`${serviceName} Failed to scrape images: ${error.message}`);  
+      logger.error(serviceName,` Failed to scrape images: ${error.message}`);  
       console.error(`Failed to scrape images: ${error.message}`);
 
 
@@ -67,7 +67,7 @@ export class ScrapeImagesService {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
         
         if (page) {
             await page.close();

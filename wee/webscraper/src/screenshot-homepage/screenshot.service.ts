@@ -63,7 +63,7 @@ export class ScreenshotService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration);
       if (page) {
         await page.close();
       }
