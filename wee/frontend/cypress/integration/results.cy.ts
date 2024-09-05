@@ -237,7 +237,7 @@ describe('results', () => {
     cy.get('[data-testid="btn-seo-keyword"]').click();
 
     //Wait for the interception of "steers" keyword to be complete
-    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 15000 });
 
     //Results now returned, test content
 

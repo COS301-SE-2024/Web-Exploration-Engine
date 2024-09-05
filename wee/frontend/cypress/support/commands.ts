@@ -871,9 +871,34 @@ Cypress.Commands.add('analyseSteersKeyword', () => {
       ).as('mock_scraper_mock_keyword_meraki_polling_done');
     });
 
+
+    //Intercept Github Url
+    http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fgithub.com&keyword=steers
+ 
+    cy.fixture('/pub-sub/cisco-keyword-meraki-status-result')
+    .as('mock_github_mock_keyword_meraki_done')
+    .then((mock_github_mock_keyword_meraki_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fgithub.com&keyword=steers',
+        mock_github_mock_keyword_meraki_done
+      ).as('mock_github_mock_keyword_meraki_done');
+    });
+
+  //Intercept request of status polling - keyword : meraki
+  cy.fixture('/pub-sub/cisco-keyword-meraki-analysis-poll')
+    .as('mock_scraper_mock_keyword_meraki_polling_done')
+    .then((mock_scraper_mock_keyword_meraki_polling_done) => {
+      cy.intercept(
+        'GET',
+        'http://localhost:3002/api/scraper/keyword-status?url=https%3A%2F%2Fsteers.co.za&keyword=meraki',
+        mock_scraper_mock_keyword_meraki_polling_done
+      ).as('mock_scraper_mock_keyword_meraki_polling_done');
+    });
+    //==============================================================
+  // Intercepts for keyword : cisco
   //==============================================================
-  // Intercepts for keyword : meraki
-  //==============================================================
+
 });
 
 Cypress.Commands.add('analyseCiscoKeyword', () => {
