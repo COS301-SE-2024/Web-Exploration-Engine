@@ -170,7 +170,7 @@ export default function Help() {
 
       <div
         id="tutorials"
-        className="px-6 h-screen place-content-center bg-zinc-100 dark:bg-zinc-800"
+        className="px-6 min-h-screen place-content-center bg-zinc-100 dark:bg-zinc-800"
       >
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
