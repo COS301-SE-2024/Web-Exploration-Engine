@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
+import { performance } from 'perf_hooks';
 import logger from '../logging/webscraperlogger';
 import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
@@ -20,6 +22,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
 import {NewsScraperService} from './scrape-news/scrape-news.service';
+import { ShareCountService } from './share-count-analytics/share-count-analytics.service';
 // Models
 import {
   ErrorResponse,
@@ -34,7 +37,7 @@ const serviceName = "[ScraperService]";
 logger.info(`${serviceName}`);
 @Injectable()
 export class ScraperService implements OnModuleInit {
-  
+
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
     private readonly pubsub: PubSubService,
@@ -51,7 +54,9 @@ export class ScraperService implements OnModuleInit {
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
+
     private readonly newsScraperService: NewsScraperService,
+    private readonly shareCountService: ShareCountService,
   ) {}
 
   onModuleInit() {
@@ -59,6 +64,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
+
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -86,6 +92,7 @@ export class ScraperService implements OnModuleInit {
         return this.keywordAnalysis(data.url, data.keyword);
       case 'scrape-news':
         return this.scrapeNews(data.url);
+      case 'shareCount':
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -101,9 +108,8 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
 
-      
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -112,7 +118,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: `Failed to launch browser ${error}`,
       } as ErrorResponse;
     }
-     
+
     const data = {
       url: '',
       domainStatus: '',
@@ -128,6 +134,7 @@ export class ScraperService implements OnModuleInit {
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
       scrapeNews: [],
+      shareCountdata: null as any,
       time: 0,
     } as ScrapeResult;
 
@@ -205,14 +212,18 @@ export class ScraperService implements OnModuleInit {
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
-  
+
     data.logo = logo;
 
     data.images = images;
 
     data.sentiment = sentimentAnalysis;
 
+
     data.scrapeNews = newsScraping;
+    //shareCount data or results
+     data.shareCountdata = this.shareCountService.getShareCount(url);
+
     // close browser
     await browser.close();
 
@@ -347,7 +358,7 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -366,7 +377,7 @@ export class ScraperService implements OnModuleInit {
       await browser.close();
       return metadataResponse;
     }
-    
+
     const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, browser);
     await browser.close();
     return images;
@@ -378,14 +389,14 @@ export class ScraperService implements OnModuleInit {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    
+
     // create puppeteer instance
     let browser: puppeteer.Browser;
     const proxy = this.proxyService.getProxy();
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); 
+      });
     } catch (error) {
       console.error('Failed to launch browser', error);
       return {
@@ -448,7 +459,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
+
     const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, browser);
     await browser.close();
     return addresses;
@@ -475,7 +486,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-    
+
     const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
     await browser.close();
     return seoAnalysis;
@@ -561,13 +572,13 @@ export class ScraperService implements OnModuleInit {
 
   async handleMessage(message) {
     // Get the publish time of the message - when message was originally published
-    const publishTime = message.publishTime; 
+    const publishTime = message.publishTime;
 
     // Calculate the age of the message in milliseconds
     const messageAge = Date.now() - publishTime.getTime();
 
     // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
-    const maxAge = 5 * 60 * 1000; 
+    const maxAge = 5 * 60 * 1000;
 
     console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`);
     console.log(`Message Age: ${messageAge} ms`);
@@ -614,22 +625,26 @@ export class ScraperService implements OnModuleInit {
               const end = performance.now();
               const times = (end - start) / 1000;
               console.log('CACHE HIT for url: ', url, " time: ", times);
-          
+
               // Update time field
               cachedData.result.time = parseFloat(times.toFixed(4));
               await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
             }
 
+          // Performance Logging
+          const duration = performance.now() - start;
+          console.log(`Duration of ${serviceName} : ${duration}, cache-hit`);
+          logger.info(`Duration of ${serviceName} : ${duration}, cache-hit`);
             return;
           }
         }
 
         // Scrape if not in cache/already processing (CACHE MISS or error status)
         console.log('CACHE MISS - SCRAPE');
-      
+
         // Add to cache as processing
         await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
-      
+
         try {
           const result = await this.scrapeWebsite(data, type);
           const completeData = {
@@ -637,16 +652,35 @@ export class ScraperService implements OnModuleInit {
             result,
           };
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+
           console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+          // Performance Logging
+          const duration = performance.now() - start;
+          console.log(`Duration of ${serviceName} : ${duration}`);
+          logger.info(`Duration of ${serviceName} : ${duration}`);
+
         } catch (error) {
           console.error(`Error scraping URL: ${url}`, error);
           await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
-        } 
+        }
 
 
     }
   }
 
+  async getShareCount(url: string) {
+    try {
+      const shareCount = await this.shareCountService.getShareCount(url);
+      return shareCount;
+    } catch (error) {
+      logger.error(`${serviceName} Failed to get share count for ${url}: ${error}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Failed to get share count for ${url}: ${error}`,
+      } as ErrorResponse;
+    }
+  }
   async getCachedData(cacheKey: string) {
     const cachedDataString:string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {

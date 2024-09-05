@@ -7,7 +7,8 @@ import { Button } from '@nextui-org/react';
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
-import { login, googleLogin } from '../../services/AuthService';
+import { login } from '../../services/AuthService';
+import { googleLogin } from '../../services/OAuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
@@ -77,7 +78,7 @@ export default function Login() {
 
     // Redirect to home page
     router.push(`/?uuid=${authResponse.uuid}`);
-    
+
   };
 
   const handleGoogleLogin = async () => {
@@ -91,7 +92,7 @@ export default function Login() {
       return () => clearTimeout(timer);
     }
   }
-  
+
 
   return (
     <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
@@ -109,14 +110,14 @@ export default function Login() {
 
       <div className="flex flex-col justify-center items-center">
       {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
-        <WEEInput 
+        <WEEInput
           type="email"
           label="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
-        <WEEInput 
+        <WEEInput
           type="password"
           label="Password"
           value={password}
@@ -134,9 +135,9 @@ export default function Login() {
 
       <div className="flex flex-col justify-center items-center">
         <Divider className='mb-6'/>
-        <Button 
+        <Button
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
-          variant="bordered" 
+          variant="bordered"
           onClick={handleGoogleLogin}
           startContent={
             <svg
@@ -165,9 +166,9 @@ export default function Login() {
           }>
             Login with Google
         </Button>
-        {/* <Button 
+        {/* <Button
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
-          variant="bordered" 
+          variant="bordered"
           startContent={
             <BsApple />
           }>
@@ -179,6 +180,10 @@ export default function Login() {
         <span>Don&apos;t have an account?</span>
         <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
             <Link href={'/signup'}>Sign up</Link>
+        </span>
+        <br />
+        <span className="font-poppins-medium underline underline-offset-4 decoration-2 ml-2 hover:cursor-pointer dark:text-jungleGreen-150">
+          <Link href={'/forgot-password'}>Forgot Password?</Link>
         </span>
       </div>
   </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ErrorResponse {
   errorStatus: number;
   errorCode: string;
@@ -76,5 +77,6 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   scrapeNews: NewsItem[] | ErrorResponse;
+  shareCountdata?:any
   time: number;
 }
