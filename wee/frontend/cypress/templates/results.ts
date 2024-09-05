@@ -39,7 +39,7 @@
         'Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.'
       );
 
-      
+
     // ==============================================
     // Tab Section : Summary Info
     // ==============================================
@@ -160,7 +160,6 @@
 
     //Results now returned, test content
 
-
     cy.get('[data-testid="keyword_not_ranked"]')
       .should('exist')
       .should('be.visible')
@@ -182,6 +181,55 @@
       .should('contain.text', 'keyword');
     
 
+// ******************** keyword : meraki (ranked ) *******************************
+ cy.get('[data-testid="keyword-input"]').type('steers');
+    cy.get('[data-testid="btn-seo-keyword"]').click();
+    
+    //Wait for the interception of "steers" keyword to be complete
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+
+    //Results now returned, test content
+
+
+    cy.get('[data-testid="keyword_ranked"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_top10"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_reccomendations"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+  
+// ******************** keyword : cisco (not ranked ) *******************************
+ cy.get('[data-testid="keyword-input"]').type('steers');
+    cy.get('[data-testid="btn-seo-keyword"]').click();
+    
+    //Wait for the interception of "steers" keyword to be complete
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+
+    //Results now returned, test content
+
+
+    cy.get('[data-testid="keyword_not_ranked"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'Not ranked in top 10');
+
+    cy.get('[data-testid="keyword_top10"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_reccomendations"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
 
     // ==============================================    
     // Tab Section : Heading Analysis
