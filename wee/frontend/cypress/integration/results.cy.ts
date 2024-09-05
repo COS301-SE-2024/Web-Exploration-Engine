@@ -254,7 +254,7 @@ describe('results', () => {
         '1. www.cisco.com2. www.cisco.com3. www.itpro.com4. www.ambitionbox.com5. www.cisco.com6. www.coursera.org7. en.wikipedia.org8. www.cisco.edu9. cp.certmetrics.com10. www.linkedin.com'
       );
 
-    cy.get('[data-testid="keyword_recommendations"]', { timeout: 10000 })
+    cy.get('[data-testid="p_keyword_recommendations"]', { timeout: 10000 })
       .should('exist')
       .should('be.visible')
       .should(
@@ -263,7 +263,8 @@ describe('results', () => {
       );
 
     //  keyword : meraki (ranked )
-    cy.get('[data-testid="keyword-input"]').clear().type('meraki');
+    cy.get('[data-testid="keyword-input"]').clear();
+    cy.get('[data-testid="keyword-input"]').type('meraki');
     cy.get('[data-testid="btn-seo-keyword"]').click();
 
     //Wait for the interception of "meraki" keyword to be complete
@@ -283,7 +284,7 @@ describe('results', () => {
         '1. meraki.cisco.com2. meraki.cisco.com3. merakijewellerydesign.com4. meraki-living.co.za5. www.eudaimonia-coaching.co.uk6. www.stratusinfosystems.com7. caryyogacollective.com8. ibanway.com9. merakicapetown.co.za10. documentation.meraki.com'
       );
 
-    cy.get('[data-testid="keyword_recommendations"]', { timeout: 10000 })
+    cy.get('[data-testid="p_keyword_recommendations"]', { timeout: 10000 })
       .should('exist')
       .should('be.visible')
       .should(

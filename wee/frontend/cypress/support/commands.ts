@@ -873,8 +873,7 @@ Cypress.Commands.add('analyseSteersKeyword', () => {
 
 
     //Intercept Github Url
-    http://localhost:3002/api/scraper/keyword-analysis?url=https%3A%2F%2Fgithub.com&keyword=steers
- 
+   
     cy.fixture('/pub-sub/cisco-keyword-meraki-status-result')
     .as('mock_github_mock_keyword_meraki_done')
     .then((mock_github_mock_keyword_meraki_done) => {

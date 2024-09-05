@@ -894,11 +894,11 @@ function ResultsComponent() {
                               )}
                             </div>
                           </div>
-                          <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          <div data-testid='keyword_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations
                             </h5>
-                            <p  data-testid='keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
+                            <p  data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
                           </div>
                         </>
                       )}
