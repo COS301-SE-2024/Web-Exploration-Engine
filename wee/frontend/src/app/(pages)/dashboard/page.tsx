@@ -4,6 +4,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import { LineChart } from '../../components/Graphs/LineChart';
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import { ColumnChartNPS } from '../../components/Graphs/ColumnChart';
+import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
@@ -94,7 +95,7 @@ function DashboardPage() {
 
 			<div>
 				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-					Reviews
+					NPS Reviews
 					<InfoPopOver
 						data-testid="popup-nps-reviews"
 						heading="News Sentiment"
@@ -106,6 +107,41 @@ function DashboardPage() {
 					<ColumnChartNPS
 						dataLabel={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul', '10 Aug', '10 Sept']}
 						dataSeries={[10, -44, 49, 50, 90, 0, 10, 45]}
+					/>
+				</div>
+				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+					Reviews - Stars
+					<InfoPopOver
+						data-testid="popup-nps-reviews"
+						heading="News Sentiment"
+						content="Add description here"
+						placement="right-end"
+					/>
+				</h3>
+				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<StackedColumnChart 
+						dataLabel={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']} 
+						dataSeries={[        
+						{
+							name: '1 Star',
+							data: [32, 15, 14, 20, 22, 48]
+						},
+						{
+							name: '2 Stars',
+							data: [25, 30, 48, 35, 33, 30]
+						},
+						{
+							name: '3 Stars',
+							data: [18, 22, 20, 25, 28, 30]
+						},
+						{
+							name: '4 Stars',
+							data: [10, 45, 18, 22, 25, 28]
+						},
+						{
+							name: '5 Stars',
+							data: [50, 12, 15, 18, 22, 25]
+						}]}
 					/>
 				</div>
 			</div>
