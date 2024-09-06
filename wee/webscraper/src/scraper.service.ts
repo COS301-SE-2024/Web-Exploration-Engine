@@ -93,6 +93,7 @@ export class ScraperService implements OnModuleInit {
       case 'scrape-news':
         return this.scrapeNews(data.url);
       case 'shareCount':
+        return this.getShareCount(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -170,7 +171,7 @@ export class ScraperService implements OnModuleInit {
     const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
 
 
-    
+
     const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
 
     if ('errorStatus' in screenshot) {
@@ -700,12 +701,12 @@ export class ScraperService implements OnModuleInit {
   async scrapeNews(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
-      return robotsResponse; 
+      return robotsResponse;
     }
-  
+
     let browser: puppeteer.Browser;
     const proxy = this.proxyService.getProxy();
-  
+
     try {
       browser = await puppeteer.launch({
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
@@ -718,7 +719,7 @@ export class ScraperService implements OnModuleInit {
         errorMessage: 'Failed to launch browser',
       } as ErrorResponse;
     }
-  
+
     try {
       const newsData = await this.newsScraperService.fetchNewsArticles(url);
       return newsData;
@@ -735,7 +736,7 @@ export class ScraperService implements OnModuleInit {
       }
     }
   }
-  
-  
+
+
 }
 
