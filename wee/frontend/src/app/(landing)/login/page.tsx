@@ -3,15 +3,14 @@ import React from 'react';
 import ThemeSwitch from '../../components/ThemeSwitch';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
-// import { BsApple } from "react-icons/bs";
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
 import { LoginRequest, AuthResponse } from '../../models/AuthModels';
-import { login, googleLogin } from '../../services/AuthService';
+import { login } from '../../services/AuthService';
+import { googleLogin } from '../../services/OAuthService';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';
-
 
 export default function Login() {
   const router = useRouter();
@@ -77,7 +76,7 @@ export default function Login() {
 
     // Redirect to home page
     router.push(`/?uuid=${authResponse.uuid}`);
-    
+
   };
 
   const handleGoogleLogin = async () => {
@@ -91,7 +90,6 @@ export default function Login() {
       return () => clearTimeout(timer);
     }
   }
-  
 
   return (
     <div className="min-h-[calc(100vh-13rem)] w-full flex flex-col justify-between sm:min-h-[calc(100vh-18rem)] md:min-h-full font-poppins-regular">
@@ -109,34 +107,36 @@ export default function Login() {
 
       <div className="flex flex-col justify-center items-center">
       {error ? <span className="mt-4 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle"><MdErrorOutline className="m-auto mx-1"/><p>{error}</p></span> : <p className="hidden"></p>}
-        <WEEInput 
+        <WEEInput
           type="email"
           label="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
-        <WEEInput 
+        <WEEInput
           type="password"
           label="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="my-3 sm:w-4/5 md:w-full lg:w-4/5"
         />
+        <div className='w-full sm:w-4/5 md:w-full lg:w-4/5 flex justify-end'>
+          <span className="text-sm font-poppins-medium hover:cursor-pointer dark:text-jungleGreen-150">
+            <Link href={'/forgot-password'}>Forgot Password?</Link>
+          </span>
+        </div>
         <Button
           data-testid="login-button"
           onClick={handleLogin}
-          className="my-3 font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
+          className="my-3 mt-[2rem] font-poppins-semibold text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor w-full sm:w-4/5 md:w-full lg:w-4/5"
         >
           Login
         </Button>
-      </div>
-
-      <div className="flex flex-col justify-center items-center">
-        <Divider className='mb-6'/>
-        <Button 
+        <Divider className='my-4'/>
+        <Button
           className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
-          variant="bordered" 
+          variant="bordered"
           onClick={handleGoogleLogin}
           startContent={
             <svg
@@ -165,14 +165,6 @@ export default function Login() {
           }>
             Login with Google
         </Button>
-        {/* <Button 
-          className='my-3 font-poppins-semibold text-lg w-full sm:w-4/5 md:w-full lg:w-4/5 border-primaryTextColor dark:border-dark-primaryTextColor'
-          variant="bordered" 
-          startContent={
-            <BsApple />
-          }>
-            Login with Apple
-        </Button> */}
       </div>
 
       <div className="text-center font-poppins-regular text-jungleGreen-800 dark:text-dark-primaryTextColor">

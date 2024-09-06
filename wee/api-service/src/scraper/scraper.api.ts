@@ -15,7 +15,8 @@ export const ScreenshotOperation = ApiOperation({ summary: 'Publish task to capt
 export const ContactInfoOperation = ApiOperation({ summary: 'Publish task to scrape contact information from the url provided' });
 export const AddressesOperation = ApiOperation({ summary: 'Publish task to scrape addresses from the url provided' });
 export const SeoAnalysisOperation = ApiOperation({ summary: 'Publish task to perform SEO analysis on the url provided' });
-
+export const NewsOperation =ApiOperation({ summary: 'Publish task to perform News extraction on the url provided' });
+export const socialAnalyticsOperation = ApiOperation({ summary: 'Publish task to perform social medial analytics on the url provided' });
 // Query descriptions
 export const ScraperQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
 
@@ -374,8 +375,8 @@ export const ScraperResponse500 = ApiResponse({ status: 500, description: 'Inter
 //   schema: {
 //     type: 'string',
 //     enum: [
-//       'scrape', 
-//       'read-robots', 
+//       'scrape',
+//       'read-robots',
 //       'scrape-metadata',
 //       'scrape-status',
 //       'classify-industry',
