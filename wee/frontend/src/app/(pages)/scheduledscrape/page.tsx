@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker, TableHeader, TableColumn, TableBody, TableRow, TableCell, useUser } from '@nextui-org/react';
+import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker, TableHeader, TableColumn, TableBody, TableRow, TableCell, useUser, Spinner } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEETable from '../../components/Util/Table';
@@ -9,9 +9,10 @@ import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ScheduleTask } from '../../models/ScheduleModels';
-import { createScheduleTask } from '../../services/ScheduledScrapingService';
+import { ScheduleTask, GetSchedulesResponse } from '../../models/ScheduleModels';
+import { createScheduleTask, getSchedules } from '../../services/ScheduledScrapingService';
 import { useUserContext } from '../../context/UserContext';
+import { set } from 'cypress/types/lodash';
 
 export default function ScheduledScrape() {
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
@@ -23,6 +24,8 @@ export default function ScheduledScrape() {
   const [keyword, setKeyword] = React.useState('');
   const [keywordList, setKeywordList] = React.useState<string[]>([]);
   const [modalError, setModalError] = React.useState('');
+  const [schedules, setSchedules] = React.useState<GetSchedulesResponse[]>([]);
+  const [loading, setLoading] = React.useState(true); // Loading state
   const { user } = useUserContext();
   const router = useRouter();
 
@@ -139,6 +142,9 @@ export default function ScheduledScrape() {
     setScrapeStartDate(new Date());
     setKeyword('');
     setKeywordList([]);
+
+    // reload the scheduled scraping tasks
+    loadScheduledScrapingTasks();
   };
 
   const handleScheduledScrapeTaskEdit = () => {
@@ -161,7 +167,29 @@ export default function ScheduledScrape() {
       const selectedValue = keyToValueMap[selectedKey];
     
       setScrapingFrequency(selectedValue);
-    };
+  };
+
+  async function loadScheduledScrapingTasks() {
+    console.log('Loading scheduled scraping tasks...');
+    setLoading(true); // Set loading to true when starting the fetch
+  
+    if (user) {
+      const schedules = await getSchedules(user.uuid) as GetSchedulesResponse[];
+      console.log('Schedules:', schedules);
+      setSchedules(schedules);
+    }
+    else {
+      console.error("User is not logged in");
+    }
+  
+    setLoading(false); // Set loading to false when the fetch is complete
+  };
+  
+  // Load the data on component mount
+  React.useEffect(() => {
+    loadScheduledScrapingTasks();
+  }, []);
+  
 
   // const handleDeleteScrapingTask = (taskId: number) => {
 
@@ -185,37 +213,46 @@ export default function ScheduledScrape() {
         </div>
 
         {/* Table */}
-        <WEETable data-testid="scheduled-scrape-table" isStriped aria-label="Scheduled scrape table">
+        <WEETable data-testid="scheduled-scrape-table" isStriped aria-label="Scheduled scrape table"
+          bottomContent={
+            <>
+              {loading ? (
+                <div className="flex w-full justify-center">
+                  <Spinner color="default" />
+                </div>
+              ) : null}
+            </>
+          }
+        >
           <TableHeader>
             <TableColumn>URL</TableColumn>
             <TableColumn>NEXT SCHEDULED SCRAPE</TableColumn>
             <TableColumn>ACTIONS</TableColumn>
             <TableColumn>DASHBOARD</TableColumn>
           </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <Link href={`/dashboard?url=${encodeURIComponent('https://takealot.com')}`}>
-                  https://takealot.com
-                </Link>
-              </TableCell>
-              <TableCell>09/01/2024, 04:54 PM</TableCell>
-              <TableCell>
-                <div className='flex'>
-                  <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={onSecondModalOpen}><FiEdit2 /></span>
-                  <span className='text-red-600 hover:cursor-pointer' onClick={onThirdModalOpen}><FiTrash /></span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <Button
-                  className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                  onClick={() => handleDashboardPage('https://takealot.com')}
-                // data-testid={'btnDashboard' + index}
-                >
-                  View
-                </Button>
-              </TableCell>
-            </TableRow>
+          <TableBody emptyContent={"No scheduled tasks"}>
+            {schedules.map((schedule, index) => (
+              <TableRow key={index}>
+                <TableCell>{schedule.url}</TableCell>
+                <TableCell>{new Date(schedule.next_scrape).toLocaleString()}</TableCell>
+                <TableCell>
+                  <div className='flex'>
+                    <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={onSecondModalOpen}><FiEdit2 /></span>
+                    <span className='text-red-600 hover:cursor-pointer' onClick={onThirdModalOpen}><FiTrash /></span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
+                    onClick={() => handleDashboardPage('https://takealot.com')}
+                  // data-testid={'btnDashboard' + index}
+                  >
+                    View
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            
           </TableBody>
         </WEETable>
       </div>

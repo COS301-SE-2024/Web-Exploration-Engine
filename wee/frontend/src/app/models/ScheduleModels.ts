@@ -47,6 +47,11 @@ export interface updateKeywordResult {
   newTopTen: string[];
 }
 
+export interface GetSchedulesResponse {
+  url: string;
+  next_scrape: string;
+}
+
 
 
 
