@@ -1,6 +1,6 @@
 'use client'
 import React from 'react';
-import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, ModalFooter, SelectItem, DatePicker, TableHeader, TableColumn, TableBody, TableRow, TableCell, useUser } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEETable from '../../components/Util/Table';
@@ -9,6 +9,9 @@ import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ScheduleTask } from '../../models/ScheduleModels';
+import { createScheduleTask } from '../../services/ScheduledScrapingService';
+import { useUserContext } from '../../context/UserContext';
 
 export default function ScheduledScrape() {
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
@@ -18,8 +21,9 @@ export default function ScheduledScrape() {
   const [scrapingFrequency, setScrapingFrequency] = React.useState<string>('');
   const [scrapeStartDate, setScrapeStartDate] = React.useState(new Date());
   const [keyword, setKeyword] = React.useState('');
-  const [keywordList, setKeywordList] = React.useState(['keywordOne', 'keyword phrase two']);
+  const [keywordList, setKeywordList] = React.useState<string[]>([]);
   const [modalError, setModalError] = React.useState('');
+  const { user } = useUserContext();
   const router = useRouter();
 
   // Add keyword to keyword list
@@ -62,6 +66,7 @@ export default function ScheduledScrape() {
 
   const handleScheduledScrapeTaskAdd = () => {
     let errorMessage = '';
+    let formattedDate: Date | null = null;
 
     // error handling for url field
     if (!urlToAdd) {
@@ -78,9 +83,25 @@ export default function ScheduledScrape() {
     }
     else {
       const now = new Date();
-      if (!scrapeStartDate || new Date(scrapeStartDate) < now) {
-        errorMessage = "The start date and time cannot be in the past";
+      if (!scrapeStartDate) {
+        errorMessage = "Please select a start date and time";
+        return;
       }
+
+      formattedDate = new Date(scrapeStartDate);
+      
+      if (formattedDate instanceof Date && !isNaN(formattedDate.getTime())) {
+        if (formattedDate.getTime() < now.getTime()) {
+          errorMessage = "The start date and time cannot be in the past";
+        }
+      } else {
+        console.error("Invalid formatted date");
+      }
+    }
+
+    if(!user) {
+      return;
+
     }
 
     // display error message
@@ -91,9 +112,33 @@ export default function ScheduledScrape() {
       }, 3000);
       return () => clearTimeout(timer);
     }
+    if(!formattedDate) {
+      formattedDate = new Date(scrapeStartDate);
+    }
+    
+
+    const createRequest: ScheduleTask = {
+      user_id: user.uuid,
+      url: urlToAdd,
+      frequency: scrapingFrequency,
+      next_scrape: formattedDate.toISOString(),
+      keywords: keywordList || [],
+    };
+
+    console.log("Sent:", createRequest);
+
+    // add the scraping task
+    createScheduleTask(createRequest);
 
     // close the modal once successful
     onFirstModalClose();
+
+    // clear the fields
+    setUrlToAdd('');
+    setScrapingFrequency('');
+    setScrapeStartDate(new Date());
+    setKeyword('');
+    setKeywordList([]);
   };
 
   const handleScheduledScrapeTaskEdit = () => {
@@ -103,6 +148,20 @@ export default function ScheduledScrape() {
   const handleDashboardPage = (url: string) => {
     router.push(`/dashboard?url=${encodeURIComponent(url)}`);
   }
+
+  const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const keyToValueMap: { [key: string]: string } = {
+        '0': 'daily',
+        '1': 'bi-weekly',
+        '2': 'weekly',
+        '3': 'monthly',
+      };
+    
+      const selectedKey = event.target.value;
+      const selectedValue = keyToValueMap[selectedKey];
+    
+      setScrapingFrequency(selectedValue);
+    };
 
   // const handleDeleteScrapingTask = (taskId: number) => {
 
@@ -182,12 +241,12 @@ export default function ScheduledScrape() {
                   label="Scraping Frequency"
                   data-testid="frequency-select"
                   value={scrapingFrequency}
-                  onChange={(event) => setScrapingFrequency(event.target.value)}
+                  onChange={handleFrequencyChange}
                 >
-                  <SelectItem key='0' textValue='Daily'>Daily</SelectItem>
-                  <SelectItem key='1' textValue='Biweekly'>Biweekly</SelectItem>
-                  <SelectItem key='2' textValue='Weekly'>Weekly</SelectItem>
-                  <SelectItem key='3' textValue='Monthly'>Monthly</SelectItem>
+                  <SelectItem key="0" textValue="Daily">Daily</SelectItem>
+                  <SelectItem key="1" textValue="Biweekly">Biweekly</SelectItem>
+                  <SelectItem key="2" textValue="Weekly">Weekly</SelectItem>
+                  <SelectItem key="3" textValue="Monthly">Monthly</SelectItem>
                 </WEESelect>
 
                 {/* Start scraping */}
@@ -196,7 +255,23 @@ export default function ScheduledScrape() {
                   hideTimeZone
                   showMonthAndYearPickers
                   defaultValue={now(getLocalTimeZone())}
-                  onChange={(value: any) => setScrapeStartDate(value)}
+                  onChange={(value: any) => {
+                    console.log('Selected date value:', value);
+                    
+                    // Extract date components from the object
+                    const { year, month, day, hour = 0, minute = 0, second = 0 } = value;
+                
+                    // Create a new Date object using the extracted components
+                    const dateObject = new Date(year, month - 1, day, hour, minute, second); // Adjust month for zero-based index
+                    
+                    console.log('Date object:', dateObject);
+                    // Check if the created date is valid
+                    if (!isNaN(dateObject.getTime())) {
+                      setScrapeStartDate(dateObject);
+                    } else {
+                      console.error("Invalid date");
+                    }
+                  }}
                 />
 
                 {/* Add keyword or phrase */}
