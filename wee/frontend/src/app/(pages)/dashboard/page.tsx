@@ -1,6 +1,7 @@
 'use client'
 import React, {Suspense} from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
+import { LineChart } from '../../components/Graphs/LineChart';
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -56,19 +57,19 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Online bookstores
 						</h3>
-						<AreaChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'a', data: [8, 10, 3, 4, 7, 5, 3] }]} />
+						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [8, 10, 18, 4, 7, 5, 3] }]} />
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Online reading
 						</h3>
-						<AreaChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'a', data: [3, 6, 4, 9, 4, 1] }]} />
+						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [3, 6, 14, 12, 4, 8] }]} />
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Readerswarehouse south africa
 						</h3>
-						<AreaChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr']} areaSeries={[{ name: 'a', data: [4, 7, 8, 7] }]} />
+						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr']} areaSeries={[{ name: 'Ranking', data: [4, 7, 8, 7] }]} />
 					</div>
 				</div>
 			</div>

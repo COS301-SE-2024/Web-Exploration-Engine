@@ -49,7 +49,6 @@ export default function NavBar() {
   }
 
   const handleHome = () => {
-    console.log('Handle home');
     router.push('/');
   }
 
