@@ -95,7 +95,7 @@ export default function Help() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
+  const [success, setSuccess] = useState('');
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,16 +132,14 @@ export default function Help() {
       return () => clearTimeout(timer);
     }
 
-    // Create Request Object
-
-    //Integration Code Goes Here
+  
   };
 
   return (
     <main className="">
       <div id="faq" className="my-16 text-center">
         <h1 className="my-4 mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Frequently Asked Questions 
+          Frequently Asked Questions
         </h1>
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
           How can we help you?{' '}
