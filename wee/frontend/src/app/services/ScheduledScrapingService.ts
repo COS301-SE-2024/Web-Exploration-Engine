@@ -95,3 +95,15 @@ export async function updateKeywords(id: string, keywords: string[]) {
   }
 }
 
+export async function deleteSchedule(id: string) {
+  const { data, error } = await supabaseClient
+    .from('scheduled_tasks')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete schedule: ${error.message}`);
+  }
+  return data;
+}
+

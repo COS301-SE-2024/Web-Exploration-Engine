@@ -10,7 +10,7 @@ import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ScheduleTask, GetSchedulesResponse } from '../../models/ScheduleModels';
-import { createScheduleTask, getSchedules, updateKeywords } from '../../services/ScheduledScrapingService';
+import { createScheduleTask, getSchedules, updateKeywords, deleteSchedule } from '../../services/ScheduledScrapingService';
 import { useUserContext } from '../../context/UserContext';
 import { on } from 'events';
 import { set } from 'cypress/types/lodash';
@@ -226,9 +226,11 @@ export default function ScheduledScrape() {
   }, []);
   
 
-  // const handleDeleteScrapingTask = (taskId: number) => {
-
-  // }
+  async function handleDeleteScrapingTask() {
+    // delete the scraping task
+    await deleteSchedule(editID);
+    await loadScheduledScrapingTasks();
+  }
 
   return (
     <>
@@ -275,7 +277,9 @@ export default function ScheduledScrape() {
                     <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={
                       () => popuateEditKeywords(schedule.id, schedule.keywords)
                     }><FiEdit2 /></span>
-                    <span className='text-red-600 hover:cursor-pointer' onClick={onThirdModalOpen}><FiTrash /></span>
+                    <span className='text-red-600 hover:cursor-pointer' onClick={
+                      () => { onThirdModalOpen(); setEditID(schedule.id); }
+                    }><FiTrash /></span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -475,6 +479,7 @@ export default function ScheduledScrape() {
         isOpen={isThirdModalOpen}
         onOpenChange={onThirdModalOpenChange}
         placement="top-center"
+        onClose={clearInputs}
       >
         <ModalContent>
           {(onThirdModalClose) => (
@@ -493,8 +498,8 @@ export default function ScheduledScrape() {
                   Cancel
                 </Button>
                 <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                  // onPress={() => { handleDeleteScrapingTask(1); onThirdModalClose(); }}
-                  onPress={() => { onThirdModalClose(); }}
+                  onPress={() => { handleDeleteScrapingTask(); onThirdModalClose(); }}
+                  // onPress={() => { onThirdModalClose(); }}
                 >
                   Yes
                 </Button>
