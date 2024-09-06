@@ -47,6 +47,20 @@ export interface SentimentClassification {
   negativeWords: string[];
   emotions: { [emotion: string]: number };
 }
+
+export interface NewsItem {
+  title: string;
+  link: string;
+  source: string;
+  pubDate: string;
+  sentimentScores?: {
+    positive: number;
+    negative: number;
+    neutral: number;
+  };
+}
+
+
 export interface ScrapeResult {
   url: string;
   domainStatus: string;
@@ -62,6 +76,7 @@ export interface ScrapeResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
+  scrapeNews: NewsItem[] | ErrorResponse;
   shareCountdata?:any
   time: number;
 }
