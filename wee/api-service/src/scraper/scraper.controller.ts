@@ -649,6 +649,46 @@ export class ScraperController {
     }
   }
 
+  @NewsOperation
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-news')
+  async scrapeNews(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
+  
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
+  
+      console.log("Publishing scrape-news task for url: ", url);
+      const message = {
+        type: 'scrape-news',
+        data: { url },
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
+  
+      return {
+        message: 'Scrape news task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-news/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in scrapeNews method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in scrapeNews method:', error);
+        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+  
   @socialAnalyticsOperation
   @ScraperQuery
   @ScraperResponse200
@@ -697,47 +737,5 @@ export class ScraperController {
       }
     }
 
-
-@NewsOperation
-@ScraperQuery
-@ScraperResponse200
-@ScraperResponse400
-@ScraperResponse500
-@Get('scrape-news')
-async scrapeNews(@Query('url') url: string) {
-  try {
-    if (!url) {
-      throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
-    }
-
-    const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-    if (!urlPattern.test(url)) {
-      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
-    }
-
-    console.log("Publishing scrape-news task for url: ", url);
-    const message = {
-      type: 'scrape-news',
-      data: { url },
-    };
-    await this.pubsubService.publishMessage(this.topicName, message);
-
-    return {
-      message: 'Scrape news task published',
-      status: 'processing',
-      pollingUrl: `/status/scrape-news/${encodeURIComponent(url)}`,
-    };
-  } catch (error) {
-    if (error instanceof HttpException) {
-      console.warn('Handled error in scrapeNews method:', error.message);
-      throw error;
-    } else {
-      console.error('Unhandled error in scrapeNews method:', error);
-      throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 }
-  }
-}
-
- 
