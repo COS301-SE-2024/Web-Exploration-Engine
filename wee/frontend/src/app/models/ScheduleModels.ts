@@ -48,9 +48,13 @@ export interface updateKeywordResult {
 }
 
 export interface GetSchedulesResponse {
+  id: string;
   url: string;
   next_scrape: string;
+  keywords: string[];
 }
+
+
 
 
 

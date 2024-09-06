@@ -10,8 +10,9 @@ import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ScheduleTask, GetSchedulesResponse } from '../../models/ScheduleModels';
-import { createScheduleTask, getSchedules } from '../../services/ScheduledScrapingService';
+import { createScheduleTask, getSchedules, updateKeywords } from '../../services/ScheduledScrapingService';
 import { useUserContext } from '../../context/UserContext';
+import { on } from 'events';
 import { set } from 'cypress/types/lodash';
 
 export default function ScheduledScrape() {
@@ -26,26 +27,38 @@ export default function ScheduledScrape() {
   const [modalError, setModalError] = React.useState('');
   const [schedules, setSchedules] = React.useState<GetSchedulesResponse[]>([]);
   const [loading, setLoading] = React.useState(true); // Loading state
+  const [editID, setEditID] = React.useState('');
   const { user } = useUserContext();
   const router = useRouter();
 
   // Add keyword to keyword list
-  const handleAddKeyword = () => {
+   const handleAddKeyword = () => {
     // show error message if the keyword list exceeds a length of 3
-    if (keywordList.length == 3 && keyword.trim() !== '') {
-      setModalError("Max of 3 keywords can be tracked");
-
+    if (keyword.trim() == '')
+    {
+      setModalError("Enter a keyword or phrase to track");
       const timer = setTimeout(() => {
         setModalError('');
       }, 3000);
-
       return () => clearTimeout(timer);
     }
-
-    if (keyword.trim() !== '') {
-      setKeywordList([...keywordList, keyword.trim()]); // Add the keyword to the list
-      setKeyword(''); // Clear the input field
+    else if (keywordList.includes(keyword.trim())){
+      setModalError("Keyword already tracked");
+      const timer = setTimeout(() => {
+        setModalError('');
+      }, 3000);
+      return () => clearTimeout(timer);
     }
+    else if (keywordList.length == 3 && keyword.trim() !== '') {
+      setModalError("Max of 3 keywords can be tracked");
+      const timer = setTimeout(() => {
+        setModalError('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    
+    setKeywordList([...keywordList, keyword.trim()]); // Add the keyword to the list
+    setKeyword(''); // Clear the input field
   };
 
   // Remove keyword from keyword list
@@ -184,6 +197,28 @@ export default function ScheduledScrape() {
   
     setLoading(false); // Set loading to false when the fetch is complete
   };
+
+  const popuateEditKeywords = (scheduleID: string, keywords: string[]) => {
+    onSecondModalOpen();
+    setEditID(scheduleID);
+    setKeywordList(keywords);
+  }
+
+  async function handleUpdateKeywordList() {
+    await updateKeywords(editID, keywordList);
+    await loadScheduledScrapingTasks();
+    onSecondModalClose();
+  }
+
+  const clearInputs = () => {
+    setKeyword('');
+    setKeywordList([]);
+    setEditID('');
+    setModalError('');
+    setScrapingFrequency('');
+    setUrlToAdd('');
+    setScrapeStartDate(new Date());
+  }
   
   // Load the data on component mount
   React.useEffect(() => {
@@ -230,14 +265,16 @@ export default function ScheduledScrape() {
             <TableColumn>ACTIONS</TableColumn>
             <TableColumn>DASHBOARD</TableColumn>
           </TableHeader>
-          <TableBody emptyContent={"No scheduled tasks"}>
+          <TableBody >
             {schedules.map((schedule, index) => (
               <TableRow key={index}>
                 <TableCell>{schedule.url}</TableCell>
                 <TableCell>{new Date(schedule.next_scrape).toLocaleString()}</TableCell>
                 <TableCell>
                   <div className='flex'>
-                    <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={onSecondModalOpen}><FiEdit2 /></span>
+                    <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={
+                      () => popuateEditKeywords(schedule.id, schedule.keywords)
+                    }><FiEdit2 /></span>
                     <span className='text-red-600 hover:cursor-pointer' onClick={onThirdModalOpen}><FiTrash /></span>
                   </div>
                 </TableCell>
@@ -259,7 +296,7 @@ export default function ScheduledScrape() {
 
       {/* Modal */}
       {/* Add Scheduled Scraping Task */}
-      <Modal isOpen={isFirstModalOpen} onOpenChange={onFirstModalOpenChange} placement='center'>
+      <Modal isOpen={isFirstModalOpen} onOpenChange={onFirstModalOpenChange} onClose={clearInputs} placement='center'>
         <ModalContent>
           {(onFirstModalClose) => (
             <>
@@ -369,7 +406,7 @@ export default function ScheduledScrape() {
       </Modal>
 
       {/* Edit Scraping Task (Keyword) */}
-      <Modal isOpen={isSecondModalOpen} onOpenChange={onSecondModalOpenChange} placement='center'>
+      <Modal isOpen={isSecondModalOpen} onOpenChange={onSecondModalOpenChange} onClose={clearInputs} placement='center'>
         <ModalContent>
           {(onSecondModalClose) => (
             <>
@@ -423,9 +460,9 @@ export default function ScheduledScrape() {
                 <Button
                   className='font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor'
                   // onPress={onClose}
-                  onClick={handleScheduledScrapeTaskEdit}
+                  onClick={handleUpdateKeywordList}
                 >
-                  Edit Task
+                  Save Changes
                 </Button>
               </ModalFooter>
             </>
