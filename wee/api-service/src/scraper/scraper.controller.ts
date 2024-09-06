@@ -582,7 +582,7 @@ export class ScraperController {
         'scrape-addresses',
         'seo-analysis',
         'keyword-analysis',
-        'scrape-news'
+        'scrape-news',
         'social-analytics',
 
       ];
