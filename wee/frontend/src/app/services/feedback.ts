@@ -21,13 +21,14 @@ export const submitFeedback = async (email: string, name: string, message: strin
         },
       ]);
 
+    // Check if error is present in the response
     if (error) {
-      throw error;
+      return { success: false, error: error.message || 'Unknown error' };
     }
 
     return { success: true };
   } catch (error) {
     console.error('Error submitting feedback:', error);
-    return { success: false, error: (error as Error).message };
+    return { success: false, error: (error as Error).message || 'Unknown error' };
   }
 };
