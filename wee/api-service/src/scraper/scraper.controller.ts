@@ -738,6 +738,5 @@ async scrapeNews(@Query('url') url: string) {
   }
 }
 
-  }
 
  
