@@ -1,8 +1,9 @@
 'use client'
-import React, {Suspense} from 'react';
+import React, { Suspense } from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { LineChart } from '../../components/Graphs/LineChart';
 import { AreaChart } from '../../components/Graphs/AreaChart';
+import { ColumnChartNPS } from '../../components/Graphs/ColumnChart';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
@@ -10,9 +11,9 @@ import { Button } from '@nextui-org/react';
 export default function Dashboard() {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
-		  <DashboardPage />
+			<DashboardPage />
 		</Suspense>
-	  );
+	);
 }
 
 function DashboardPage() {
@@ -88,6 +89,24 @@ function DashboardPage() {
 
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 					<AreaChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr']} areaSeries={[{ name: 'positive', data: [52, 58, 41, 28] }, { name: 'neutral', data: [10, 8, 30, 16] }, { name: 'negative', data: [38, 34, 29, 56] }]} />
+				</div>
+			</div>
+
+			<div>
+				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+					Reviews
+					<InfoPopOver
+						data-testid="popup-nps-reviews"
+						heading="News Sentiment"
+						content="Add description here"
+						placement="right-end"
+					/>
+				</h3>
+				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<ColumnChartNPS
+						dataLabel={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul', '10 Aug', '10 Sept']}
+						dataSeries={[10, -44, 49, 50, 90, 0, 10, 45]}
+					/>
 				</div>
 			</div>
 
