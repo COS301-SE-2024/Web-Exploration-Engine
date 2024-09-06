@@ -5,6 +5,7 @@ import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Button } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
+import { submitFeedback } from '../../services/feedback';
 
 const faqs = [
   {
@@ -132,7 +133,22 @@ export default function Help() {
       return () => clearTimeout(timer);
     }
 
-  
+    const { success, error: feedbackError } = await submitFeedback(email, name, message);
+
+    if (success) {
+      setSuccess('Feedback submitted successfully');
+      setEmail('');
+      setName('');
+      setMessage('');
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 3000);
+    } else {
+      setError(`Error: ${feedbackError}`);
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+    }
   };
 
   return (
