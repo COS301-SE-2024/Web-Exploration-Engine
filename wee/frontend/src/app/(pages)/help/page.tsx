@@ -220,14 +220,19 @@ export default function Help() {
           </h3>
         </div>
 
-        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
-          {error ? (
-            <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-              <p>{error}</p>
-            </span>
-          ) : (
-            <p className="hidden"></p>
-          )}
+        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto">
+    {error && (
+      <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+        <p>{error}</p>
+      </span>
+    )}
+
+    {success && (
+      <span className="mx-auto mt-4 p-2 w-full text-white bg-jungleGreen-700 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+        <p>{success}</p>
+      </span>
+    )}
+
 
           <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">
             <WEEInput
