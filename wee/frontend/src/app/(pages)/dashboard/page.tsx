@@ -1,7 +1,7 @@
 'use client'
 import React, { Suspense } from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
-import { LineChart } from '../../components/Graphs/LineChart';
+import { LineChartCustomAxis, LineChart } from '../../components/Graphs/LineChart';
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import { ColumnChartNPS } from '../../components/Graphs/ColumnChart';
 import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
@@ -59,19 +59,19 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Online bookstores
 						</h3>
-						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [8, 10, 18, 4, 7, 5, 3] }]} />
+						<LineChartCustomAxis areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [8, 10, 18, 4, 7, 5, 3] }]} />
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Online reading
 						</h3>
-						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [3, 6, 14, 12, 4, 8] }]} />
+						<LineChartCustomAxis areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [3, 6, 14, 12, 4, 8] }]} />
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Readerswarehouse south africa
 						</h3>
-						<LineChart
+						<LineChartCustomAxis
 							areaCategories={[
 								'10 Jan 24', '10 Feb 24', '10 Mar 24', '10 Apr 24', '10 May 24', '10 Jun 24', '10 Jul 24',
 								'10 Aug 24', '10 Sep 24', '10 Oct 24', '10 Nov 24', '10 Dec 24', '10 Jan 25', '10 Feb 25', '10 Mar 25'
@@ -157,7 +157,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [8, 10, 18, 4, 7, 5, 3] }]} />
+						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun']} areaSeries={[{ name: 'Ranking', data: [2.1, 1.5, 1.7, 3.5, 3] }]} />
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">

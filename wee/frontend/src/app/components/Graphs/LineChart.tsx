@@ -17,7 +17,7 @@ export interface LineSeries {
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function LineChart({ areaCategories, areaSeries }: LineInterface) {
+export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterface) {
     const { theme } = useTheme();
 
     const [options, setOptions] = useState<ApexOptions>({
@@ -82,6 +82,102 @@ export function LineChart({ areaCategories, areaSeries }: LineInterface) {
         ...seriesItem,
         data: seriesItem.data.map(value => value > 10 ? 11 : value)
     }))
+
+    useEffect(() => {
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            colors: theme === 'light' ? ChartColours : DarkChartColours,
+            theme: {
+                mode: theme === 'dark' ? 'dark' : 'light'
+            },
+            plotOptions: {
+                radar: {
+                    polygons: {
+                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    }
+                }
+            },
+            xaxis: {
+                categories: areaCategories,
+                labels: {
+                    style: {
+                        colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                    },
+                },
+            },
+        }));
+    }, [theme]);
+
+    return (
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="line"
+                        height={400}
+                        width="100%"
+                    />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export function LineChart({ areaCategories, areaSeries }: LineInterface) {
+    const { theme } = useTheme();
+
+    const [options, setOptions] = useState<ApexOptions>({
+        chart: {
+            id: 'apexchart-bar',
+            fontFamily: "'Poppins', sans-serif",
+            background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'line',
+            toolbar: {
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
+            }
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        plotOptions: {
+            radar: {
+                polygons: {
+
+                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                }
+            }
+        },
+        theme: {
+            mode: theme === 'dark' ? 'dark' : 'light'
+        },
+        xaxis: {
+            categories: areaCategories,
+            labels: {
+                style: {
+                    colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                },
+            },
+        },
+        dataLabels: {
+            enabled: true, // Enables data labels
+        },
+    });
+
+    const series = areaSeries;
 
     useEffect(() => {
         setOptions(prevOptions => ({
