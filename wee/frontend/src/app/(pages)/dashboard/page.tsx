@@ -5,6 +5,7 @@ import { LineChartCustomAxis, LineChart } from '../../components/Graphs/LineChar
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import { ColumnChartNPS } from '../../components/Graphs/ColumnChart';
 import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
+import { HeatMapChart } from '../../components/Graphs/HeatMapChart';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
@@ -186,23 +187,53 @@ function DashboardPage() {
 						dataSeries={[
 							{
 								name: '1 Star',
-								data: [32, 15, 14, 20, 22, 48]
+								data: [32, 38, 44, 50, 62, 88]
 							},
 							{
 								name: '2 Stars',
-								data: [25, 30, 48, 35, 33, 30]
+								data: [25, 30, 48, 50, 73, 80]
 							},
 							{
 								name: '3 Stars',
-								data: [18, 22, 20, 25, 28, 30]
+								data: [18, 22, 28, 35, 42, 50]
 							},
 							{
 								name: '4 Stars',
-								data: [10, 45, 18, 22, 25, 28]
+								data: [40, 45, 50, 77, 90, 120]
 							},
 							{
 								name: '5 Stars',
-								data: [50, 12, 15, 18, 22, 25]
+								data: [55, 63, 77, 89, 90, 111]
+							}]}
+					/>
+				</div>
+
+				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
+					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+						Ratings HeatMap
+					</h3>
+					<HeatMapChart
+						dataLabel={['Jan-Feb', 'Feb-Mrt', 'Mar-Apr', 'Apr-May', 'May-Jun']}
+						dataSeries={[
+							{
+								name: '1 Star',
+								data: [6, 6, 6, 12, 26]
+							},
+							{
+								name: '2 Stars',
+								data: [5, 18, 2, 23, 7]
+							},
+							{
+								name: '3 Stars',
+								data: [4, 6, 7, 7, 8]
+							},
+							{
+								name: '4 Stars',
+								data: [5, 5, 27, 13, 30]
+							},
+							{
+								name: '5 Stars',
+								data: [8, 24, 12, 1, 21]
 							}]}
 					/>
 				</div>
