@@ -6,14 +6,20 @@
     cy.get('[data-testid="btnView1"]').should('exist').click();
 
     cy.url().should('include', 'results');
-
+    
+    
+    // ==============================================
     //  Tab : General Overview
-    cy.log('Testing General overview tab');
+    // ==============================================
 
+    cy.log('Testing General overview tab');
     cy.get('[data-testid="tab-general"]').should('exist');
     cy.get('[data-testid="tab-general"]').click();
+   
+    // ==============================================
+    // Tab Section : Header, Title, Logo
+    // ==============================================
 
-    //Tab Section : Header, Title, Logo
     cy.get('[data-testid="div-summary"]').should('exist').should('be.visible');
 
     cy.get('[data-testid="p-title"]')
@@ -32,9 +38,17 @@
         'contain.text',
         'Nothing slaps more than 100% Flame-Grilled flavour. Steers South Africa is the takeaway restaurant of choice for burgers, chicken, ribs and hand-cut chips.'
       );
-    // Tab Section : Summary Info
 
+
+    // ==============================================
+    // Tab Section : Summary Info
+    // ==============================================
+
+
+    //================================================
     //  Tab : Media
+    //================================================
+
     cy.log('Testing Media Tab');
     cy.get('[data-testid="tab-media"]').click();
 
@@ -68,12 +82,19 @@
       .should('have.attr', 'alt', 'Image')
       .and('have.attr', 'src'); // Ensure images have src attribute
 
-    //  Tab : SEO Analysis
-    cy.log('Testing SEO Analysis');
 
+    //================================================
+    //  Tab : SEO Analysis
+    //================================================
+    
+    
+    cy.log('Testing SEO Analysis');
     cy.get('[data-testid="tab-seo"]').click();
 
-    //Check Titles
+    //=============================================
+    // Tab Section : Check Titles
+    //=============================================
+
     cy.contains(/images/i).should('exist');
     cy.contains(/internal linking/i).should('exist');
     cy.contains(/headings/i).should('exist');
@@ -122,7 +143,97 @@
         'contain.text','abc'
       )
 
-    //Heading Analysis
+
+
+
+
+    //=====================================================
+    //Tab Section : Keyword Analysis
+    //=====================================================
+
+    cy.analyseSteersKeyword()
+    cy.get('[data-testid="keyword-input"]').type('steers');
+    cy.get('[data-testid="btn-seo-keyword"]').click();
+    
+    //Wait for the interception of "steers" keyword to be complete
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+
+    //Results now returned, test content
+
+    cy.get('[data-testid="keyword_not_ranked"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_ranked"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_top10"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_reccomendations"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+    
+
+// ******************** keyword : meraki (ranked ) *******************************
+ cy.get('[data-testid="keyword-input"]').type('steers');
+    cy.get('[data-testid="btn-seo-keyword"]').click();
+    
+    //Wait for the interception of "steers" keyword to be complete
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+
+    //Results now returned, test content
+
+
+    cy.get('[data-testid="keyword_ranked"]')
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_top10"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_reccomendations"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+  
+// ******************** keyword : cisco (not ranked ) *******************************
+ cy.get('[data-testid="keyword-input"]').type('steers');
+    cy.get('[data-testid="btn-seo-keyword"]').click();
+    
+    //Wait for the interception of "steers" keyword to be complete
+    cy.wait('@mock_scraper_mock_keyword_steers_done', { timeout: 10000 });
+
+    //Results now returned, test content
+
+
+    cy.get('[data-testid="keyword_not_ranked"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'Not ranked in top 10');
+
+    cy.get('[data-testid="keyword_top10"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    cy.get('[data-testid="keyword_reccomendations"]', { timeout: 20000 })
+      .should('exist')
+      .should('be.visible')
+      .should('contain.text', 'keyword');
+
+    // ==============================================    
+    // Tab Section : Heading Analysis
+    // ==============================================
     cy.get('[data-testid="headingscount"]')
       .should('exist')
       .should('be.visible')
@@ -133,7 +244,10 @@
       .should('be.visible')
       .should('contain.text', 'Welcome to Steers®, the home of Flame-Grilled');
 
-    // MetaDescription Analysis
+    // ==============================================
+    // Tab Section : MetaDescription Analysis
+    // ==============================================
+   
     cy.get('[data-testid="p-metadescription-tag"]')
     .should('exist')
     .should('be.visible')
@@ -148,7 +262,10 @@
         'contain.text','array'
       )
 
-    // EO MetaDescription Analysis
+    // ==============================================
+    // Tab Section : EO MetaDescription Analysis
+    // ==============================================
+
     cy.get('[data-testid="p-metadescription"]')
     .should('exist')
     .should('be.visible')
@@ -170,7 +287,13 @@
         'contain.text','array'
       )
 
-    //Unique Content
+
+
+    // ==============================================
+    // Tab Section : Unique Content
+    // ==============================================
+
+
     cy.get('[data-testid="p-titletag-length"]')
     .should('exist')
     .should('be.visible')
@@ -191,15 +314,22 @@
       .should('be.visible')
       .should('contain.text', 'king: 5burger: 5only: 4');
 
-   // Sentiment Analysis
-    cy.get('[data-testid="div-sentiment-analysis"]')
+
+    // ==============================================
+    // Tab Section : Sentiment Analysis
+    // ==============================================
+
+
+   cy.get('[data-testid="div-sentiment-analysis"]')
     .should('exist')
     .should('be.visible')
     .should(
         'contain.text','array'
       )
 
-    // Test Technical Analysis
+    // ==============================================
+    // Tab Section : Technical Analysis
+    // ==============================================
 
     cy.log('Testing Sentiment Analysis');
     
@@ -273,8 +403,9 @@
     .should('be.visible')
     .should('contain.text', 'No structured data found. Add structured data to improve SEO.')
     
-    
-    //Testing Lighthouse analysis
+    // ============================================== 
+    // Tab Section : Testing Lighthouse analysis
+    // ==============================================
 
     cy.get('[data-testid="lighthouse-performance"]')
     .should('exist')
@@ -300,7 +431,9 @@
 
       
 
-    
+    // ==============================================    
     //  Tab : Sentiment Analysis
+    // ==============================================
+
     cy.log('Testing Sentiment Analysis');
 
