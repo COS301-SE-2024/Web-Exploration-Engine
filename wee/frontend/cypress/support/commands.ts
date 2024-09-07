@@ -658,7 +658,7 @@ Cypress.Commands.add('scrapeCisco', () => {
     });
 
   //Mocking polling ie keyword-analysis?url=...
-  cy.fixture('/pub-sub/cisco-keyword-cisco-analysis-result')
+  cy.fixture('/pub-sub/cisco-keyword-cisco-frontend-result')
     .as('mock_scraper_cisco_keyword_cisco_result')
     .then((mock_scraper_cisco_keyword_cisco_result) => {
       cy.intercept(
@@ -668,7 +668,7 @@ Cypress.Commands.add('scrapeCisco', () => {
       ).as('mock_scraper_cisco_keyword_cisco_result');
     });
 
-  cy.fixture('/pub-sub/cisco-keyword-meraki-analysis-result')
+  cy.fixture('/pub-sub/cisco-keyword-meraki-frontend-result')
     .as('mock_scraper_cisco_keyword_meraki_result')
     .then((mock_scraper_cisco_keyword_meraki_result) => {
       cy.intercept(
