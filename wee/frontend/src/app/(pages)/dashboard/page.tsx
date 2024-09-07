@@ -8,6 +8,7 @@ import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
+import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 
 export default function Dashboard() {
 	return (
@@ -40,6 +41,22 @@ function DashboardPage() {
 				<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
 					Dashboard of {url}
 				</h1>
+			</div>
+
+			{/* Summary */}
+			<div className='gap-4 grid sm:grid-cols-2 lg:grid-cols-4'>
+				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div className='text-4xl flex justify-center'>
+						<FiArrowUp />
+						<span className='text-4xl'>821</span>
+					</div>
+					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+						Comment Count
+					</div>
+					<div className='font-poppins-semibold text-2xl'>
+						19 661
+					</div>
+				</div>
 			</div>
 
 			{/* Keyword tracking */}
@@ -104,6 +121,50 @@ function DashboardPage() {
 				</div>
 			</div>
 
+			{/* Facebook */}
+			<div>
+				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+					Facebook
+					<InfoPopOver
+						data-testid="popup-seo-keyword-analaysis"
+						heading="SEO Keyword Analysis"
+						content="Add description here"
+						placement="right-end"
+					/>
+				</h3>
+
+				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Comment Count
+						</h3>
+						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [19661, 19898, 20111, 20203, 20257, 20658, 21684] }]} />
+					</div>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Share Count
+						</h3>
+						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [62322, 62358, 63367, 63800, 64112, 64218] }]} />
+					</div>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Reaction Count
+						</h3>
+						<LineChart
+							areaCategories={[
+								'10 Jan 24', '10 Feb 24', '10 Mar 24', '10 Apr 24'
+							]}
+							areaSeries={[
+								{
+									name: 'Ranking',
+									data: [108645, 109762, 111231, 120009]
+								}
+							]}
+						/>
+					</div>
+				</div>
+			</div>
+
 			{/* Reviews */}
 			<div>
 				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
@@ -159,7 +220,7 @@ function DashboardPage() {
 						</h3>
 						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun']} areaSeries={[{ name: 'Ranking', data: [2.1, 1.5, 1.7, 3.5, 3] }]} />
 					</div>
-					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							NPS Reviews
 							<InfoPopOver
