@@ -4,7 +4,7 @@ import { Button, Modal, ModalHeader, ModalContent, ModalBody, useDisclosure, Mod
 import WEEInput from '../../components/Util/Input';
 import WEESelect from '../../components/Util/Select';
 import WEETable from '../../components/Util/Table';
-import { FiPlus, FiTrash, FiEdit2 } from "react-icons/fi";
+import { FiPlus, FiTrash, FiEdit2, FiRefreshCcw  } from "react-icons/fi";
 import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
@@ -238,7 +238,7 @@ export default function ScheduledScrape() {
         <h1 className="my-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-center text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Scheduled Scraping Tasks
         </h1>
-        <div className='flex justify-end mb-3'>
+        <div className="flex flex-col sm:flex-row justify-end mb-3">
           <Button
             data-testid="btn-add-scraping-task"
             startContent={<FiPlus />}
@@ -246,6 +246,15 @@ export default function ScheduledScrape() {
             className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
           >
             Add Scraping Task
+          </Button>
+          <Button
+            data-testid="btn-refresh"
+            startContent={<FiRefreshCcw  />}
+            variant="bordered"
+            onPress={loadScheduledScrapingTasks}
+            className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg border-3"
+          >
+            Refresh
           </Button>
         </div>
 
