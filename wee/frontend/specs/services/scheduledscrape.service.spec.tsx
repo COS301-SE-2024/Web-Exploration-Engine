@@ -131,4 +131,80 @@ describe('ScheduledScrapingService functions', () => {
       await expect(service.getSchedules(user_id)).rejects.toThrow('Failed to get schedules: Select error');
     });
   });
+
+  describe('updateKeywords', () => {
+    it('should update keywords successfully', async () => {
+      const id = 'schedule123';
+      const keywords = ['keyword1', 'keyword2'];
+  
+      const currentData = {
+        keywords: ['keyword1', 'keyword3'],
+        keyword_results: [
+          { keyword: 'keyword1', result: 'result1' },
+          { keyword: 'keyword3', result: 'result3' },
+        ],
+      };
+  
+      // Mock the response for select
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: [currentData],
+        error: null,
+      });
+  
+      // Mock the response for update
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: { id, keywords, keyword_results: [{ keyword: 'keyword1', result: 'result1' }] },
+        error: null,
+      });
+  
+      await service.updateKeywords(id, keywords);
+  
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.select).toHaveBeenCalledWith('keywords, keyword_results');
+      expect(supabaseClient.eq).toHaveBeenCalledWith('id', id);
+      expect(supabaseClient.update).toHaveBeenCalledWith({
+        keywords,
+        keyword_results: [{ keyword: 'keyword1', result: 'result1' }],
+      });
+    });
+
+    it('should throw an error if getting current keywords fails', async () => {
+      const id = 'schedule123';
+      const keywords = ['keyword1', 'keyword2'];
+  
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Select error' },
+      });
+  
+      await expect(service.updateKeywords(id, keywords)).rejects.toThrow('Failed to update keywords: Select error');
+    });
+
+    it('should throw an error if updating keywords fails', async () => {
+      const id = 'schedule123';
+      const keywords = ['keyword1', 'keyword2'];
+  
+      const currentData = {
+        keywords: ['keyword1', 'keyword3'],
+        keyword_results: [
+          { keyword: 'keyword1', result: 'result1' },
+          { keyword: 'keyword3', result: 'result3' },
+        ],
+      };
+  
+      // Mock the response for select
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: [currentData],
+        error: null,
+      });
+  
+      // Mock the response for update
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Update error' },
+      });
+  
+      await expect(service.updateKeywords(id, keywords)).rejects.toThrow('Failed to update keywords: Update error');
+    });
+  });
 });
