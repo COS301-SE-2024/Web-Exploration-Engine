@@ -50,6 +50,18 @@ describe('ScrapeReviewsService', () => {
     });
   });
 
+  describe('scrapeReviewsViaGoogle', () => {
+
+
+    it('should return an empty array if Google search fails', async () => {
+      page.goto.mockRejectedValue(new Error('Network Error'));
+  
+      const result = await service['scrapeReviewsViaGoogle']('example business');
+  
+      expect(result).toEqual([]);
+    });
+
+  });
 
   describe('scrapeReviewsFromHelloPeter', () => {
     it('should extract reviews from Hello Peter', async () => {
@@ -89,7 +101,7 @@ describe('ScrapeReviewsService', () => {
       expect(businessName).toBe('example business');
     });
 
-    it('should return empty string for invalid URL', () => {
+    it('should return an empty string for an invalid URL', () => {
       const businessName = service['extractBusinessNameFromUrl']('invalid-url');
       expect(businessName).toBe('');
     });
