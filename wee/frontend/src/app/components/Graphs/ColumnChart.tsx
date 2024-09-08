@@ -162,6 +162,18 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
         },
         grid: {
             borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        },
+        xaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
         }
     });
 

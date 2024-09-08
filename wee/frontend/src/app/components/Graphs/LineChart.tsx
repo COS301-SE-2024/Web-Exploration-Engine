@@ -71,7 +71,11 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
                 },
             },
             stepSize: 1,
-            reversed: true
+            reversed: true,
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
         },
         xaxis: {
             categories: areaCategories,
@@ -80,6 +84,13 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
                     colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
                 },
             },
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            },
+        },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
     });
 
@@ -166,10 +177,23 @@ export function LineChart({ areaCategories, areaSeries }: LineInterface) {
                     colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
                 },
             },
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            },
         },
         dataLabels: {
             enabled: true, // Enables data labels
         },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        }
     });
 
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
