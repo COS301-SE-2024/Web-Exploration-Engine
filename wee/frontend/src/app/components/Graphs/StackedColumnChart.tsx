@@ -9,9 +9,14 @@ import { ChartColours, DarkChartColours } from "./colours";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function StackedColumnChart({ dataLabel, dataSeries}: IChart) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -31,60 +36,45 @@ export function StackedColumnChart({ dataLabel, dataSeries}: IChart) {
                 }
             }
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             bar: {
                 horizontal: false // determines whether it is a horizontal(true) or vertical(false) chart
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         xaxis: {
             categories: dataLabel,
             axisBorder: {
                 show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             },
         },
         yaxis: {
             axisBorder: {
                 show: true,
-                color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         },
         grid: {
-            borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
     });
     
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = dataSeries;    
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            xaxis: {
-                categories: dataLabel,
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
-            },
-            yaxis: {
-                axisBorder: {
-                    show: true,
-                    color: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                }
-            },
-            grid: {
-                borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-            }
-        }));
-    }, [theme, dataLabel]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, dataLabel, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
