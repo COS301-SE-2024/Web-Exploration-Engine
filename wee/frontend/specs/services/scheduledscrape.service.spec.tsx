@@ -13,7 +13,7 @@ jest.mock('../../src/app/utils/supabase/server', () => {
     eq: jest.fn().mockReturnThis(),
     lte: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
-    
+    delete: jest.fn().mockReturnThis(),
   };
 
   // allow chaining of methods - call last method in chain to resolve
@@ -180,6 +180,73 @@ describe('ScheduledScrapingService functions', () => {
       await expect(service.updateKeywords(id, keywords)).rejects.toThrow('Failed to update keywords: Select error');
     });
 
+    it('should filter out removed keywords and update keyword results', async () => {
+      const id = 'schedule123';
+      const keywords = ['keyword1', 'keyword2'];
+  
+      const currentData = {
+        keywords: ['keyword1', 'keyword3'],
+        keyword_results: [
+          { keyword: 'keyword1', result: 'result1' },
+          { keyword: 'keyword3', result: 'result3' },
+        ],
+      };
+  
+      // Mock the response for select
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: [currentData],
+        error: null,
+      });
+  
+      // Mock the response for update
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: { id, keywords, keyword_results: [{ keyword: 'keyword1', result: 'result1' }] },
+        error: null,
+      });
+  
+      await service.updateKeywords(id, keywords);
+  
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.select).toHaveBeenCalledWith('keywords, keyword_results');
+      expect(supabaseClient.eq).toHaveBeenCalledWith('id', id);
+      expect(supabaseClient.update).toHaveBeenCalledWith({
+        keywords,
+        keyword_results: [{ keyword: 'keyword1', result: 'result1' }],
+      });
+    });
+
+    it('should set keyword_results to an empty array if there are not current key words', async () => {
+      const id = 'schedule123';
+      const keywords = ['keyword1', 'keyword2'];
+  
+      const currentData = {
+        keywords: [],
+        keyword_results: [],
+      };
+  
+      // Mock the response for select
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: [currentData],
+        error: null,
+      });
+  
+      // Mock the response for update
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: { id, keywords, keyword_results: [] },
+        error: null,
+      });
+  
+      await service.updateKeywords(id, keywords);
+  
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.select).toHaveBeenCalledWith('keywords, keyword_results');
+      expect(supabaseClient.eq).toHaveBeenCalledWith('id', id);
+      expect(supabaseClient.update).toHaveBeenCalledWith({
+        keywords,
+        keyword_results: [],
+      });
+    });
+
     it('should throw an error if updating keywords fails', async () => {
       const id = 'schedule123';
       const keywords = ['keyword1', 'keyword2'];
@@ -205,6 +272,34 @@ describe('ScheduledScrapingService functions', () => {
       });
   
       await expect(service.updateKeywords(id, keywords)).rejects.toThrow('Failed to update keywords: Update error');
+    });
+  });
+
+  describe('deleteSchedule', () => {
+    it('should delete a schedule successfully', async () => {
+      const id = 'schedule123';
+  
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: { id },
+        error: null,
+      });
+  
+      await service.deleteSchedule(id);
+  
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.delete).toHaveBeenCalledWith();
+      expect(supabaseClient.eq).toHaveBeenCalledWith('id', id);
+    });
+
+    it('should throw an error if deleting schedule fails', async () => {
+      const id = 'schedule123';
+  
+      supabaseClient.eq.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'Delete error' },
+      });
+  
+      await expect(service.deleteSchedule(id)).rejects.toThrow('Failed to delete schedule: Delete error');
     });
   });
 });
