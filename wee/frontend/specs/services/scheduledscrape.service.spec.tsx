@@ -1,51 +1,68 @@
-import { createClient } from '../../src/app/utils/supabase/server';
+import { createClient } from '../../src/app/utils/supabase/server'; // Adjust paths as necessary
 import * as service from '../../src/app/services/ScheduledScrapingService';
+import { ScheduleTask } from '../../src/app/models/ScheduleModels';
+import { error } from 'console';
 
 
-jest.mock('../../src/app/utils/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+jest.mock('../../src/app/utils/supabase/server', () => {
+  const mockSupabaseClient = {
+    from: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    single: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    lte: jest.fn().mockReturnThis(),
+  };
+
+  // allow chaining of methods - call last method in chain to resolve
+
+  return {
+    createClient: jest.fn().mockReturnValue(mockSupabaseClient),
+    mockSupabaseClient, // Expose the mock client for testing
+  };
+});
 
 jest.mock('next/headers', () => ({
   cookies: jest.fn(),
 }));
 
 
-const mockSupabaseClient = {
-  auth: {
-    signInWithPassword: jest.fn(),
-    signInWithOAuth: jest.fn(),
-    signUp: jest.fn(),
-    getUser: jest.fn(),
-    resetPasswordForEmail: jest.fn(),
-    updateUser: jest.fn(),
-  },
-  from: jest.fn().mockReturnThis(), // Mock from to return the same object (allowing chaining)
-  insert: jest.fn(), // Mock insert to be chained after from
-  select: jest.fn().mockReturnThis(), // Mock select for other tests
-  eq: jest.fn().mockReturnThis(), // Mock eq to be used in chaining
-  delete: jest.fn().mockReturnThis(), // Mock delete for delete tests
-};
-
-(createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
 describe('ScheduledScrapingService functions', () => {
+
+  let supabaseClient: any;
+
+  beforeEach(() => {
+    supabaseClient = createClient();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
   describe('createScheduleTask', () => {
     it('should create a new schedule successfully', async () => {
       const scheduleData = {
-        id: 'schedule123',
+        user_id: 'user123',
         url: 'https://example.com',
         next_scrape: '2024-08-24T00:00:00.000Z',
         result_history: [],
         frequency: 'daily',
-      };
+        keywords: ['keyword1', 'keyword2'],
+        keyword_results: [],
+      } as ScheduleTask;
 
-      mockSupabaseClient.insert.mockResolvedValueOnce({ data: [scheduleData], error: null });
+      supabaseClient.insert.mockResolvedValueOnce({ data: [scheduleData], error: null });
 
       const result = await service.createScheduleTask(scheduleData);
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
-      expect(mockSupabaseClient.insert).toHaveBeenCalledWith([scheduleData]);
+      expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
+      expect(supabaseClient.insert).toHaveBeenCalledWith([scheduleData]);
       expect(result).toEqual([scheduleData]);
     });
 
@@ -58,10 +75,9 @@ describe('ScheduledScrapingService functions', () => {
         frequency: 'daily',
       };
 
-      mockSupabaseClient.insert.mockResolvedValueOnce({ data: null, error: 'Insert error' });
+      supabaseClient.insert.mockResolvedValueOnce({ data: null, error: {message: 'Insert error'} });
 
       await expect(service.createScheduleTask(scheduleData)).rejects.toThrow('Failed to create schedule: Insert error');
     });
   });
 });
-
