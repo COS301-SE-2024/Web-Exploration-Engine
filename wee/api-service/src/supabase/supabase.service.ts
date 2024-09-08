@@ -8,34 +8,34 @@ export class SupabaseService {
   serviceKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
   private readonly supabaseClient = createClient(this.supabaseURL, this.serviceKey);
 
-  async createSchedule(scheduleData: ScheduleTask) {
-    const { user_id, url, frequency, next_scrape } = scheduleData;
+  // async createSchedule(scheduleData: ScheduleTask) {
+  //   const { user_id, url, frequency, next_scrape } = scheduleData;
 
-    let nextScrape: Date;
+  //   let nextScrape: Date;
 
-    if (next_scrape) {
-      nextScrape = new Date(next_scrape); // may have to fix this - time zone issue
-    } else {
-      nextScrape = new Date();
-    }
+  //   if (next_scrape) {
+  //     nextScrape = new Date(next_scrape); // may have to fix this - time zone issue
+  //   } else {
+  //     nextScrape = new Date();
+  //   }
 
-    const { data, error } = await this.supabaseClient
-      .from('scheduled_tasks')
-      .insert([
-        { 
-          user_id, 
-          url, 
-          frequency, 
-          next_scrape: nextScrape.toISOString(),
-          result_history: [] 
-        },
-      ]);
+  //   const { data, error } = await this.supabaseClient
+  //     .from('scheduled_tasks')
+  //     .insert([
+  //       { 
+  //         user_id, 
+  //         url, 
+  //         frequency, 
+  //         next_scrape: nextScrape.toISOString(),
+  //         result_history: [] 
+  //       },
+  //     ]);
 
-    if (error) {
-      throw new Error(`Failed to create schedule: ${error}`);
-    }
-    return data;
-  }
+  //   if (error) {
+  //     throw new Error(`Failed to create schedule: ${error}`);
+  //   }
+  //   return data;
+  // }
 
   async updateSchedule(scheduleData: UpdateScheduleTask) {
     const { id, result_history, newResults } = scheduleData;
@@ -80,6 +80,7 @@ export class SupabaseService {
       // if the keyword result object exists, update the arrays
       keywordResult.timestampArr.push(timestamp);
       keywordResult.rankArr.push(newRank);
+      // push each top ten result as a separate array
       keywordResult.topTenArr.push(newTopTen);
     }
     
@@ -95,7 +96,6 @@ export class SupabaseService {
     }
     return data;
   }
-
 
   async getDueSchedules() {
     console.log('Getting due schedules...');

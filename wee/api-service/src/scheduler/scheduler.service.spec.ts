@@ -53,19 +53,6 @@ describe('SchedulerService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createSchedule', () => {
-    it('should call SupabaseService.createSchedule with the correct parameters', async () => {
-      const schedule: ScheduleTask = {
-        user_id: '1',
-        url: 'http://example.com',
-        frequency: 'daily',
-      };
-      await service.createSchedule(schedule);
-      jest.spyOn(supabaseService, 'createSchedule').mockResolvedValue(undefined);
-      expect(supabaseService.createSchedule).toHaveBeenCalledWith(schedule);
-    });
-  });
-
   describe('checkSchedules', () => {
     it('should skip execution if another job is running', async () => {
       service.isRunning = true;
@@ -84,6 +71,8 @@ describe('SchedulerService', () => {
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
         result_history: [],
+        keywords: [],
+        keyword_results: [],
        }];
       jest.spyOn(supabaseService, 'getDueSchedules').mockResolvedValue(dueSchedules);
       jest.spyOn(pubsubService, 'publishMessage').mockResolvedValue(undefined);
@@ -169,6 +158,8 @@ describe('SchedulerService', () => {
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
         result_history: [],
+        keywords: [],
+        keyword_results: [],
       };
       const updateSpy = jest.spyOn(supabaseService, 'updateSchedule').mockResolvedValue(undefined);
 
