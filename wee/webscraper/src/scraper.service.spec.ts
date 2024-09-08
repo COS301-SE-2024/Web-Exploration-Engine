@@ -14,6 +14,7 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from "./sentiment-analysis/sentiment-analysis.service";
 import { PubSubService } from "./pub-sub/pub_sub.service";
 import { ProxyService } from "./proxy/proxy.service";
+import { ScrapeReviewsService } from "./scrape-reviews/scrape-reviews.service";
 import * as puppeteer from 'puppeteer';
 
 jest.mock('puppeteer');
@@ -37,7 +38,7 @@ describe('ScraperService', () => {
     let mockScrapeAddressService: ScrapeAddressService;
     let mockSeoAnalysisService: SeoAnalysisService;
     let mockSentimentAnalysisService: SentimentAnalysisService;
-
+    let mockReviewService: ScrapeReviewsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -144,6 +145,12 @@ describe('ScraperService', () => {
                         getProxy: jest.fn(),
                     },
                 },
+                {
+                    provide: ScrapeReviewsService,
+                    useValue: {
+                        scrapeReviews: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 
@@ -163,7 +170,7 @@ describe('ScraperService', () => {
         mockScrapeAddressService = module.get<ScrapeAddressService>(ScrapeAddressService);
         mockSeoAnalysisService = module.get<SeoAnalysisService>(SeoAnalysisService);
         mockSentimentAnalysisService = module.get<SentimentAnalysisService>(SentimentAnalysisService);
-
+        mockReviewService = module.get<ScrapeReviewsService>(ScrapeReviewsService);
 
         mockMessage = {
             data: { toString: jest.fn() },
@@ -253,6 +260,7 @@ describe('ScraperService', () => {
             screenshot: '',
             seoAnalysis: null,
             semtimentClassification: null,
+            reviews:[],
           };
           const cachedDataProcessing = { status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` };
           jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null); // Cache miss
@@ -298,6 +306,7 @@ describe('ScraperService', () => {
                 screenshot: '',
                 seoAnalysis: null,
                 semtimentClassification: null,
+                reviews:[],
              };
     
             jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
@@ -531,6 +540,25 @@ describe('ScraperService', () => {
             const type = 'unknownType';
     
             await expect(service.scrapeWebsite(url, type)).rejects.toThrowError('Unknown scraping type: unknownType');
+        });
+        it('should call scrape method with type "scrape-reviews"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-reviews';
+            const reviewsResult = [
+                "Rating: 4.5",
+                "Number of reviews: 100",
+                "Trustindex rating: 54",
+                "NPS: 80",
+                "Recommendation status: Highly recommended",
+                "Review breakdown: 50; 30; 20"
+            ];
+    
+            jest.spyOn(service, 'scrapeReviews').mockResolvedValue(reviewsResult);
+    
+            const result = await service.scrapeWebsite(url, type);
+    
+            expect(result).toEqual(reviewsResult);
+            expect(service.scrapeReviews).toHaveBeenCalledWith(url);
         });
     });
 
@@ -1031,6 +1059,43 @@ describe('ScraperService', () => {
             expect(mockScrapeAddressService.scrapeAddress).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
         });
     });
+
+    describe('scrapeReviews', () => {
+        it('should scrape reviews and return the result', async () => {
+            const url = 'http://example.com';
+            const robotsResult = {
+                baseUrl: url,
+                allowedPaths: [],
+                disallowedPaths: [],
+                isUrlScrapable: true,
+                isBaseUrlAllowed: true,
+            };
+    
+            const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn(),
+                authenticate: jest.fn(),
+                close: jest.fn(),
+            } as unknown as puppeteer.Page;
+    
+            const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+            } as unknown as puppeteer.Browser;
+    
+            // Mock environment variables
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+    
+            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            const reviewsResult = { reviews: [] };
+            jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
+    
+            const result = await service.scrapeReviews(url);
+    
+        });
+    });
+    
 
 
 
