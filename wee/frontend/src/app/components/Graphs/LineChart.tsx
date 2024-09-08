@@ -18,9 +18,14 @@ export interface LineSeries {
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterface) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -42,18 +47,18 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
         stroke: {
             curve: 'smooth'
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             radar: {
                 polygons: {
 
-                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
                 }
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         yaxis: {
             min: 1,
@@ -72,42 +77,27 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
             categories: areaCategories,
             labels: {
                 style: {
-                    colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
                 },
             },
         },
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = areaSeries.map((seriesItem) => ({
         ...seriesItem,
         data: seriesItem.data.map(value => value > 10 ? 11 : value)
     }))
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {
-                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    }
-                }
-            },
-            xaxis: {
-                categories: areaCategories,
-                labels: {
-                    style: {
-                        colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
-                    },
-                },
-            },
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
@@ -127,9 +117,14 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
 }
 
 export function LineChart({ areaCategories, areaSeries }: LineInterface) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -151,24 +146,24 @@ export function LineChart({ areaCategories, areaSeries }: LineInterface) {
         stroke: {
             curve: 'smooth'
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             radar: {
                 polygons: {
 
-                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
                 }
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         xaxis: {
             categories: areaCategories,
             labels: {
                 style: {
-                    colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
                 },
             },
         },
@@ -177,33 +172,18 @@ export function LineChart({ areaCategories, areaSeries }: LineInterface) {
         },
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = areaSeries;
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {
-                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    }
-                }
-            },
-            xaxis: {
-                categories: areaCategories,
-                labels: {
-                    style: {
-                        colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
-                    },
-                },
-            },
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
