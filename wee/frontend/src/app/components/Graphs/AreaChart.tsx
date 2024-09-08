@@ -18,9 +18,14 @@ export interface AreaSeries {
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function AreaChart({ areaCategories, areaSeries }: AreaInterface) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -42,18 +47,18 @@ export function AreaChart({ areaCategories, areaSeries }: AreaInterface) {
         stroke: {
             curve: 'smooth'
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             radar: {
                 polygons: {
                     
-                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
                 }
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         yaxis: {
             stepSize: 20
@@ -62,39 +67,24 @@ export function AreaChart({ areaCategories, areaSeries }: AreaInterface) {
             categories: areaCategories,
             labels: {
                 style: {
-                    colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
                 },                
             },
-        },       
+        },    
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = areaSeries;      
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {                        
-                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
-                    }
-                }
-            },
-            xaxis: {
-                categories: areaCategories,
-                labels: {
-                    style: {
-                        colors: theme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
-                    },                    
-                },
-            },   
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
