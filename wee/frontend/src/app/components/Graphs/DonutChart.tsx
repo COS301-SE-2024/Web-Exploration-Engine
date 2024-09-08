@@ -12,7 +12,7 @@ interface IChartExtended extends IChart {
 }
 
 export function DonutChart({ dataLabel, dataSeries, legendPosition }: IChartExtended) {
-    const { theme, resolvedTheme } = useTheme();
+    const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
