@@ -24,6 +24,7 @@ describe('SchedulerService', () => {
             getDueSchedules: jest.fn(),
             updateNextScrapeTime: jest.fn(),
             updateSchedule: jest.fn(),
+            updateKeywordResult: jest.fn(),
           },
         },
         {
@@ -101,9 +102,8 @@ describe('SchedulerService', () => {
     });
   });
 
-  describe('pollApiEndpoint', () => {
+  describe('pollForResults', () => {
     it('should poll the API endpoint until results are received or max retries are reached', async () => {
-      const url = 'http://example.com';
       const schedule: ScheduleTaskResponse = { 
         id: '1', 
         user_id: '1', 
@@ -113,40 +113,55 @@ describe('SchedulerService', () => {
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
         result_history: [],
+        keywords: [],
+        keyword_results: [],
       };
+
+      const mockEndPoints = ['http://api.com/1', 'http://api.com/2'];
 
       const handleApiResultsSpy = jest.spyOn(service, 'handleApiResults');
 
       const mockResponse = { data: { status: 'completed', result: 'result' } };
       (axios.get as jest.Mock).mockResolvedValue(mockResponse);
 
-      await service.pollApiEndpoint(url, schedule);
+      await service.pollForResults(mockEndPoints, schedule);
 
       expect(axios.get).toHaveBeenCalled();
       expect(handleApiResultsSpy).toHaveBeenCalledWith('result', schedule);
     }, 10000);
 
-  //   it('should retry polling on failure', async () => {
-  //     const url = 'http://example.com';
-  //     const schedule: ScheduleTaskResponse = { 
-  //       id: '1', 
-  //       user_id: '1', 
-  //       url: 'http://example.com', 
-  //       frequency: 'daily', 
-  //       next_scrape: '2021-01-01T00:00:00.000Z', 
-  //       updated_at: '2021-01-01T00:00:00.000Z', 
-  //       created_at: '2021-01-01T00:00:00.000Z', 
-  //       result_history: [],
-  //     };
-  //     (axios.get as jest.Mock).mockRejectedValue(new Error('API error'));
-
-  //     await service.pollApiEndpoint(url, schedule);
-
-  //     expect(axios.get).toHaveBeenCalledTimes(expect.any(Number));
-  //   }, 10000);
+    it('should retry polling on failure', async () => {
+      const schedule: ScheduleTaskResponse = { 
+        id: '1', 
+        user_id: '1', 
+        url: 'http://example.com', 
+        frequency: 'daily', 
+        next_scrape: '2021-01-01T00:00:00.000Z', 
+        updated_at: '2021-01-01T00:00:00.000Z', 
+        created_at: '2021-01-01T00:00:00.000Z', 
+        result_history: [],
+        keywords: [],
+        keyword_results: [],
+      };
+    
+      const mockEndPoints = ['http://api.com/1', 'http://api.com/2'];
+      const maxRetries = 20; // Set a specific number of retries to control test duration
+      
+      jest.spyOn(service, 'delay').mockImplementation(() => Promise.resolve()); // Mock delay to speed up the test
+    
+      // Mock axios.get to always throw an error to simulate failure
+      (axios.get as jest.Mock).mockRejectedValue(new Error('API error'));
+    
+      // Call the pollForResults method
+      await service.pollForResults(mockEndPoints, schedule);
+    
+      // Verify that axios.get was called the expected number of times (maxRetries * endpoints)
+      expect(axios.get).toHaveBeenCalledTimes(mockEndPoints.length * maxRetries);
+    }, 10000);
   });
 
-  describe('handleApiResults', () => {
+
+  describe('handleScrapeResults', () => {
     it('should update schedule with the new results', async () => {
       const results = 'result';
       const schedule: ScheduleTaskResponse = { 
@@ -163,12 +178,46 @@ describe('SchedulerService', () => {
       };
       const updateSpy = jest.spyOn(supabaseService, 'updateSchedule').mockResolvedValue(undefined);
 
-      await service.handleApiResults(results, schedule);
+      await service.handleScrapeResults(results, schedule);
 
       expect(updateSpy).toHaveBeenCalledWith({
         id: '1',
         result_history: expect.any(Array),
         newResults: results,
+      });
+    });
+  });
+
+  describe('handleKeywordResults', () => {
+    it('should update schedule with the new results', async () => {
+      const results = {
+        keyword: 'keyword',
+        timestampArr: ['2021-01-01T00:00:00.000Z'],
+        ranking: '1',
+        topTen: ['result1', 'result2'],
+      };
+      const schedule: ScheduleTaskResponse = { 
+        id: '1', 
+        user_id: '1', 
+        url: 'http://example.com', 
+        frequency: 'daily', 
+        next_scrape: '2021-01-01T00:00:00.000Z', 
+        updated_at: '2021-01-01T00:00:00.000Z', 
+        created_at: '2021-01-01T00:00:00.000Z', 
+        result_history: [],
+        keywords: [],
+        keyword_results: [],
+      };
+      const updateSpy = jest.spyOn(supabaseService, 'updateKeywordResult').mockResolvedValue(undefined);
+
+      await service.handleKeywordResults(results, schedule);
+
+      expect(updateSpy).toHaveBeenCalledWith({
+        id: schedule.id,
+        keyword: results.keyword,
+        results: schedule.keyword_results,
+        newRank: results.ranking,
+        newTopTen: results.topTen, 
       });
     });
   });

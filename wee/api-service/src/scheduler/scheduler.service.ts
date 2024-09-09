@@ -21,17 +21,6 @@ export class SchedulerService {
     cron.schedule('* * * * *', () => this.checkSchedules());
   }
 
-  async createSchedule(schedule: ScheduleTask) {
-    // Create a new schedule in Supabase
-    await this.supabaseService.createSchedule(schedule);
-  }
-
-  // async getSchedule(id: string) {
-  //   // Get a schedule by ID from Supabase
-  //   return await this.supabaseService.getScheduleById(id);
-  // }
-
-
   async checkSchedules() {
     if (this.isRunning) {
       console.log('Job already running, skipping...');
