@@ -48,11 +48,35 @@ describe('ScrapeReviewsService', () => {
       const result = await service.scrapeReviews('invalid-url');
       expect(result).toEqual([]);
     });
+    it('should log business name and review count on successful review scraping', async () => {
+        const consoleLogSpy = jest.spyOn(console, 'log');
+        const scrapeReviewsViaGoogleSpy = jest
+          .spyOn(service as any, 'scrapeReviewsViaGoogle')
+          .mockResolvedValue(['Review 1', 'Review 2']);
+      
+        await service.scrapeReviews('https://example-business.com');
+      
+        expect(consoleLogSpy).toHaveBeenCalledWith('Starting review scraping for URL: https://example-business.com');
+        expect(consoleLogSpy).toHaveBeenCalledWith('Extracted business name: example business');
+        expect(scrapeReviewsViaGoogleSpy).toHaveBeenCalledWith('example business');
+      });
+      
   });
 
   describe('scrapeReviewsViaGoogle', () => {
 
-
+    it('should extract reviews via Google search and scrape Hello Peter reviews', async () => {
+        page.evaluate.mockResolvedValue(['https://www.hellopeter.com/review-page']);
+        const scrapeReviewsFromHelloPeterSpy = jest
+          .spyOn(service as any, 'scrapeReviewsFromHelloPeter')
+          .mockResolvedValue(['Rating: 4.5', 'Number of reviews: 100']);
+      
+        const result = await service['scrapeReviewsViaGoogle']('example business');
+      
+        expect(result).toEqual(['Rating: 4.5', 'Number of reviews: 100']);
+        expect(scrapeReviewsFromHelloPeterSpy).toHaveBeenCalledWith(page);
+      });
+      
     it('should return an empty array if Google search fails', async () => {
       page.goto.mockRejectedValue(new Error('Network Error'));
   
@@ -60,6 +84,23 @@ describe('ScrapeReviewsService', () => {
   
       expect(result).toEqual([]);
     });
+    it('should return an empty array if no review URLs are found in Google search', async () => {
+        page.evaluate.mockResolvedValue([]);
+        const result = await service['scrapeReviewsViaGoogle']('example business');
+        expect(result).toEqual([]);
+      });
+      it('should handle errors when scraping individual review URLs', async () => {
+        page.evaluate.mockResolvedValue(['https://www.hellopeter.com/review-page']);
+        const scrapeReviewsFromHelloPeterSpy = jest
+          .spyOn(service as any, 'scrapeReviewsFromHelloPeter')
+          .mockRejectedValue(new Error('Page error'));
+      
+        const result = await service['scrapeReviewsViaGoogle']('example business');
+      
+        expect(result).toEqual([]);
+        expect(scrapeReviewsFromHelloPeterSpy).toHaveBeenCalledWith(page);
+      });
+      
 
   });
 
@@ -93,6 +134,50 @@ describe('ScrapeReviewsService', () => {
         'Failed to scrape reviews from Hello Peter: Failed to load page'
       );
     });
+    it('should handle missing review elements when scraping Hello Peter', async () => {
+        page.evaluate.mockResolvedValue({
+          rating: '',
+          reviewCount: '',
+          trustindexRating: '',
+          nps: '',
+          recommendationStatus: '',
+          reviewNumbers: []
+        });
+      
+        const reviews = await service['scrapeReviewsFromHelloPeter'](page);
+      
+        expect(reviews).toEqual([
+          'Rating: ',
+          'Number of reviews: ',
+          'Trustindex rating: ',
+          'NPS: ',
+          'Recommendation status: ',
+          'Review breakdown: '
+        ]);
+      });
+      it('should return default values if Hello Peter HTML structure is invalid', async () => {
+        page.evaluate.mockResolvedValue({
+          rating: 'No rating found',
+          reviewCount: 'No review count found',
+          trustindexRating: 'No Trustindex rating found',
+          nps: 'No NPS found',
+          recommendationStatus: 'No recommendation status found',
+          reviewNumbers: []
+        });
+      
+        const reviews = await service['scrapeReviewsFromHelloPeter'](page);
+      
+        expect(reviews).toEqual([
+          'Rating: No rating found',
+          'Number of reviews: No review count found',
+          'Trustindex rating: No Trustindex rating found',
+          'NPS: No NPS found',
+          'Recommendation status: No recommendation status found',
+          'Review breakdown: '
+        ]);
+      });
+      
+      
   });
 
   describe('extractBusinessNameFromUrl', () => {
