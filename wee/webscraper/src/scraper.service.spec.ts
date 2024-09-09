@@ -181,6 +181,8 @@ describe('ScraperService', () => {
                     provide: ScrapeReviewsService,
                     useValue: {
                         scrapeReviews: jest.fn(),
+                        scrapeReviewsFromHelloPeter: jest.fn(),
+                        scrapeReviewsViaGoogle: jest.fn(),
                     },
                 },
             ],
@@ -1295,41 +1297,58 @@ describe('ScraperService', () => {
       
         });
       });
-      
+    
       describe('scrapeReviews', () => {
-        it('should scrape reviews and return the result', async () => {
-            const url = 'http://example.com';
-            const robotsResult = {
-                baseUrl: url,
-                allowedPaths: [],
-                disallowedPaths: [],
-                isUrlScrapable: true,
-                isBaseUrlAllowed: true,
-            };
-
-            const mockPage = {
-                goto: jest.fn(),
-                evaluate: jest.fn(),
-                authenticate: jest.fn(),
-                close: jest.fn(),
-            } as unknown as puppeteer.Page;
-
-            const mockBrowser = {
-                newPage: jest.fn().mockResolvedValue(mockPage),
-                close: jest.fn(),
-            } as unknown as puppeteer.Browser;
-
-            // Mock environment variables
-            process.env.PROXY_USERNAME = 'username';
-            process.env.PROXY_PASSWORD = 'password';
-
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
-            const reviewsResult = { reviews: [] };
-            jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
-
-            const result = await service.scrapeReviews(url);
-
+        it('should scrape reviews and return the result in the expected format', async () => {
+          const url = 'http://example.com';
+      
+          const expectedReviewsResult = [
+            `Rating: 4.5`,
+            `Number of reviews: 120`,
+            `Trustindex rating: 4.2`,
+            `NPS: 60`,
+            `Recommendation status: Unlikely`,
+            `Review breakdown: 50 excellent; 30 good; 20 average; 10 poor`
+          ];
+      
+          const mockPage = {
+            goto: jest.fn(),
+            evaluate: jest.fn().mockResolvedValue({
+              rating: '4.5',
+              reviewCount: '120',
+              trustindexRating: '4.2',
+              nps: '60',
+              recommendationStatus: 'Unlikely',
+              reviewNumbers: ['50', '30', '20', '10']
+            }),
+            authenticate: jest.fn(),
+            close: jest.fn(),
+          } as unknown as puppeteer.Page;
+      
+          const mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn(),
+          } as unknown as puppeteer.Browser;
+      
+          process.env.PROXY_USERNAME = 'username';
+          process.env.PROXY_PASSWORD = 'password';
+      
+          jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+          jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue({
+            baseUrl: url,
+            allowedPaths: [],
+            disallowedPaths: [],
+            isUrlScrapable: true,
+            isBaseUrlAllowed: true,
+          });
+      
+          jest.spyOn(service, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
+      
+          const result = await service.scrapeReviews(url);
+      
+          expect(result).toEqual(expectedReviewsResult);
         });
-    });
+      });
+      
     
 });
