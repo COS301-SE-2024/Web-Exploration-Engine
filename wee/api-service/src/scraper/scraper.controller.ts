@@ -737,7 +737,7 @@ export class ScraperController {
         );
       }
     }
-
+  }
   @ReviewsOperation
   @ScraperQuery
   @ScraperResponse200
@@ -776,7 +776,6 @@ export class ScraperController {
         throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
-  }
   }
   
 }
