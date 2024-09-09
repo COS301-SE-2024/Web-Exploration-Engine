@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ScrapeAddressService } from './scrape-address.service';
 import { RobotsResponse } from '../models/ServiceModels';
@@ -177,7 +178,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser); 
+    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
 
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
   });
@@ -272,7 +273,7 @@ describe('ScrapeAddressService', () => {
       '456-A Elm Street, Springfield, IL',
       '101 Maple Boulevard, Springfield'
     ];
-    
+
     const mockPage = {
       goto: jest.fn(),
       evaluate: jest.fn().mockResolvedValue(mockAddresses),
@@ -364,7 +365,7 @@ describe('ScrapeAddressService', () => {
       authenticate: jest.fn(),
       close: jest.fn(),
     } as unknown as puppeteer.Page;
-    
+
     const browser = {
       newPage: jest.fn().mockResolvedValue(mockPage),
       close: jest.fn(),

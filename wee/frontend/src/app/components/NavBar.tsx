@@ -2,25 +2,16 @@
 import React, { useEffect } from "react";
 import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
-import { getSupabase } from "../utils/supabase_service_client";
 import { useRouter } from 'next/navigation';
 import { useUserContext } from "../context/UserContext";
+import { createClient } from "../utils/supabase/client";
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const { user, setUser } = useUserContext();
-    const supabase = getSupabase();
-    
+    const supabase = createClient();    
 
     const router = useRouter();
-
-    const menuItems = [
-      "Home",
-      "Help"
-      // "Profile",
-      // "Analytics",
-      // "Log Out",
-    ];
 
     useEffect(() => {
       const fetchUserData = async () => {
@@ -33,7 +24,7 @@ export default function NavBar() {
               setUser({
                   uuid: user.id,
                   emailVerified: user?.email_confirmed_at ? true : false,
-                  name: user?.user_metadata?.name,
+                  name: user?.user_metadata?.name ? user?.user_metadata?.name : user?.user_metadata?.fullname,
               });
           } catch (error) {
               console.error("Error fetching user data:", error);
@@ -58,6 +49,7 @@ export default function NavBar() {
   }
 
   const handleHome = () => {
+    console.log('Handle home');
     router.push('/');
   }
 
@@ -75,6 +67,7 @@ export default function NavBar() {
     
   return (
       <Navbar
+        data-testid="header"
         isBordered
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
@@ -159,18 +152,34 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
+        <NavbarMenuItem>
+          <Link 
+            onClick={() => {handleHome(); setIsMenuOpen(false)}} 
+            className="w-full"
+            color="foreground"                
+            size="lg"
+          >
+            Home
+          </Link>
+          <Link 
+            onClick={() => {handleHelp(); setIsMenuOpen(false)}} 
+            className="w-full"
+            color="foreground"                
+            size="lg"
+          >
+            Help
+          </Link>
+          {user &&           
+            <Link 
+              onClick={() => {handleSavedReports(); setIsMenuOpen(false)}} 
               className="w-full"
               color="foreground"                
-              href={item == 'Home' ? `/` : `/${item.toLowerCase()}`}
               size="lg"
             >
-              {item}
+                Saved Reports
             </Link>
-          </NavbarMenuItem>
-        ))}
+          }
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   )

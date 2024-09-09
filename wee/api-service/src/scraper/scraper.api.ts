@@ -16,6 +16,8 @@ export const ContactInfoOperation = ApiOperation({ summary: 'Publish task to scr
 export const AddressesOperation = ApiOperation({ summary: 'Publish task to scrape addresses from the url provided' });
 export const SeoAnalysisOperation = ApiOperation({ summary: 'Publish task to perform SEO analysis on the url provided' });
 export const ReviewsOperation = ApiOperation({ summary: 'Publish task to scrape reviews on the url provided' });
+export const NewsOperation =ApiOperation({ summary: 'Publish task to perform News extraction on the url provided' });
+export const socialAnalyticsOperation = ApiOperation({ summary: 'Publish task to perform social medial analytics on the url provided' });
 // Query descriptions
 export const ScraperQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
 
@@ -374,8 +376,8 @@ export const ScraperResponse500 = ApiResponse({ status: 500, description: 'Inter
 //   schema: {
 //     type: 'string',
 //     enum: [
-//       'scrape', 
-//       'read-robots', 
+//       'scrape',
+//       'read-robots',
 //       'scrape-metadata',
 //       'scrape-status',
 //       'classify-industry',
@@ -398,6 +400,8 @@ export const ScraperResponse500 = ApiResponse({ status: 500, description: 'Inter
 // });
 export const GetJobStatusQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
 export const GetJobStatusTypeQuery = ApiQuery({ name: 'type', required: true, description: 'Type of the job' });
+export const GetJobStatusKeywordQuery = ApiQuery({ name: 'keyword', required: true, description: 'The keyword to analyse' });
+
 
 export const GetJobStatusOperation = ApiOperation({ summary: 'Get the status of a job' });
 

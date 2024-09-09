@@ -31,6 +31,8 @@ services:
       timeout: 10s
     depends_on:
       - redis-cache
+    volumes:
+      - /home/techodyssey/logs/webscraper:/logs
 
   api-service:
     build:
