@@ -21,8 +21,8 @@ import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
+import {NewsScraperService} from './scrape-news/scrape-news.service';
 import { ShareCountService } from './share-count-analytics/share-count-analytics.service';
-
 // Models
 import {
   ErrorResponse,
@@ -54,6 +54,8 @@ export class ScraperService implements OnModuleInit {
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
+
+    private readonly newsScraperService: NewsScraperService,
     private readonly shareCountService: ShareCountService,
   ) {}
 
@@ -88,6 +90,8 @@ export class ScraperService implements OnModuleInit {
         return this.seoAnalysis(data.url);
       case 'keyword-analysis':
         return this.keywordAnalysis(data.url, data.keyword);
+      case 'scrape-news':
+        return this.scrapeNews(data.url);
       case 'shareCount':
         return this.getShareCount(data.url);
       default:
@@ -130,6 +134,7 @@ export class ScraperService implements OnModuleInit {
       screenshot:'' as string | ErrorResponse,
       seoAnalysis: null as any,
       sentiment: null as SentimentClassification | null,
+      scrapeNews: [],
       shareCountdata: null as any,
       time: 0,
     } as ScrapeResult;
@@ -165,6 +170,8 @@ export class ScraperService implements OnModuleInit {
     const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
     const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
 
+
+
     const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
 
     if ('errorStatus' in screenshot) {
@@ -198,7 +205,11 @@ export class ScraperService implements OnModuleInit {
     const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
     const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
-    const [industryClassification, logo, images, sentimentAnalysis] = await Promise.all([industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise]);
+    const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
+
+    const [industryClassification, logo, images, sentimentAnalysis, newsScraping] = await Promise.all([
+      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise
+  ]);
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
@@ -209,6 +220,8 @@ export class ScraperService implements OnModuleInit {
 
     data.sentiment = sentimentAnalysis;
 
+
+    data.scrapeNews = newsScraping;
     //shareCount data or results
      data.shareCountdata = this.shareCountService.getShareCount(url);
 
@@ -684,5 +697,45 @@ export class ScraperService implements OnModuleInit {
     }
     return null;
   }
+  async scrapeNews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    try {
+      const newsData = await this.newsScraperService.fetchNewsArticles(url);
+      return newsData;
+    } catch (error) {
+      logger.error(`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Error scraping news: ${error instanceof Error ? error.message : String(error)}`,
+      } as ErrorResponse;
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
+  }
+
+
 }
 

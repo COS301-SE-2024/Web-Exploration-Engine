@@ -30,12 +30,23 @@ describe('scraping functionality', () => {
         ).as('mock_scraper_github_done');
       });
 
-    cy.fixture('/pub-sub/github-waiting')
+    cy.fixture('/pub-sub/github-status')
       .as('mock_scraper_github')
       .then((mock_scraper_github) => {
         cy.intercept(
           'GET',
           'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
+          mock_scraper_github
+        ).as('mock_scraper_github_check_job');
+      });
+
+
+    cy.fixture('/pub-sub/github-waiting')
+      .as('mock_scraper_github')
+      .then((mock_scraper_github) => {
+        cy.intercept(
+          'GET',
+          'http://localhost:3002/api/scraper/status?type=scrape&url=https%3A%2F%2Fmock.test.github.com',
           mock_scraper_github
         ).as('mock_scraper_github_check_job');
       });
@@ -49,5 +60,9 @@ describe('scraping functionality', () => {
 
   });
  
+  it('Scrape 2 websites - Github, Cisco' , () => {
+    cy.scrapeGithub()
+    cy.scrapeCisco()
+  });
 
 }); 

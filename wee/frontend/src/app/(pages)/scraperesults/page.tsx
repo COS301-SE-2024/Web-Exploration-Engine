@@ -27,6 +27,7 @@ import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scrape
 import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
 import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
 import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
+import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-result.json'
 
 function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
@@ -223,6 +224,8 @@ const getScrapingResults = async (url: string) => {
             result = MockSteersResult;
           else if (url.includes('mock.test.insecure'))
             result = MockInsecureResult;
+          else if (url.includes('mock.test.cisco'))
+            result = MockCiscoResult;
         }
 
       if ('errorStatus' in result) {

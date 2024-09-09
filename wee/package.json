@@ -67,7 +67,8 @@
     "tslib": "^2.3.0",
     "wait-on": "^7.2.0",
     "winston": "^3.13.1",
-    "winston-daily-rotate-file": "^5.0.0"
+    "winston-daily-rotate-file": "^5.0.0",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.39",
