@@ -1,61 +1,79 @@
 import { submitFeedback } from '../../src/app/services/feedback';
-import { createClient } from '../../src/app/utils/supabase/server';
+import { createClient } from '../../src/app/utils/supabase/client';
 
-
-jest.mock('../../src/app/utils/supabase/server', () => ({
-  createClient: jest.fn(() => ({
-    from: jest.fn(() => ({
-      insert: jest.fn(),
-    })),
-  })),
-}));
 
 const mockInsert = jest.fn();
-const supabase = createClient();
+const mockSupabaseClient = {
+  from: jest.fn().mockReturnValue({
+    insert: mockInsert,
+  }),
+};
+
+jest.mock('../../src/app/utils/supabase/client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+
+jest.mock('next/headers', () => ({
+  cookies: jest.fn(() => ({
+    get: jest.fn(),
+    getAll: jest.fn(),
+
+  })),
+}));
 
 describe('submitFeedback', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should successfully submit feedback', async () => {
-   n
-    (supabase.from as jest.Mock).mockReturnValueOnce({
-      insert: mockInsert.mockResolvedValueOnce({ data: [], error: null }), // Mock successful insert
-    });
+  it('should return success when feedback is submitted successfully', async () => {
+    (mockInsert as jest.Mock).mockResolvedValue({ data: [], error: null });
 
-    const response = await submitFeedback('test@example.com', 'John Doe', 'Great app!');
+    const response = await submitFeedback('test@example.com', 'John Doe', 'Great service!');
 
     expect(response).toEqual({ success: true });
+    expect(mockInsert).toHaveBeenCalledTimes(1);
     expect(mockInsert).toHaveBeenCalledWith([
       {
         email: 'test@example.com',
         name: 'John Doe',
-        message: 'Great app!',
+        message: 'Great service!',
         created_at: expect.any(String),
       },
     ]);
-    expect(mockInsert).toHaveBeenCalledTimes(1);
   });
 
-  it('should handle errors during feedback submission', async () => {
-  
-    const errorMessage = 'Database error';
-    (supabase.from as jest.Mock).mockReturnValueOnce({
-      insert: mockInsert.mockResolvedValueOnce({ data: [], error: null }), // Mock failed insert
-    });
+  it('should return error when Supabase insert fails', async () => {
+    (mockInsert as jest.Mock).mockResolvedValue({ data: [], error: 'Insert failed' });
 
-    const response = await submitFeedback('test@example.com', 'John Doe', 'Great app!');
+    const response = await submitFeedback('test@example.com', 'John Doe', 'Great service!');
 
-    expect(response).toEqual({ success: false, error: errorMessage });
+    expect(response).toEqual({ success: false, error: 'Insert failed' });
+    expect(mockInsert).toHaveBeenCalledTimes(1);
     expect(mockInsert).toHaveBeenCalledWith([
       {
         email: 'test@example.com',
         name: 'John Doe',
-        message: 'Great app!',
+        message: 'Great service!',
         created_at: expect.any(String),
       },
     ]);
+  });
+
+  it('should handle unexpected errors', async () => {
+    (mockInsert as jest.Mock).mockRejectedValue(new Error('Unexpected error'));
+
+    const response = await submitFeedback('test@example.com', 'John Doe', 'Great service!');
+
+    expect(response).toEqual({ success: false, error: 'Unexpected error' });
     expect(mockInsert).toHaveBeenCalledTimes(1);
+    expect(mockInsert).toHaveBeenCalledWith([
+      {
+        email: 'test@example.com',
+        name: 'John Doe',
+        message: 'Great service!',
+        created_at: expect.any(String),
+      },
+    ]);
   });
 });
