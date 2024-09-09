@@ -10,7 +10,7 @@ interface FeedbackResponse {
 
 export const submitFeedback = async (email: string, name: string, message: string): Promise<FeedbackResponse> => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('feedback')
       .insert([
         {
