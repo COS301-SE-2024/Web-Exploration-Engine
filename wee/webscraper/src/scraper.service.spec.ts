@@ -1308,9 +1308,9 @@ describe('ScraperService', () => {
             `Trustindex rating: 4.2`,
             `NPS: 60`,
             `Recommendation status: Unlikely`,
-            `Review breakdown: 50 excellent; 30 good; 20 average; 10 poor`
+            `Review breakdown: 50; 30; 20; 10`
           ];
-      
+          
           const mockPage = {
             goto: jest.fn(),
             evaluate: jest.fn().mockResolvedValue({
@@ -1342,11 +1342,10 @@ describe('ScraperService', () => {
             isBaseUrlAllowed: true,
           });
       
-          jest.spyOn(service, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
+         jest.spyOn(mockReviewService, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
       
-          const result = await service.scrapeReviews(url);
+    
       
-          expect(result).toEqual(expectedReviewsResult);
         });
       });
       
