@@ -77,6 +77,7 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   scrapeNews: NewsItem[] | ErrorResponse;
-  shareCountdata?:any
+  shareCountdata?:any;
   time: number;
+  reviews:string[];
 }
