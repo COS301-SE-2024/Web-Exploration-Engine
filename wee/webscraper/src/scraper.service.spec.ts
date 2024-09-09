@@ -646,6 +646,8 @@ describe('ScraperService', () => {
             const type = 'keyword-analysis';
             const keyword = 'example';
             const keywordResult = {
+                keyword,
+                url,
                 ranking: 1,
                 topTen: [
                     'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -1198,6 +1200,8 @@ describe('ScraperService', () => {
             const url = 'http://example.com';
             const keyword = 'example';
             const keywordResult = {
+                keyword,
+                url,
                 ranking: 1,
                 topTen: [
                     'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'

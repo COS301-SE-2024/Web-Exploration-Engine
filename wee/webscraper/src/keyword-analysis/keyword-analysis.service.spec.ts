@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KeywordAnalysisService } from './keyword-analysis.service';
 import * as puppeteer from 'puppeteer';
+import { url } from 'inspector';
 
 jest.mock('puppeteer');
 
@@ -49,6 +50,8 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example.com',
         ranking: 1,
         topTen: [
           'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -91,6 +94,8 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://example2.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example2.com',
         ranking: 2,
         topTen: [
           'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -133,6 +138,8 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://nonexistenturl.com',
         ranking: 'Not ranked in the top results',
         topTen: [
           'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -181,6 +188,8 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example.com',  
         ranking: 1,
         topTen: [
           'example.com','example.com','example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com'
