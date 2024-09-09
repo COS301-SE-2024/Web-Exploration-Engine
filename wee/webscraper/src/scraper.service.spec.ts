@@ -181,6 +181,7 @@ describe('ScraperService', () => {
                         fetchNewsArticles: jest.fn(),
                         extractBusinessName: jest.fn(),
                         getSentiment: jest.fn(),
+                    }
                 },
      
             ],

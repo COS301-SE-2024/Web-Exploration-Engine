@@ -54,10 +54,8 @@ export class ScraperService implements OnModuleInit {
     private readonly scrapeAddressService: ScrapeAddressService,
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
-    private readonly reviewsService: ScrapeReviewsService
-
+    private readonly reviewsService: ScrapeReviewsService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
-
     private readonly newsScraperService: NewsScraperService,
     private readonly shareCountService: ShareCountService,
   ) {}

@@ -67,7 +67,7 @@ import {ShareCountService } from './share-count-analytics/share-count-analytics.
     SentimentAnalysisService,
     KeywordAnalysisService,
     ProxyService,
-    ScrapeReviewsService
+    ScrapeReviewsService,
     NewsScraperService,
     ShareCountService,
   ],
