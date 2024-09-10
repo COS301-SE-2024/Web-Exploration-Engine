@@ -24,7 +24,9 @@ import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { ProxyService } from './proxy/proxy.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
+import {NewsScraperService} from './scrape-news/scrape-news.service';
 import {ShareCountService } from './share-count-analytics/share-count-analytics.service';
+import { ScrapeReviewsService } from './scrape-reviews/scrape-reviews.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -65,7 +67,9 @@ import {ShareCountService } from './share-count-analytics/share-count-analytics.
     SentimentAnalysisService,
     KeywordAnalysisService,
     ProxyService,
+    NewsScraperService,
     ShareCountService,
+    ScrapeReviewsService,
   ],
 })
 export class ScraperModule {}

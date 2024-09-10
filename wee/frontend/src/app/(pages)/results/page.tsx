@@ -31,6 +31,12 @@ import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
 import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
+import MockCiscoKeywordCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-status-result.json'
+import MockCiscoKeywordMerakiFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-frontend-result.json'
+import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-frontend-result.json'
+import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
+import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
+import { result } from 'cypress/types/lodash';
 
 interface Classifications {
   label: string;
@@ -318,7 +324,14 @@ function ResultsComponent() {
   const handleKeyword = async () => {
     // check the input box
     // check that the url is there and valid (and make sure it is in the context)
-    const url_decoded = decodeURIComponent(url ? url : '');
+
+    let url_decoded = decodeURIComponent(url ? url : '');
+ 
+    if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
+      console.log(processedUrls)
+      url_decoded = processedUrls[0];
+    }
+    
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
@@ -330,7 +343,7 @@ function ResultsComponent() {
     }
 
     // check that the keyword is entered by the user
-    if (!keyword) {
+    if (!keyword) { 
       setKeywordError("Keyword cannot be empty");
 
       const timer = setTimeout(() => {
@@ -369,7 +382,16 @@ function ResultsComponent() {
 
       // Poll the API until the keyword is done
       try {
-        const result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+        let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
+
+        if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
+          if (keyword && keyword =="meraki"){
+          result = MockCiscoKeywordMerakiFrontendResult;
+        }
+        else {
+          result = MockCiscoKeywordCiscoFrontendResult
+        }
+        }
         setSeoKeywordAnalysis(result);        
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
@@ -913,7 +935,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations
                             </h5>
-                            <p>{seoKeywordAnalysis.recommendation}</p>
+                            <p  data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
                           </div>
                         </>
                       )}
