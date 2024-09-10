@@ -31,7 +31,8 @@ import {
   Metadata,
   IndustryClassification,
   SentimentClassification,
-  ScrapeResult
+  ScrapeResult,
+  ReviewData,
 } from './models/ServiceModels';
 
 const serviceName = "[ScraperService]";
@@ -140,7 +141,7 @@ export class ScraperService implements OnModuleInit {
       scrapeNews: [],
       shareCountdata: null as any,
       time: 0,
-      reviews:[],
+      reviews: null as ReviewData | null,
     } as ScrapeResult;
 
     data.url = url;

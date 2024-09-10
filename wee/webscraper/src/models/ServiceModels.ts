@@ -60,6 +60,21 @@ export interface NewsItem {
   };
 }
 
+export interface starRatings {
+  stars: number;
+  numReviews: number;
+}
+
+
+export interface ReviewData {
+  rating: number;
+  numberOfReviews: number;
+  trustIndex: number;
+  NPS: number;
+  recommendationStatus: string;
+  starRatings: starRatings[];
+}
+
 
 export interface ScrapeResult {
   url: string;
@@ -79,5 +94,5 @@ export interface ScrapeResult {
   scrapeNews: NewsItem[] | ErrorResponse;
   shareCountdata?:any;
   time: number;
-  reviews:string[];
+  reviews: ReviewData | null;
 }

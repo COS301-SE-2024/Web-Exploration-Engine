@@ -4,6 +4,7 @@ import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
+import { ScrapeResult } from '../models/scraperModels';
 
 @Injectable()
 export class SchedulerService {
@@ -121,18 +122,31 @@ export class SchedulerService {
     }
   }
 
-  async handleScrapeResults(results: any, schedule: ScheduleTaskResponse) {
+  async handleScrapeResults(results: ScrapeResult, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
     console.log('Received scrape results for URL:', schedule.url);
-
+    
     // Example of updating Supabase with the results
     const updateMessage = {
       id: schedule.id,
       result_history: schedule.result_history,
-      newReactionCount: results.reactionCount,
-      newCommentCount: results.commentCount,
-      
-    } ;
+      newReactionCount: results.shareCountdata?.Facebook?.reaction_count || 0,
+      newCommentCount: results.shareCountdata?.Facebook?.comment_count || 0,
+      newShareCount: results.shareCountdata?.Facebook?.share_count || 0,
+      newTotalEngagement: results.shareCountdata?.Facebook?.total_count || 0,
+      newPinCount: results.shareCountdata?.Pinterest || 0,
+      newNewsSentiment: results.scrapeNews,
+      newRating: results.reviews?.rating || 0,
+      newNumReviews: results.reviews?.numberOfReviews || 0,
+      newTrustIndex: results.reviews?.trustIndex || 0,
+      newNPS: results.reviews?.NPS || 0,
+      newRecommendationStatus: results.reviews?.recommendationStatus || '',
+      newStarRatings: results.reviews?.starRatings || {},
+      newSiteSpeed: results.seoAnalysis?.siteSpeedAnalysis?.loadTime || 0,
+      newPerformanceScore: results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 0,
+      newAccessibilityScore: results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 0,
+      newBestPracticesScore: results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 0,
+    } as UpdateScheduleTask;
 
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);

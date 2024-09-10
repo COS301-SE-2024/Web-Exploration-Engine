@@ -1,3 +1,5 @@
+import { of } from "rxjs";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ErrorResponse {
   errorStatus: number;
@@ -60,6 +62,33 @@ export interface NewsItem {
   };
 }
 
+export interface ShareCountdata {
+  Facebook: {
+    comment_plugin_count: number;
+    total_count: number;
+    og_object: any;
+    comment_count: number;
+    share_count: number;
+    reaction_count: number;
+  },
+  Pinterest: number;
+}
+
+export interface starRatings {
+  stars: number;
+  numReviews: number;
+}
+
+
+export interface ReviewData {
+  rating: number;
+  numberOfReviews: number;
+  trustIndex: number;
+  NPS: number;
+  recommendationStatus: string;
+  starRatings: starRatings[];
+}
+
 
 export interface ScrapeResult {
   url: string;
@@ -77,19 +106,7 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   scrapeNews: NewsItem[] | ErrorResponse;
-  shareCountdata?:any
+  shareCountdata: ShareCountdata | null;
   time: number;
-}
-
-
-{
-  "status": "completed",
-  "result": [
-    "Rating: 2.19",
-    "Number of reviews: 843",
-    "Trustindex rating: 2.7",
-    "NPS: -42 NPS",
-    "Recommendation status: Unlikely",
-    "Review breakdown: 213 Reviews; 28 Reviews; 12 Reviews; 47 Reviews; 543 Reviews"
-  ]
+  reviews: ReviewData | null;
 }

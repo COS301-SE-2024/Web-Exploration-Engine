@@ -1,5 +1,5 @@
 'use server'
-import { ScheduleTask, GetSchedulesResponse, ScheduleTaskResponse } from '../models/ScheduleModels'
+import { ScheduleTask, GetSchedulesResponse, ScheduleTaskResponse, ScheduleResult } from '../models/ScheduleModels'
 import { createClient } from '../utils/supabase/server';
 
 const supabaseClient = createClient();
@@ -15,7 +15,29 @@ export async function createScheduleTask(scheduleData: ScheduleTask) {
     url,
     frequency: formattedFrequency,
     next_scrape,
-    result_history: [],
+    result_history: {
+      timestampArr: [],
+      commentCount: [],
+      shareCount: [],
+      reactionCount: [],
+      totalEngagement: [],
+      pinCount: [],
+      newsSentiment: {
+        positiveAvg: [],
+        negativeAvg: [],
+        neutralAvg: []
+      },
+      rating: [],
+      numReviews: [],
+      trustIndex: [],
+      NPS: [],
+      recommendationStatus: [],
+      starRatings: [],
+      siteSpeed: [],
+      performanceScore: [],
+      accessibilityScore: [],
+      bestPracticesScore: []
+    } as ScheduleResult,
     keywords,
     keyword_results: [],
   } as ScheduleTask;

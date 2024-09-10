@@ -2,11 +2,35 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SchedulerService } from './scheduler.service';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
-import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask } from '../models/scheduleTaskModels';
+import { ScheduleResult, ScheduleTaskResponse, UpdateScheduleTask} from '../models/scheduleTaskModels';
+import { ScrapeResult } from '../models/scraperModels';
 import axios from 'axios';
 import * as cron from 'node-cron';
 
 jest.mock('axios');
+
+const emptyResultHistory = {
+  commentCount: [],
+  shareCount: [],
+  reactionCount: [],
+  totalEngagement: [],
+  pinCount: [],
+  rating: [],
+  numReviews: [],
+  trustIndex: [],
+  newsSentiment: {
+    positiveAvg: [],
+    negativeAvg: [],
+    neutralAvg: [],
+  },
+  NPS: [],
+  recommendationStatus: [],
+  starRatings: [],
+  siteSpeed: [],
+  performanceScore: [],
+  accessibilityScore: [],
+  bestPracticesScore: [],
+} as ScheduleResult;
 
 describe('SchedulerService', () => {
   let service: SchedulerService;
@@ -71,7 +95,7 @@ describe('SchedulerService', () => {
         next_scrape: '2021-01-01T00:00:00.000Z', 
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
        }];
@@ -89,9 +113,24 @@ describe('SchedulerService', () => {
       });
       expect(updateSpy).toHaveBeenCalledWith({
         id: '1',
-        result_history: expect.any(Array),
-        newResults: expect.anything(),
-      });
+        result_history: emptyResultHistory,
+        newAccessibilityScore: 0,
+        newBestPracticesScore: 0,
+        newCommentCount: 0,
+        newNPS: 0,
+        newNewsSentiment: undefined,
+        newNumReviews: 0,
+        newPerformanceScore: 0,
+        newPinCount: 0,
+        newRating: 0,
+        newReactionCount: 0,
+        newRecommendationStatus: '',
+        newShareCount: 0,
+        newSiteSpeed: 0,
+        newStarRatings: {},
+        newTotalEngagement: 0,
+        newTrustIndex: 0,
+      } as UpdateScheduleTask);
     }, 20000);
 
     it('should handle errors during execution', async () => {
@@ -112,7 +151,7 @@ describe('SchedulerService', () => {
         next_scrape: '2021-01-01T00:00:00.000Z', 
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };
@@ -139,7 +178,7 @@ describe('SchedulerService', () => {
         next_scrape: '2021-01-01T00:00:00.000Z', 
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };
@@ -163,7 +202,15 @@ describe('SchedulerService', () => {
 
   describe('handleScrapeResults', () => {
     it('should update schedule with the new results', async () => {
-      const results = 'result';
+      const results: ScrapeResult = {
+        url: '',
+        domainStatus: '',
+        robots: undefined,
+        scrapeNews: undefined,
+        shareCountdata: undefined,
+        time: 0,
+        reviews: undefined
+      };
       const schedule: ScheduleTaskResponse = { 
         id: '1', 
         user_id: '1', 
@@ -172,7 +219,7 @@ describe('SchedulerService', () => {
         next_scrape: '2021-01-01T00:00:00.000Z', 
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };
@@ -182,9 +229,24 @@ describe('SchedulerService', () => {
 
       expect(updateSpy).toHaveBeenCalledWith({
         id: '1',
-        result_history: expect.any(Array),
-        newResults: results,
-      });
+        result_history: expect.any(Object),
+        newAccessibilityScore: 0,
+        newBestPracticesScore: 0,
+        newCommentCount: 0,
+        newNPS: 0,
+        newNewsSentiment: undefined,
+        newNumReviews: 0,
+        newPerformanceScore: 0,
+        newPinCount: 0,
+        newRating: 0,
+        newReactionCount: 0,
+        newRecommendationStatus: '',
+        newShareCount: 0,
+        newSiteSpeed: 0,
+        newStarRatings: {},
+        newTotalEngagement: 0,
+        newTrustIndex: 0,
+      } as UpdateScheduleTask);
     });
   });
 
@@ -204,7 +266,7 @@ describe('SchedulerService', () => {
         next_scrape: '2021-01-01T00:00:00.000Z', 
         updated_at: '2021-01-01T00:00:00.000Z', 
         created_at: '2021-01-01T00:00:00.000Z', 
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };

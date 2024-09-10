@@ -38,16 +38,45 @@ export class SupabaseService {
   // }
 
   async updateSchedule(scheduleData: UpdateScheduleTask) {
-    const { id, result_history, newResults } = scheduleData;
+    const { id, result_history, newCommentCount, newShareCount, newReactionCount, newTotalEngagement, newNewsSentiment, newRating, newNumReviews, newTrustIndex, newNPS, newRecommendationStatus, newStarRatings, newSiteSpeed, newPerformanceScore, newAccessibilityScore, newBestPracticesScore, newPinCount } = scheduleData;
     
     // get the current date and time
     const now = new Date();
     
-    // append the new results to the result history
-    result_history.push({ 
-      timestamp: now.toISOString(),
-      result: newResults 
-    });
+    // append to necessary fields
+    result_history.commentCount.push(newCommentCount);
+    result_history.shareCount.push(newShareCount);
+    result_history.reactionCount.push(newReactionCount);
+    result_history.totalEngagement.push(newTotalEngagement);
+    result_history.pinCount.push(newPinCount);
+    result_history.rating.push(newRating);
+    result_history.numReviews.push(newNumReviews);
+    result_history.trustIndex.push(newTrustIndex);
+    result_history.NPS.push(newNPS);
+    result_history.recommendationStatus.push(newRecommendationStatus);
+    result_history.starRatings.push(newStarRatings);
+    result_history.siteSpeed.push(newSiteSpeed);
+    result_history.performanceScore.push(newPerformanceScore);
+    result_history.accessibilityScore.push(newAccessibilityScore);
+    result_history.bestPracticesScore.push(newBestPracticesScore);
+
+    // calculate the average of the news sentiment scores
+    let posAvg = 0;
+    let negAvg = 0;
+    let neuAvg = 0;
+    for (const newsItem of newNewsSentiment) {
+      posAvg += newsItem.sentimentScores?.positive || 0;
+      negAvg += newsItem.sentimentScores?.negative || 0;
+      neuAvg += newsItem.sentimentScores?.neutral || 0;
+    }
+
+    posAvg = posAvg / newNewsSentiment.length;
+    negAvg = negAvg / newNewsSentiment.length;
+    neuAvg = neuAvg / newNewsSentiment.length;
+
+    result_history.newsSentiment.positiveAvg.push(posAvg);
+    result_history.newsSentiment.negativeAvg.push(negAvg);
+    result_history.newsSentiment.neutralAvg.push(neuAvg);
 
     const { data, error } = await this.supabaseClient
       .from('scheduled_tasks')

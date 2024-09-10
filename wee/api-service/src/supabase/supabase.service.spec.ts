@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseService } from './supabase.service';
 import { createClient } from '@supabase/supabase-js';
-import { ScheduleTask, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
+import { ScheduleResult, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
 import { DateTime } from 'luxon';
 
 
@@ -23,6 +23,66 @@ jest.mock('@supabase/supabase-js', () => {
     mockSupabaseClient, // Expose the mock client for testing
   };
 });
+
+
+const emptyResultHistory = {
+  commentCount: [],
+  shareCount: [],
+  reactionCount: [],
+  totalEngagement: [],
+  pinCount: [],
+  rating: [],
+  numReviews: [],
+  trustIndex: [],
+  newsSentiment: {
+    positiveAvg: [],
+    negativeAvg: [],
+    neutralAvg: [],
+  },
+  NPS: [],
+  recommendationStatus: [],
+  starRatings: [],
+  siteSpeed: [],
+  performanceScore: [],
+  accessibilityScore: [],
+  bestPracticesScore: [],
+} as ScheduleResult;
+
+const mockResultHistory = {
+  commentCount: [1],
+  shareCount: [2],
+  reactionCount: [3],
+  totalEngagement: [6],
+  pinCount: [5],
+  rating: [4],
+  numReviews: [100],
+  trustIndex: [80],
+  NPS: [90],
+  recommendationStatus: ['Good'],
+  starRatings: [[
+    { stars: 1, numReviews: 10 },
+    { stars: 2, numReviews: 20 },
+    { stars: 3, numReviews: 30 },
+    { stars: 4, numReviews: 40 },
+    { stars: 5, numReviews: 50 },
+  ],
+  [
+    { stars: 1, numReviews: 10 },
+    { stars: 2, numReviews: 20 },
+    { stars: 3, numReviews: 30 },
+    { stars: 4, numReviews: 40 },
+    { stars: 5, numReviews: 50 },
+  ]],
+  newsSentiment: {
+    positiveAvg: [1],
+    negativeAvg: [2],
+    neutralAvg: [3],
+  },
+  siteSpeed: [100],
+  performanceScore: [90],
+  accessibilityScore: [80],
+  bestPracticesScore: [70],
+} as ScheduleResult;
 
 
 
@@ -68,26 +128,49 @@ describe('SupabaseService', () => {
       const timestamp = new Date();
       const updateData = {
         id: 'schedule123',
-        result_history: [
+        result_history: mockResultHistory,
+        newCommentCount: 10,
+        newShareCount: 20,
+        newReactionCount: 30,
+        newTotalEngagement: 60,
+        newPinCount: 5,
+        newNewsSentiment: [
           {
-            timestamp: timestamp.toISOString(),
-            result: '',
+            title: 'News title',
+            link: 'https://example.com',
+            source: 'News source',
+            pubDate: timestamp.toISOString(),
+            sentimentScores: {
+              positive: 1,
+              negative: 2,
+              neutral: 3,
+            },
           },
         ],
-        newResults: {},
-        updated_at: timestamp.toISOString(),
-      };
+        newRating: 4,
+        newNumReviews: 100,
+        newTrustIndex: 80,
+        newNPS: 90,
+        newRecommendationStatus: 'Good',
+        newStarRatings: [
+          { stars: 1, numReviews: 1 },
+          { stars: 2, numReviews: 2 },
+          { stars: 3, numReviews: 3 },
+          { stars: 4, numReviews: 4 },
+          { stars: 5, numReviews: 5 },
+        ],
+        newSiteSpeed: 100,
+        newPerformanceScore: 90,
+        newAccessibilityScore: 80,
+        newBestPracticesScore: 70,
+      } as UpdateScheduleTask;
     
       // Mock the Supabase client methods
       supabaseClient.from.mockReturnThis();
       supabaseClient.update.mockReturnThis();
-      supabaseClient.eq.mockResolvedValueOnce({ data: [updateData], error: null });
+      supabaseClient.eq.mockResolvedValueOnce({ data: mockResultHistory, error: null });
     
-      const result = await service.updateSchedule({
-        id: updateData.id,
-        result_history: updateData.result_history,
-        newResults: updateData.newResults,
-      });
+      const result = await service.updateSchedule(updateData);
     
       // Assertions
       expect(supabaseClient.from).toHaveBeenCalledWith('scheduled_tasks');
@@ -96,7 +179,52 @@ describe('SupabaseService', () => {
         updated_at: timestamp.toISOString(),
       });
       expect(supabaseClient.eq).toHaveBeenCalledWith('id', updateData.id);
-      expect(result).toEqual([updateData]);
+
+      // Check the updated result history
+      expect(result).toEqual({
+        commentCount: [1, 10],
+        shareCount: [2, 20],
+        reactionCount: [3, 30],
+        totalEngagement: [6, 60],
+        pinCount: [5, 5],
+        rating: [4, 4],
+        numReviews: [100, 100],
+        trustIndex: [80, 80],
+        NPS: [90, 90],
+        recommendationStatus: ['Good', 'Good'],
+        starRatings: [
+          [
+            { stars: 1, numReviews: 10 },
+            { stars: 2, numReviews: 20 },
+            { stars: 3, numReviews: 30 },
+            { stars: 4, numReviews: 40 },
+            { stars: 5, numReviews: 50 },
+          ],
+          [
+            { stars: 1, numReviews: 10 },
+            { stars: 2, numReviews: 20 },
+            { stars: 3, numReviews: 30 },
+            { stars: 4, numReviews: 40 },
+            { stars: 5, numReviews: 50 },
+          ],
+          [
+            { stars: 1, numReviews: 1 },
+            { stars: 2, numReviews: 2 },
+            { stars: 3, numReviews: 3 },
+            { stars: 4, numReviews: 4 },
+            { stars: 5, numReviews: 5 },
+          ],
+        ],
+        newsSentiment: {
+          positiveAvg: [1, 1],
+          negativeAvg: [2, 2],
+          neutralAvg: [3, 3],
+        },
+        siteSpeed: [100, 100],
+        performanceScore: [90, 90],
+        accessibilityScore: [80, 80],
+        bestPracticesScore: [70, 70],
+      });
     
       // Restore the original DateTime.now() method after the test
       jest.restoreAllMocks();
@@ -106,10 +234,42 @@ describe('SupabaseService', () => {
     it('should throw an error if schedule update fails', async () => {
       const updateData: UpdateScheduleTask = {
         id: 'schedule123',
-        result_history: [],
-        newResults: {},
-      };
-
+        result_history: emptyResultHistory,
+        newCommentCount: 10,
+        newShareCount: 20,
+        newReactionCount: 30,
+        newTotalEngagement: 60,
+        newPinCount: 5,
+        newNewsSentiment: [
+          {
+            title: 'News title',
+            link: 'https://example.com',
+            source: 'News source',
+            pubDate: new Date().toISOString(),
+            sentimentScores: {
+              positive: 1,
+              negative: 2,
+              neutral: 3,
+            },
+          },
+        ],
+        newRating: 4,
+        newNumReviews: 100,
+        newTrustIndex: 80,
+        newNPS: 90,
+        newRecommendationStatus: 'Good',
+        newStarRatings: [
+          { stars: 1, numReviews: 1 },
+          { stars: 2, numReviews: 2 },
+          { stars: 3, numReviews: 3 },
+          { stars: 4, numReviews: 4 },
+          { stars: 5, numReviews: 5 },
+        ],  
+        newSiteSpeed: 100,
+        newPerformanceScore: 90,
+        newAccessibilityScore: 80,
+        newBestPracticesScore: 70,
+      }
       supabaseClient.eq.mockResolvedValue({ data: null, error: {message: 'Update error'} });
 
       await expect(service.updateSchedule(updateData)).rejects.toThrow('Failed to update schedule: Update error');
@@ -128,7 +288,7 @@ describe('SupabaseService', () => {
           next_scrape: timestamp.toISOString(),
           updated_at: timestamp.toISOString(),
           created_at: timestamp.toISOString(),
-          result_history: [],
+          result_history: emptyResultHistory,
           keywords: [],
           keyword_results: [],
         },
@@ -160,7 +320,7 @@ describe('SupabaseService', () => {
         created_at: '2024-08-24T00:00:00.000Z',
         updated_at: '2024-08-24T00:00:00.000Z',
         next_scrape: '2024-08-24T00:00:00.000Z',
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };
@@ -187,7 +347,7 @@ describe('SupabaseService', () => {
         created_at: '2024-08-24T00:00:00.000Z',
         updated_at: '2024-08-24T00:00:00.000Z',
         next_scrape: '2024-08-24T00:00:00.000Z',
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };
@@ -208,7 +368,7 @@ describe('SupabaseService', () => {
         created_at: '2024-08-24T00:00:00.000Z',
         updated_at: '2024-08-24T00:00:00.000Z',
         next_scrape: '2024-08-24T00:00:00.000Z',
-        result_history: [],
+        result_history: emptyResultHistory,
         keywords: [],
         keyword_results: [],
       };

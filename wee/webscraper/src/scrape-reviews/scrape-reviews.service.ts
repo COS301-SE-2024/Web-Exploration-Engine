@@ -151,11 +151,13 @@ export class ScrapeReviewsService {
         trustIndex: trustindexRatingNumber,
         NPS: npsNumber,
         recommendationStatus,
-        oneStar,
-        twoStars,
-        threeStars,
-        fourStars,
-        fiveStars,
+        starRatings: [
+          { stars: 5, numReviews: fiveStars },
+          { stars: 4, numReviews: fourStars },
+          { stars: 3, numReviews: threeStars },
+          { stars: 2, numReviews: twoStars },
+          { stars: 1, numReviews: oneStar },
+        ],
       }
     } catch (error) {
       throw new Error(`Failed to scrape reviews from Hello Peter: ${error.message}`);

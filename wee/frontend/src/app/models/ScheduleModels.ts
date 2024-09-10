@@ -6,17 +6,57 @@ export interface ScheduleTask {
   keywords: string[];
 }
 
-export interface SavedResult {
-  // how to store the result of a scrape?
-  // this is just a placeholder
-  timestamp: string; // timestamp
-  result: string;
+export interface ScheduleResult {
+  timestampArr: string[];
+  commentCount: number[];
+  shareCount: number[];
+  reactionCount: number[];
+  totalEngagement: number[]; // sum of comment, share, reaction - can show sum of increase/decrease
+  pinCount: number[]; // Pinterest share count
+  newsSentiment: newsSentiment;
+  rating: number[]; // average of reviews
+  numReviews: number[]; // number of reviews
+  trustIndex: number[]; // trust index
+  NPS: number[]; // Net Promoter Score
+  recommendationStatus: string[]; // recommendation status
+  starRatings: starRatings[];
+  siteSpeed: number[]; // site speed
+  performanceScore: number[]; // performance score
+  accessibilityScore: number[]; // accessibility score
+  bestPracticesScore: number[]; // best practices score
 }
+
+export interface NewsItem {
+  title: string;
+  link: string;
+  source: string;
+  pubDate: string;
+  sentimentScores?: {
+    positive: number;
+    negative: number;
+    neutral: number;
+  };
+}
+
 
 export interface UpdateScheduleTask {
   id: string,
-  result_history: SavedResult[];
-  newResults: any;
+  result_history: ScheduleResult;
+  newCommentCount: number;
+  newShareCount: number;
+  newReactionCount: number;
+  newTotalEngagement: number;
+  newNewsSentiment: NewsItem[];
+  newRating: number;
+  newNumReviews: number;
+  newTrustIndex: number;
+  newNPS: number;
+  newRecommendationStatus: string;
+  newStarRatings: starRatings;
+  newSiteSpeed: number;
+  newPerformanceScore: number;
+  newAccessibilityScore: number;
+  newBestPracticesScore: number;
 }
 
 export interface ScheduleTaskResponse {
@@ -27,7 +67,7 @@ export interface ScheduleTaskResponse {
   next_scrape: string; // timestamp
   updated_at: string; // timestamp
   created_at: string; // timestamp
-  result_history: SavedResult[];
+  result_history: ScheduleResult;
   keywords: string[];
   keyword_results: KeywordResult[];
 }
@@ -45,6 +85,17 @@ export interface updateKeywordResult {
   results: KeywordResult[];
   newRank: string;
   newTopTen: string[];
+}
+
+export interface newsSentiment {
+  positiveAvg: number[];
+  negativeAvg: number[];
+  neutralAvg: number[];
+}
+
+export interface starRatings {
+  stars: number;
+  numReviews: number;
 }
 
 export interface GetSchedulesResponse {

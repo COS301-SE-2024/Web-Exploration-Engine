@@ -136,11 +136,13 @@ describe('ScrapeReviewsService', () => {
           trustIndex: 90,
           NPS: 60,
           recommendationStatus: 'Recommended',
-          fiveStars: 80,
-          fourStars: 15,
-          threeStars: 5,
-          twoStars: 0,
-          oneStar: 0,
+          starRatings: [
+            { stars: 5, numReviews: 80 },
+            { stars: 4, numReviews: 15 },
+            { stars: 3, numReviews: 5 },
+            { stars: 2, numReviews: 0 },
+            { stars: 1, numReviews: 0 },
+          ],
         } as ReviewData;
   
         expect(reviews).toEqual(expectedResults);
@@ -172,11 +174,13 @@ describe('ScrapeReviewsService', () => {
             trustIndex: 0,
             NPS: 0,
             recommendationStatus: '',
-            fiveStars: 0,
-            fourStars: 0,
-            threeStars: 0,
-            twoStars: 0,
-            oneStar: 0,
+            starRatings: [
+              { stars: 5, numReviews: 0 },
+              { stars: 4, numReviews: 0 },
+              { stars: 3, numReviews: 0 },
+              { stars: 2, numReviews: 0 },
+              { stars: 1, numReviews: 0 },
+            ],
           } as ReviewData;
         
           expect(reviews).toEqual(expectedResults);
@@ -200,11 +204,13 @@ describe('ScrapeReviewsService', () => {
             trustIndex: 0,
             NPS: 0,
             recommendationStatus: 'No recommendation status found',
-            fiveStars: 0,
-            fourStars: 0,
-            threeStars: 0,
-            twoStars: 0,
-            oneStar: 0,
+            starRatings: [
+              { stars: 5, numReviews: 0 },
+              { stars: 4, numReviews: 0 },
+              { stars: 3, numReviews: 0 },
+              { stars: 2, numReviews: 0 },
+              { stars: 1, numReviews: 0 },
+            ],
           } as ReviewData;
         
           expect(reviews).toEqual(expectedResults);
