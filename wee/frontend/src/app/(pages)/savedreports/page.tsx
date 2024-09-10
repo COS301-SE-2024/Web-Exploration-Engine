@@ -351,17 +351,16 @@ function ResultsComponent() {
                 </h1>
               </ModalBody>
               <ModalFooter>
-                <Button 
-                  className="text-md font-poppins-semibold text-jungleGreen-700 border-jungleGreen-700 dark:text-jungleGreen-400 dark:border-text-jungleGreen-400" 
-                  onPress={onClose}
-                  variant="bordered"
-                >
-                  Cancel
-                </Button>
                 <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
                   onPress={() => {handleDelete(idToDelete); onClose();}}
                 >
                   Yes
+                </Button>
+                <Button 
+                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
+                  onPress={onClose}
+                  >
+                  Cancel
                 </Button>
               </ModalFooter>
             </>

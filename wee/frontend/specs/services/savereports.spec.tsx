@@ -1,33 +1,30 @@
 import { saveReport, getReports, deleteReport } from '../../src/app/services/SaveReportService';
-import { createClient } from '../../src/app/utils/supabase/client';
+import { getSupabase } from '../../src/app/utils/supabase_service_client';
 
-jest.mock('../../src/app/utils/supabase/client', () => ({
-  createClient: jest.fn(),
-}));
+jest.mock('../../src/app/utils/supabase_service_client', () => {
+  const mockFrom = jest.fn().mockReturnThis();
+  const mockSelect = jest.fn().mockReturnThis();
+  const mockEq = jest.fn().mockReturnThis();
+  const mockInsert = jest.fn().mockReturnThis();
+  const mockDelete = jest.fn().mockReturnThis();
+  const mockFetch = jest.fn().mockResolvedValue({ data: [] }); // Adjust this mock data as needed
 
-jest.mock('next/headers', () => ({
-  cookies: jest.fn(),
-}));
+  const mockSupabase = {
+    from: mockFrom,
+    select: mockSelect,
+    eq: mockEq,
+    insert: mockInsert,
+    delete: mockDelete,
+    fetch: mockFetch,
 
-const mockSupabaseClient = {
-  auth: {
-    signInWithPassword: jest.fn(),
-    signInWithOAuth: jest.fn(),
-    signUp: jest.fn(),
-    getUser: jest.fn(),
-    resetPasswordForEmail: jest.fn(),
-    updateUser: jest.fn(),
-  },
-  from: jest.fn().mockReturnThis(), // Mock from to return the same object (allowing chaining)
-  insert: jest.fn(), // Mock insert to be chained after from
-  select: jest.fn().mockReturnThis(), // Mock select for other tests
-  eq: jest.fn().mockReturnThis(), // Mock eq to be used in chaining
-  delete: jest.fn().mockReturnThis(), // Mock delete for delete tests
-};
-
-(createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+  };
+  return {
+    getSupabase: jest.fn(() => mockSupabase),
+  };
+});
 
 describe('saveReport function', () => {
+
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -44,7 +41,6 @@ describe('saveReport function', () => {
     };
 
     // Debugging: Check mockSupabase before calling saveReport
-    mockSupabaseClient.insert.mockResolvedValueOnce({ data: [report], error: null });
 
     // Test if saveReport resolves without errors
     await expect(saveReport(report)).resolves.toBeUndefined();
@@ -78,7 +74,7 @@ describe('getReports function', () => {
       { id: 2, user_id: 'user123', report_name: 'Report 2', report_data: {}, is_summary: true, saved_at: new Date() },
     ];
   
-    const mockSelect = jest.spyOn(mockSupabaseClient, 'from').mockReturnValueOnce({
+    const mockSelect = jest.spyOn(getSupabase(), 'from').mockReturnValueOnce({
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
       fetch: jest.fn().mockResolvedValueOnce({ data: mockData }),
@@ -108,7 +104,7 @@ describe('deleteReport function', () => {
     const reportId = 1;
 
     // Mock successful deletion
-    mockSupabaseClient.from().delete().eq.mockResolvedValueOnce({});
+    getSupabase().from().delete().eq.mockResolvedValueOnce({});
 
     await expect(deleteReport(reportId)).resolves.toBeUndefined();
   });

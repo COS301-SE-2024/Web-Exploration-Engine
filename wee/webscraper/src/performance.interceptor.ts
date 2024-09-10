@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CallHandler,
   ExecutionContext,
@@ -14,7 +13,7 @@ const serviceName = "[PerformanceInterceptor]";
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    logger.debug(`${serviceName}`);
+    logger.debug(`${serviceName}`);    
     const now = performance.now();
     return next
       .handle()
@@ -26,9 +25,13 @@ export class PerformanceInterceptor implements NestInterceptor {
               performance.now() - now
             ).toFixed(2)}ms`,
           );
-          
-          logger.info(context.getClass().name, 'duration' , (performance.now() - now) , context.getHandler().name);
 
+          logger.info(
+            `${serviceName} ${context.getClass().name} - ${context.getHandler().name} executed in ${(
+              performance.now() - now
+            ).toFixed(2)}ms`,
+          );
+     
         }
         ),
       );

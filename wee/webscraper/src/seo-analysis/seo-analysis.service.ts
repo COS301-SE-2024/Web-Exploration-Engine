@@ -5,20 +5,17 @@ import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import logger from '../../logging/webscraperlogger';
-import { performance } from 'perf_hooks';
 const serviceName = "[SeoAnalysisService]";
-
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
   async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
   
     logger.debug(`${serviceName}`);
-    const start = performance.now();
-
+    
     if (!robots.isUrlScrapable) {
       //console.error('Crawling not allowed for this URL');
-      logger.warn(serviceName,`Crawling not allowed for this URL`);
+      logger.warn(`${serviceName} Crawling not allowed for this URL`);
       return {
         error: 'Crawling not allowed for this URL',
       };
@@ -65,11 +62,6 @@ export class SeoAnalysisService {
       this.runLighthouse(url),
     ]);
 
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
-      
     return {
       titleTagsAnalysis,
       metaDescriptionAnalysis,
@@ -260,7 +252,7 @@ export class SeoAnalysisService {
         } catch (error) {
 
           //console.error(`Error checking optimization for image ${img.src}: ${error.message}`);
-          logger.error(serviceName,` Error checking optimization for image ${img.src}: ${error.message}`);
+          logger.error(`${serviceName} Error checking optimization for image ${img.src}: ${error.message}`);
 
           nonOptimizedCount++;
           reasonsMap.other.push(imageUrl);  // Categorize as "other"
@@ -296,7 +288,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
 
-      logger.error(serviceName,` Error analyzing images using Puppeteer: ${error.message}`);
+      logger.error(`${serviceName} Error analyzing images using Puppeteer: ${error.message}`);
       //console.error(`Error analyzing images using Puppeteer: ${error.message}`);
 
       return {
@@ -348,7 +340,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error checking optimization for image ${imageUrl}: ${error.message}`);
-      logger.error(serviceName,` Error checking optimization for image ${imageUrl}: ${error.message}`);
+      logger.error(`${serviceName} Error checking optimization for image ${imageUrl}: ${error.message}`);
       return {
         optimized: false,
         reasons: [],
@@ -459,7 +451,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       // console.error(`Error analyzing site speed: ${error.message}`);
-      logger.error(serviceName,` Error analyzing site speed: ${error.message}`);
+      logger.error(`${serviceName} Error analyzing site speed: ${error.message}`);
       // throw new Error(`Error analyzing site speed: ${error.message}`);
     }
   }
@@ -512,7 +504,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
-      logger.error(serviceName,` Error analyzing mobile-friendliness: ${error.message}`);
+      logger.error(`${serviceName} Error analyzing mobile-friendliness: ${error.message}`);
 
       //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
       // return {
@@ -584,7 +576,7 @@ export class SeoAnalysisService {
     } catch (error) {
 
       //console.error(`Error fetching XML sitemap: ${error.message}`);
-      logger.error(serviceName,` Error fetching XML sitemap: ${error.message}`);
+      logger.error(`${serviceName} Error fetching XML sitemap: ${error.message}`);
 
       return {
         isSitemapValid: false,
@@ -621,7 +613,7 @@ export class SeoAnalysisService {
         } else {
 
           //console.warn(`Category score for ${category} is not available.`);
-         logger.warn(serviceName,`Category score for ${category} is not available.`);
+         logger.warn(`${serviceName} Category score for ${category} is not available.`);
 
           return null;
         }
@@ -665,7 +657,7 @@ export class SeoAnalysisService {
       return { scores, diagnostics }; 
     } catch (error) {
       // console.error(`Error fetching Lighthouse data: ${error.message}`);
-      logger.error(serviceName,` Error fetching Lighthouse data: ${error.message}`);
+      logger.error(`${serviceName} Error fetching Lighthouse data: ${error.message}`);
       // throw new Error(`Error fetching Lighthouse data: ${error.message}`);
     }
   }

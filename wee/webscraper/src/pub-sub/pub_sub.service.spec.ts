@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, TestingModule } from '@nestjs/testing';
 import { PubSubService } from './pub_sub.service';
 import { PubSub } from '@google-cloud/pubsub';

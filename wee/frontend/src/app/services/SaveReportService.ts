@@ -1,6 +1,8 @@
 import { AuthResponse } from "../models/AuthModels";
-import { createClient } from "../utils/supabase/client";
+import { getSupabase } from '../utils/supabase_service_client';
 import { ReportRecord } from "../models/ReportModels"
+
+const supabase = getSupabase();
 
 export async function saveReport(report: ReportRecord) {
 
@@ -8,7 +10,6 @@ export async function saveReport(report: ReportRecord) {
   if (!report.reportName) throw new Error('Report name is required');
   if (!report.reportData) throw new Error('Report data is required');
 
-  const supabase = createClient();
 
   const { error } = await supabase
     .from('saved_reports')
@@ -29,8 +30,6 @@ export async function saveReport(report: ReportRecord) {
 
 export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
   if (!user.uuid) throw new Error('User id is required');
-
-  const supabase = createClient();
 
   const { data, error } = await supabase
     .from('saved_reports')
@@ -57,7 +56,6 @@ export async function getReports(user: AuthResponse): Promise<ReportRecord[]> {
 }
 
 export async function deleteReport(reportId: number) {
-  const supabase = createClient();
   const { error } = await supabase
     .from('saved_reports')
     .delete()

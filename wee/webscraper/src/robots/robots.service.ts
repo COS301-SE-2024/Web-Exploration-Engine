@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, Logger } from '@nestjs/common';
 import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { performance } from 'perf_hooks';
 import logger from '../../logging/webscraperlogger';
 import fetch from 'node-fetch';
 
@@ -14,10 +12,10 @@ export class RobotsService {
   async extractAllowedPaths(
     baseUrl: string
   ): Promise<{ allowedPaths: string[]; disallowedPaths: string[] }> {
-
+    
     logger.debug(`${serviceName}`);
-    const start = performance.now();
 
+   
     // Extract base URL
     const domain = this.extractDomain(baseUrl);
     // Construct the URL for the robots.txt file
@@ -29,12 +27,7 @@ export class RobotsService {
       // Check if website has a robots.txt file -- if not, return an empty set
       if (response.status === 404) {
         console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
-        logger.warn(serviceName,` robots.txt does not exist for ${robotstxtUrl}`);
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
-
+        logger.warn(`${serviceName}  robots.txt does not exist for ${robotstxtUrl}`);
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -43,8 +36,8 @@ export class RobotsService {
 
       // Check if error occured
       if (!response.ok) {
-        logger.error(serviceName,
-          `An error occurred while fetching robots.txt from ${robotstxtUrl}`,robotstxtUrl
+        logger.error(
+          `${serviceName} An error occurred while fetching robots.txt from ${robotstxtUrl}`
         );
 
         throw new Error(
@@ -59,12 +52,7 @@ export class RobotsService {
 
       if (!robotstxt) {
         console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
-        logger.warn(serviceName,`robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
-        
+        logger.warn(`${serviceName} robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
         return {
           allowedPaths: [],
           disallowedPaths: [],
@@ -100,10 +88,6 @@ export class RobotsService {
           }
         }
       });
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
 
       return {
         allowedPaths: Array.from(allowedPaths),
@@ -121,7 +105,7 @@ export class RobotsService {
 
       return parsedUrl.origin;
     } catch (error) {
-      logger.error(serviceName,` Extracting Domain Error ${error}`);
+      logger.error(`${serviceName} Extracting Domain Error ${error}`);
       throw new Error('Invalid URL');
     }
   }
@@ -206,7 +190,7 @@ export class RobotsService {
       } as RobotsResponse;
     } catch (error) {
       // return error response if error encountered
-      logger.error(serviceName,` 500 Internal Server Error ${error.message}`)
+      logger.error(`${serviceName} 500 Internal Server Error ${error.message}`)
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',

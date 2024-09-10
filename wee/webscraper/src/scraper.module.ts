@@ -20,12 +20,12 @@ import { ScrapeImagesService } from './scrape-images/scrape-images.service';
 import { ScrapeContactInfoService } from './scrape-contact-info/scrape-contact-info.service';
 import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { ScreenshotService } from './screenshot-homepage/screenshot.service';
-import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
+import { SeoAnalysisService } from './seo-analysis/seo-analysis.service'; 
 import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysis.service';
 import { ProxyService } from './proxy/proxy.service';
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
 import {NewsScraperService} from './scrape-news/scrape-news.service';
-import {ShareCountService } from './share-count-analytics/share-count-analytics.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +33,7 @@ import {ShareCountService } from './share-count-analytics/share-count-analytics.
       isGlobal: true,
     }),
     CacheModule.registerAsync({
-      isGlobal: true,
+      isGlobal: true, 
       imports: [ConfigModule],
       useFactory: async (config) => {
         const store = await redisStore({
@@ -56,8 +56,8 @@ import {ShareCountService } from './share-count-analytics/share-count-analytics.
     RobotsService,
     ScrapeMetadataService,
     ScrapeStatusService,
-    IndustryClassificationService,
-    ScrapeLogoService,
+    IndustryClassificationService, 
+    ScrapeLogoService, 
     ScrapeImagesService,
     ScrapeContactInfoService,
     ScrapeAddressService,
@@ -66,8 +66,7 @@ import {ShareCountService } from './share-count-analytics/share-count-analytics.
     SentimentAnalysisService,
     KeywordAnalysisService,
     ProxyService,
-    NewsScraperService,
-    ShareCountService,
+    NewsScraperService
   ],
 })
 export class ScraperModule {}

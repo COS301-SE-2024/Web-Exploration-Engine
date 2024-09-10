@@ -148,7 +148,7 @@ export default function Help() {
         </h3>
       </div>
 
-      <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle mb-6">
+      <div className="mx-auto px-10 md:px-32 lg:px-48 align-middle ">
         <Accordion
           className="mx-auto "
           selectionMode="multiple"
@@ -170,7 +170,7 @@ export default function Help() {
 
       <div
         id="tutorials"
-        className="px-6 min-h-screen place-content-center bg-zinc-100 dark:bg-zinc-800"
+        className="mx-6 md:px-6 h-screen place-content-center"
       >
         <div className="my-16 text-center">
           <h1 className="my-4 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">

@@ -5,7 +5,7 @@ import {
   Button, Tabs, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow, Spinner
+  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow
 } from '@nextui-org/react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
@@ -26,10 +26,6 @@ import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 import CircularProgressComparison from "../../components/CircularProgressComparison";
-import WEEInput from '../../components/Util/Input';
-import { pollForKeyWordResult } from '../../services/PubSubService';
-import { MdErrorOutline } from "react-icons/md";
-import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 
 interface Classifications {
   label: string;
@@ -119,13 +115,7 @@ function ResultsComponent() {
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
 
-  const [keywordError, setKeywordError] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [isKeywordLoading, setKeywordLoading]= useState(false);
-
-  const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
-
-  const { processedUrls, results } = useScrapingContext();
+  const { results } = useScrapingContext();
   const { user } = useUserContext();
 
   const router = useRouter();
@@ -161,7 +151,6 @@ function ResultsComponent() {
   const [canonicalTagAnalysis, setCanonicalTagAnalysis] = useState<CanonicalTagAnalysis | SEOError>();
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
-  const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
 
   useEffect(() => {
     if (url) {
@@ -223,16 +212,7 @@ function ResultsComponent() {
   };
 
   const downloadSummaryReport = (key: any) => {
-    setIsDownloadInProgress(true);
-
-    // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
-
-    try {
-      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
-    }
-    finally {
-      setIsDownloadInProgress(false);
-    }
+    handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
   };
 
   // Pagination Logic
@@ -308,76 +288,6 @@ function ResultsComponent() {
     }
   }, [isOpen]);
 
-  const sanitizeKeyword = (_keyword: string) => {
-    return _keyword.replace(/[<>"'`;()]/g, '');
-  }
-
-  const handleKeyword = async () => {
-    // check the input box
-    // check that the url is there and valid (and make sure it is in the context)
-    const url_decoded = decodeURIComponent(url ? url : '');
-    if (!url || !processedUrls.includes(url_decoded.toString())) {
-      setKeywordError("URL is not valid");
-
-      const timer = setTimeout(() => {
-        setKeywordError('');
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-
-    // check that the keyword is entered by the user
-    if (!keyword) {
-      setKeywordError("Keyword cannot be empty");
-
-      const timer = setTimeout(() => {
-        setKeywordError('');
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-
-    // sanitize the keyword
-    const sanitizedKeyword = sanitizeKeyword(keyword);
-    if (sanitizedKeyword !== keyword) {
-      setKeywordError('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');
-
-      const timer = setTimeout(() => {
-        setKeywordError('');
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-
-    // make API call to get information about the keyword
-    setKeywordLoading(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-      console.log("HIERRRRR", url.toString(), keyword);
-      const response = await fetch(
-        `${apiUrl}/scraper/keyword-analysis?url=${encodeURIComponent(url.toString())}&keyword=${encodeURIComponent(keyword)}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error initiating scrape: ${response.statusText}`);
-      }
-      const initData = await response.json();
-      console.log('Scrape initiation response:', initData);
-
-      // Poll the API until the keyword is done
-      try {
-        const result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
-        setSeoKeywordAnalysis(result);        
-        console.log('Keyword result after polling: ', result);
-        setKeywordLoading(false);
-      } catch (error) {
-        console.error('Error when fetching keyword resuls:', error);
-      }
-
-    } catch (error) {
-      console.error('Error when fetching keyword resuls:', error);
-    }
-  }
 
   return (
     <>
@@ -398,32 +308,9 @@ function ResultsComponent() {
             <Dropdown>
               <DropdownTrigger>
                 <Button
-                  isLoading={isDownloadInProgress}
                   variant="flat"
                   data-testid="btn-export-save-report"
-                  startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
-                  spinner={
-                    <svg
-                      className="animate-spin h-5 w-5 text-current"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  }
+                  startContent={<FiShare className={iconClasses} />}
                 >
                   Export/Save
                 </Button>
@@ -824,101 +711,6 @@ function ResultsComponent() {
           <Tab key="seo" data-testid="tab-seo" title="SEO Analysis">
             <Card>
               <CardBody>
-                {/* Keyword Analysis */}
-                <div>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
-                    Keyword Analysis
-                    <InfoPopOver
-                      data-testid="popup-keyword"
-                      heading="Keyword Analysis"
-                      content="The code normalises the URL by extracting its hostname, performs a Google search using Puppeteer, extracts search result titles and links, and checks if the hostname matches any search results to determine its ranking position."
-                      placement="bottom"
-                    />
-                  </h3>
-
-                  {/* Enter keyword */}
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
-                    <div className='flex flex-col sm:flex-row w-full justify-center items-center'>
-                      <Input 
-                        data-testid="keyword-input"
-                        label="Enter keywords"
-                        value={keyword}
-                        onChange={(e) => setKeyword(e.target.value)}
-                        className='my-2 sm:my-0'
-                      />
-                      <Button
-                        data-testid="btn-seo-keyword"
-                        className="w-full sm:w-auto sm:ml-4 font-poppins-semibold text-lg  bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                        onClick={handleKeyword}
-                      >
-                        Lookup
-                      </Button>
-                    </div>
-
-                    {isKeywordLoading ? (
-                      <div className="flex w-full justify-center my-2">
-                        <Spinner color="default" />
-                      </div>
-                    ) : null}
-
-                    {keywordError ? (
-                      <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-                        <MdErrorOutline className="m-auto mx-1" />
-                        <p data-testid="keyword-error">{keywordError}</p>
-                      </span>
-                    ) : (
-                      <></>
-                    )}
-
-                    {/* Keyword result */}
-                    <div className='mt-2'>
-                      {seoKeywordAnalysis && (
-                        <>
-                          <div className='gap-2 grid sm:grid-cols-2 md:grid-cols-3'>
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4 md:col-span-1'>
-                              <div>
-                                {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
-                                  ? <div data-testid="keyword_not_ranked" className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                      Not ranked in top 10
-                                    </div>
-                                  : 
-                                    <>
-                                      <div className='font-poppins-semibold text-lg'>
-                                        Ranked
-                                      </div>
-                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
-                                        #{seoKeywordAnalysis.ranking}
-                                      </div>
-                                    </>
-                                }
-                              </div>
-                            </div>
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:col-span-2' data-testid="keyword_top10">
-                              {Array.isArray(seoKeywordAnalysis.topTen) ? (
-                                seoKeywordAnalysis.topTen.map((higherRankedUrl, index) => (
-                                  <div key={index}>
-                                    <span className='font-poppins-semibold'>{index + 1}. </span>
-                                    <span>{higherRankedUrl}</span>
-                                  </div>
-                                ))
-                              ) : (
-                                <div>No higher ranked URLs available.</div>
-                              )}
-                            </div>
-                          </div>
-                          <div data-testid='keyword_recommendations' className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Recommendations
-                            </h5>
-                            <p>{seoKeywordAnalysis.recommendation}</p>
-                          </div>
-                        </>
-                      )}
-                    </div>
-
-                  </div>
-                </div> {/* EO Keyword Analysis */}
-
                 {/* Onpage Analysis */}
                 <div>
                   {/* Onpage Analysis Heading */}
@@ -1922,7 +1714,7 @@ function ResultsComponent() {
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        placement="center"
+        placement="top-center"
         data-testid="save-report-modal"
       >
         <ModalContent>
@@ -1965,12 +1757,7 @@ function ResultsComponent() {
       </Modal>
 
       {/* successfull save */}
-      <Modal 
-        isOpen={isSuccessOpen} 
-        onOpenChange={onSuccessOpenChange} 
-        className="font-poppins-regular"
-        placement="center"
-      >
+      <Modal isOpen={isSuccessOpen} onOpenChange={onSuccessOpenChange} className="font-poppins-regular">
         <ModalContent>
           <ModalBody>
             <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">

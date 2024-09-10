@@ -1,27 +1,5 @@
-import winston, { createLogger, format, transports } from 'winston';
+import { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
-import path from 'path';
-
-// Custom format to handle message and service extraction
-const customFormat = winston.format((info) => {
-  console.log(info);
-  console.log('==========================================');
-
-  // Check if the message is passed as a string and the second argument is a string
-  if (
-    typeof info.message === 'string' &&
-    Array.isArray(info[Symbol.for('splat')])
-  ) {
-    const splat = info[Symbol.for('splat')];
-    if (splat.length > 0 && typeof splat[0] === 'string') {
-      info.service = splat[0]; // Assign the second argument as the service
-      info.message = splat[1]; // Assign the fist argument as the message
-      info.meta = splat; // Keep the original message
-    }
-  }
-  console.log(info);
-  return info;
-})();
 
 const getLogger = (fileName = 'application') => {
   const fileLogTransport = new transports.DailyRotateFile({
@@ -32,21 +10,32 @@ const getLogger = (fileName = 'application') => {
     maxFiles: '100d',
   });
 
-
-  // Create the logger instance
-  const logger = winston.createLogger({
-    format: winston.format.combine(
-      winston.format.timestamp(),  
-      customFormat,
-      winston.format.json() // Output the logs in JSON format
+  const consoleTransport = new transports.Console({
+    handleExceptions: false,
+    format: format.combine(
+      format.colorize(), // Adds colour to console output
+      format.printf((i) => `${i.message} ${i.servicename} `)
     ),
-    transports: [
-      new winston.transports.File({
-        filename: path.join(__dirname, 'logs.json'),
-      }), // Save logs to a file
-    ],
   });
 
+  const logger = createLogger({
+    level: 'info',
+    format: format.combine(
+      format.timestamp({
+        format: 'YYYY-MM-DD HH:mm:ss.SSS',
+      }),
+      format.errors({ stack: true }),
+      format.splat(),
+      format.printf(
+        ({ level, message, servicename, label = process.env.NODE_ENV, timestamp }) =>
+          `${timestamp} [${label}] ${level}: ${message}, ${servicename}`
+      )
+    ),
+    defaultMeta: { service: 'my-app' },
+    transports: [consoleTransport],
+  });
+
+  // Add to file regardless of environment
   logger.add(fileLogTransport);
 
   return logger;

@@ -1,11 +1,10 @@
 'use client'
 import React, { useState } from "react";
-import { Button } from '@nextui-org/react';
+import { Button, Checkbox } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
 import WEETextarea from "../components/Util/Textarea";
 import { useScrapingContext } from "../context/ScrapingContext";
-import { InfoPopOver } from "../components/InfoPopOver";
 
 // Models
 import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
@@ -121,22 +120,6 @@ export default function Home() {
           </h1>
           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
             Start by entering the URLs of the websites you wish to scrape
-            <InfoPopOver
-              data-testid="popup-home"
-              heading="Start Scraping"
-              content="This section provides a brief overview of the website based on the information extracted from the website's metadata. Enter the URLs you wish to scrape below. 
-              </br></br>
-              Please ensure that:
-              </br>
-              <ul>
-                <li>- Up to 10 URLs can be entered.</li>
-                <li>- Separate each URL with a comma (,).</li>
-                <li>- Include the full URL starting with http:// or https://.</li>
-              </ul>
-              </br>
-              Example: https://example.com, http://anotherexample.com"
-              placement="right-end"
-            />
           </h3>
         </div>
         <div className="flex flex-col sm:flex-row w-full justify-center items-center">

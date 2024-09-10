@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import NavBar from '../../src/app/components/NavBar';
 import { useUserContext } from '../../src/app/context/UserContext';
 import { useRouter } from 'next/navigation';
-import { createClient } from '../../src/app/utils/supabase/client';
+import { getSupabase } from '../../src/app/utils/supabase_service_client';
 import '@testing-library/jest-dom';
 
 jest.mock('next/navigation', () => ({
@@ -14,29 +14,9 @@ jest.mock('../../src/app/context/UserContext', () => ({
   useUserContext: jest.fn(),
 }));
 
-jest.mock('../../src/app/utils/supabase/client', () => ({
-	createClient: jest.fn(), 
+jest.mock('../../src/app/utils/supabase_service_client', () => ({
+  getSupabase: jest.fn(),
 }));
-
-jest.mock('next/headers', () => ({
-	cookies: jest.fn(),
-}));
-
-const mockSupabaseClient = {
-	auth: {
-		signInWithPassword: jest.fn(),
-		signInWithOAuth: jest.fn(),
-		signUp: jest.fn(),
-		getUser: jest.fn(),
-    signOut: jest.fn(),
-	},
-	from: jest.fn(() => ({
-		select: jest.fn().mockReturnThis(),
-		eq: jest.fn().mockReturnThis(),
-	})),
-};
-
-(createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
 describe('NavBar Component', () => {
   const mockPush = jest.fn();
@@ -47,6 +27,11 @@ describe('NavBar Component', () => {
     (useUserContext as jest.Mock).mockReturnValue({
       user: null,
       setUser: mockSetUser,
+    });
+    (getSupabase as jest.Mock).mockReturnValue({
+      auth: {
+        signOut: jest.fn(),
+      },
     });
   });
 
@@ -114,7 +99,7 @@ describe('NavBar Component', () => {
 
     // Verify that the sign out function was called
     await waitFor(() => {
-      expect(mockSupabaseClient.auth.signOut).toHaveBeenCalled();
+      expect(getSupabase().auth.signOut).toHaveBeenCalled();
     });
 
     // Verify that the user state is set to null
