@@ -11,7 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
   ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
-  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500, NewsOperation,  socialAnalyticsOperation,
+  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500, NewsOperation,  socialAnalyticsOperation,ReviewsOperation,
   GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400, GetJobStatusKeywordQuery,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -650,92 +650,47 @@ export class ScraperController {
 
   }
 
-  @Get('status')
-  @GetJobStatusOperation
-  @GetJobStatusResponse200
-  @GetJobStatusResponse400
-  @GetJobStatusTypeQuery
-  @GetJobStatusQuery
-  async getJobStatus(@Query('type') type: string, @Query('url') url: string) {
-    console.log(url, type);
-    try {
-      const acceptedTypes = [
-        'scrape',
-        'read-robots',
-        'scrape-metadata',
-        'scrape-status',
-        'classify-industry',
-        'scrape-logo',
-        'scrape-images',
-        'screenshot',
-        'scrape-contact-info',
-        'scrape-addresses',
-        'seo-analysis',
-        'keyword-analysis',
-        'scrape-news',
-        'social-analytics',
-
-      ];
-      if (!acceptedTypes.includes(type)) {
-        throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
-      }
-
-      const cacheKey = `${url}-${type}`;
-      const jobData: string = await this.cacheManager.get(cacheKey);
-      if (!jobData) {
-        return {
-          url,
-          message: 'Job not found',
-          data: null,
-        };
-      }
-      return JSON.parse(jobData);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        console.warn('Handled error in getJobStatus method:', error.message);
-        throw error;
-      } else {
-        console.error('Unhandled error in getJobStatus method:', error);
-        throw new HttpException(
-          'Internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
+  @ReviewsOperation
+@ScraperQuery
+@ScraperResponse200
+@ScraperResponse400
+@ScraperResponse500
+@Get('scrape-reviews')
+async scrapeReviews(@Query('url') url: string) {
+  try {
+    if (!url) {
+      throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
     }
-  }
 
-  @Get('keyword-status')
-  @GetJobStatusOperation
-  @GetJobStatusResponse200
-  @GetJobStatusResponse400
-  @GetJobStatusQuery
-  @GetJobStatusKeywordQuery
-  async getKeyWordAnalysis(
-    @Query('url') url: string,
-    @Query('keyword') keyword: string
-  ) {
-    const cacheKey = `${url}-keyword-${keyword}`;
-    const jobData: string = await this.cacheManager.get(cacheKey);
-    if (!jobData) {
-      return {
-        url,
-        keyword,
-        message: 'Job not found',
-        data: null,
-      };
+    const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+    if (!urlPattern.test(url)) {
+      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
     }
-    return JSON.parse(jobData);
-  }
-  catch(error) {
+
+    console.log('Publishing scrape-reviews task for url: ', url);
+    const message = {
+      type: 'scrape-reviews',
+      data: { url },
+    };
+    await this.pubsubService.publishMessage(this.topicName, message);
+
+    return {
+      message: 'Scrape reviews task published',
+      status: 'processing',
+      pollingUrl: `/status/scrape-reviews/${encodeURIComponent(url)}`,
+    };
+  } catch (error) {
     if (error instanceof HttpException) {
-      console.warn('Handled error in getJobStatus method:', error.message);
+      console.warn('Handled error in scrapeReviews method:', error.message);
       throw error;
     } else {
-      console.error('Unhandled error in getJobStatus method:', error);
+      console.error('Unhandled error in scrapeReviews method:', error);
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
+}
+
 }

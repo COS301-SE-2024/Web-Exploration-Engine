@@ -23,6 +23,7 @@ import { SentimentAnalysisService } from './sentiment-analysis/sentiment-analysi
 import { KeywordAnalysisService } from './keyword-analysis/keyword-analysis.service';
 import {NewsScraperService} from './scrape-news/scrape-news.service';
 import { ShareCountService } from './share-count-analytics/share-count-analytics.service';
+import { ScrapeReviewsService } from './scrape-reviews/scrape-reviews.service';
 // Models
 import {
   ErrorResponse,
@@ -54,7 +55,7 @@ export class ScraperService implements OnModuleInit {
     private readonly seoAnalysisService: SeoAnalysisService,
     private readonly sentimentAnalysisService: SentimentAnalysisService,
     private readonly keywordAnalysisService: KeywordAnalysisService,
-
+    private readonly reviewsService: ScrapeReviewsService,
     private readonly newsScraperService: NewsScraperService,
     private readonly shareCountService: ShareCountService,
   ) {}
@@ -94,6 +95,8 @@ export class ScraperService implements OnModuleInit {
         return this.scrapeNews(data.url);
       case 'share-count':
         return this.getShareCount(data.url);
+      case 'scrape-reviews':
+        return this.scrapeReviews(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -137,6 +140,7 @@ export class ScraperService implements OnModuleInit {
       scrapeNews: [],
       shareCountdata: null as any,
       time: 0,
+      reviews:[],
     } as ScrapeResult;
 
     data.url = url;
@@ -736,7 +740,45 @@ export class ScraperService implements OnModuleInit {
       }
     }
   }
-
+  async scrapeReviews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+  
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+  
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      logger.error(`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+  
+    try {
+      const reviewsData = await this.reviewsService.scrapeReviews(url);
+      return reviewsData;
+    } catch (error) {
+      logger.error(`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`,
+      } as ErrorResponse;
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
+  }
+  
 
 }
 
