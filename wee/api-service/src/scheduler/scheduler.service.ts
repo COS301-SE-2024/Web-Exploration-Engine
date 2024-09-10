@@ -129,8 +129,10 @@ export class SchedulerService {
     const updateMessage = {
       id: schedule.id,
       result_history: schedule.result_history,
-      newResults: results,
-    } as UpdateScheduleTask;
+      newReactionCount: results.reactionCount,
+      newCommentCount: results.commentCount,
+      
+    } ;
 
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);

@@ -9,17 +9,44 @@ export interface ScheduleTask {
   // result_history will initially be empty
 }
 
-export interface SavedResult {
-  // how to store the result of a scrape?
-  // this is just a placeholder
-  timestamp: string; // timestamp
-  result: string;
+export interface ScheduleResult {
+  timestampArr: string[];
+  commentCount: number[];
+  shareCount: number[];
+  reactionCount: number[];
+  totalEngagement: number[]; // sum of comment, share, reaction - can show sum of increase/decrease
+  newsSentiment: newsSentiment[];
+  rating: number[]; // average of reviews
+  numReviews: number[]; // number of reviews
+  trustIndex: number[]; // trust index
+  NPS: number[]; // Net Promoter Score
+  recommendationStatus: string[]; // recommendation status
+  starRatings: starRatings[];
+  siteSpeed: number[]; // site speed
+  performanceScore: number[]; // performance score
+  accessibilityScore: number[]; // accessibility score
+  bestPracticesScore: number[]; // best practices score
 }
 
 export interface UpdateScheduleTask {
   id: string,
-  result_history: SavedResult[];
-  newResults: any;
+  result_history: ScheduleResult;
+  newCommentCount: number;
+  newShareCount: number;
+  newReactionCount: number;
+  newTotalEngagement: number;
+  newNewsSentiment: newsSentiment;
+  // add when Johanes branch is merged
+    // newRating: number;
+    // newNumReviews: number;
+    // newTrustIndex: number;
+    // newNPS: number;
+    // newRecommendationStatus: string;
+    // newStarRatings: starRatings;
+  newSiteSpeed: number;
+  newPerformanceScore: number;
+  newAccessibilityScore: number;
+  newBestPracticesScore: number;
 }
 
 export interface ScheduleTaskResponse {
@@ -62,24 +89,6 @@ export interface starRatings {
 }
 
 
-export interface ScheduleResult {
-  timestampArr: string[];
-  commentCount: number[];
-  shareCount: number[];
-  reactionCount: number[];
-  totalEngagement: number[]; // sum of comment, share, reaction - can show sum of increase/decrease
-  newsSentiment: newsSentiment[];
-  rating: number[]; // average of reviews
-  numReviews: number[]; // number of reviews
-  trustIndex: number[]; // trust index
-  NPS: number[]; // Net Promoter Score
-  recommendationStatus: string[]; // recommendation status
-  starRatings: starRatings[];
-  siteSpeed: number[]; // site speed
-  performanceScore: number[]; // performance score
-  accessibilityScore: number[]; // accessibility score
-  bestPracticesScore: number[]; // best practices score
-}
 
 
 
