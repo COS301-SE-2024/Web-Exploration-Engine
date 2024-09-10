@@ -80,3 +80,73 @@
 {"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:16:48.025Z"}
 {"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:17:38.460Z"}
 {"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:19:10.510Z"}
+{"level":"info","message":0.027299999999740976,"meta":["duration",0.027299999999740976],"service":"duration","timestamp":"2024-09-10T08:19:51.659Z"}
+{"level":"error","message":"${serviceName} Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:51.678Z"}
+{"level":"info","message":8.457000000000335,"meta":["duration",8.457000000000335],"service":"duration","timestamp":"2024-09-10T08:19:51.688Z"}
+{"level":"error","meta":[" Failed to scrape logo: Cannot read properties of undefined (reading 'length')"],"service":" Failed to scrape logo: Cannot read properties of undefined (reading 'length')","timestamp":"2024-09-10T08:19:51.702Z"}
+{"level":"info","message":4.809400000000096,"meta":["duration",4.809400000000096],"service":"duration","timestamp":"2024-09-10T08:19:51.706Z"}
+{"level":"info","message":0.16300000000046566,"meta":["duration",0.16300000000046566],"service":"duration","timestamp":"2024-09-10T08:19:51.718Z"}
+{"level":"info","message":0.13929999999891152,"meta":["duration",0.13929999999891152],"service":"duration","timestamp":"2024-09-10T08:19:51.732Z"}
+{"level":"info","message":0.11980000000039581,"meta":["duration",0.11980000000039581],"service":"duration","timestamp":"2024-09-10T08:19:51.745Z"}
+{"level":"error","meta":[" Failed to scrape logo: Scraping failed"],"service":" Failed to scrape logo: Scraping failed","timestamp":"2024-09-10T08:19:51.795Z"}
+{"level":"info","message":8.636400000001231,"meta":["duration",8.636400000001231],"service":"duration","timestamp":"2024-09-10T08:19:51.803Z"}
+{"level":"error","meta":[" Failed to scrape logo: Failed to launch browser"],"service":" Failed to scrape logo: Failed to launch browser","timestamp":"2024-09-10T08:19:51.827Z"}
+{"level":"info","message":4.537400000001071,"meta":["duration",4.537400000001071],"service":"duration","timestamp":"2024-09-10T08:19:51.832Z"}
+{"level":"error","meta":[" Extracting Domain Error TypeError: Invalid URL"],"service":" Extracting Domain Error TypeError: Invalid URL","timestamp":"2024-09-10T08:19:52.054Z"}
+{"level":"error","meta":[" Extracting Domain Error TypeError: Invalid URL"],"service":" Extracting Domain Error TypeError: Invalid URL","timestamp":"2024-09-10T08:19:52.194Z"}
+{"level":"info","message":1.8077999999986787,"meta":["duration",1.8077999999986787],"service":"duration","timestamp":"2024-09-10T08:19:52.393Z"}
+{"level":"warn","meta":["Crawling not allowed for this URL"],"service":"Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:52.412Z"}
+{"level":"info","message":0.17419999999947322,"meta":["duration",0.17419999999947322],"service":"duration","timestamp":"2024-09-10T08:19:52.450Z"}
+{"level":"info","message":0.4206000000012864,"meta":["duration",0.4206000000012864],"service":"duration","timestamp":"2024-09-10T08:19:52.467Z"}
+{"level":"info","message":0.13400000000001455,"meta":["duration",0.13400000000001455],"service":"duration","timestamp":"2024-09-10T08:19:52.480Z"}
+{"level":"info","message":0.15970000000015716,"meta":["duration",0.15970000000015716],"service":"duration","timestamp":"2024-09-10T08:19:52.497Z"}
+{"level":"info","message":0.2217000000000553,"meta":["duration",0.2217000000000553],"service":"duration","timestamp":"2024-09-10T08:19:52.509Z"}
+{"level":"info","message":0.1323000000011234,"meta":["duration",0.1323000000011234],"service":"duration","timestamp":"2024-09-10T08:19:52.521Z"}
+{"level":"info","message":0.46080000000074506,"meta":["duration",0.46080000000074506],"service":"duration","timestamp":"2024-09-10T08:19:52.535Z"}
+{"level":"info","message":581.2464,"meta":["duration",581.2464],"service":"duration","timestamp":"2024-09-10T08:19:52.791Z"}
+{"level":"info","message":99.61809999999969,"meta":["duration",99.61809999999969],"service":"duration","timestamp":"2024-09-10T08:19:52.908Z"}
+{"level":"info","message":0.5693000000010215,"meta":["duration",0.5693000000010215],"service":"duration","timestamp":"2024-09-10T08:19:53.662Z"}
+{"level":"info","message":2.1174000000009983,"meta":["duration",2.1174000000009983],"service":"duration","timestamp":"2024-09-10T08:19:53.689Z"}
+{"level":"warn","meta":["Crawling not allowed for this URL"],"service":"Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:53.703Z"}
+{"level":"warn","meta":[" robots.txt does not exist for https://www.pnp.com/robots.txt"],"service":" robots.txt does not exist for https://www.pnp.com/robots.txt","timestamp":"2024-09-10T08:19:53.907Z"}
+{"level":"info","message":988.8833999999988,"meta":["duration",988.8833999999988],"service":"duration","timestamp":"2024-09-10T08:19:53.909Z"}
+{"level":"info","message":41.46010000000024,"meta":["duration",41.46010000000024],"service":"duration","timestamp":"2024-09-10T08:19:53.997Z"}
+{"level":"warn","meta":[" robots.txt does not exist for https://www.pnp.com/robots.txt"],"service":" robots.txt does not exist for https://www.pnp.com/robots.txt","timestamp":"2024-09-10T08:19:54.327Z"}
+{"level":"info","message":323.0007999999998,"meta":["duration",323.0007999999998],"service":"duration","timestamp":"2024-09-10T08:19:54.330Z"}
+{"level":"info","message":0.507900000000518,"meta":["duration",0.507900000000518],"service":"duration","timestamp":"2024-09-10T08:19:55.288Z"}
+{"level":"error","meta":[" Crawling not allowed for this URL"],"service":" Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:55.297Z"}
+{"level":"error","meta":[" Failed to scrape images: Failed to launch browser"],"service":" Failed to scrape images: Failed to launch browser","timestamp":"2024-09-10T08:19:55.306Z"}
+{"level":"info","message":8.014800000000832,"meta":["duration",8.014800000000832],"service":"duration","timestamp":"2024-09-10T08:19:55.314Z"}
+{"level":"info","message":0.2790000000022701,"meta":["duration",0.2790000000022701],"service":"duration","timestamp":"2024-09-10T08:19:55.322Z"}
+{"level":"error","meta":[" Failed to scrape images: page.authenticate is not a function"],"service":" Failed to scrape images: page.authenticate is not a function","timestamp":"2024-09-10T08:19:55.342Z"}
+{"level":"info","message":16.17399999999907,"meta":["duration",16.17399999999907],"service":"duration","timestamp":"2024-09-10T08:19:55.346Z"}
+{"level":"info","message":0.10710000000108266,"meta":["duration",0.10710000000108266],"service":"duration","timestamp":"2024-09-10T08:19:55.361Z"}
+{"level":"error","meta":[" Failed to scrape images: Failed to create new page"],"service":" Failed to scrape images: Failed to create new page","timestamp":"2024-09-10T08:19:55.374Z"}
+{"level":"info","message":3.1965999999993073,"meta":["duration",3.1965999999993073],"service":"duration","timestamp":"2024-09-10T08:19:55.377Z"}
+{"level":"error","meta":[" Failed to scrape images: Failed to evaluate"],"service":" Failed to scrape images: Failed to evaluate","timestamp":"2024-09-10T08:19:55.386Z"}
+{"level":"info","message":2.3885000000009313,"meta":["duration",2.3885000000009313],"service":"duration","timestamp":"2024-09-10T08:19:55.389Z"}
+{"level":"info","message":0.6316999999999098,"meta":["duration",0.6316999999999098],"service":"duration","timestamp":"2024-09-10T08:19:53.829Z"}
+{"level":"warn","message":"${serviceName} Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:53.850Z"}
+{"level":"info","message":0.3477999999995518,"meta":["duration",0.3477999999995518],"service":"duration","timestamp":"2024-09-10T08:19:55.327Z"}
+{"level":"info","message":0.16609999999855063,"meta":["duration",0.16609999999855063],"service":"duration","timestamp":"2024-09-10T08:19:55.344Z"}
+{"level":"info","message":0.22039999999833526,"meta":["duration",0.22039999999833526],"service":"duration","timestamp":"2024-09-10T08:19:55.395Z"}
+{"level":"info","message":0.09819999999672291,"meta":["duration",0.09819999999672291],"service":"duration","timestamp":"2024-09-10T08:19:55.408Z"}
+{"level":"warn","meta":["Not allowed to scrape root URL for metadata"],"service":"Not allowed to scrape root URL for metadata","timestamp":"2024-09-10T08:19:55.290Z"}
+{"level":"info","message":1.3787999999985914,"meta":["duration",1.3787999999985914],"service":"duration","timestamp":"2024-09-10T08:19:55.920Z"}
+{"level":"error","meta":[" Error classifying industry: Network error"],"service":" Error classifying industry: Network error","timestamp":"2024-09-10T08:19:55.968Z"}
+{"level":"info","message":39.96849999999904,"meta":["duration",39.96849999999904],"service":"duration","timestamp":"2024-09-10T08:19:55.972Z"}
+{"level":"error","meta":[" Error classifying industry: Network error"],"service":" Error classifying industry: Network error","timestamp":"2024-09-10T08:19:55.985Z"}
+{"level":"error","message":"[NewsScraperService] Error fetching news articles: Failed to fetch","timestamp":"2024-09-10T08:19:54.826Z"}
+{"level":"error","message":"[NewsScraperService] Invalid URL provided: invalid-url","timestamp":"2024-09-10T08:19:54.889Z"}
+{"level":"warn","meta":["Crawling not allowed for this URL"],"service":"Crawling not allowed for this URL","timestamp":"2024-09-10T08:19:55.366Z"}
+{"level":"error","meta":[" Error checking optimization for image http://example.com/image.jpg: Unexpected error"],"service":" Error checking optimization for image http://example.com/image.jpg: Unexpected error","timestamp":"2024-09-10T08:19:55.751Z"}
+{"level":"error","meta":[" Error checking optimization for image http://example.com/image.jpg: Unexpected error fetching image"],"service":" Error checking optimization for image http://example.com/image.jpg: Unexpected error fetching image","timestamp":"2024-09-10T08:19:55.992Z"}
+{"level":"error","meta":[" Error fetching XML sitemap: Failed to fetch"],"service":" Error fetching XML sitemap: Failed to fetch","timestamp":"2024-09-10T08:19:56.038Z"}
+{"level":"info","message":0.846400000002177,"meta":["duration",0.846400000002177],"service":"duration","timestamp":"2024-09-10T08:19:55.331Z"}
+{"level":"error","meta":[" Error scraping metadata: Page not found"],"service":" Error scraping metadata: Page not found","timestamp":"2024-09-10T08:19:55.360Z"}
+{"level":"info","message":6.372100000000501,"meta":["duration",6.372100000000501],"service":"duration","timestamp":"2024-09-10T08:19:55.366Z"}
+{"level":"info","message":0.2691999999988184,"meta":["duration",0.2691999999988184],"service":"duration","timestamp":"2024-09-10T08:19:55.383Z"}
+{"level":"info","message":0.1967000000004191,"meta":["duration",0.1967000000004191],"service":"duration","timestamp":"2024-09-10T08:19:55.421Z"}
+{"level":"error","meta":[" Error scraping metadata: Failed to launch"],"service":" Error scraping metadata: Failed to launch","timestamp":"2024-09-10T08:19:55.440Z"}
+{"level":"info","message":6.257600000000821,"meta":["duration",6.257600000000821],"service":"duration","timestamp":"2024-09-10T08:19:55.446Z"}
+{"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:20:02.252Z"}

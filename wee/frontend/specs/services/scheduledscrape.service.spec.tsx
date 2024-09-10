@@ -1,6 +1,6 @@
 import { createClient } from '../../src/app/utils/supabase/server'; // Adjust paths as necessary
 import * as service from '../../src/app/services/ScheduledScrapingService';
-import { ScheduleTask, GetSchedulesResponse} from '../../src/app/models/ScheduleModels';
+import { ScheduleTask, GetSchedulesResponse, ScheduleResult } from '../../src/app/models/ScheduleModels';
 
 
 jest.mock('../../src/app/utils/supabase/server', () => {
@@ -28,6 +28,30 @@ jest.mock('next/headers', () => ({
   cookies: jest.fn(),
 }));
 
+const emptyResultHistory = {
+  timestampArr: [],
+  commentCount: [],
+  shareCount: [],
+  reactionCount: [],
+  totalEngagement: [],
+  pinCount: [],
+  newsSentiment: {
+    positiveAvg: [],
+    negativeAvg: [],
+    neutralAvg: [],
+  },
+  rating: [],
+  numReviews: [],
+  trustIndex: [],
+  NPS: [],
+  recommendationStatus: [],
+  starRatings: [],
+  siteSpeed: [],
+  performanceScore: [],
+  accessibilityScore: [],
+  bestPracticesScore: [],
+} as ScheduleResult;
+
 
 
 describe('ScheduledScrapingService functions', () => {
@@ -52,7 +76,7 @@ describe('ScheduledScrapingService functions', () => {
         user_id: 'user123',
         url: 'https://example.com',
         next_scrape: '2024-08-24T00:00:00.000Z',
-        result_history: [],
+        result_history: emptyResultHistory,
         frequency: 'daily',
         keywords: ['keyword1', 'keyword2'],
         keyword_results: [],
