@@ -114,7 +114,8 @@ describe('ScheduledScrapingService functions', () => {
         id: 'schedule123',
         url: 'https://example.com',
         next_scrape: '2024-08-24T00:00:00.000Z',
-        result_history: [],
+        updated_at: '2024-08-24T00:00:00.000Z',
+        result_history: emptyResultHistory,
         frequency: 'daily',
         keywords: ['keyword1', 'keyword2'],
         keyword_results: [],
@@ -125,6 +126,9 @@ describe('ScheduledScrapingService functions', () => {
         url: scheduleData.url,
         next_scrape: scheduleData.next_scrape,
         keywords: scheduleData.keywords,
+        keyword_results: scheduleData.keyword_results,
+        updated_at: scheduleData.updated_at,
+        result_history: scheduleData.result_history,
       } as GetSchedulesResponse;
 
       const mockData = [scheduleData];

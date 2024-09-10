@@ -75,6 +75,9 @@ export async function getSchedules(user_id: string) {
       url: task.url,
       next_scrape: task.next_scrape,
       keywords: task.keywords,
+      updated_at: task.updated_at,
+      keyword_results: task.keyword_results,
+      result_history: task.result_history,
     } as GetSchedulesResponse;
   }) as GetSchedulesResponse[]; 
 }

@@ -103,6 +103,9 @@ export interface GetSchedulesResponse {
   url: string;
   next_scrape: string;
   keywords: string[];
+  updated_at: string;
+  keyword_results: KeywordResult[];
+  result_history: ScheduleResult;
 }
 
 
