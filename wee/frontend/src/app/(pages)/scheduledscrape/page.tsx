@@ -16,6 +16,8 @@ import { on } from 'events';
 import { set } from 'cypress/types/lodash';
 
 export default function ScheduledScrape() {
+  const MAX_URLS = 10; // Define the maximum number of URLs
+  const [urlCount, setUrlCount] = React.useState(0); // Track the number of URLs
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
   const { isOpen: isSecondModalOpen, onOpen: onSecondModalOpen, onOpenChange: onSecondModalOpenChange, onClose: onSecondModalClose } = useDisclosure();
   const { isOpen: isThirdModalOpen, onOpen: onThirdModalOpen, onOpenChange: onThirdModalOpenChange, onClose: onThirdModalClose } = useDisclosure();
@@ -190,6 +192,7 @@ export default function ScheduledScrape() {
       const schedules = await getSchedules(user.uuid) as GetSchedulesResponse[];
       console.log('Schedules:', schedules);
       setSchedules(schedules);
+      setUrlCount(schedules.length);
     }
     else {
       console.error("User is not logged in");
@@ -238,11 +241,22 @@ export default function ScheduledScrape() {
         <h1 className="my-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-center text-jungleGreen-800 dark:text-dark-primaryTextColor">
           Scheduled Scraping Tasks
         </h1>
+      {/* check if limit   is reached */}
+      {urlCount >= MAX_URLS ? (
+        <h3 className="my-4 font-poppins text-md sm:text-md md:text-lg text-center text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          {urlCount} tasks scheduled. Please delete a task to add a new one.
+        </h3>
+      ) : (
+        <h3 className="my-4 font-poppins text-md sm:text-md md:text-lg text-center text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          {urlCount} tasks scheduled. {MAX_URLS - urlCount} slots remaining.
+        </h3>
+      )}
         <div className="flex flex-col sm:flex-row justify-end mb-3">
           <Button
             data-testid="btn-add-scraping-task"
             startContent={<FiPlus />}
             onPress={onFirstModalOpen}
+            isDisabled={urlCount >= MAX_URLS} // Disable button if URL count exceeds the limit
             className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
           >
             Add Scraping Task
