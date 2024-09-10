@@ -17,6 +17,7 @@ export const AddressesOperation = ApiOperation({ summary: 'Publish task to scrap
 export const SeoAnalysisOperation = ApiOperation({ summary: 'Publish task to perform SEO analysis on the url provided' });
 export const NewsOperation =ApiOperation({ summary: 'Publish task to perform News extraction on the url provided' });
 export const socialAnalyticsOperation = ApiOperation({ summary: 'Publish task to perform social medial analytics on the url provided' });
+export const ReviewsOperation = ApiOperation({ summary: 'Publish task to scrape reviews on the url provided' });
 // Query descriptions
 export const ScraperQuery = ApiQuery({ name: 'url', required: true, description: 'The URL to scrape' });
 
@@ -386,7 +387,8 @@ export const GetJobStatusTypeParam = ApiParam({
       'scrape-contact-info',
       'scrape-addresses',
       'seo-analysis',
-      'scrape-news'
+      'scrape-news',
+      'scrape-reviews',
     ],
   },
 });
