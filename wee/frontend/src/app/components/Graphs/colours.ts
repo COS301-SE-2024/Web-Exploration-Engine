@@ -14,12 +14,12 @@ export const ChartColours: string[] = [
 export const DarkChartColours: string[] = [
     "#5ECDC3",
     "#C8F563",
-    "#FAC368",
-    "#C8FFF8",
-    "#F66C6D",
-    "#576E7A",
-    "#96A9FF",
-    "#FCE375",
+    "#F1982C",
+    "#576e7a",
+    "#ff96f6",
+    "#eb4c4c",
+    "#F8CE0E",
+    "#7CB6F9",
     "#82E275",
     "#F89792",    
 ]
