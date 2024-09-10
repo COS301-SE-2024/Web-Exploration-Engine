@@ -56,6 +56,11 @@ export interface newsSentiment {
   neutralAvg: number;
 }
 
+export interface starRatings {
+  stars: number;
+  numReviews: number;
+}
+
 
 export interface ScheduleResult {
   timestampArr: string[];
@@ -64,8 +69,16 @@ export interface ScheduleResult {
   reactionCount: number[];
   totalEngagement: number[]; // sum of comment, share, reaction - can show sum of increase/decrease
   newsSentiment: newsSentiment[];
-  
-
+  rating: number[]; // average of reviews
+  numReviews: number[]; // number of reviews
+  trustIndex: number[]; // trust index
+  NPS: number[]; // Net Promoter Score
+  recommendationStatus: string[]; // recommendation status
+  starRatings: starRatings[];
+  siteSpeed: number[]; // site speed
+  performanceScore: number[]; // performance score
+  accessibilityScore: number[]; // accessibility score
+  bestPracticesScore: number[]; // best practices score
 }
 
 
