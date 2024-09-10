@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import React, { useState } from 'react';
@@ -5,6 +6,7 @@ import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Button } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
+import { submitFeedback } from '../../services/feedback';
 
 const faqs = [
   {
@@ -95,7 +97,7 @@ export default function Help() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
+  const [success, setSuccess] = useState('');
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,16 +134,29 @@ export default function Help() {
       return () => clearTimeout(timer);
     }
 
-    // Create Request Object
+    const { success, error: feedbackError } = await submitFeedback(email, name, message);
 
-    //Integration Code Goes Here
+    if (success) {
+      setSuccess('Feedback submitted successfully');
+      setEmail('');
+      setName('');
+      setMessage('');
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 3000);
+    } else {
+      setError(`Error: ${feedbackError}`);
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+    }
   };
 
   return (
     <main className="">
       <div id="faq" className="my-16 text-center">
         <h1 className="my-4 mx-9 font-poppins-bold text-5xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-          Frequently Asked Questions 
+          Frequently Asked Questions
         </h1>
         <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
           How can we help you?{' '}
@@ -205,14 +220,19 @@ export default function Help() {
           </h3>
         </div>
 
-        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto ">
-          {error ? (
-            <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-              <p>{error}</p>
-            </span>
-          ) : (
-            <p className="hidden"></p>
-          )}
+        <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto">
+    {error && (
+      <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+        <p>{error}</p>
+      </span>
+    )}
+
+    {success && (
+      <span className="mx-auto mt-4 p-2 w-full text-white bg-jungleGreen-700 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+        <p>{success}</p>
+      </span>
+    )}
+
 
           <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">
             <WEEInput
