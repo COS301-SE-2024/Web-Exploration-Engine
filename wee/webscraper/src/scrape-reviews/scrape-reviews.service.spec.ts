@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ScrapeReviewsService } from './scrape-reviews.service';
 import * as puppeteer from 'puppeteer';
+import { ReviewData } from '../models/ServiceModels';
 
 jest.mock('puppeteer');
 
@@ -49,9 +50,9 @@ describe('ScrapeReviewsService', () => {
       expect(scrapeReviewsViaGoogleSpy).toHaveBeenCalledWith('example business');
     });
 
-    it('should return an empty array if business name cannot be extracted', async () => {
+    it('should return null if business name cannot be extracted', async () => {
       const result = await service.scrapeReviews('invalid-url');
-      expect(result).toEqual([]);
+      expect(result).toBeNull();
     });
 
     it('should log business name and review count on successful review scraping', async () => {
@@ -81,18 +82,18 @@ describe('ScrapeReviewsService', () => {
       expect(scrapeReviewsFromHelloPeterSpy).toHaveBeenCalledWith(page);
     });
   
-    it('should return an empty array if Google search fails', async () => {
+    it('should return null if Google search fails', async () => {
       page.goto.mockRejectedValue(new Error('Network Error'));
 
       const result = await service['scrapeReviewsViaGoogle']('example business');
 
-      expect(result).toEqual([]);
+      expect(result).toBeNull();
     });
 
-    it('should return an empty array if no review URLs are found in Google search', async () => {
+    it('should return null if no review URLs are found in Google search', async () => {
       page.evaluate.mockResolvedValue([]);
       const result = await service['scrapeReviewsViaGoogle']('example business');
-      expect(result).toEqual([]);
+      expect(result).toBeNull();
     });
 
     it('should handle errors when scraping individual review URLs', async () => {
@@ -103,7 +104,7 @@ describe('ScrapeReviewsService', () => {
   
       const result = await service['scrapeReviewsViaGoogle']('example business');
   
-      expect(result).toEqual([]);
+      expect(result).toBeNull();
       expect(scrapeReviewsFromHelloPeterSpy).toHaveBeenCalledWith(page);
     });
   });
@@ -124,19 +125,25 @@ describe('ScrapeReviewsService', () => {
           trustindexRating: '90',
           nps: '60',
           recommendationStatus: 'Recommended',
-          reviewNumbers: ['5-star: 80', '4-star: 15', '3-star: 5'],
+          reviewNumbers: ['80 Reviews', '15 Reviews', '5 Reviews'],
         });
   
         const reviews = await service['scrapeReviewsFromHelloPeter'](page);
+        
+        const expectedResults = {
+          rating: 4.5,
+          numberOfReviews: 100,
+          trustIndex: 90,
+          NPS: 60,
+          recommendationStatus: 'Recommended',
+          fiveStars: 80,
+          fourStars: 15,
+          threeStars: 5,
+          twoStars: 0,
+          oneStar: 0,
+        } as ReviewData;
   
-        expect(reviews).toEqual([
-          'Rating: 4.5',
-          'Number of reviews: 100',
-          'Trustindex rating: 90',
-          'NPS: 60',
-          'Recommendation status: Recommended',
-          'Review breakdown: 5-star: 80; 4-star: 15; 3-star: 5',
-        ]);
+        expect(reviews).toEqual(expectedResults);
       });
   
       it('should handle errors during review extraction', async () => {
@@ -146,6 +153,7 @@ describe('ScrapeReviewsService', () => {
           'Failed to scrape reviews from Hello Peter: Failed to load page'
         );
       });
+      
       it('should handle missing review elements when scraping Hello Peter', async () => {
           page.evaluate.mockResolvedValue({
             rating: '',
@@ -157,16 +165,23 @@ describe('ScrapeReviewsService', () => {
           });
         
           const reviews = await service['scrapeReviewsFromHelloPeter'](page);
+
+          const expectedResults = {
+            rating: 0,
+            numberOfReviews: 0,
+            trustIndex: 0,
+            NPS: 0,
+            recommendationStatus: '',
+            fiveStars: 0,
+            fourStars: 0,
+            threeStars: 0,
+            twoStars: 0,
+            oneStar: 0,
+          } as ReviewData;
         
-          expect(reviews).toEqual([
-            'Rating: ',
-            'Number of reviews: ',
-            'Trustindex rating: ',
-            'NPS: ',
-            'Recommendation status: ',
-            'Review breakdown: '
-          ]);
+          expect(reviews).toEqual(expectedResults);
         });
+
         it('should return default values if Hello Peter HTML structure is invalid', async () => {
           page.evaluate.mockResolvedValue({
             rating: 'No rating found',
@@ -178,15 +193,21 @@ describe('ScrapeReviewsService', () => {
           });
         
           const reviews = await service['scrapeReviewsFromHelloPeter'](page);
+
+          const expectedResults = {
+            rating: 0,
+            numberOfReviews: 0,
+            trustIndex: 0,
+            NPS: 0,
+            recommendationStatus: 'No recommendation status found',
+            fiveStars: 0,
+            fourStars: 0,
+            threeStars: 0,
+            twoStars: 0,
+            oneStar: 0,
+          } as ReviewData;
         
-          expect(reviews).toEqual([
-            'Rating: No rating found',
-            'Number of reviews: No review count found',
-            'Trustindex rating: No Trustindex rating found',
-            'NPS: No NPS found',
-            'Recommendation status: No recommendation status found',
-            'Review breakdown: '
-          ]);
+          expect(reviews).toEqual(expectedResults);
         });
   });
 

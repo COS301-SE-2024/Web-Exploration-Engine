@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
+import { ReviewData } from '../models/ServiceModels';
 
 @Injectable()
 export class ScrapeReviewsService {
-  async scrapeReviews(url: string): Promise<string[]> {
+  async scrapeReviews(url: string): Promise<ReviewData> {
     console.log(`Starting review scraping for URL: ${url}`);
 
     const businessName = this.extractBusinessNameFromUrl(url);
     if (!businessName) {
       console.error('Failed to extract business name from URL');
-      return [];
+      return null;
     }
     console.log(`Extracted business name: ${businessName}`);
 
@@ -19,10 +20,10 @@ export class ScrapeReviewsService {
     return reviews;
   }
 
-  private async scrapeReviewsViaGoogle(businessName: string): Promise<string[]> {
+  private async scrapeReviewsViaGoogle(businessName: string): Promise<ReviewData> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    const reviews: string[] = [];
+    let reviews: ReviewData = null
 
     try {
       const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(businessName)}+reviews`;
@@ -38,32 +39,32 @@ export class ScrapeReviewsService {
 
       console.log(`Found review URLs: ${reviewUrls}`);
 
-      for (const url of reviewUrls) {
-        try {
-          const reviewPage = await browser.newPage();
-          await reviewPage.goto(url, { waitUntil: 'networkidle2' });
+      // just use first url
+      const url = reviewUrls[0];
 
-          let pageReviews: string[] = [];
-          if (url.includes('hellopeter.com')) {
-            pageReviews = await this.scrapeReviewsFromHelloPeter(reviewPage);
-          }
-          reviews.push(...pageReviews);
-          await reviewPage.close();
-        } catch (error) {
-          console.error(`Failed to scrape reviews from ${url}: ${error.message}`);
+      try {
+        const reviewPage = await browser.newPage();
+        await reviewPage.goto(url, { waitUntil: 'networkidle2' });
+
+        if (url.includes('hellopeter.com')) {
+          reviews = await this.scrapeReviewsFromHelloPeter(reviewPage);
         }
+        await reviewPage.close();
+      } catch (error) {
+        console.error(`Failed to scrape reviews from ${url}: ${error.message}`);
       }
+      
 
       return reviews;
     } catch (error) {
       console.error(`Failed to perform Google search: ${error.message}`);
-      return [];
+      return null;
     } finally {
       await page.close();
       await browser.close();
     }
   }
-  private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<string[]> {
+  private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<ReviewData> {
     try {
       await page.waitForSelector('span.has-text-weight-bold', { timeout: 15000 });
       console.log('Review content and elements loaded.');
@@ -78,6 +79,7 @@ export class ScrapeReviewsService {
         
         const reviewNumbersElements = Array.from(document.querySelectorAll('div.is-flex.falign-center.margin-bottom-10 span.fb__breakdown'));
         const reviewNumbers = reviewNumbersElements.map(el => (el as HTMLElement).innerText.trim());
+       
         const rating = ratingElement ? (ratingElement as HTMLElement).innerText.trim() : 'No rating found';
         const reviewCount = reviewCountElement ? (reviewCountElement as HTMLElement).innerText.trim() : 'No review count found';
         const trustindexRating = trustindexRatingElement ? (trustindexRatingElement as HTMLElement).innerText.trim() : 'No Trustindex rating found';
@@ -93,15 +95,68 @@ export class ScrapeReviewsService {
       console.log(`Extracted NPS from Hello Peter: ${nps}`);
       console.log(`Extracted recommendation status from Hello Peter: ${recommendationStatus}`);
       console.log(`Extracted review numbers from Hello Peter: ${reviewNumbers.join(', ')}`);
+
+
+      // format correctly
+      // change rating to number
+      let ratingNumber = 0;
+      if (rating !== 'No rating found') {
+        ratingNumber = parseFloat(rating);
+        // check if NaN
+        if (isNaN(ratingNumber)) {
+          ratingNumber = 0;
+        }
+      }
+
+      // change review count to number
+      let reviewCountNumber = 0;
+      if (reviewCount !== 'No review count found') {
+        reviewCountNumber = parseInt(reviewCount);
+        // check if NaN
+        if (isNaN(reviewCountNumber)) {
+          reviewCountNumber = 0;
+        }
+      }
+
+      // change trustindex rating to number
+      let trustindexRatingNumber = 0;
+      if (trustindexRating !== 'No Trustindex rating found') {
+        trustindexRatingNumber = parseFloat(trustindexRating);
+        // check if NaN
+        if (isNaN(trustindexRatingNumber)) {
+          trustindexRatingNumber = 0;
+        }
+      }
+
+      // change NPS to number
+      let npsNumber = 0;
+      if (nps !== 'No NPS found') {
+        npsNumber = parseFloat(nps);
+        // check if NaN
+        if (isNaN(npsNumber)) {
+          npsNumber = 0;
+        }
+      }
+
+      // change review numbers to number
+      const numericValues = reviewNumbers.map(review => {
+        return parseInt(review.replace(/[^\d]/g, '').trim());
+      });
+      
+      const [fiveStars = 0, fourStars= 0, threeStars= 0, twoStars= 0, oneStar= 0] = numericValues;
   
-      return [
-        `Rating: ${rating}`,
-        `Number of reviews: ${reviewCount}`,
-        `Trustindex rating: ${trustindexRating}`,
-        `NPS: ${nps}`,
-        `Recommendation status: ${recommendationStatus}`,
-        `Review breakdown: ${reviewNumbers.join('; ')}`
-      ];
+      return {
+        rating: ratingNumber,
+        numberOfReviews: reviewCountNumber,
+        trustIndex: trustindexRatingNumber,
+        NPS: npsNumber,
+        recommendationStatus,
+        oneStar,
+        twoStars,
+        threeStars,
+        fourStars,
+        fiveStars,
+      }
     } catch (error) {
       throw new Error(`Failed to scrape reviews from Hello Peter: ${error.message}`);
     }
