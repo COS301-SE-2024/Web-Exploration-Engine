@@ -717,7 +717,7 @@ async scrapeReviews(@Query('url') url: string) {
         'keyword-analysis',
         'scrape-news',
         'social-analytics',
-
+        'shareCount',
       ];
       if (!acceptedTypes.includes(type)) {
         throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);

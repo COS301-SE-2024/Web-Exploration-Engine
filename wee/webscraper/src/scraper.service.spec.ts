@@ -21,6 +21,8 @@ import { ScrapeReviewsService } from "./scrape-reviews/scrape-reviews.service";
 import * as puppeteer from 'puppeteer';
 import { NewsItem, RobotsResponse } from "./models/ServiceModels";
 
+import { ScrapeResult, ReviewData } from "./models/ServiceModels";
+
 jest.mock('puppeteer');
 import axios from 'axios';
 import xml2js from 'xml2js';
@@ -306,8 +308,8 @@ describe('ScraperService', () => {
             scrapeNews: [],
             semtimentClassification: null,
             shareCount:null,
-            reviews:[],
-          };
+            reviews: null,
+          } as ScrapeResult;
           const mockMessage = {
             data: Buffer.from(JSON.stringify({ data: { url }, type })),
             ack: jest.fn(),
@@ -361,7 +363,7 @@ describe('ScraperService', () => {
                 semtimentClassification: null,
                 news:[],
                 shareCount:null,
-                reviews:[],
+                reviews: null,
              };
 
             jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
@@ -684,14 +686,22 @@ describe('ScraperService', () => {
         it('should call scrape method with type "scrape-reviews"', async () => {
             const url = 'http://example.com';
             const type = 'scrape-reviews';
-            const reviewsResult = [
-                "Rating: 4.5",
-                "Number of reviews: 100",
-                "Trustindex rating: 54",
-                "NPS: 80",
-                "Recommendation status: Highly recommended",
-                "Review breakdown: 50; 30; 20"
-            ];
+            const reviewsResult = {
+                rating: 4.5,
+                numberOfReviews: 100,
+                trustIndex: 4.5,
+                NPS: 4.5,
+                recommendationStatus: 'Good',
+                starRatings: [
+                    {stars: 5, numReviews: 50},
+                    {stars: 4, numReviews: 30},
+                    {stars: 3, numReviews: 10},
+                    {stars: 2, numReviews: 5},
+                    {stars: 1, numReviews: 5},
+                ]
+
+                
+            } as ReviewData;
 
             jest.spyOn(service, 'scrapeReviews').mockResolvedValue(reviewsResult);
 
@@ -1306,14 +1316,21 @@ describe('ScraperService', () => {
             it('should scrape reviews and return the result in the expected format', async () => {
               const url = 'http://example.com';
               
-              const expectedReviewsResult = [
-                `Rating: 4.5`,
-                `Number of reviews: 120`,
-                `Trustindex rating: 4.2`,
-                `NPS: 60`,
-                `Recommendation status: Unlikely`,
-                `Review breakdown: 50; 30; 20; 10`
-              ];
+              const expectedReviewsResult = {
+                rating: 5,
+                numberOfReviews: 120,
+                trustIndex: 4.2,
+                NPS: 60,
+                recommendationStatus: 'Unlikely',
+                starRatings: [
+                  { stars: 5, numReviews: 50 },
+                  { stars: 4, numReviews: 30 },
+                  { stars: 3, numReviews: 20 },
+                  { stars: 2, numReviews: 10 },
+                  { stars: 1, numReviews: 10 },
+                ],
+            } as ReviewData;
+            
           
               const mockPage = {
                 goto: jest.fn(),

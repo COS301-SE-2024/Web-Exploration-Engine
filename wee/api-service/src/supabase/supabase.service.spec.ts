@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseService } from './supabase.service';
 import { createClient } from '@supabase/supabase-js';
 import { ScheduleResult, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
-import { DateTime } from 'luxon';
 
 
 jest.mock('@supabase/supabase-js', () => {
