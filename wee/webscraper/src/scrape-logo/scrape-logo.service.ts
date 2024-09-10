@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse } from '../models/ServiceModels';
+import { performance } from 'perf_hooks';
 import logger from '../../logging/webscraperlogger';
 import * as puppeteer from 'puppeteer';
 const serviceName = "[ScrapeLogoService]";
@@ -14,6 +15,8 @@ export class ScrapeLogoService {
      */
   async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string> {
     logger.debug(`${serviceName}`);  
+    const start = performance.now();
+
     // proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
@@ -62,13 +65,18 @@ export class ScrapeLogoService {
 
         return imageUrls.length > 0 ? imageUrls[0] : '';
     } catch (error) {
-      logger.error(`${serviceName} Failed to scrape logo: ${error.message}`);
+      logger.error(serviceName,` Failed to scrape logo: ${error.message}`);
       console.error(`Failed to scrape logo: ${error.message}`);
         return '';
     } finally {
         if (page) {
             await page.close();
         }
+        // Performance Logging
+        const duration = performance.now() - start;
+        console.log(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
+
     }
  }
 }

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { KeywordAnalysisService } from './keyword-analysis.service';
 import * as puppeteer from 'puppeteer';
+import { url } from 'inspector';
 
 jest.mock('puppeteer');
 
@@ -19,6 +20,15 @@ describe('KeywordAnalysisService', () => {
       const mockResults = [
         { link: 'http://example.com' },
         { link: 'http://example2.com' },
+        { link: 'http://example3.com' },
+        { link: 'http://example4.com' },
+        { link: 'http://example5.com' },
+        { link: 'http://example6.com' },
+        { link: 'http://example7.com' },
+        { link: 'http://example8.com' },
+        { link: 'http://example9.com' },
+        { link: 'http://example10.com' },
+        { link: 'http://example11.com' },
       ];
 
       const mockPage = {
@@ -40,15 +50,29 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example.com',
         ranking: 1,
+        topTen: [
+          'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+        ],
         recommendation: 'The URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.',
       });
     });
 
     it('should return ranking and recommendations with URLs ranked higher', async () => {
       const mockResults = [
-        { link: 'http://example2.com' },
         { link: 'http://example.com' },
+        { link: 'http://example2.com' },
+        { link: 'http://example3.com' },
+        { link: 'http://example4.com' },
+        { link: 'http://example5.com' },
+        { link: 'http://example6.com' },
+        { link: 'http://example7.com' },
+        { link: 'http://example8.com' },
+        { link: 'http://example9.com' },
+        { link: 'http://example10.com' },
+        { link: 'http://example11.com' },
       ];
 
       const mockPage = {
@@ -67,11 +91,16 @@ describe('KeywordAnalysisService', () => {
       process.env.PROXY_USERNAME = 'username';
       process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
+      const result = await service.getKeywordRanking('http://example2.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example2.com',
         ranking: 2,
-        recommendation: 'The URL is ranked at position 2 for the keyword. However, the following URLs are ranked higher: example2.com. Consider analyzing the content, backlinks, and SEO strategies of these competitors to improve the ranking.',
+        topTen: [
+          'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+        ],
+        recommendation: 'The URL is ranked at position 2 for the keyword. However, the following URLs are ranked higher: example.com. Consider analyzing the content, backlinks, and SEO strategies of these competitors to improve the ranking.',
       });
     });
 
@@ -79,6 +108,15 @@ describe('KeywordAnalysisService', () => {
       const mockResults = [
         { link: 'http://example.com' },
         { link: 'http://example2.com' },
+        { link: 'http://example3.com' },
+        { link: 'http://example4.com' },
+        { link: 'http://example5.com' },
+        { link: 'http://example6.com' },
+        { link: 'http://example7.com' },
+        { link: 'http://example8.com' },
+        { link: 'http://example9.com' },
+        { link: 'http://example10.com' },
+        { link: 'http://example11.com' },
       ];
 
       const mockPage = {
@@ -100,8 +138,13 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://nonexistenturl.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://nonexistenturl.com',
         ranking: 'Not ranked in the top results',
-        recommendation:'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.',
+        topTen: [
+          'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
+        ],
+        recommendation:'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com, example3.com, example4.com, example5.com, example6.com, example7.com, example8.com, example9.com, example10.com.',
       });
     });
 
@@ -114,6 +157,16 @@ describe('KeywordAnalysisService', () => {
       const mockResults = [
         { link: 'http://example.com' },
         { link: 'http://example.com/page' },
+        { link: 'http://example2.com' },
+        { link: 'http://example3.com' },
+        { link: 'http://example4.com' },
+        { link: 'http://example5.com' },
+        { link: 'http://example6.com/home' },
+        { link: 'http://example7.com' },
+        { link: 'http://example8.com' },
+        { link: 'http://example9.com/page' },
+        { link: 'http://example10.com' },
+        { link: 'http://example11.com' },
       ];
 
       const mockPage = {
@@ -135,7 +188,12 @@ describe('KeywordAnalysisService', () => {
       const result = await service.getKeywordRanking('http://example.com', 'test keyword', mockBrowser);
 
       expect(result).toEqual({
+        keyword: 'test keyword',
+        url: 'http://example.com',  
         ranking: 1,
+        topTen: [
+          'example.com','example.com','example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com'
+        ],
         recommendation: 'The URL is ranked at position 1 for the keyword. Continue analyzing the content, backlinks, and SEO strategies to maintain your top ranking.',
       });
     });
