@@ -44,6 +44,9 @@ function DashboardPage() {
 				<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
 					Dashboard of {url}
 				</h1>
+				<h2 className="mt-2 font-poppins-bold text-md sm:text-lg md:text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+					Date of last scheduled scrape: 09/01/2024, 04:54 PM
+				</h2>
 			</div>
 
 			{/* Summary */}
@@ -64,7 +67,7 @@ function DashboardPage() {
 
 			{/* Keyword tracking */}
 			<div>
-				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					SEO Keyword Analysis
 					<InfoPopOver
 						data-testid="popup-seo-keyword-analaysis"
@@ -109,7 +112,7 @@ function DashboardPage() {
 
 			{/* News sentiment */}
 			<div>
-				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					News Sentiment
 					<InfoPopOver
 						data-testid="popup-news-sentiment"
@@ -126,7 +129,7 @@ function DashboardPage() {
 
 			{/* Facebook */}
 			<div>
-				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					Facebook
 					<InfoPopOver
 						data-testid="popup-seo-keyword-analaysis"
@@ -170,7 +173,7 @@ function DashboardPage() {
 
 			{/* Reviews */}
 			<div>
-				<h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100">
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					Reviews
 					<InfoPopOver
 						data-testid="popup-nps-reviews"
