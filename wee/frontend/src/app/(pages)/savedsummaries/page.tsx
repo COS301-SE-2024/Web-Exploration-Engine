@@ -17,7 +17,7 @@ import { FiShare, FiDownload, FiSave } from "react-icons/fi";
 import { useUserContext } from '../../context/UserContext';
 import { saveReport } from '../../services/SaveReportService';
 import { set } from 'cypress/types/lodash';
-
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 interface weakClassification {
     url: string;
@@ -62,6 +62,8 @@ function SummaryComponent() {
     const [scrapableUrls, setscrapableUrls] = useState<number>(0);
     const [avgTime, setAvgTime] = useState<number>(0);
    
+    useBeforeUnload();
+
     useEffect(() => {
         if (id) {
           const savedSummary = summaries.filter((res) => res.id == id);

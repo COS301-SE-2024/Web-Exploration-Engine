@@ -10,7 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import { FiArrowUp, FiArrowDown } from "react-icons/fi";
-
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 export default function Dashboard() {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
@@ -27,6 +27,8 @@ function DashboardPage() {
 	const backToScheduledScrape = () => {
 		router.back();
 	};
+
+	useBeforeUnload();
 
 	return (
 		<div className='p-4 min-h-screen'>

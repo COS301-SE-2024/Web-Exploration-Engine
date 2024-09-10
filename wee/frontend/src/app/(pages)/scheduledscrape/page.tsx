@@ -9,6 +9,7 @@ import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 export default function ScheduledScrape() {
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
@@ -21,6 +22,8 @@ export default function ScheduledScrape() {
   const [keywordList, setKeywordList] = React.useState(['keywordOne', 'keyword phrase two']);
   const [modalError, setModalError] = React.useState('');
   const router = useRouter();
+
+  useBeforeUnload();
 
   // Add keyword to keyword list
   const handleAddKeyword = () => {

@@ -5,6 +5,7 @@ import { Accordion, AccordionItem } from '@nextui-org/accordion';
 import { Button } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 const faqs = [
   {
@@ -96,6 +97,7 @@ export default function Help() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
+  useBeforeUnload();
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

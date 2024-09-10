@@ -30,6 +30,7 @@ import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
 import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 interface Classifications {
   label: string;
@@ -162,6 +163,8 @@ function ResultsComponent() {
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
   const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
+
+  useBeforeUnload();
 
   useEffect(() => {
     if (url) {

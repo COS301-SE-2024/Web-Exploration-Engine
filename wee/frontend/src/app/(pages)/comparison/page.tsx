@@ -10,6 +10,7 @@ import CircularProgressComparison from "../../components/CircularProgressCompari
 import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis, UniqueContentAnalysis } from "../../models/ScraperModels";
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
 import { InfoPopOver } from "../../components/InfoPopOver";
+import useBeforeUnload from "../../hooks/useBeforeUnload";
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
     return 'scores' in data || 'diagnostics' in data;
@@ -36,6 +37,8 @@ export default function Comparison() {
     const router = useRouter();
     const [websiteOne, setWebsiteOne] = React.useState<ScraperResult>();
     const [websiteTwo, setWebsiteTwo] = React.useState<ScraperResult>();
+
+    useBeforeUnload();
 
     const backToScrapeResults = () => {
         router.push(`/scraperesults`);

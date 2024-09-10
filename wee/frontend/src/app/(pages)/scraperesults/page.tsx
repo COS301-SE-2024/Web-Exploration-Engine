@@ -27,6 +27,7 @@ import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scrape
 import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
 import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
 import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
@@ -54,6 +55,8 @@ function ResultsComponent() {
   const [selectedCrawlableFilter, setSelectedCrawlableFilter] =
     React.useState('');
   const router = useRouter();
+
+  useBeforeUnload();
 
   const filteredResultItems = React.useMemo(() => {
     let filteredUrls = [...results];
