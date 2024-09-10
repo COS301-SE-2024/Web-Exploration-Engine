@@ -32,6 +32,7 @@ export default function Home() {
     }
 
     const handleScraping = () => {
+      throw Error('Sample error')
       if (!url) {
           setError('URL cannot be empty');
 
