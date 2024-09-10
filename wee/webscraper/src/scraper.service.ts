@@ -92,7 +92,7 @@ export class ScraperService implements OnModuleInit {
         return this.keywordAnalysis(data.url, data.keyword);
       case 'scrape-news':
         return this.scrapeNews(data.url);
-      case 'shareCount':
+      case 'share-count':
         return this.getShareCount(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
@@ -206,10 +206,11 @@ export class ScraperService implements OnModuleInit {
     const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
+    const shareCountPromise = this.shareCountService.getShareCount(url);
 
-    const [industryClassification, logo, images, sentimentAnalysis, newsScraping] = await Promise.all([
-      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise
-  ]);
+    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount ] = await Promise.all([
+      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise
+    ]);
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
@@ -222,8 +223,8 @@ export class ScraperService implements OnModuleInit {
 
 
     data.scrapeNews = newsScraping;
-    //shareCount data or results
-     data.shareCountdata = this.shareCountService.getShareCount(url);
+    
+    data.shareCountdata = shareCount;
 
     // close browser
     await browser.close();

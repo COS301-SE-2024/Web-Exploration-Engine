@@ -560,95 +560,6 @@ export class ScraperController {
     }
   }
 
-  @Get('status')
-  @GetJobStatusOperation
-  @GetJobStatusResponse200
-  @GetJobStatusResponse400
-  @GetJobStatusTypeQuery
-  @GetJobStatusQuery
-  async getJobStatus(@Query('type') type: string, @Query('url') url: string) {
-    console.log(url, type);
-    try {
-      const acceptedTypes = [
-        'scrape',
-        'read-robots',
-        'scrape-metadata',
-        'scrape-status',
-        'classify-industry',
-        'scrape-logo',
-        'scrape-images',
-        'screenshot',
-        'scrape-contact-info',
-        'scrape-addresses',
-        'seo-analysis',
-        'keyword-analysis',
-        'scrape-news',
-        'social-analytics',
-
-      ];
-      if (!acceptedTypes.includes(type)) {
-        throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
-      }
-
-      const cacheKey = `${url}-${type}`;
-      const jobData: string = await this.cacheManager.get(cacheKey);
-      if (!jobData) {
-        return {
-          url,
-          message: 'Job not found',
-          data: null,
-        };
-      }
-      return JSON.parse(jobData);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        console.warn('Handled error in getJobStatus method:', error.message);
-        throw error;
-      } else {
-        console.error('Unhandled error in getJobStatus method:', error);
-        throw new HttpException(
-          'Internal server error',
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    }
-  }
-
-  @Get('keyword-status')
-  @GetJobStatusOperation
-  @GetJobStatusResponse200
-  @GetJobStatusResponse400
-  @GetJobStatusQuery
-  @GetJobStatusKeywordQuery
-  async getKeyWordAnalysis(
-    @Query('url') url: string,
-    @Query('keyword') keyword: string
-  ) {
-    const cacheKey = `${url}-keyword-${keyword}`;
-    const jobData: string = await this.cacheManager.get(cacheKey);
-    if (!jobData) {
-      return {
-        url,
-        keyword,
-        message: 'Job not found',
-        data: null,
-      };
-    }
-    return JSON.parse(jobData);
-  }
-  catch(error) {
-    if (error instanceof HttpException) {
-      console.warn('Handled error in getJobStatus method:', error.message);
-      throw error;
-    } else {
-      console.error('Unhandled error in getJobStatus method:', error);
-      throw new HttpException(
-        'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-  }
-
   @NewsOperation
   @ScraperQuery
   @ScraperResponse200
@@ -737,5 +648,94 @@ export class ScraperController {
       }
     }
 
+  }
+
+  @Get('status')
+  @GetJobStatusOperation
+  @GetJobStatusResponse200
+  @GetJobStatusResponse400
+  @GetJobStatusTypeQuery
+  @GetJobStatusQuery
+  async getJobStatus(@Query('type') type: string, @Query('url') url: string) {
+    console.log(url, type);
+    try {
+      const acceptedTypes = [
+        'scrape',
+        'read-robots',
+        'scrape-metadata',
+        'scrape-status',
+        'classify-industry',
+        'scrape-logo',
+        'scrape-images',
+        'screenshot',
+        'scrape-contact-info',
+        'scrape-addresses',
+        'seo-analysis',
+        'keyword-analysis',
+        'scrape-news',
+        'social-analytics',
+
+      ];
+      if (!acceptedTypes.includes(type)) {
+        throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
+      }
+
+      const cacheKey = `${url}-${type}`;
+      const jobData: string = await this.cacheManager.get(cacheKey);
+      if (!jobData) {
+        return {
+          url,
+          message: 'Job not found',
+          data: null,
+        };
+      }
+      return JSON.parse(jobData);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        console.warn('Handled error in getJobStatus method:', error.message);
+        throw error;
+      } else {
+        console.error('Unhandled error in getJobStatus method:', error);
+        throw new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
+  }
+
+  @Get('keyword-status')
+  @GetJobStatusOperation
+  @GetJobStatusResponse200
+  @GetJobStatusResponse400
+  @GetJobStatusQuery
+  @GetJobStatusKeywordQuery
+  async getKeyWordAnalysis(
+    @Query('url') url: string,
+    @Query('keyword') keyword: string
+  ) {
+    const cacheKey = `${url}-keyword-${keyword}`;
+    const jobData: string = await this.cacheManager.get(cacheKey);
+    if (!jobData) {
+      return {
+        url,
+        keyword,
+        message: 'Job not found',
+        data: null,
+      };
+    }
+    return JSON.parse(jobData);
+  }
+  catch(error) {
+    if (error instanceof HttpException) {
+      console.warn('Handled error in getJobStatus method:', error.message);
+      throw error;
+    } else {
+      console.error('Unhandled error in getJobStatus method:', error);
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

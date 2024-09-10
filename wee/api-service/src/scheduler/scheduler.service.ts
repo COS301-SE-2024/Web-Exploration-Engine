@@ -64,8 +64,8 @@ export class SchedulerService {
         }
 
 
-        console.log('Updating next scrape time for:', schedule.url);
-        await this.supabaseService.updateNextScrapeTime(schedule);
+        // console.log('Updating next scrape time for:', schedule.url);
+        // await this.supabaseService.updateNextScrapeTime(schedule);
 
         // poll the API endpoint for the results
         console.log('Polling for results:', schedule.url);
@@ -91,6 +91,8 @@ export class SchedulerService {
           const response = await axios.get(endpoint);
   
           if (response.data && response.data.status === 'completed') {
+            console.log('Updating next scrape time for:', schedule.url);
+            await this.supabaseService.updateNextScrapeTime(schedule);
             this.handleApiResults(response.data.result, schedule);
             break;
           } else {

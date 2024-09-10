@@ -50,6 +50,24 @@ export interface updateKeywordResult {
   newTopTen: string[];
 }
 
+export interface newsSentiment {
+  positiveAvg: number;
+  negativeAvg: number;
+  neutralAvg: number;
+}
+
+
+export interface ScheduleResult {
+  timestampArr: string[];
+  commentCount: number[];
+  shareCount: number[];
+  reactionCount: number[];
+  totalEngagement: number[]; // sum of comment, share, reaction - can show sum of increase/decrease
+  newsSentiment: newsSentiment[];
+  
+
+}
+
 
 
 
