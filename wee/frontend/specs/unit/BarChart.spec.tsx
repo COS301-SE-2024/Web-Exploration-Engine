@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { useTheme } from 'next-themes';
-import { BarChart } from 'frontend/src/app/components/Graphs';
+import { BarChart } from '../../src/app/components/Graphs';
 import '@testing-library/jest-dom';
 
 jest.mock('next-themes', () => ({
