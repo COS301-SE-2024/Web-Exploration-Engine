@@ -549,9 +549,9 @@ describe('ScraperService', () => {
           
           
 
-        it('should call scrape method with type "shareCount"', async () => {
+        it('should call scrape method with type "share-count"', async () => {
           const url = 'http://example.com';
-          const type = 'shareCount';
+          const type = 'share-count';
           const shareCountArr = {
             "Facebook": {
               "comment_plugin_count": 9835,

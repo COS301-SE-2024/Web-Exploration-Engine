@@ -78,3 +78,5 @@
 {"level":"info","message":0.1088000000017928,"meta":["duration",0.1088000000017928],"service":"duration","timestamp":"2024-09-10T08:08:18.401Z"}
 {"level":"info","message":0.24420000000100117,"meta":["duration",0.24420000000100117],"service":"duration","timestamp":"2024-09-10T08:08:18.462Z"}
 {"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:16:48.025Z"}
+{"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:17:38.460Z"}
+{"level":"info","message":"[ScraperService]","timestamp":"2024-09-10T08:19:10.510Z"}
