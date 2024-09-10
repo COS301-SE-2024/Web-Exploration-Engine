@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupabaseService } from './supabase.service';
 import { createClient } from '@supabase/supabase-js';
 import { ScheduleResult, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
+import { time } from 'console';
 
 
 jest.mock('@supabase/supabase-js', () => {
@@ -25,6 +26,7 @@ jest.mock('@supabase/supabase-js', () => {
 
 
 const emptyResultHistory = {
+  timestampArr: [],
   commentCount: [],
   shareCount: [],
   reactionCount: [],
@@ -48,6 +50,7 @@ const emptyResultHistory = {
 } as ScheduleResult;
 
 const mockResultHistory = {
+  timestampArr: ['2021-01-01T00:00:00.000Z'],
   commentCount: [1],
   shareCount: [2],
   reactionCount: [3],
@@ -181,6 +184,7 @@ describe('SupabaseService', () => {
 
       // Check the updated result history
       expect(result).toEqual({
+        timestampArr: ['2021-01-01T00:00:00.000Z', timestamp.toISOString()],
         commentCount: [1, 10],
         shareCount: [2, 20],
         reactionCount: [3, 30],
@@ -269,7 +273,7 @@ describe('SupabaseService', () => {
         newAccessibilityScore: 80,
         newBestPracticesScore: 70,
       }
-      supabaseClient.eq.mockResolvedValue({ data: null, error: {message: 'Update error'} });
+      supabaseClient.eq.mockResolvedValue({ data: emptyResultHistory, error: {message: 'Update error'} });
 
       await expect(service.updateSchedule(updateData)).rejects.toThrow('Failed to update schedule: Update error');
     });

@@ -44,6 +44,7 @@ export class SupabaseService {
     const now = new Date();
     
     // append to necessary fields
+    result_history.timestampArr.push(now.toISOString());
     result_history.commentCount.push(newCommentCount);
     result_history.shareCount.push(newShareCount);
     result_history.reactionCount.push(newReactionCount);
