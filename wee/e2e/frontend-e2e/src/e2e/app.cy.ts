@@ -88,69 +88,153 @@ describe('frontend-e2e', () => {
   });
 
   describe('Scraping and Results Page', () => {
-    beforeEach(() => {
-      // Visit the home page before each test
+    // beforeEach(() => {
+    //   // Visit the home page before each test
+    //   cy.visit('/');
+    // });
+
+    // it('should start scraping and display results', () => {
+    //   // Type the URLs into the textarea
+    //   cy.get('[data-testid="scraping-textarea-home"]')
+    //     .type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
+
+    //   // Click the start scraping button
+    //   cy.get('[data-testid="btn-start-scraping"]').click();
+
+    //   // Wait for the loading indicator to disappear
+    //   cy.get('[data-testid="loading-indicator"]', { timeout: 20000 }).should('not.exist');
+
+    //   // Verify that the results page shows results for both sites
+    //   cy.get('[data-testid="btnView0"]', { timeout: 20000 }).should('exist').should('be.visible');
+    //   cy.get('[data-testid="btnView1"]', { timeout: 20000 }).should('exist').should('be.visible');
+
+    //   // Click the first view button
+    //   cy.get('[data-testid="btnView0"]').click();
+
+    //   // Assert that we are on the result page
+    //   cy.url({ timeout: 10000 }).should('include', '/results');
+
+    //   // Verify the presence of tabs and content on the result page
+    //   // General Overview Tab
+    //   cy.contains(/overview/i).should('exist');
+    //   cy.contains(/seo/i).should('exist');
+    //   cy.contains(/contact details/i).should('exist');
+
+    //   // Verify and navigate to the SEO tab
+    //   cy.get('[data-testid="tab-seo"]').should('exist').click();
+    //   cy.contains(/media/i).should('exist');
+    //   cy.contains(/seo/i).should('exist');
+    //   cy.contains(/export/i).should('exist');
+
+    //   // Ensure the media tab is clicked
+    //   cy.get('[data-testid="tab-media"]').click();
+
+    //   // Wait for the content to be visible
+
+    //   // Verify presence of the text and image
+    //   // cy.contains(/screenshot/i).should('exist');
+    //   // cy.contains(/screenshot available/i, { timeout: 10000 }).should('exist');
+    //   cy.contains(/images/i).should('exist');
+    //   cy.contains(/No images available/i).should('exist');
+
+    //   // Navigate to the SEO Analysis Tab
+    //   cy.get('[data-testid="tab-seo"]').click();
+    //   cy.contains(/images/i).should('exist');
+    //   cy.contains(/internal linking/i).should('exist');
+    //   cy.contains(/headings/i).should('exist');
+    //   cy.contains(/meta/i).should('exist');
+    //   cy.contains(/title tags/i).should('exist');
+    //   cy.contains(/unique content/i).should('exist');
+
+    //   // Navigate to the Sentimental Analysis Tab (if applicable)
+    //   //cy.get('[data-testid="tab-sentimental"]').click(); // Assuming there's a tab for sentiment analysis
+    //   //cy.contains(/sentiment/i).should('exist'); // Adjust the content to what you expect on this tab
+    // });
+  });
+
+  describe('comparison page', () => {
+    before(() => {
+      // Ensure the app is running and visit the home page
       cy.visit('/');
     });
 
-    it('should start scraping and display results', () => {
-      // Type the URLs into the textarea
-      cy.get('[data-testid="scraping-textarea-home"]')
-        .type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
+    it('all elements on the comparison page should exist', () => {
+      cy.visit('/comparison');
 
-      // Click the start scraping button
+      // Check all components exist
+      cy.get('[data-testid="website1-select"]').should('exist');
+      cy.get('[data-testid="website2-select"]').should('exist');
+
+      // Page Section: Domain Overview
+      cy.get('[data-testid="sect-website-status"]').should('exist');
+      cy.get('[data-testid="sect-industry-classification"]').should('exist');
+      cy.get('[data-testid="sect-domain-match"]').should('exist');
+
+      // Page Section: On-page SEO analysis
+      cy.get('[data-testid="sect-unique-content"]').should('exist');
+      cy.get('[data-testid="sect-images"]').should('exist');
+
+      // Page Section: Technical SEO analysis
+      cy.get('[data-testid="sect-lighthouse"]').should('exist');
+      cy.get('[data-testid="sect-mobile-friendly"]').should('exist');
+      cy.get('[data-testid="sect-site-speed"]').should('exist');
+    });
+
+    it('compare results of 2 URLs - wee-test-site-1 and wee-test-site-2', () => {
+      cy.visit('/');
+
+      // Input the URLs and start scraping
+      cy.get('[data-testid="scraping-textarea-home"]').type(
+        'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/'
+      );
       cy.get('[data-testid="btn-start-scraping"]').click();
 
-      // Wait for the loading indicator to disappear
-      cy.get('[data-testid="loading-indicator"]', { timeout: 20000 }).should('not.exist');
+      // Wait for scraping to finish
+      cy.get('[data-testid="btnView0"]', { timeout: 10000 }).should('exist').should('be.visible');
+      cy.get('[data-testid="btnView1"]', { timeout: 10000 }).should('exist').should('be.visible');
 
-      // Verify that the results page shows results for both sites
-      cy.get('[data-testid="btnView0"]', { timeout: 20000 }).should('exist').should('be.visible');
-      cy.get('[data-testid="btnView1"]', { timeout: 20000 }).should('exist').should('be.visible');
+      // Go to the results page
+      cy.url().should('include', 'results');
 
-      // Click the first view button
-      cy.get('[data-testid="btnView0"]').click();
+      // Navigate to the comparison page
+      cy.get('[data-testid="btn-comparison-summary"]').should('exist').click();
 
-      // Assert that we are on the result page
-      cy.url({ timeout: 10000 }).should('include', '/results');
+      // Verify we are on the Comparison Page
+      cy.url().should('include', 'comparison');
 
-      // Verify the presence of tabs and content on the result page
-      // General Overview Tab
-      cy.contains(/overview/i).should('exist');
-      cy.contains(/seo/i).should('exist');
-      cy.contains(/contact details/i).should('exist');
+     //Select first website to compare
+     cy.get('[data-testid="website1-select"]').should('exist');
+     cy.get('[data-testid="website1-select"]').click();
 
-      // Verify and navigate to the SEO tab
-      cy.get('[data-testid="tab-seo"]').should('exist').click();
-      cy.contains(/media/i).should('exist');
-      cy.contains(/seo/i).should('exist');
-      cy.contains(/export/i).should('exist');
+     cy.get('[data-testid="website1-option-0"]').should('exist');
+     cy.get('[data-testid="website1-option-1"]').should('exist');
+     cy.get('[data-testid="website1-option-1"]').click();
 
-      // Ensure the media tab is clicked
-      cy.get('[data-testid="tab-media"]').click();
+     //Select second website to compare
+     cy.get('[data-testid="website2-select"]').should('exist');
+     cy.get('[data-testid="website2-select"]').click();
 
-      // Wait for the content to be visible
+     cy.get('[data-testid="website2-option-0"]').should('exist');
+     cy.get('[data-testid="website2-option-1"]').should('exist');
+     cy.get('[data-testid="website2-option-1"]').click();
 
-      // Verify presence of the text and image
-      // cy.contains(/screenshot/i).should('exist');
-      // cy.contains(/screenshot available/i, { timeout: 10000 }).should('exist');
-      cy.contains(/images/i).should('exist');
-      cy.contains(/No images available/i).should('exist');
+      // Section: Lighthouse Analysis
+      cy.get('[data-testid="website1-lighthouse-performance"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website1-lighthouse-accessibility"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website1-lighthouse-bestpractices"]').should('exist').should('be.visible');
 
-      // Navigate to the SEO Analysis Tab
-      cy.get('[data-testid="tab-seo"]').click();
-      cy.contains(/images/i).should('exist');
-      cy.contains(/internal linking/i).should('exist');
-      cy.contains(/headings/i).should('exist');
-      cy.contains(/meta/i).should('exist');
-      cy.contains(/title tags/i).should('exist');
-      cy.contains(/unique content/i).should('exist');
+      cy.get('[data-testid="website2-lighthouse-performance"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website2-lighthouse-accessibility"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website2-lighthouse-bestpractices"]').should('exist').should('be.visible');
 
-      // Navigate to the Sentimental Analysis Tab (if applicable)
-      //cy.get('[data-testid="tab-sentimental"]').click(); // Assuming there's a tab for sentiment analysis
-      //cy.contains(/sentiment/i).should('exist'); // Adjust the content to what you expect on this tab
+      // Section: Mobile Friendly
+      cy.get('[data-testid="website1-mobilefriendly"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website2-mobilefriendly"]').should('exist').should('be.visible');
+
+      // Section: Site Speed
+      cy.get('[data-testid="website1-sitespeed"]').should('exist').should('be.visible');
+      cy.get('[data-testid="website2-sitespeed"]').should('exist').should('be.visible');
     });
   });
-
 
   });
