@@ -32,7 +32,15 @@ export default function Home() {
     }
 
     const handleScraping = () => {
-      throw Error('Sample error')
+      const timestamp = new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      
+      throw Error(`Sample error from frontend button ${timestamp}`)
       if (!url) {
           setError('URL cannot be empty');
 

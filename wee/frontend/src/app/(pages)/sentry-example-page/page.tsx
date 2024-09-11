@@ -55,7 +55,16 @@ export default function Page() {
             }, async () => {
               const res = await fetch("/api/sentry-example-api");
               if (!res.ok) {
-                throw new Error("Sentry Example Frontend Error");
+                const timestamp = new Date().toLocaleString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+                
+                Sentry.captureException(`Sample Error Using Capture Exception  ${timestamp}`);
+                throw new Error(`Sentry Example Frontend Error ${timestamp}`);
               }
             });
           }}
