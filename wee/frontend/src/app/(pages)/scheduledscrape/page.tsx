@@ -14,6 +14,7 @@ import { createScheduleTask, getSchedules, updateKeywords, deleteSchedule } from
 import { useUserContext } from '../../context/UserContext';
 import { on } from 'events';
 import { set } from 'cypress/types/lodash';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 export default function ScheduledScrape() {
   const MAX_URLS = 10; // Define the maximum number of URLs
@@ -32,6 +33,8 @@ export default function ScheduledScrape() {
   const [editID, setEditID] = React.useState('');
   const { user } = useUserContext();
   const router = useRouter();
+
+  useBeforeUnload();
 
   // Add keyword to keyword list
    const handleAddKeyword = () => {

@@ -8,11 +8,7 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-interface IChartExtended extends IChart {
-    legendPosition: 'bottom' | 'right';
-}
-
-export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended) {
+export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -22,31 +18,56 @@ export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended
 
     const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
-            id: 'apexchart-pie',
+            id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
             background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'heatmap',
+            stacked: true,
             toolbar: {
-              tools: {
-                zoom:false,
-                zoomin:true,
-                zoomout:true,
-                pan:false,
-                reset:false,
-                download:false,
-              }
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
             }
         },
         colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
-        labels: dataLabel,
+        plotOptions: {
+            heatmap: {
+                shadeIntensity: 0,
+                colorScale: {
+                    ranges: [
+                        { from: 0, to: 15, color: '#b6e4ce', name: 'Low' },       // Light green
+                        { from: 16, to: 30, color: '#54b38e', name: 'Medium' },    // Medium green
+                        { from: 31, to: 50, color: '#329874', name: 'High' },      // Darker green
+                        { from: 51, to: 100, color: '#144033', name: 'Very High' }  // Darkest green
+                    ]
+                }
+            }
+        },
         theme: {
             mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
-        legend: {
-          position: legendPosition,
-          horizontalAlign: 'left',
-          labels: {
-            colors: currentTheme === 'dark' ? '#FFFFFF' : '#000000',
-          }
+        xaxis: {
+            categories: dataLabel,
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            },
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
     });
 
@@ -70,12 +91,12 @@ export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended
                     <Chart
                         options={options}
                         series={series}
-                        type="pie"
+                        type="heatmap"
                         height={280}
                         width="100%"
                     />
                 </div>
             </div>
-        </div>      
+        </div>
     );
 }

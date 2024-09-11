@@ -22,6 +22,7 @@ import { saveReport } from '../../services/SaveReportService';
 import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
 import { AreaChart } from '../../components/Graphs/AreaChart';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 interface weakClassification {
   url: string;
@@ -79,6 +80,8 @@ export default function SummaryReport() {
   const [emotionsArea, setEmotionsArea] = useState<AreaInterface>();
 
   const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
+
+  useBeforeUnload();
 
   useEffect(() => {
 

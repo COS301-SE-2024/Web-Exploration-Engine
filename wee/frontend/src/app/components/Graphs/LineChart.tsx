@@ -3,12 +3,21 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
-import IChart from "../../models/ChartModel";
 import { ChartColours, DarkChartColours } from "./colours";
+
+interface LineInterface {
+    areaCategories: string[],
+    areaSeries: LineSeries[]
+}
+
+export interface LineSeries {
+    name: string,
+    data: number[]
+}
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export function ColumnChart({ dataLabel, dataSeries }: IChart) {
+export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterface) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -23,7 +32,7 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
             background: 'transparent',
             height: 100, // or any other fixed height
             width: '100%',
-            type: 'bar',
+            type: 'line',
             toolbar: {
                 tools: {
                     zoom: false,
@@ -34,37 +43,51 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
                     download: false,
                 }
             }
+        },
+        stroke: {
+            curve: 'smooth'
         },
         colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
-            bar: {
-                distributed: true
+            radar: {
+                polygons: {
+
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                }
             }
         },
         theme: {
             mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
-        xaxis: {
+        yaxis: {
+            min: 1,
+            max: 11,
+            tickAmount: 11,
             labels: {
-                show: false
+                formatter: (value) => {
+                    const customLabels = ['N/A', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+                    return value > 10 ? customLabels[0] : customLabels[11 - value];
+                },
             },
-            axisTicks: {
-                show: false
-            },
+            stepSize: 1,
+            reversed: true,
             axisBorder: {
-                show: false
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         },
-        yaxis: {
+        xaxis: {
+            categories: areaCategories,
             labels: {
-                show: false
-            },
-            axisTicks: {
-                show: false
+                style: {
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                },
             },
             axisBorder: {
-                show: false
-            }
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            },
         },
         grid: {
             borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
@@ -72,15 +95,16 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
     });
 
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
-    const series = [{
-        data: dataSeries.map((value, index) => ({ x: dataLabel[index], y: value }))
-    }];
+    const series = areaSeries.map((seriesItem) => ({
+        ...seriesItem,
+        data: seriesItem.data.map(value => value > 10 ? 11 : value)
+    }))
 
     useEffect(() => {
         if (mounted) {
             setOptions(generateOptions(resolvedTheme || 'light'));
         }
-    }, [resolvedTheme, dataLabel, mounted]);
+    }, [resolvedTheme, mounted]);
 
     if (!mounted) {
         return null;
@@ -93,17 +117,17 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
                     <Chart
                         options={options}
                         series={series}
-                        type="bar"
-                        height={280}
+                        type="line"
+                        height={400}
                         width="100%"
                     />
                 </div>
             </div>
-        </div>        
+        </div>
     );
 }
 
-export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
+export function LineChart({ areaCategories, areaSeries }: LineInterface) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -118,7 +142,7 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
             background: 'transparent',
             height: 100, // or any other fixed height
             width: '100%',
-            type: 'bar',
+            type: 'line',
             toolbar: {
                 tools: {
                     zoom: false,
@@ -130,44 +154,39 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
                 }
             }
         },
+        stroke: {
+            curve: 'smooth'
+        },
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
-            bar: {
-                distributed: true,
-                colors: {
-                    ranges: [
-                        {
-                            from: -Infinity,
-                            to: 0,
-                            color: '#FF0000',
-                        },
-                        {
-                            from: 1, 
-                            to: 49,
-                            color: '#FFA500', 
-                        },
-                        {
-                            from: 50, 
-                            to: Infinity,
-                            color: '#008000',
-                        }
-                    ]
+            radar: {
+                polygons: {
+
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
                 }
             }
-        },
-        legend: {
-            show: false,
         },
         theme: {
             mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
-        grid: {
-            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-        },
         xaxis: {
+            categories: areaCategories,
+            labels: {
+                style: {
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                },
+            },
             axisBorder: {
                 show: true,
                 color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-            }
+            },
+        },
+        dataLabels: {
+            enabled: true, // Enables data labels
+        },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
         yaxis: {
             axisBorder: {
@@ -178,15 +197,13 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
     });
 
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
-    const series = [{
-        data: dataSeries.map((value, index) => ({ x: dataLabel[index], y: value }))
-    }];
+    const series = areaSeries;
 
     useEffect(() => {
         if (mounted) {
             setOptions(generateOptions(resolvedTheme || 'light'));
         }
-    }, [resolvedTheme, dataLabel, mounted]);
+    }, [resolvedTheme, mounted]);
 
     if (!mounted) {
         return null;
@@ -199,12 +216,12 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
                     <Chart
                         options={options}
                         series={series}
-                        type="bar"
-                        height={280}
+                        type="line"
+                        height={400}
                         width="100%"
                     />
                 </div>
             </div>
-        </div>        
+        </div>
     );
 }

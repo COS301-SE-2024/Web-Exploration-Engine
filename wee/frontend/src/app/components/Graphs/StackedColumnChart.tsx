@@ -8,11 +8,7 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-interface IChartExtended extends IChart {
-    legendPosition: 'bottom' | 'right';
-}
-
-export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended) {
+export function StackedColumnChart({ dataLabel, dataSeries}: IChart) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
@@ -22,36 +18,53 @@ export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended
 
     const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
-            id: 'apexchart-pie',
+            id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
             background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'bar',
+            stacked: true,
             toolbar: {
-              tools: {
-                zoom:false,
-                zoomin:true,
-                zoomout:true,
-                pan:false,
-                reset:false,
-                download:false,
-              }
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
             }
         },
         colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
-        labels: dataLabel,
+        plotOptions: {
+            bar: {
+                horizontal: false // determines whether it is a horizontal(true) or vertical(false) chart
+            }
+        },
         theme: {
             mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
-        legend: {
-          position: legendPosition,
-          horizontalAlign: 'left',
-          labels: {
-            colors: currentTheme === 'dark' ? '#FFFFFF' : '#000000',
-          }
+        xaxis: {
+            categories: dataLabel,
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            },
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
     });
-
+    
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
-    const series = dataSeries;
+    const series = dataSeries;    
 
     useEffect(() => {
         if (mounted) {
@@ -70,12 +83,12 @@ export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended
                     <Chart
                         options={options}
                         series={series}
-                        type="pie"
+                        type="bar"
                         height={280}
                         width="100%"
                     />
                 </div>
             </div>
-        </div>      
-    );
+        </div>        
+    );   
 }

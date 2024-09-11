@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { useTheme } from 'next-themes';
-import { ColumnChart } from "../../src/app/components/Graphs/ColumnChart";
+import { LineChart } from '../../src/app/components/Graphs/LineChart';
+import { LineChartCustomAxis } from '../../src/app/components/Graphs/LineChart';
 import '@testing-library/jest-dom';
-import { ColumnChartNPS } from '../../src/app/components/Graphs/ColumnChart';
 
 jest.mock('next-themes', () => ({
     useTheme: jest.fn(),
@@ -16,14 +16,17 @@ jest.mock('next/dynamic', () => {
 
 const mockUseTheme = useTheme as jest.Mock;
 
-describe('ColumnChart', () => {
+describe('LineChart', () => {
     beforeEach(() => {
         mockUseTheme.mockReset();
         mockUseTheme.mockReturnValue({ theme: 'light' });
     });
 
+    const radarCategories = ['Category1', 'Category2', 'Category3'];
+    const radarSeries = [{ name: 'Series1', data: [10, 20, 30] }];
+
     it('renders correctly with light theme', () => {
-        render(<ColumnChart dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        render(<LineChart areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
@@ -31,35 +34,39 @@ describe('ColumnChart', () => {
     it('renders correctly with dark theme', () => {
         mockUseTheme.mockReturnValue({ theme: 'dark' });
 
-        render(<ColumnChart dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        render(<LineChart areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
 
     it('updates options when theme changes', () => {
         const { rerender } = render(
-            <ColumnChart dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />
+            <LineChart areaCategories={radarCategories} areaSeries={radarSeries} />
         );
 
         mockUseTheme.mockReturnValue({ theme: 'light' });
-        rerender(<ColumnChart dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        rerender(<LineChart areaCategories={radarCategories} areaSeries={radarSeries} />);
+
         expect(screen.getByRole('presentation')).toBeInTheDocument();
 
         mockUseTheme.mockReturnValue({ theme: 'dark' });
-        rerender(<ColumnChart dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        rerender(<LineChart areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
 });
 
-describe('ColumnChartNPS', () => {
+describe('LineChartCustomAxis', () => {
     beforeEach(() => {
         mockUseTheme.mockReset();
         mockUseTheme.mockReturnValue({ theme: 'light' });
     });
 
+    const radarCategories = ['Category1', 'Category2', 'Category3'];
+    const radarSeries = [{ name: 'Series1', data: [10, 20, 30] }];
+
     it('renders correctly with light theme', () => {
-        render(<ColumnChartNPS dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        render(<LineChartCustomAxis areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
@@ -67,22 +74,23 @@ describe('ColumnChartNPS', () => {
     it('renders correctly with dark theme', () => {
         mockUseTheme.mockReturnValue({ theme: 'dark' });
 
-        render(<ColumnChartNPS dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        render(<LineChartCustomAxis areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
 
     it('updates options when theme changes', () => {
         const { rerender } = render(
-            <ColumnChartNPS dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />
+            <LineChartCustomAxis areaCategories={radarCategories} areaSeries={radarSeries} />
         );
 
         mockUseTheme.mockReturnValue({ theme: 'light' });
-        rerender(<ColumnChartNPS dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        rerender(<LineChartCustomAxis areaCategories={radarCategories} areaSeries={radarSeries} />);
+
         expect(screen.getByRole('presentation')).toBeInTheDocument();
 
         mockUseTheme.mockReturnValue({ theme: 'dark' });
-        rerender(<ColumnChartNPS dataLabel={['Label1', 'Label2']} dataSeries={[10, 20]} />);
+        rerender(<LineChartCustomAxis areaCategories={radarCategories} areaSeries={radarSeries} />);
 
         expect(screen.getByRole('presentation')).toBeInTheDocument();
     });
