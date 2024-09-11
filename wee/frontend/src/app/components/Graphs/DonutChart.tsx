@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
 import IChart from "../../models/ChartModel";
-import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -12,54 +11,56 @@ interface IChartExtended extends IChart {
     legendPosition: 'bottom' | 'right';
 }
 
-export function DonutChart({dataLabel, dataSeries, legendPosition}: IChartExtended) {
-    const { theme } = useTheme();
-    const [options, setOptions] = useState<ApexOptions>({
+export function DonutChart({ dataLabel, dataSeries, legendPosition }: IChartExtended) {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-donut',
             fontFamily: "'Poppins', sans-serif",
             background: 'transparent',
             toolbar: {
-              tools: {
-                zoom:false,
-                zoomin:true,
-                zoomout:true,
-                pan:false,
-                reset:false,
-                download:false,
-              }
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
             }
         },
-        colors: theme === 'light' ? ['#60d143','#f76e25','#aa0825'] : ['#7aff82','#eb8945','#ca677a'],
+        colors: currentTheme === 'light' ? ['#60d143', '#f76e25', '#aa0825'] : ['#7aff82', '#eb8945', '#ca677a'],
         labels: dataLabel,
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         legend: {
-          position: legendPosition,
-          horizontalAlign: 'left',
-        },
-  
+            position: legendPosition,
+            horizontalAlign: 'left',
+            labels: {
+                colors: currentTheme === 'dark' ? '#FFFFFF' : '#000000',
+            }
+        }
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = dataSeries;
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ['#60d143','#f76e25','#aa0825'] : ['#7aff82','#eb8945','#ca677a'],
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            }
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, dataLabel, mounted]);
 
-    useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            labels: dataLabel
-        }));
-    }, [dataLabel]);
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
@@ -74,6 +75,6 @@ export function DonutChart({dataLabel, dataSeries, legendPosition}: IChartExtend
                     />
                 </div>
             </div>
-        </div>      
+        </div>
     );
 }

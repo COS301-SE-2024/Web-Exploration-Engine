@@ -15,7 +15,7 @@ import { getReports } from '../../services/SaveReportService';
 import { useUserContext } from '../../context/UserContext';
 import { deleteReport } from "../../services/SaveReportService";
 import WEETabs from "../../components/Util/Tabs";
-
+import useBeforeUnload from "../../hooks/useBeforeUnload";
 
 function ResultsComponent() {
   const { user, results, setResults, summaries, setSummaries } = useUserContext();
@@ -24,7 +24,8 @@ function ResultsComponent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
-  
+  useBeforeUnload();
+
   const handleResultPage = (reportID: number) => {
     router.push(`/savedresults?id=${reportID}`);
   };

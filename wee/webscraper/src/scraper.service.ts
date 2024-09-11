@@ -31,7 +31,8 @@ import {
   Metadata,
   IndustryClassification,
   SentimentClassification,
-  ScrapeResult
+  ScrapeResult,
+  ReviewData,
 } from './models/ServiceModels';
 
 const serviceName = "[ScraperService]";
@@ -93,7 +94,7 @@ export class ScraperService implements OnModuleInit {
         return this.keywordAnalysis(data.url, data.keyword);
       case 'scrape-news':
         return this.scrapeNews(data.url);
-      case 'shareCount':
+      case 'share-count':
         return this.getShareCount(data.url);
       case 'scrape-reviews':
         return this.scrapeReviews(data.url);
@@ -140,7 +141,7 @@ export class ScraperService implements OnModuleInit {
       scrapeNews: [],
       shareCountdata: null as any,
       time: 0,
-      reviews:[],
+      reviews: null as ReviewData | null,
     } as ScrapeResult;
 
     data.url = url;
@@ -210,10 +211,12 @@ export class ScraperService implements OnModuleInit {
     const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
+    const shareCountPromise = this.shareCountService.getShareCount(url);
+    const reviewsPromise = this.reviewsService.scrapeReviews(url);
 
-    const [industryClassification, logo, images, sentimentAnalysis, newsScraping] = await Promise.all([
-      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise
-  ]);
+    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
+      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
+    ]);
 
     // add error handling industryClassification
     data.industryClassification = industryClassification as IndustryClassification;
@@ -226,8 +229,10 @@ export class ScraperService implements OnModuleInit {
 
 
     data.scrapeNews = newsScraping;
-    //shareCount data or results
-     data.shareCountdata = this.shareCountService.getShareCount(url);
+    
+    data.shareCountdata = shareCount;
+
+    data.reviews = reviews;
 
     // close browser
     await browser.close();

@@ -29,7 +29,6 @@ const mockSupabaseClient = {
 
 describe('saveReport function', () => {
 
-
   afterEach(() => {
     jest.clearAllMocks();
   });

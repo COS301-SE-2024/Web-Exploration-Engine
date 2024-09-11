@@ -1,3 +1,5 @@
+import { of } from "rxjs";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ErrorResponse {
   errorStatus: number;
@@ -60,6 +62,18 @@ export interface NewsItem {
   };
 }
 
+export interface ShareCountdata {
+  Facebook: {
+    comment_plugin_count: number;
+    total_count: number;
+    og_object: any;
+    comment_count: number;
+    share_count: number;
+    reaction_count: number;
+  },
+  Pinterest: number;
+}
+
 export interface starRatings {
   stars: number;
   numReviews: number;
@@ -92,7 +106,7 @@ export interface ScrapeResult {
   seoAnalysis?: any;
   sentiment?: SentimentClassification | ErrorResponse;
   scrapeNews: NewsItem[] | ErrorResponse;
-  shareCountdata?:any;
+  shareCountdata: ShareCountdata | null;
   time: number;
   reviews: ReviewData | null;
 }
