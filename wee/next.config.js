@@ -9,13 +9,13 @@ module.exports = withSentryConfig(
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
-    org: "web-exploration-engine",
-    project: "wee-frontend",
+    org: process.env.NEXT_PUBLIC_SENTRY_DSN_LINK,
+    project: process.env.NEXT_PUBLIC_SENTRY_PROJECT,
     sentryUrl: "https://sentry.io/",
-
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    silent: false, // Can be used to suppress logs
     // Only print logs for uploading source maps in CI
-    silent: !process.env.CI,
-
+    //silent: !process.env.CI,
     // For all available options, see:
     // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
