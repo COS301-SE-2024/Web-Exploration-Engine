@@ -156,14 +156,14 @@ describe('SchedulerService', () => {
         keyword_results: [],
       };
 
-      const mockEndPoints = ['http://api.com/1', 'http://api.com/2'];
+      const mockEndPoint = 'http://api.com/1';
 
       const handleApiResultsSpy = jest.spyOn(service, 'handleApiResults');
 
       const mockResponse = { data: { status: 'completed', result: 'result' } };
       (axios.get as jest.Mock).mockResolvedValue(mockResponse);
 
-      await service.pollForResults(mockEndPoints, schedule);
+      await service.pollForResults(mockEndPoint, schedule);
 
       expect(axios.get).toHaveBeenCalled();
       expect(handleApiResultsSpy).toHaveBeenCalledWith('result', schedule);
@@ -183,7 +183,7 @@ describe('SchedulerService', () => {
         keyword_results: [],
       };
     
-      const mockEndPoints = ['http://api.com/1', 'http://api.com/2'];
+      const mockEndPoint = 'http://api.com/1';
       const maxRetries = 20; // Set a specific number of retries to control test duration
       
       jest.spyOn(service, 'delay').mockImplementation(() => Promise.resolve()); // Mock delay to speed up the test
@@ -192,10 +192,10 @@ describe('SchedulerService', () => {
       (axios.get as jest.Mock).mockRejectedValue(new Error('API error'));
     
       // Call the pollForResults method
-      await service.pollForResults(mockEndPoints, schedule);
+      await service.pollForResults(mockEndPoint, schedule);
     
       // Verify that axios.get was called the expected number of times (maxRetries * endpoints)
-      expect(axios.get).toHaveBeenCalledTimes(mockEndPoints.length * maxRetries);
+      expect(axios.get).toHaveBeenCalledTimes(maxRetries);
     }, 10000);
   });
 

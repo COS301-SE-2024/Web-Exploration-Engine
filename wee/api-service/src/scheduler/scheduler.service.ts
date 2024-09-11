@@ -142,10 +142,10 @@ export class SchedulerService {
         console.log(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
         
         // Validate if the endpoint is correct for the schedule's URL
-        if (!endpoint.includes(encodeURIComponent(schedule.url))) {
-          console.log('Invalid endpoint for schedule, skipping...');
-          return;
-        }
+        // if (!endpoint.includes(encodeURIComponent(schedule.url))) {
+        //   console.log('Invalid endpoint for schedule, skipping...');
+        //   return;
+        // }
   
         const response = await axios.get(endpoint);
   
