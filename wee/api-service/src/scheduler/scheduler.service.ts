@@ -22,14 +22,16 @@ export class SchedulerService {
     cron.schedule('* * * * *', () => this.checkSchedules());
   }
 
+  
+
   async checkSchedules() {
     if (this.isRunning) {
       console.log('Job already running, skipping...');
       return; // Prevent new job if one is already running
     }
-
+  
     this.isRunning = true; // Set lock
-
+  
     try {
       console.log('Checking schedules...');
       const dueSchedules = await this.supabaseService.getDueSchedules() as ScheduleTaskResponse[];
@@ -38,22 +40,27 @@ export class SchedulerService {
         return;
       }
       console.log('Number of due schedules:', dueSchedules.length);
-
-      const pollEndpoints: string[] = [];
+  
       const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
       const pollScrapeEndpoint = `${apiUrl}/scraper/status?type=scrape`;
       const pollKeywordEndpoint = `${apiUrl}/scraper/keyword-status?`;
-
+  
+      // Array to hold all concurrent polling promises
+      const pollingPromises: Promise<void>[] = [];
+  
       for (const schedule of dueSchedules) {
+        // Publish scrape tasks
         const message = {
           type: 'scrape',
           data: { url: schedule.url }
         };
-
         await this.pubsubService.publishMessage(this.topicName, message);
-        pollEndpoints.push(`${pollScrapeEndpoint}&url=${encodeURIComponent(schedule.url)}`);
-
-        // publish keyword tasks
+  
+        // Schedule a polling task for the scrape endpoint
+        const scrapeEndpoint = `${pollScrapeEndpoint}&url=${encodeURIComponent(schedule.url)}`;
+        pollingPromises.push(this.pollForResults(scrapeEndpoint, schedule));
+  
+        // Publish and schedule keyword analysis tasks
         const keywords = schedule.keywords;
         for (const keyword of keywords) {
           const keywordMessage = {
@@ -61,57 +68,103 @@ export class SchedulerService {
             data: { url: schedule.url, keyword }
           };
           await this.pubsubService.publishMessage(this.topicName, keywordMessage);
-          pollEndpoints.push(`${pollKeywordEndpoint}url=${encodeURIComponent(schedule.url)}&keyword=${encodeURIComponent(keyword)}`);
+  
+          // Schedule a polling task for each keyword analysis endpoint
+          const keywordEndpoint = `${pollKeywordEndpoint}url=${encodeURIComponent(schedule.url)}&keyword=${encodeURIComponent(keyword)}`;
+          pollingPromises.push(this.pollForResults(keywordEndpoint, schedule));
         }
-
-
-        // console.log('Updating next scrape time for:', schedule.url);
-        // await this.supabaseService.updateNextScrapeTime(schedule);
-
-        // poll the API endpoint for the results
-        console.log('Polling for results:', schedule.url);
-        await this.pollForResults(pollEndpoints, schedule);
-
       }
+  
+      // Execute all polling operations concurrently
+      await Promise.all(pollingPromises);
     } catch (error) {
       console.error('Error during job execution:', error);
     } finally {
       this.isRunning = false; // Release lock
     }
   }
+  
 
-  async pollForResults(endpoints: string[], schedule: ScheduleTaskResponse) {
+  // async pollForResults(endpoints: string[], schedule: ScheduleTaskResponse) {
+  //   const maxRetries = 20;
+  //   const retryDelay = 10000; // 10 seconds
+  //   const completedEndpoints: string[] = [];
+  
+  //   // Helper function to poll a single endpoint
+  //   const pollSingleEndpoint = async (endpoint: string) => {
+  //     if (completedEndpoints.includes(endpoint)) {
+  //       return; // Skip if already completed
+  //     }
+  //     for (let attempt = 0; attempt < maxRetries; attempt++) {
+
+  //       if (completedEndpoints.includes(endpoint)) {
+  //         return; // Skip if already completed
+  //       }
+
+  //       try {
+  //         console.log(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
+  //         if (!endpoint.includes(encodeURIComponent(schedule.url))) {
+  //           attempt--;
+  //           return;
+
+  //         }
+  //         const response = await axios.get(endpoint);
+  
+  //         if (response.data && response.data.status === 'completed') {
+  //           completedEndpoints.push(endpoint);
+  //           console.log('Updating next scrape time for:', schedule.url);
+  //           await this.supabaseService.updateNextScrapeTime(schedule);
+  //           await this.handleApiResults(response.data.result, schedule);
+  //           break;
+  //         } else {
+  //           await this.delay(retryDelay); // Delay before retrying
+  //         }
+  //       } catch (error) {
+  //         // Log the error and delay before retrying
+  //         await this.delay(retryDelay);
+  //       }
+  //     }
+  //   };
+  
+  //   // Create an array of promises for each endpoint to poll concurrently
+  //   const pollingPromises = endpoints.map(endpoint => pollSingleEndpoint(endpoint));
+  
+  //   // Use Promise.all to wait for all polling to complete
+  //   await Promise.all(pollingPromises);
+  // }
+
+  async pollForResults(endpoint: string, schedule: ScheduleTaskResponse) {
     const maxRetries = 20;
     const retryDelay = 10000; // 10 seconds
   
-    // Helper function to poll a single endpoint
-    const pollSingleEndpoint = async (endpoint: string) => {
-      for (let attempt = 0; attempt < maxRetries; attempt++) {
-        try {
-          console.log(`Polling API endpoint: ${endpoint}, attempt ${attempt + 1}`);
-          const response = await axios.get(endpoint);
-  
-          if (response.data && response.data.status === 'completed') {
-            console.log('Updating next scrape time for:', schedule.url);
-            await this.supabaseService.updateNextScrapeTime(schedule);
-            await this.handleApiResults(response.data.result, schedule);
-            break;
-          } else {
-            await this.delay(retryDelay); // Delay before retrying
-          }
-        } catch (error) {
-          // Log the error and delay before retrying
-          await this.delay(retryDelay);
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        console.log(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
+        
+        // Validate if the endpoint is correct for the schedule's URL
+        if (!endpoint.includes(encodeURIComponent(schedule.url))) {
+          console.log('Invalid endpoint for schedule, skipping...');
+          return;
         }
+  
+        const response = await axios.get(endpoint);
+  
+        if (response.data && response.data.status === 'completed') {
+          console.log('Updating next scrape time for:', schedule.url);
+          await this.supabaseService.updateNextScrapeTime(schedule);
+          await this.handleApiResults(response.data.result, schedule);
+          break; // Exit the loop on success
+        } else {
+          console.log(`Attempt ${attempt + 1} failed. Retrying after ${retryDelay / 1000} seconds...`);
+          await this.delay(retryDelay); // Delay before retrying
+        }
+      } catch (error) {
+        console.error('Error while polling API:', error);
+        await this.delay(retryDelay); // Delay before retrying on error
       }
-    };
-  
-    // Create an array of promises for each endpoint to poll concurrently
-    const pollingPromises = endpoints.map(endpoint => pollSingleEndpoint(endpoint));
-  
-    // Use Promise.all to wait for all polling to complete
-    await Promise.all(pollingPromises);
+    }
   }
+  
 
   async handleApiResults(results: any, schedule: ScheduleTaskResponse) {
     // Check if its scrape or keyword analysis
@@ -124,7 +177,7 @@ export class SchedulerService {
 
   async handleScrapeResults(results: ScrapeResult, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
-    console.log('Received scrape results for URL:', schedule.url);
+    console.log('Received scrape results for URL:', schedule.url );
     
     // Example of updating Supabase with the results
     const updateMessage = {

@@ -212,9 +212,10 @@ export class ScraperService implements OnModuleInit {
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
     const shareCountPromise = this.shareCountService.getShareCount(url);
+    const reviewsPromise = this.reviewsService.scrapeReviews(url);
 
-    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount ] = await Promise.all([
-      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise
+    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
+      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
     ]);
 
     // add error handling industryClassification
@@ -230,6 +231,8 @@ export class ScraperService implements OnModuleInit {
     data.scrapeNews = newsScraping;
     
     data.shareCountdata = shareCount;
+
+    data.reviews = reviews;
 
     // close browser
     await browser.close();
