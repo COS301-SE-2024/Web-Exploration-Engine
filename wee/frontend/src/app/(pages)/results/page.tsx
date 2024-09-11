@@ -30,6 +30,7 @@ import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
 import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 import MockCiscoKeywordCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-status-result.json'
 import MockCiscoKeywordMerakiFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-frontend-result.json'
 import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-frontend-result.json'
@@ -168,6 +169,8 @@ function ResultsComponent() {
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
   const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
+
+  useBeforeUnload();
 
   useEffect(() => {
     if (url) {
