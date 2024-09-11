@@ -22,7 +22,7 @@ export class ShareCountService {
       return response.data;
     } catch (error) {
       console.error('Error fetching share count:', error);
-      throw error;
+      return null;
     }
   }
 }

@@ -63,6 +63,10 @@ export default function NavBar() {
   const handleSavedReports = () => {  
     router.push('/savedreports');
   }
+
+  const handleScheduledScrape = () => {
+    router.push('/scheduledscrape');
+  }
     
   return (
       <Navbar
@@ -107,8 +111,23 @@ export default function NavBar() {
                   <Link onClick={handleSavedReports} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
                       Saved Reports
                   </Link>
+                  
               )}
-          </NavbarItem>
+        </NavbarItem>
+        <NavbarItem>
+              {!user ? (
+                  <Tooltip content="Please log in to access Scheduled Tasks">
+                      <span className="cursor-not-allowed">
+                      Scheduled Tasks
+                      </span>
+                  </Tooltip>
+              ) : (
+                  <Link onClick={handleScheduledScrape} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
+                     Scheduled Tasks
+                  </Link>
+                  
+              )}
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarContent justify="end">
