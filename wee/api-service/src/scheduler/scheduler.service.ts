@@ -94,7 +94,7 @@ export class SchedulerService {
           if (response.data && response.data.status === 'completed') {
             console.log('Updating next scrape time for:', schedule.url);
             await this.supabaseService.updateNextScrapeTime(schedule);
-            this.handleApiResults(response.data.result, schedule);
+            await this.handleApiResults(response.data.result, schedule);
             break;
           } else {
             await this.delay(retryDelay); // Delay before retrying
