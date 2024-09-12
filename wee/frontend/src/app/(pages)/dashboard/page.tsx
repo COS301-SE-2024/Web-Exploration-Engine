@@ -178,29 +178,25 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Comment Count
 						</h3>
-						<LineChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [19661, 19898, 20111, 20203, 20257, 20658, 21684] }]} />
+						{dashboardData && dashboardData.result_history.commentCount && 
+							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.commentCount }]} />
+						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Share Count
 						</h3>
-						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [62322, 62358, 63367, 63800, 64112, 64218] }]} />
+						{dashboardData && dashboardData.result_history.shareCount &&
+							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.shareCount }]} />
+						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Reaction Count
 						</h3>
-						<LineChart
-							areaCategories={[
-								'10 Jan 24', '10 Feb 24', '10 Mar 24', '10 Apr 24'
-							]}
-							areaSeries={[
-								{
-									name: 'Ranking',
-									data: [108645, 109762, 111231, 120009]
-								}
-							]}
-						/>
+						{dashboardData && dashboardData.result_history.reactionCount &&
+							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.reactionCount }]} />
+						}
 					</div>
 				</div>
 			</div>
