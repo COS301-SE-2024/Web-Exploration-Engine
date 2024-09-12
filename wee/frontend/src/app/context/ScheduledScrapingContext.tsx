@@ -3,7 +3,8 @@ import { GetSchedulesResponse } from "../models/ScheduleModels";
 
 interface SceduledScrapingContextType {
     scheduledScrapeResponse: GetSchedulesResponse[],
-    setScheduledScrapeResponse: (update: (prevScheduledScrapeResults: GetSchedulesResponse[]) => GetSchedulesResponse[]) => void;
+    // setScheduledScrapeResponse: (update: (prevScheduledScrapeResults: GetSchedulesResponse[]) => GetSchedulesResponse[]) => void;
+    setScheduledScrapeResponse: (data: GetSchedulesResponse[]) => void;
 }
 
 const ScheduledScrapeContext = createContext<SceduledScrapingContextType | undefined>(undefined);
