@@ -269,7 +269,7 @@ export default function ScheduledScrape() {
             startContent={<FiRefreshCcw  />}
             variant="bordered"
             onPress={loadScheduledScrapingTasks}
-            className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg border-3"
+            className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg border-3 border-jungleGreen-700 dark:border-jungleGreen-400"
           >
             Refresh
           </Button>
