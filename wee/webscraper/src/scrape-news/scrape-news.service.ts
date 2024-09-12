@@ -11,7 +11,7 @@ const serviceName = "[NewsScraperService]";
 
 @Injectable()
 export class NewsScraperService {
-  private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative'
+  private readonly HUGGING_FACE_SENTIMENT_API_URL = process.env.SENTIMENT_ANALYSIS_API_URL;
 
   async fetchNewsArticles(url: string): Promise<{ title: string; link: string; source: string; pubDate: string; sentimentScores?: { positive: number; negative: number; neutral: number } }[]> {
     try {

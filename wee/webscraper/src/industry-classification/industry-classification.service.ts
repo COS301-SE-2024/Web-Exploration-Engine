@@ -8,12 +8,7 @@ const serviceName = "[IndustryClassificationService]";
 @Injectable()
 export class IndustryClassificationService {
 
-  // private readonly HUGGING_FACE_API_URL =
-  //   'https://api-inference.huggingface.co/models/sampathkethineedi/industry-classification-api';
-
-  private readonly HUGGING_FACE_ZERO_SHOT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/zero-shot';
-
-  // private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
+  private readonly HUGGING_FACE_ZERO_SHOT_API_URL = process.env.ZERO_SHOT_API_URL;
 
   private readonly CANDIDATE_LABELS = [
     'Mining and Minerals', 'Agriculture', 'Manufacturing', 'Finance and Banking',
@@ -28,7 +23,6 @@ export class IndustryClassificationService {
     'Insurance','Legal Services','Fitness and Wellness','Jewelry','Entertainment and Recreation'
   ];
 
- 
   async classifyIndustry(url: string, metadata: Metadata): Promise<IndustryClassification> {
     // update: try and catch for each classification - doesn't return unknown if one fails
     logger.debug(`${serviceName}`);
