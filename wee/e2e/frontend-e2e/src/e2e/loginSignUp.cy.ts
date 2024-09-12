@@ -4,7 +4,6 @@ describe('frontend-e2e', () => {
   beforeEach(() => cy.visit('/'));
 
   it('should display welcome message', () => {
-    // Custom command to login
     cy.login('my-email@something.com', 'myPassword');
 
     // Check the greeting message

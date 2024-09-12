@@ -1,6 +1,3 @@
-
-
-
 describe('Summary Report Page E2E Test', () => {
   before(() => {
     // Visit the homepage and start the scraping process with real URLs
@@ -53,7 +50,6 @@ describe('Summary Report Page E2E Test', () => {
     cy.get('[data-testid="table-domain-match"]').find('th').eq(1).should('contain.text', 'CLASSIFICATION - META');
     cy.get('[data-testid="table-domain-match"]').find('th').eq(2).should('contain.text', 'DOMAIN MATCH');
 
-    // Additional checks or assertions for content, layout, or data
   });
 
 
