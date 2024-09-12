@@ -449,5 +449,46 @@ describe('ScraperController', () => {
       );
     });
   });
+  describe('seoAnalysis', () => {
+    it('should publish an SEO analysis task when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.seoAnalysis(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'seo-analysis', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'SEO analysis task published',
+        status: 'processing',
+        pollingUrl: `/status/seo-analysis/${encodeURIComponent(url)}`,
+      });
+    });
   
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.seoAnalysis('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.seoAnalysis('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.seoAnalysis('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+    
 });
