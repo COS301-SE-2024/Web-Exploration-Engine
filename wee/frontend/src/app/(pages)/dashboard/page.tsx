@@ -97,7 +97,21 @@ function DashboardPage() {
 				</h3>
 
 				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
-					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					{dashboardData && dashboardData.keyword_results.map((keyword_result, index) => {
+						const numericRankArr = keyword_result.rankArr.map(rank => {
+							return typeof rank === 'string' ? 11 : rank;
+						});
+
+						return (
+							<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center' key={index}>
+								<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+									{keyword_result.keyword}
+								</h3>
+								<LineChartCustomAxis areaCategories={keyword_result.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]} />
+							</div>
+						)
+					})}
+					{/* <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Online bookstores
 						</h3>
@@ -125,7 +139,7 @@ function DashboardPage() {
 								}
 							]}
 						/>
-					</div>
+					</div> */}
 				</div>
 			</div>
 
@@ -140,10 +154,11 @@ function DashboardPage() {
 						placement="right-end"
 					/>
 				</h3>
-
-				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-					<AreaChart areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr']} areaSeries={[{ name: 'positive', data: [52, 58, 41, 28] }, { name: 'neutral', data: [10, 8, 30, 16] }, { name: 'negative', data: [38, 34, 29, 56] }]} />
-				</div>
+				{dashboardData && dashboardData.result_history.newsSentiment && (
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]} />
+					</div>
+				)}
 			</div>
 
 			{/* Facebook */}
