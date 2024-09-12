@@ -408,5 +408,46 @@ describe('ScraperController', () => {
       );
     });
   });
-    
+  describe('scrapeContactInfo', () => {
+    it('should publish a scrape-contact-info task when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.scrapeContactInfo(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'scrape-contact-info', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'Scrape contact info task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-contact-info/${encodeURIComponent(url)}`,
+      });
+    });
+  
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.scrapeContactInfo('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.scrapeContactInfo('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.scrapeContactInfo('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+  
 });
