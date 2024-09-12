@@ -164,7 +164,7 @@ function DashboardPage() {
 			{/* Facebook */}
 			<div>
 				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
-					Facebook
+					Social Media
 					<InfoPopOver
 						data-testid="popup-seo-keyword-analaysis"
 						heading="SEO Keyword Analysis"
@@ -173,10 +173,10 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
+				<div className='gap-4 grid md:grid-cols-2 xl:grid-cols-4'>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Comment Count
+							Facebook - Comment Count
 						</h3>
 						{dashboardData && dashboardData.result_history.commentCount &&
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.commentCount }]} />
@@ -184,7 +184,7 @@ function DashboardPage() {
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Share Count
+							Facebook - Share Count
 						</h3>
 						{dashboardData && dashboardData.result_history.shareCount &&
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.shareCount }]} />
@@ -192,10 +192,18 @@ function DashboardPage() {
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Reaction Count
+							Facebook - Reaction Count
 						</h3>
 						{dashboardData && dashboardData.result_history.reactionCount &&
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.reactionCount }]} />
+						}
+					</div>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Pintrest - Pin Count
+						</h3>
+						{dashboardData && dashboardData.result_history.pinCount &&
+							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.pinCount }]} />
 						}
 					</div>
 				</div>
@@ -284,7 +292,11 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						<LineChart areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun']} areaSeries={[{ name: 'Ranking', data: [2.1, 1.5, 1.7, 3.5, 3] }]} />
+						{dashboardData && dashboardData.result_history.trustIndex &&
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} 
+								areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.trustIndex}]} />
+						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
