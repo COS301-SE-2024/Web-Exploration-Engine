@@ -82,6 +82,58 @@ function DashboardPage() {
 						19 661
 					</div>
 				</div>
+
+				{/* Recommendation Status */}
+				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+						Recommedation Status
+					</div>
+					<div className='font-poppins-semibold text-2xl pt-2'>
+						{dashboardData && dashboardData.result_history &&
+							dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1] != ""
+							? dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1]
+							: "N/A"
+						}
+					</div>
+				</div>
+			</div>
+
+			{/* Technical SEO Analysis */}
+			<div>
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
+					SEO Technical Analysis: Light House
+					<InfoPopOver
+						data-testid="popup-seo-technical-analaysis"
+						heading="SEO Technical Analysis"
+						content="Add description here"
+						placement="right-end"
+					/>
+				</h3>
+
+				{dashboardData && dashboardData.result_history.accessibilityScore && dashboardData.result_history.bestPracticesScore && dashboardData.result_history.performanceScore &&
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]} />
+					</div>
+				}
+			</div>
+
+			{/* Site Speed */}
+			<div>
+				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
+					SEO Technical Analysis: Site Speed
+					<InfoPopOver
+						data-testid="popup-seo-sitespeed-analaysis"
+						heading="SEO Site Speed Analysis"
+						content="Add description here"
+						placement="right-end"
+					/>
+				</h3>
+
+				{dashboardData && dashboardData.result_history.siteSpeed &&
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.siteSpeed.map(value => Math.round(value * 100) / 100) }]} />
+					</div>
+				}
 			</div>
 
 			{/* Keyword tracking */}
@@ -293,9 +345,9 @@ function DashboardPage() {
 							/>
 						</h3>
 						{dashboardData && dashboardData.result_history.trustIndex &&
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} 
-								areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.trustIndex}]} />
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
+								areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.trustIndex }]} />
 						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
