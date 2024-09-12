@@ -367,5 +367,46 @@ describe('ScraperController', () => {
       );
     });
   });
+  describe('getScreenshot', () => {
+    it('should publish a screenshot task when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.getScreenshot(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'screenshot', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'Screenshot task published',
+        status: 'processing',
+        pollingUrl: `/status/screenshot/${encodeURIComponent(url)}`,
+      });
+    });
   
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.getScreenshot('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.getScreenshot('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.getScreenshot('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+    
 });
