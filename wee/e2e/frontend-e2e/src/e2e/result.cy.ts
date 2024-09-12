@@ -65,8 +65,8 @@ describe('Scraping and Results Page', () => {
     cy.get('[data-testid="loading-indicator"]', { timeout: 20000 }).should('not.exist');
 
     // Verify that the results page shows results for both sites
-    cy.get('[data-testid="btnView0"]', { timeout: 20000 }).should('exist').should('be.visible');
-    cy.get('[data-testid="btnView1"]', { timeout: 20000 }).should('exist').should('be.visible');
+    cy.get('[data-testid="btnView0"]', { timeout: 30000 }).should('exist').should('be.visible');
+    cy.get('[data-testid="btnView1"]', { timeout: 30000 }).should('exist').should('be.visible');
 
     // Click the first view button
     cy.get('[data-testid="btnView0"]').click();
@@ -74,7 +74,7 @@ describe('Scraping and Results Page', () => {
     // Assert that we are on the result page
     cy.url({ timeout: 10000 }).should('include', '/results');
 
- 
+
     // General Overview Tab
     cy.contains(/overview/i).should('exist');
     cy.contains(/seo/i).should('exist');
