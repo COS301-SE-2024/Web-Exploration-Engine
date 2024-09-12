@@ -178,7 +178,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Comment Count
 						</h3>
-						{dashboardData && dashboardData.result_history.commentCount && 
+						{dashboardData && dashboardData.result_history.commentCount &&
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.commentCount }]} />
 						}
 					</div>
@@ -296,10 +296,12 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						<ColumnChartNPS
-							dataLabel={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul', '10 Aug', '10 Sept']}
-							dataSeries={[10, -44, 49, 50, 90, 0, 10, 45]}
-						/>
+						{dashboardData && dashboardData.result_history.NPS &&
+							<ColumnChartNPS
+								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
+								dataSeries={dashboardData.result_history.NPS}
+							/>
+						}
 					</div>
 				</div>
 			</div>

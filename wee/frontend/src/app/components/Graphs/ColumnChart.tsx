@@ -170,6 +170,8 @@ export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
             }
         },
         yaxis: {
+            min: -100,
+            max: 100,
             axisBorder: {
                 show: true,
                 color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
