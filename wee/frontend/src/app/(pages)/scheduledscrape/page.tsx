@@ -170,8 +170,8 @@ export default function ScheduledScrape() {
     onSecondModalClose();
   }
 
-  const handleDashboardPage = (url: string) => {
-    router.push(`/dashboard?url=${encodeURIComponent(url)}`);
+  const handleDashboardPage = (id: string) => {
+    router.push(`/dashboard?id=${encodeURIComponent(id)}`);
   }
 
   const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -313,7 +313,7 @@ export default function ScheduledScrape() {
                 <TableCell>
                   <Button
                     className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                    onClick={() => handleDashboardPage('https://takealot.com')}
+                    onClick={() => handleDashboardPage(schedule.id)}
                   // data-testid={'btnDashboard' + index}
                   >
                     View

@@ -1,5 +1,5 @@
 'use client'
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { LineChartCustomAxis, LineChart } from '../../components/Graphs/LineChart';
 import { AreaChart } from '../../components/Graphs/AreaChart';
@@ -11,6 +11,9 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@nextui-org/react';
 import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 import useBeforeUnload from '../../hooks/useBeforeUnload';
+import { useScheduledScrapeContext } from '../../context/ScheduledScrapingContext';
+import { GetSchedulesResponse } from '../../models/ScheduleModels';
+
 export default function Dashboard() {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
@@ -20,8 +23,13 @@ export default function Dashboard() {
 }
 
 function DashboardPage() {
+	// scheduled scrape results
+	const { scheduledScrapeResponse, setScheduledScrapeResponse } = useScheduledScrapeContext();
+
+	const [dashboardData, setDashboardData] = React.useState<GetSchedulesResponse | null>(null);
+
 	const searchParams = useSearchParams();
-	const url = searchParams.get('url');
+	const id = searchParams.get('id');
 	const router = useRouter();
 
 	const backToScheduledScrape = () => {
@@ -29,6 +37,17 @@ function DashboardPage() {
 	};
 
 	useBeforeUnload();
+
+	useEffect(() => {
+		if (id && scheduledScrapeResponse.length > 0) {
+			const filteredResponse = scheduledScrapeResponse.find((scheduledResponse) => scheduledResponse.id == id);
+			console.log("Filtered Response", filteredResponse);
+
+			if (filteredResponse) {
+				setDashboardData(filteredResponse);
+			}
+		}
+	}, [id, scheduledScrapeResponse])
 
 	return (
 		<div className='p-4 min-h-screen'>
@@ -42,10 +61,10 @@ function DashboardPage() {
 
 			<div className='mb-8 text-center'>
 				<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-					Dashboard of {url}
+					Dashboard of {dashboardData ? dashboardData.url : 'N/A'}
 				</h1>
 				<h2 className="mt-2 font-poppins-bold text-md sm:text-lg md:text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-					Date of last scheduled scrape: 09/01/2024, 04:54 PM
+					Date of last scheduled scrape: {dashboardData ? new Date(dashboardData.updated_at).toLocaleString() : 'N/A'}
 				</h2>
 			</div>
 
