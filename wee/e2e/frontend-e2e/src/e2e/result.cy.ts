@@ -107,8 +107,8 @@ describe('Scraping and Results Page', () => {
     cy.contains(/unique content/i).should('exist');
 
     // Navigate to the Sentimental Analysis Tab (if applicable)
-    //cy.get('[data-testid="tab-sentimental"]').click();
-    //cy.contains(/sentiment/i).should('exist');
+    cy.get('[data-testid="tab-sentiment"]').click();
+    cy.contains(/sentiment/i).should('exist');
   });
 });
 
