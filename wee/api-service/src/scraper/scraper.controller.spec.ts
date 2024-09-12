@@ -490,5 +490,53 @@ describe('ScraperController', () => {
       );
     });
   });
-    
+  describe('keywordAnalysis', () => {
+    it('should publish a keyword analysis task when the URL and keyword are valid', async () => {
+      const url = 'https://example.com';
+      const keyword = 'test';
+      const result = await scraperController.keywordAnalysis(url, keyword);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'keyword-analysis', data: { url, keyword } },
+      );
+      expect(result).toEqual({
+        message: 'Keyword analysis task published',
+        status: 'processing',
+        pollingUrl: `/status/keyword-analysis/${encodeURIComponent(url)}`,
+      });
+    });
+  
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.keywordAnalysis('', 'test')).rejects.toThrow(
+        new HttpException('URL and keyword is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when no keyword is provided', async () => {
+      await expect(scraperController.keywordAnalysis('https://example.com', '')).rejects.toThrow(
+        new HttpException('URL and keyword is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.keywordAnalysis('invalid-url', 'test')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.keywordAnalysis('https://example.com', 'test'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+      
 });
