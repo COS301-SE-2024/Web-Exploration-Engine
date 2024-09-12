@@ -285,5 +285,46 @@ describe('ScraperController', () => {
       );
     });
   });
-    
+  describe('scrapeImages', () => {
+    it('should publish a scrape-images task when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.scrapeImages(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'scrape-images', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'Scrape images task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-images/${encodeURIComponent(url)}`,
+      });
+    });
+  
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.scrapeImages('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.scrapeImages('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.scrapeImages('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+  
 });
