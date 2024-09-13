@@ -706,8 +706,7 @@ describe('ScraperController', () => {
         new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
     });
-  });
-  describe('getKeyWordAnalysis', () => {
+  });describe('getKeyWordAnalysis', () => {
     const url = 'https://example.com';
     const keyword = 'test-keyword';
   
@@ -737,17 +736,32 @@ describe('ScraperController', () => {
       });
     });
   
-    it('should handle errors gracefully', async () => {
+    it('should handle HttpException errors gracefully', async () => {
       const cacheKey = `${url}-keyword-${keyword}`;
-      jest.spyOn(cacheManager, 'get').mockRejectedValue(new Error('Server Error'));
+      jest.spyOn(cacheManager, 'get').mockRejectedValue(new HttpException('Handled error', HttpStatus.BAD_REQUEST));
   
       try {
         await scraperController.getKeyWordAnalysis(url, keyword);
       } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('Server Error');
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error.message).toBe('Handled error');
+        expect(error.getStatus()).toBe(HttpStatus.BAD_REQUEST);
+      }
+    });
+  
+    it('should handle unexpected errors gracefully', async () => {
+      const cacheKey = `${url}-keyword-${keyword}`;
+      jest.spyOn(cacheManager, 'get').mockRejectedValue(new Error('Unhandled error'));
+  
+      try {
+        await scraperController.getKeyWordAnalysis(url, keyword);
+      } catch (error) {
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error.message).toBe('Internal server error');
+        expect(error.getStatus()).toBe(HttpStatus.INTERNAL_SERVER_ERROR);
       }
     });
   });
+  
     
 });
