@@ -579,5 +579,86 @@ describe('ScraperController', () => {
       );
     });
   });
-        
-});
+  describe('socialAnalytics', () => {
+    it('should publish a social analytics task for shareCount when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.socialAnalytics(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'shareCount', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'shareCount analytics task published',
+        status: 'processing',
+        pollingUrl: `/status/shareCount/${encodeURIComponent(url)}`,
+      });
+    });
+  
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.socialAnalytics('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.socialAnalytics('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.socialAnalytics('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+  describe('scrapeReviews', () => {
+    it('should publish a scrape reviews task when the URL is valid', async () => {
+      const url = 'https://example.com';
+      const result = await scraperController.scrapeReviews(url);
+      expect(pubSubService.publishMessage).toHaveBeenCalledWith(
+        expect.any(String),
+        { type: 'scrape-reviews', data: { url } },
+      );
+      expect(result).toEqual({
+        message: 'Scrape reviews task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-reviews/${encodeURIComponent(url)}`,
+      });
+    });
+  
+    it('should throw BAD_REQUEST when no URL is provided', async () => {
+      await expect(scraperController.scrapeReviews('')).rejects.toThrow(
+        new HttpException('URL is required', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should throw BAD_REQUEST when an invalid URL is provided', async () => {
+      await expect(scraperController.scrapeReviews('invalid-url')).rejects.toThrow(
+        new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      jest
+        .spyOn(pubSubService, 'publishMessage')
+        .mockImplementation(() => Promise.reject(new Error('Server Error')));
+      await expect(
+        scraperController.scrapeReviews('https://example.com'),
+      ).rejects.toThrow(
+        new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        ),
+      );
+    });
+  });
+  describe('get
