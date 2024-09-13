@@ -15,7 +15,7 @@ import { getReports } from '../../services/SaveReportService';
 import { useUserContext } from '../../context/UserContext';
 import { deleteReport } from "../../services/SaveReportService";
 import WEETabs from "../../components/Util/Tabs";
-
+import useBeforeUnload from "../../hooks/useBeforeUnload";
 
 function ResultsComponent() {
   const { user, results, setResults, summaries, setSummaries } = useUserContext();
@@ -24,7 +24,8 @@ function ResultsComponent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
 
-  
+  useBeforeUnload();
+
   const handleResultPage = (reportID: number) => {
     router.push(`/savedresults?id=${reportID}`);
   };
@@ -115,7 +116,7 @@ function ResultsComponent() {
 
   return (
     <>
-      <div className="p-4">
+      <div className="p-4 min-h-screen">
         <div className="text-center">
           <h1 className="my-4 mx-9 font-poppins-bold text-3xl md:text-6xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             My Reports
@@ -123,7 +124,7 @@ function ResultsComponent() {
         </div>
         <div className="flex flex-col">
           <WEETabs aria-label="Options" size="lg">
-            <Tab key="individual" title="Reports">
+            <Tab data-testid="tab-reports" key="individual" title="Reports">
               <Card>
                 <CardBody>
                   <div className="flex justify-between items-center mb-2">
@@ -146,7 +147,7 @@ function ResultsComponent() {
                     </label>
                   </div>
 
-                  <WEETable
+                  <WEETable data-testid="table-reports" 
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
@@ -227,7 +228,7 @@ function ResultsComponent() {
                 </CardBody>
               </Card>  
             </Tab>
-            <Tab key="summary" title="Summaries">
+            <Tab data-testid="tab-summaries" key="summary" title="Summaries">
               <Card>
                 <CardBody>
                   <div className="flex justify-between items-center mb-2">
@@ -250,7 +251,7 @@ function ResultsComponent() {
                     </label>
                   </div>
 
-                  <WEETable
+                  <WEETable data-testid="table-summaries"
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
@@ -351,16 +352,17 @@ function ResultsComponent() {
                 </h1>
               </ModalBody>
               <ModalFooter>
+                <Button 
+                  className="text-md font-poppins-semibold text-jungleGreen-700 border-jungleGreen-700 dark:text-jungleGreen-400 dark:border-text-jungleGreen-400" 
+                  onPress={onClose}
+                  variant="bordered"
+                >
+                  Cancel
+                </Button>
                 <Button className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
                   onPress={() => {handleDelete(idToDelete); onClose();}}
                 >
                   Yes
-                </Button>
-                <Button 
-                  className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor" 
-                  onPress={onClose}
-                  >
-                  Cancel
                 </Button>
               </ModalFooter>
             </>

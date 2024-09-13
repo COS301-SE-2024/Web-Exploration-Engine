@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Metadata, RobotsResponse } from '../models/ServiceModels';
+import { performance } from 'perf_hooks';
+import logger from '../../logging/webscraperlogger';
 import * as puppeteer from 'puppeteer';
+const serviceName = "[ScrapeLogoService]";
 
 @Injectable()
 export class ScrapeLogoService {
@@ -11,6 +14,9 @@ export class ScrapeLogoService {
      * @returns {Promise<string>} - Returns a promise that resolves to the URL of the logo or and empty string if no logo is found.
      */
   async scrapeLogo(url: string, metadata: Metadata, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string> {
+    logger.debug(`${serviceName}`);  
+    const start = performance.now();
+
     // proxy authentication
     const username = process.env.PROXY_USERNAME;
     const password = process.env.PROXY_PASSWORD;
@@ -33,6 +39,7 @@ export class ScrapeLogoService {
         // look for more keywords or patterns - e.g. 'brand', 'icon', 'logo'
         // return multiple images - order based on relevance
         if (!robots.isUrlScrapable) {
+            logger.error('${serviceName} Crawling not allowed for this URL');
             console.error('Crawling not allowed for this URL');
             return '';
         }
@@ -58,12 +65,18 @@ export class ScrapeLogoService {
 
         return imageUrls.length > 0 ? imageUrls[0] : '';
     } catch (error) {
-        console.error(`Failed to scrape logo: ${error.message}`);
+      logger.error(serviceName,` Failed to scrape logo: ${error.message}`);
+      console.error(`Failed to scrape logo: ${error.message}`);
         return '';
     } finally {
         if (page) {
             await page.close();
         }
+        // Performance Logging
+        const duration = performance.now() - start;
+        console.log(`Duration of ${serviceName} : ${duration}`);
+        logger.info(serviceName,'duration',duration);
+
     }
  }
 }

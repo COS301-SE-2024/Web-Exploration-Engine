@@ -1,9 +1,9 @@
+'use server'
 import { LoginRequest, SignUpRequest } from '../models/AuthModels';
-import { getSupabase } from '../utils/supabase_anon_client';
-
-const supabase = getSupabase();
+import { createClient } from '../utils/supabase/server';
 
 export async function login(req: LoginRequest) {
+  const supabase = createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email: req.email,
     password: req.password,
@@ -18,7 +18,7 @@ export async function login(req: LoginRequest) {
   const user = data?.user;
   const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.name || user?.email || '';
 
-  return { 
+  return {
     uuid: data?.user?.id,
     emailVerified: data?.user?.email_confirmed_at ? true : false,
     name: userName
@@ -27,11 +27,12 @@ export async function login(req: LoginRequest) {
 
 export async function signUp(req: SignUpRequest) {
   // check if email is already taken
+  const supabase = createClient();
   const { data: users, error: usersError } = await supabase
     .from('profiles')
     .select('*')
     .eq('email', req.email)
-  
+
 
   if (usersError) {
     return {
@@ -67,30 +68,46 @@ export async function signUp(req: SignUpRequest) {
     }
   }
 
-  return { 
+  return {
     uuid: data?.user?.id,
     emailVerified: data?.user?.email_confirmed_at ? true : false,
   }
 }
 
-export async function googleLogin() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+export async function forgotPassword(email: string) {
+  const supabase = createClient();
+  const redirectUrl = process.env.NEXT_PUBLIC_FORGOT_PASSWORD_URL;
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectUrl,
   });
+
   if (error) {
-    console.error('Error logging in with Google:', error.message);
     return {
       code: error.code,
       message: error.message,
-    }
+    };
   }
 
-  // get user data
-  const { data: { user } } = await supabase.auth.getUser();
-  const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.user_metadata?.fullname || user?.email || '';
-  return { 
-    uuid: user?.id,
-    emailVerified: user?.email_confirmed_at ? true : false,
-    name: userName ,
+  return {
+    message: 'Password reset email sent. Please check your inbox.',
+  };
+}
+
+export async function resetPassword(newPassword: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  if (error) {
+    return {
+      code: error.code,
+      message: error.message,
+    };
   }
+
+  return {
+    message: 'Password reset successfully.',
+    user: data,
+  };
 }
