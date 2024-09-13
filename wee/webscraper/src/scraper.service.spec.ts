@@ -1365,7 +1365,7 @@ describe('ScraperService', () => {
           
               jest.spyOn(mockReviewService, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
           
-              const result = await mockReviewService.scrapeReviews(url);
+              const result = await mockReviewService.scrapeReviews(url, mockBrowser);
           
               expect(result).toEqual(expectedReviewsResult);
             });
