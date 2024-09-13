@@ -7,6 +7,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 describe('ScraperController', () => {
   let scraperController: ScraperController;
   let pubSubService: PubSubService;
+  let cacheManager: Cache;
 
   beforeAll(() => {
     // Mocking GOOGLE_CLOUD_TOPIC environment variable
@@ -35,6 +36,7 @@ describe('ScraperController', () => {
 
     scraperController = module.get<ScraperController>(ScraperController);
     pubSubService = module.get<PubSubService>(PubSubService);
+    cacheManager = module.get<Cache>('CACHE_MANAGER');
   });
 
   describe('scrape', () => {
@@ -661,4 +663,49 @@ describe('ScraperController', () => {
       );
     });
   });
-  describe('get
+  describe('getJobStatus', () => {
+    const url = 'https://example.com';
+    
+    it('should return job status from cache when type is valid and job exists', async () => {
+      const type = 'scrape-images';
+      const jobData = JSON.stringify({ status: 'completed', result: 'data' });
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(jobData);
+  
+      const result = await scraperController.getJobStatus(type, url);
+      
+      expect(cacheManager.get).toHaveBeenCalledWith(`${url}-${type}`);
+      expect(result).toEqual(JSON.parse(jobData));
+    });
+  
+    it('should return job not found when job data does not exist in cache', async () => {
+      const type = 'scrape-images';
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+  
+      const result = await scraperController.getJobStatus(type, url);
+      
+      expect(cacheManager.get).toHaveBeenCalledWith(`${url}-${type}`);
+      expect(result).toEqual({
+        url,
+        message: 'Job not found',
+        data: null,
+      });
+    });
+  
+    it('should throw BAD_REQUEST for invalid type', async () => {
+      const type = 'invalid-type';
+      await expect(scraperController.getJobStatus(type, url)).rejects.toThrow(
+        new HttpException('Invalid type', HttpStatus.BAD_REQUEST),
+      );
+    });
+  
+    it('should handle internal server error', async () => {
+      const type = 'scrape-images';
+      jest.spyOn(cacheManager, 'get').mockRejectedValue(new Error('Server Error'));
+  
+      await expect(scraperController.getJobStatus(type, url)).rejects.toThrow(
+        new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+    });
+  });
+         
+});
