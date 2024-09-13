@@ -84,11 +84,11 @@ function DashboardPage() {
 				</div>
 
 				{/* Recommendation Status */}
-				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-						Recommedation Status
+				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
+					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+						Recommendation Status
 					</div>
-					<div className='font-poppins-semibold text-2xl pt-2'>
+					<div className='font-poppins-semibold text-2xl pt-3'>
 						{dashboardData && dashboardData.result_history &&
 							dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1] != ""
 							? dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1]
@@ -110,11 +110,15 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.accessibilityScore && dashboardData.result_history.bestPracticesScore && dashboardData.result_history.performanceScore &&
+				{dashboardData && dashboardData.result_history.accessibilityScore && dashboardData.result_history.bestPracticesScore && dashboardData.result_history.performanceScore ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]} />
 					</div>
-				}
+				) : (
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						There are no Ligth House Technical SEO Analysis currently available
+					</div>
+				)}
 			</div>
 
 			{/* Site Speed */}
@@ -129,11 +133,15 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.siteSpeed &&
+				{dashboardData && dashboardData.result_history.siteSpeed ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.siteSpeed.map(value => Math.round(value * 100) / 100) }]} />
 					</div>
-				}
+				) : (
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						There are no Site Speed Technical SEO Analysis currently available
+					</div>
+				)}
 			</div>
 
 			{/* Keyword tracking */}
@@ -148,51 +156,31 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
-					{dashboardData && dashboardData.keyword_results.map((keyword_result, index) => {
+				{dashboardData && dashboardData.keyword_results.length > 0 ? (
+					dashboardData.keyword_results.map((keyword_result, index) => {
 						const numericRankArr = keyword_result.rankArr.map(rank => {
 							return typeof rank === 'string' ? 11 : rank;
 						});
 
 						return (
-							<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center' key={index}>
-								<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-									{keyword_result.keyword}
-								</h3>
-								<LineChartCustomAxis areaCategories={keyword_result.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]} />
+							<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3' key={index}>
+								<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+									<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+										{keyword_result.keyword}
+									</h3>
+									<LineChartCustomAxis
+										areaCategories={keyword_result.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
+										areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]}
+									/>
+								</div>
 							</div>
-						)
-					})}
-					{/* <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Online bookstores
-						</h3>
-						<LineChartCustomAxis areaCategories={['10 Jan', '10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [8, 10, 18, 4, 7, 5, 3] }]} />
-					</div>
-					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Online reading
-						</h3>
-						<LineChartCustomAxis areaCategories={['10 Feb', '10 Mar', '10 Apr', '10 May', '10 Jun', '10 Jul']} areaSeries={[{ name: 'Ranking', data: [3, 6, 14, 12, 4, 8] }]} />
-					</div>
-					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Readerswarehouse south africa
-						</h3>
-						<LineChartCustomAxis
-							areaCategories={[
-								'10 Jan 24', '10 Feb 24', '10 Mar 24', '10 Apr 24', '10 May 24', '10 Jun 24', '10 Jul 24',
-								'10 Aug 24', '10 Sep 24', '10 Oct 24', '10 Nov 24', '10 Dec 24', '10 Jan 25', '10 Feb 25', '10 Mar 25'
-							]}
-							areaSeries={[
-								{
-									name: 'Ranking',
-									data: [4, 7, 8, 7, 9, 6, 8, 7, 5, 8, 6, 9, 7, 8, 6]
-								}
-							]}
-						/>
-					</div> */}
-				</div>
+						);
+					})
+				) : (
+					<p className="bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center">
+						No keywords are being tracked
+					</p>
+				)}
 			</div>
 
 			{/* News sentiment */}
@@ -206,9 +194,14 @@ function DashboardPage() {
 						placement="right-end"
 					/>
 				</h3>
-				{dashboardData && dashboardData.result_history.newsSentiment && (
+
+				{dashboardData && dashboardData.result_history.newsSentiment ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]} />
+					</div>
+				) : (
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						There are no News Sentiment currently available
 					</div>
 				)}
 			</div>
@@ -225,37 +218,49 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				<div className='gap-4 grid md:grid-cols-2 xl:grid-cols-4'>
+				<div className='gap-4 grid md:grid-cols-2 2xl:grid-cols-4'>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Comment Count
 						</h3>
-						{dashboardData && dashboardData.result_history.commentCount &&
+						{dashboardData && dashboardData.result_history.commentCount ? (
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.commentCount }]} />
+						) : (
+							<p>There are no Facebook Comment Count currently available</p>
+						)
 						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Share Count
 						</h3>
-						{dashboardData && dashboardData.result_history.shareCount &&
+						{dashboardData && dashboardData.result_history.shareCount ? (
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.shareCount }]} />
+						) : (
+							<p>There are no Facebook Share Count currently available</p>
+						)
 						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Reaction Count
 						</h3>
-						{dashboardData && dashboardData.result_history.reactionCount &&
+						{dashboardData && dashboardData.result_history.reactionCount ? (
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.reactionCount }]} />
+						) : (
+							<p>There are no Facebook Reaction Count currently available</p>
+						)
 						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Pintrest - Pin Count
 						</h3>
-						{dashboardData && dashboardData.result_history.pinCount &&
+						{dashboardData && dashboardData.result_history.pinCount ? (
 							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.pinCount }]} />
+						) : (
+							<p>There are no Pintrest Pin Count currently available</p>
+						)
 						}
 					</div>
 				</div>
@@ -344,10 +349,13 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.trustIndex &&
+						{dashboardData && dashboardData.result_history.trustIndex ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
 								areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.trustIndex }]} />
+						) : (
+							<p>There are no Trust Index currently available</p>
+						)
 						}
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
@@ -360,11 +368,14 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.NPS &&
+						{dashboardData && dashboardData.result_history.NPS ? (
 							<ColumnChartNPS
 								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
 								dataSeries={dashboardData.result_history.NPS}
 							/>
+						) : (
+							<p>There are no NPS Reviews currently available</p>
+						)
 						}
 					</div>
 				</div>
