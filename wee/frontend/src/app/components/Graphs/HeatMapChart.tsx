@@ -42,10 +42,10 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
                 shadeIntensity: 0,
                 colorScale: {
                     ranges: [
-                        { from: 0, to: 15, color: '#b6e4ce', name: 'Low' },       // Light green
-                        { from: 16, to: 30, color: '#54b38e', name: 'Medium' },    // Medium green
-                        { from: 31, to: 50, color: '#329874', name: 'High' },      // Darker green
-                        { from: 51, to: 100, color: '#144033', name: 'Very High' }  // Darkest green
+                        { from: 0, to: 500, color: '#b6e4ce', name: 'Low' },       // Light green
+                        { from: 501, to: 1000, color: '#54b38e', name: 'Medium' },    // Medium green
+                        { from: 1001, to: 5000, color: '#329874', name: 'High' },      // Darker green
+                        { from: 5001, to: 200000, color: '#144033', name: 'Very High' }  // Darkest green
                     ]
                 }
             }
