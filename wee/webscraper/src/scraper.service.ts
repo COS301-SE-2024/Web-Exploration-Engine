@@ -212,7 +212,7 @@ export class ScraperService implements OnModuleInit {
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
     const shareCountPromise = this.shareCountService.getShareCount(url);
-    const reviewsPromise = this.reviewsService.scrapeReviews(url);
+    const reviewsPromise = this.reviewsService.scrapeReviews(url, browser);
 
     const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
       industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
@@ -767,7 +767,7 @@ export class ScraperService implements OnModuleInit {
     }
   
     try {
-      const reviewsData = await this.reviewsService.scrapeReviews(url);
+      const reviewsData = await this.reviewsService.scrapeReviews(url, browser);
       return reviewsData;
     } catch (error) {
       logger.error(`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
