@@ -157,14 +157,14 @@ function DashboardPage() {
 				</h3>
 
 				{dashboardData && dashboardData.keyword_results.length > 0 ? (
-					dashboardData.keyword_results.map((keyword_result, index) => {
-						const numericRankArr = keyword_result.rankArr.map(rank => {
-							return typeof rank === 'string' ? 11 : rank;
-						});
+					<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
+						{dashboardData.keyword_results.map((keyword_result, index) => {
+							const numericRankArr = keyword_result.rankArr.map(rank => {
+								return typeof rank === 'string' ? 11 : rank;
+							});
 
-						return (
-							<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3' key={index}>
-								<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+							return (
+								<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center' key={index}>
 									<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 										{keyword_result.keyword}
 									</h3>
@@ -173,9 +173,9 @@ function DashboardPage() {
 										areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]}
 									/>
 								</div>
-							</div>
-						);
-					})
+							);
+						})}
+					</div>
 				) : (
 					<p className="bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center">
 						No keywords are being tracked
@@ -280,37 +280,36 @@ function DashboardPage() {
 
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-						Ratings
+						Star Ratings Distribution for Reviews
 					</h3>
-					<StackedColumnChart
-						dataLabel={['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']}
-						dataSeries={[
-							{
-								name: '1 Star',
-								data: [32, 38, 44, 50, 62, 88]
-							},
-							{
-								name: '2 Stars',
-								data: [25, 30, 48, 50, 73, 80]
-							},
-							{
-								name: '3 Stars',
-								data: [18, 22, 28, 35, 42, 50]
-							},
-							{
-								name: '4 Stars',
-								data: [40, 45, 50, 77, 90, 120]
-							},
-							{
-								name: '5 Stars',
-								data: [55, 63, 77, 89, 90, 111]
-							}]}
-					/>
+
+					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings ? (
+						<StackedColumnChart
+							dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString())}
+							dataSeries={[1, 2, 3, 4, 5].map((star) => ({
+								name: `${star} Star`,
+								data: dashboardData.result_history.starRatings.map((period) => {
+									// period is an array, find the rating for the current star
+									if (Array.isArray(period)) {
+										const rating = period.find((r) => r.stars === star);
+										return rating ? rating.numReviews : 0;
+									} else {
+										console.error('Expected period to be an array, but got:', period);
+										return 0;
+									}
+								})
+							}))}
+						/>
+
+					) : (
+						<p>There are no rating data currently available</p>
+					)}
+
 				</div>
 
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-						Ratings HeatMap
+						Ratings Intensity Heatmap
 					</h3>
 					<HeatMapChart
 						dataLabel={['Jan-Feb', 'Feb-Mrt', 'Mar-Apr', 'Apr-May', 'May-Jun']}
@@ -341,10 +340,10 @@ function DashboardPage() {
 				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-2'>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Index
+							Trust Index Rating
 							<InfoPopOver
-								data-testid="popup-nps-reviews"
-								heading="News Sentiment"
+								data-testid="popup-trustindex-ratings"
+								heading="Trust Index Rating"
 								content="Add description here"
 								placement="right-end"
 							/>
@@ -360,11 +359,14 @@ function DashboardPage() {
 					</div>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							NPS Reviews
+							NPS Score
 							<InfoPopOver
-								data-testid="popup-nps-reviews"
-								heading="News Sentiment"
-								content="Add description here"
+								data-testid="popup-nps-score"
+								heading="NPS Score"
+								content="The score indicates how likely it is for reviewers to recommed a business.</br>
+									</br><i>Less than 0 :</i> Unlikely (Indicated in red)
+									</br><i>1 to 49 :</i> Likely (Indicated in orange)
+									</br><i>Greater than 49 :</i> Very likely (Indicated in green)"
 								placement="right-end"
 							/>
 						</h3>
