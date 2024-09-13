@@ -4,7 +4,7 @@ import { ReviewData } from '../models/ServiceModels';
 
 @Injectable()
 export class ScrapeReviewsService {
-  async scrapeReviews(url: string): Promise<ReviewData> {
+  async scrapeReviews(url: string, browser: puppeteer.Browser): Promise<ReviewData> {
     console.log(`Starting review scraping for URL: ${url}`);
 
     const businessName = this.extractBusinessNameFromUrl(url);
@@ -14,20 +14,38 @@ export class ScrapeReviewsService {
     }
     console.log(`Extracted business name: ${businessName}`);
 
-    const reviews = await this.scrapeReviewsViaGoogle(businessName);
+    const reviews = await this.scrapeReviewsViaGoogle(businessName, browser);
     //console.log(`Scraped ${reviews.length} reviews.`);
 
     return reviews;
   }
 
-  private async scrapeReviewsViaGoogle(businessName: string): Promise<ReviewData> {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+  private async scrapeReviewsViaGoogle(businessName: string, browser: puppeteer.Browser): Promise<ReviewData> {
+
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      console.error('Proxy username or password not set');
+      return null;
+    }
+    let page;
     let reviews: ReviewData = null
 
     try {
       const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(businessName)}+reviews`;
+
+      page = await browser.newPage();
+
+      // authenticate page with proxy
+      await page.authenticate({
+        username,
+        password,
+      });
+      
       await page.goto(searchUrl, { waitUntil: 'networkidle2' });
+
       console.log(`Navigated to Google search results for "${businessName} reviews".`);
 
       const reviewUrls = await page.evaluate(() => {
@@ -60,7 +78,6 @@ export class ScrapeReviewsService {
       console.error(`Failed to perform Google search: ${error.message}`);
       return null;
     } finally {
-      await page.close();
       await browser.close();
     }
   }
