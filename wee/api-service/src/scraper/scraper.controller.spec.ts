@@ -707,5 +707,47 @@ describe('ScraperController', () => {
       );
     });
   });
-         
+  describe('getKeyWordAnalysis', () => {
+    const url = 'https://example.com';
+    const keyword = 'test-keyword';
+  
+    it('should return job status from cache when job exists', async () => {
+      const cacheKey = `${url}-keyword-${keyword}`;
+      const jobData = JSON.stringify({ status: 'completed', result: 'data' });
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(jobData);
+  
+      const result = await scraperController.getKeyWordAnalysis(url, keyword);
+      
+      expect(cacheManager.get).toHaveBeenCalledWith(cacheKey);
+      expect(result).toEqual(JSON.parse(jobData));
+    });
+  
+    it('should return job not found when job data does not exist in cache', async () => {
+      const cacheKey = `${url}-keyword-${keyword}`;
+      jest.spyOn(cacheManager, 'get').mockResolvedValue(null);
+  
+      const result = await scraperController.getKeyWordAnalysis(url, keyword);
+  
+      expect(cacheManager.get).toHaveBeenCalledWith(cacheKey);
+      expect(result).toEqual({
+        url,
+        keyword,
+        message: 'Job not found',
+        data: null,
+      });
+    });
+  
+    it('should handle errors gracefully', async () => {
+      const cacheKey = `${url}-keyword-${keyword}`;
+      jest.spyOn(cacheManager, 'get').mockRejectedValue(new Error('Server Error'));
+  
+      try {
+        await scraperController.getKeyWordAnalysis(url, keyword);
+      } catch (error) {
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toBe('Server Error');
+      }
+    });
+  });
+    
 });
