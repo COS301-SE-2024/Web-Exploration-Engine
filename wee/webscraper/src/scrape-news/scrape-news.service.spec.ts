@@ -8,6 +8,9 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('NewsScraperService', () => {
   let service: NewsScraperService;
 
+  // mock api url
+  process.env.SENTIMENT_ANALYSIS_API_URL = 'mocked-api-url';
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [NewsScraperService],
@@ -102,7 +105,7 @@ describe('NewsScraperService', () => {
 
       expect(sentimentScores).toEqual({ positive: 0.8, negative: 0.1, neutral: 0.1 });
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'https://capstone-wee.dns.net.za/hugging-face/Positive-negative',
+        'mocked-api-url',
         { text: inputText },
         {
           headers: {

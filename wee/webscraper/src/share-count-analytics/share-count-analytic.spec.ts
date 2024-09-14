@@ -37,6 +37,6 @@ describe('ShareCountService', () => {
 
     const url = 'https://example.com';
 
-    await expect(service.getShareCount(url)).rejects.toThrow(errorMessage);
+    await expect(service.getShareCount(url)).resolves.toBeNull();
   });
 });

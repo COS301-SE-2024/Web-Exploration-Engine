@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   push:
-    branches: [master]
+    branches: [master, config/deploy]
 
 jobs:
   deploy:
@@ -40,6 +40,7 @@ jobs:
           envkey_NEXT_PUBLIC_SENTRY_DSN_LINK: ${{secrets.NEXT_PUBLIC_SENTRY_DSN_LINK}}
           envkey_NEXT_PUBLIC_SENTRY_ORG: ${{secrets.NEXT_PUBLIC_SENTRY_ORG}}
           envkey_NEXT_PUBLIC_SENTRY_PROJECT: ${{secrets.NEXT_PUBLIC_SENTRY_PROJECT}}
+          envkey_NEXT_PUBLIC_FORGOT_PASSWORD_URL: ${{secrets.FORGOT_PASSWORD_URL}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
@@ -62,6 +63,11 @@ jobs:
           envkey_PROXY_PORT: ${{secrets.PROXY_PORT}}
           envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
+          envkey_SHARE_COUNT_API_KEY: ${{secrets.SHARE_COUNT_API_KEY}}
+          envkey_ZERO_SHOT_API_URL: ${{secrets.ZERO_SHOT_API_URL}}
+          envkey_SENTIMENT_ANALYSIS_API_URL: ${{secrets.SENTIMENT_ANALYSIS_API_URL}}
+          envkey_TOKEN_CLASSIFICATION_API_URL: ${{secrets.TOKEN_CLASSIFICATION_API_URL}}
+          envkey_EMOTION_API_URL: ${{secrets.EMOTION_API_URL}}
           directory: wee/webscraper
           file_name: .env
           fail_on_empty: false

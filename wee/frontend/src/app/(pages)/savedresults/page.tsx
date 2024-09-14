@@ -21,7 +21,7 @@ import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
-
+import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 
 interface Classifications {
@@ -65,7 +65,7 @@ function ResultsComponent() {
   const [reportUrl, setReportUrl] = useState<string>('');
   const [summaryDate, setSummaryDate] = useState<string>("");
 
-  
+  useBeforeUnload();
 
   useEffect(() => {
     if (id) {

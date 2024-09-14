@@ -18,9 +18,14 @@ export interface RadarSeries {
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -39,18 +44,18 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
                 }
             }
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             radar: {
                 polygons: {
                     
-                    strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                    connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
                 }
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         yaxis: {
             stepSize: 20
@@ -59,39 +64,24 @@ export function RadarChart({ radarCategories, radarSeries }: MetaRadarInterface)
             categories: radarCategories,
             labels: {
                 style: {
-                    colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
+                    colors: currentTheme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
                 },                
             },
-        },       
+        },     
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = radarSeries;      
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {                        
-                        strokeColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-                        connectorColors: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
-                    }
-                }
-            },
-            xaxis: {
-                categories: radarCategories,
-                labels: {
-                    style: {
-                        colors: theme === 'light' ? new Array(radarCategories.length).fill('#000000') : new Array(radarCategories.length).fill('#ffffff')
-                    },                    
-                },
-            },   
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">

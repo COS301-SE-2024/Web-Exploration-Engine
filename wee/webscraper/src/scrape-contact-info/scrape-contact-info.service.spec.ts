@@ -18,7 +18,6 @@ describe('ScrapeContactInfoService', () => {
   });
 
   
-
   it('should handle errors gracefully', async () => {
     const url = 'https://example.com';
     const robots: RobotsResponse = {

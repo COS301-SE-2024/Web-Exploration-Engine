@@ -15,6 +15,8 @@ export class KeywordAnalysisService {
         if (!username || !password) {
             console.error('Proxy username or password not set');
             return { 
+                url,
+                keyword,
                 ranking: 'Not ranked in the top results', 
                 topTen: {},
                 recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
@@ -71,6 +73,8 @@ export class KeywordAnalysisService {
                 recommendation = `The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: ${topUrls.join(', ')}.`;
             }    
             return {
+                url,
+                keyword,
                 ranking: ranking > 0 ? ranking : 'Not ranked in the top results',
                 topTen: topTenUrls,
                 recommendation: recommendation
@@ -78,6 +82,8 @@ export class KeywordAnalysisService {
         } catch (error) {
             console.error(`Failed to get keyword ranking: ${error.message}`);
             return { 
+                url,
+                keyword,
                 ranking: 'Not ranked in the top results', 
                 topTen: {},
                 recommendation: 'The URL is not ranked in the top search results for the keyword. Consider optimizing the content, improving on-page SEO, and possibly targeting less competitive keywords. Here are the top 10 URLs for this keyword: example.com, example2.com.' };
