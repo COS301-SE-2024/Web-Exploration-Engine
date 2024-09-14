@@ -40,7 +40,6 @@ export default function Home() {
         minute: '2-digit',
       });
       
-      throw Error(`Sample error from frontend button ${timestamp}`)
       if (!url) {
           setError('URL cannot be empty');
 
