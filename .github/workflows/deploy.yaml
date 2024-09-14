@@ -37,6 +37,9 @@ jobs:
           envkey_PROXIES: ${{secrets.PROXIES}}
           envkey_PROXY_PORT: ${{secrets.PROXY_PORT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
+          envkey_NEXT_PUBLIC_SENTRY_DSN_LINK: ${{secrets.NEXT_PUBLIC_SENTRY_DSN_LINK}}
+          envkey_NEXT_PUBLIC_SENTRY_ORG: ${{secrets.NEXT_PUBLIC_SENTRY_ORG}}
+          envkey_NEXT_PUBLIC_SENTRY_PROJECT: ${{secrets.NEXT_PUBLIC_SENTRY_PROJECT}}
           directory: wee/frontend
           file_name: .env
           fail_on_empty: false
