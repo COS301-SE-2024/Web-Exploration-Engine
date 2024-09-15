@@ -4,10 +4,10 @@ import axios from 'axios';
 
 @Injectable()
 export class SentimentAnalysisService {
-  private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative';
-  private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/sentiment';
+  private readonly HUGGING_FACE_SENTIMENT_API_URL = process.env.SENTIMENT_ANALYSIS_API_URL;
+  private readonly HUGGING_FACE_TOKEN_CLASSIFICATION_API_URL = process.env.TOKEN_CLASSIFICATION_API_URL;
   private readonly SCORE_THRESHOLD = 0.4;
-  private readonly HUGGING_FACE_EMOTION_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/emotion';
+  private readonly HUGGING_FACE_EMOTION_API_URL = process.env.EMOTION_API_URL;
 
   // private readonly HUGGING_FACE_API_TOKEN = process.env.ACCESS_TOKEN;
 
