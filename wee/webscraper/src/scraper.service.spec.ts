@@ -13,13 +13,22 @@ import { ScrapeAddressService } from './scrape-address/scrape-address.service';
 import { SeoAnalysisService } from './seo-analysis/seo-analysis.service';
 import { SentimentAnalysisService } from "./sentiment-analysis/sentiment-analysis.service";
 import { KeywordAnalysisService } from "./keyword-analysis/keyword-analysis.service";
+import { NewsScraperService } from "./scrape-news/scrape-news.service";
 import { ShareCountService } from "./share-count-analytics/share-count-analytics.service";
-
 import { PubSubService } from "./pub-sub/pub_sub.service";
 import { ProxyService } from "./proxy/proxy.service";
+import { ScrapeReviewsService } from "./scrape-reviews/scrape-reviews.service";
 import * as puppeteer from 'puppeteer';
+import { NewsItem, RobotsResponse } from "./models/ServiceModels";
+
+import { ScrapeResult, ReviewData } from "./models/ServiceModels";
 
 jest.mock('puppeteer');
+import axios from 'axios';
+import xml2js from 'xml2js';
+
+jest.mock('axios');
+jest.mock('xml2js');
 
 describe('ScraperService', () => {
     let service: ScraperService;
@@ -40,8 +49,9 @@ describe('ScraperService', () => {
     let mockSeoAnalysisService: SeoAnalysisService;
     let mockSentimentAnalysisService: SentimentAnalysisService;
     let mockKeywordAnalysisService: KeywordAnalysisService;
+    let mockScrapeNewsService:NewsScraperService;
     let mockShareCountService: ShareCountService;
-
+    let mockReviewService: ScrapeReviewsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -161,6 +171,22 @@ describe('ScraperService', () => {
                         getProxy: jest.fn(),
                     },
                 },
+                {
+                    provide: NewsScraperService,
+                    useValue: {
+                        fetchNewsArticles: jest.fn(),
+                        extractBusinessName: jest.fn(),
+                        getSentiment: jest.fn(),
+                    },
+                },
+                {
+                    provide: ScrapeReviewsService,
+                    useValue: {
+                        scrapeReviews: jest.fn(),
+                        scrapeReviewsFromHelloPeter: jest.fn(),
+                        scrapeReviewsViaGoogle: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 
@@ -181,8 +207,9 @@ describe('ScraperService', () => {
         mockSeoAnalysisService = module.get<SeoAnalysisService>(SeoAnalysisService);
         mockSentimentAnalysisService = module.get<SentimentAnalysisService>(SentimentAnalysisService);
         mockKeywordAnalysisService = module.get<KeywordAnalysisService>(KeywordAnalysisService);
+        mockScrapeNewsService=module.get<NewsScraperService>(NewsScraperService);
         mockShareCountService = module.get<ShareCountService>(ShareCountService);
-
+        mockReviewService = module.get<ScrapeReviewsService>(ScrapeReviewsService);
         process.env.GOOGLE_CLOUD_SUBSCRIPTION = 'mock-subscription';
     });
 
@@ -278,9 +305,11 @@ describe('ScraperService', () => {
             addresses: [],
             screenshot: '',
             seoAnalysis: null,
+            scrapeNews: [],
             semtimentClassification: null,
             shareCount:null,
-          };
+            reviews: null,
+          } as ScrapeResult;
           const mockMessage = {
             data: Buffer.from(JSON.stringify({ data: { url }, type })),
             ack: jest.fn(),
@@ -330,8 +359,11 @@ describe('ScraperService', () => {
                 addresses: [],
                 screenshot: '',
                 seoAnalysis: null,
+                scrapeNews:[],
                 semtimentClassification: null,
+                news:[],
                 shareCount:null,
+                reviews: null,
              };
 
             jest.spyOn(service, 'scrape').mockResolvedValueOnce(scrapeResult);
@@ -477,10 +509,49 @@ describe('ScraperService', () => {
             expect(result).toEqual(addressResult);
             expect(service.scrapeAddress).toHaveBeenCalledWith(url);
         });
+        it('should call scrape method with type "scrape-news"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-news';
 
-        it('should call scrape method with type "shareCount"', async () => {
+            const robotsResponse: RobotsResponse = {
+              baseUrl: url,
+              allowedPaths: ['/'],
+              disallowedPaths: ['/admin'],
+              isUrlScrapable: true,
+              isBaseUrlAllowed: true,
+            };
+          
+  
+            jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResponse);
+
+            const newsResult: NewsItem[] = [
+              {
+                title: 'Example News Title',
+                link: 'http://example.com/news1',
+                source: 'Example Source',
+                pubDate: '2024-09-01T10:00:00Z',
+                sentimentScores: {
+                  positive: 0.7,
+                  negative: 0.1,
+                  neutral: 0.2,
+                },
+              },
+            ];
+
+            jest.spyOn(mockScrapeNewsService, 'fetchNewsArticles').mockResolvedValue(newsResult);
+
+
+            const result = await service.scrapeWebsite({ url }, type);
+
+            expect(result).toEqual(newsResult); 
+            expect(mockScrapeNewsService.fetchNewsArticles).toHaveBeenCalledWith(url); 
+          });
+          
+          
+
+        it('should call scrape method with type "share-count"', async () => {
           const url = 'http://example.com';
-          const type = 'shareCount';
+          const type = 'share-count';
           const shareCountArr = {
             "Facebook": {
               "comment_plugin_count": 9835,
@@ -500,6 +571,7 @@ describe('ScraperService', () => {
           expect(result).toEqual(shareCountArr);
           expect(service.getShareCount).toHaveBeenCalledWith(url);
       });
+
 
         it('should call scrape method with type "seo-analysis"', async () => {
             const url = 'http://example.com';
@@ -588,6 +660,8 @@ describe('ScraperService', () => {
             const type = 'keyword-analysis';
             const keyword = 'example';
             const keywordResult = {
+                keyword,
+                url,
                 ranking: 1,
                 topTen: [
                     'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -608,6 +682,33 @@ describe('ScraperService', () => {
             const type = 'unknownType';
 
             await expect(service.scrapeWebsite({url}, type)).rejects.toThrowError('Unknown scraping type: unknownType');
+        });
+        it('should call scrape method with type "scrape-reviews"', async () => {
+            const url = 'http://example.com';
+            const type = 'scrape-reviews';
+            const reviewsResult = {
+                rating: 4.5,
+                numberOfReviews: 100,
+                trustIndex: 4.5,
+                NPS: 4.5,
+                recommendationStatus: 'Good',
+                starRatings: [
+                    {stars: 5, numReviews: 50},
+                    {stars: 4, numReviews: 30},
+                    {stars: 3, numReviews: 10},
+                    {stars: 2, numReviews: 5},
+                    {stars: 1, numReviews: 5},
+                ]
+
+                
+            } as ReviewData;
+
+            jest.spyOn(service, 'scrapeReviews').mockResolvedValue(reviewsResult);
+
+            const result = await service.scrapeWebsite({url, }, type);
+
+            expect(result).toEqual(reviewsResult);
+            expect(service.scrapeReviews).toHaveBeenCalledWith(url);
         });
     });
 
@@ -1140,6 +1241,8 @@ describe('ScraperService', () => {
             const url = 'http://example.com';
             const keyword = 'example';
             const keywordResult = {
+                keyword,
+                url,
                 ranking: 1,
                 topTen: [
                     'example.com', 'example2.com', 'example3.com', 'example4.com', 'example5.com', 'example6.com', 'example7.com', 'example8.com', 'example9.com', 'example10.com'
@@ -1175,5 +1278,97 @@ describe('ScraperService', () => {
 
 
     });
-
+    describe('newsScraping', () => {
+        it('should return the news articles with sentiment scores for the given URL', async () => {
+          const url = 'http://example.com';
+      
+          const expectedNewsArticles: NewsItem[] = [
+            {
+              title: 'Example News 1',
+              link: 'http://example.com/news1',
+              source: 'Example Source 1',
+              pubDate: '2024-09-01',
+              sentimentScores: {
+                positive: 0.8,
+                negative: 0.1,
+                neutral: 0.1,
+              },
+            },
+            {
+              title: 'Example News 2',
+              link: 'http://example.com/news2',
+              source: 'Example Source 2',
+              pubDate: '2024-09-02',
+              sentimentScores: {
+                positive: 0.3,
+                negative: 0.3,
+                neutral: 0.4,
+              },
+            },
+          ];
+      
+          jest.spyOn(mockScrapeNewsService, 'fetchNewsArticles').mockResolvedValue(expectedNewsArticles);
+      
+        });
+      });
+    
+      describe('scrapeReviews', () => {
+            it('should scrape reviews and return the result in the expected format', async () => {
+              const url = 'http://example.com';
+              
+              const expectedReviewsResult = {
+                rating: 5,
+                numberOfReviews: 120,
+                trustIndex: 4.2,
+                NPS: 60,
+                recommendationStatus: 'Unlikely',
+                starRatings: [
+                  { stars: 5, numReviews: 50 },
+                  { stars: 4, numReviews: 30 },
+                  { stars: 3, numReviews: 20 },
+                  { stars: 2, numReviews: 10 },
+                  { stars: 1, numReviews: 10 },
+                ],
+            } as ReviewData;
+            
+          
+              const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn().mockResolvedValue({
+                  rating: '4.5',
+                  reviewCount: '120',
+                  trustindexRating: '4.2',
+                  nps: '60',
+                  recommendationStatus: 'Unlikely',
+                  reviewNumbers: ['50', '30', '20', '10']
+                }),
+                close: jest.fn(),
+              } as unknown as puppeteer.Page;
+          
+              const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+              } as unknown as puppeteer.Browser;
+          
+              process.env.PROXY_USERNAME = 'username';
+              process.env.PROXY_PASSWORD = 'password';
+          
+              jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+          
+              jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue({
+                baseUrl: url,
+                allowedPaths: [],
+                disallowedPaths: [],
+                isUrlScrapable: true,
+                isBaseUrlAllowed: true,
+              });
+          
+              jest.spyOn(mockReviewService, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
+          
+              const result = await mockReviewService.scrapeReviews(url);
+          
+              expect(result).toEqual(expectedReviewsResult);
+            });
+          });
+    
 });

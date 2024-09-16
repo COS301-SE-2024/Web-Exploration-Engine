@@ -9,9 +9,14 @@ import { ChartColours, DarkChartColours } from "./colours";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export function ColumnChart({ dataLabel, dataSeries }: IChart) {
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
 
-    const [options, setOptions] = useState<ApexOptions>({
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-bar',
             fontFamily: "'Poppins', sans-serif",
@@ -30,14 +35,14 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
                 }
             }
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         plotOptions: {
             bar: {
                 distributed: true
             }
         },
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         xaxis: {
             labels: {
@@ -62,26 +67,130 @@ export function ColumnChart({ dataLabel, dataSeries }: IChart) {
             }
         },
         grid: {
-            borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
-        }
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        },
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = [{
         data: dataSeries.map((value, index) => ({ x: dataLabel[index], y: value }))
     }];
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            },
-            grid: {
-                borderColor: theme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, dataLabel, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
+
+    return (
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="bar"
+                        height={280}
+                        width="100%"
+                    />
+                </div>
+            </div>
+        </div>        
+    );
+}
+
+export function ColumnChartNPS({ dataLabel, dataSeries }: IChart) {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
+        chart: {
+            id: 'apexchart-bar',
+            fontFamily: "'Poppins', sans-serif",
+            background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'bar',
+            toolbar: {
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
             }
-        }));
-    }, [theme]);
+        },
+        plotOptions: {
+            bar: {
+                distributed: true,
+                colors: {
+                    ranges: [
+                        {
+                            from: -Infinity,
+                            to: 0,
+                            color: '#FF0000',
+                        },
+                        {
+                            from: 1, 
+                            to: 49,
+                            color: '#FFA500', 
+                        },
+                        {
+                            from: 50, 
+                            to: Infinity,
+                            color: '#008000',
+                        }
+                    ]
+                }
+            }
+        },
+        legend: {
+            show: false,
+        },
+        theme: {
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
+        },
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        },
+        xaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        yaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        }
+    });
+
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
+    const series = [{
+        data: dataSeries.map((value, index) => ({ x: dataLabel[index], y: value }))
+    }];
+
+    useEffect(() => {
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, dataLabel, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">

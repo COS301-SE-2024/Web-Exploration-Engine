@@ -13,8 +13,14 @@ interface IChartExtended extends IChart {
 }
 
 export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended) {
-    const { theme } = useTheme();
-    const [options, setOptions] = useState<ApexOptions>({
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
         chart: {
             id: 'apexchart-pie',
             fontFamily: "'Poppins', sans-serif",
@@ -30,36 +36,32 @@ export function PieChart({dataLabel, dataSeries, legendPosition}: IChartExtended
               }
             }
         },
-        colors: theme === 'light' ? ChartColours : DarkChartColours,
+        colors: currentTheme === 'light' ? ChartColours : DarkChartColours,
         labels: dataLabel,
         theme: {
-            mode: theme === 'dark' ? 'dark' : 'light'
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
         legend: {
           position: legendPosition,
           horizontalAlign: 'left',
+          labels: {
+            colors: currentTheme === 'dark' ? '#FFFFFF' : '#000000',
+          }
         },
-  
     });
 
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = dataSeries;
 
     useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            colors: theme === 'light' ? ChartColours : DarkChartColours,
-            theme: {
-                mode: theme === 'dark' ? 'dark' : 'light'
-            }
-        }));
-    }, [theme]);
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, dataLabel, mounted]);
 
-    useEffect(() => {
-        setOptions(prevOptions => ({
-            ...prevOptions,
-            labels: dataLabel
-        }));
-    }, [dataLabel]);
+    if (!mounted) {
+        return null;
+    }
 
     return (
         <div className="app">
