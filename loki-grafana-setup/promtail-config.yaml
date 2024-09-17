@@ -16,3 +16,5 @@ scrape_configs:
     labels:
       job: varlogs
       __path__: /var/log/*.log
+       job: root
+      __path__: wee
