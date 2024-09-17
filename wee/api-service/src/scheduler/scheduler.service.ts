@@ -3,6 +3,7 @@ import * as cron from 'node-cron';
 import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
+import { EmailService } from '../email.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
 
@@ -13,7 +14,8 @@ export class SchedulerService {
 
   constructor(
     private readonly supabaseService: SupabaseService,
-    private readonly pubsubService: PubSubService
+    private readonly pubsubService: PubSubService,
+    private readonly emailService: EmailService 
   ) {
     console.log('Scheduler service initialized');
     this.topicName = process.env.GOOGLE_CLOUD_TOPIC;
@@ -203,6 +205,18 @@ export class SchedulerService {
 
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
+    const emailText = `Your URL: ${schedule.url} has been successfully scraped. 
+    Here are some details:
+    - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime}ms
+    - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance}
+    - Total Facebook Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}`;
+
+  try {
+    await this.emailService.sendMail('johane.breytie@gmail.com', 'Scrape Completed', emailText);
+    console.log('Email sent successfully to johane.breytie@gmail.com');
+  } catch (emailError) {
+    console.error('Error sending email:', emailError);
+  }
   }
 
   async handleKeywordResults(results: any, schedule: ScheduleTaskResponse) {
