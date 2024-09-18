@@ -8,6 +8,22 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
+const lightModeColors = [
+    { from: -50000, to: -1, color: '#38023b', name: 'Very Low' }, 
+    { from: 0, to: 500, color: '#b6e4ce', name: 'Low' },       // Light green
+    { from: 501, to: 1000, color: '#54b38e', name: 'Medium' },    // Medium green
+    { from: 1001, to: 5000, color: '#329874', name: 'High' },      // Darker green
+    { from: 5001, to: 200000, color: '#144033', name: 'Very High' }  // Darkest green
+];
+
+const darkModeColors = [
+    { from: -50000, to: -1, color: '#a288e3', name: 'Very Low' }, 
+    { from: 0, to: 500, color: '#dae5d7', name: 'Low' },       // Light gray-green
+    { from: 501, to: 1000, color: '#92c3ab', name: 'Medium' },    // Grayish green
+    { from: 1001, to: 5000, color: '#5a8c74', name: 'High' },      // Dark gray-green
+    { from: 5001, to: 200000, color: '#2b4d3a', name: 'Very High' }  // Dark green
+];
+
 export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -41,12 +57,7 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
             heatmap: {
                 shadeIntensity: 0,
                 colorScale: {
-                    ranges: [
-                        { from: 0, to: 500, color: '#b6e4ce', name: 'Low' },       // Light green
-                        { from: 501, to: 1000, color: '#54b38e', name: 'Medium' },    // Medium green
-                        { from: 1001, to: 5000, color: '#329874', name: 'High' },      // Darker green
-                        { from: 5001, to: 200000, color: '#144033', name: 'Very High' }  // Darkest green
-                    ]
+                    ranges: currentTheme === 'dark' ? darkModeColors : lightModeColors,
                 }
             }
         },
