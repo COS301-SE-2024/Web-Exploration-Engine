@@ -77,8 +77,8 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
                 color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         },
-        grid: {
-            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        stroke: {
+            colors: currentTheme === 'dark' ? ['#D7D7D7'] : ['#BBBBBB'],
         },
     });
 
