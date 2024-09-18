@@ -31,7 +31,7 @@ interface SumamryDashboard {
 	increase?: boolean,
 	increaseDecreaseBy?: number,
 	summaryCategory: string,
-	currentCount: number
+	currentCount: number | string
 }
 
 function DashboardPage() {
@@ -42,6 +42,8 @@ function DashboardPage() {
 	const [changedRatingsHeatmap, setChangedRatingsHeatmap] = React.useState<RatingsHeatmap[]>([]);
 
 	// summary section
+	const [summaryStarRating, setSummaryStarRating] = React.useState<SumamryDashboard>();
+	const [summaryRecommendationStatus, setSummaryRecommendationStatus] = React.useState<SumamryDashboard>();
 	const [summaryEngagement, setSummaryEngagement] = React.useState<SumamryDashboard>();
 	const [summarySiteSpeed, setSummarySiteSpeed] = React.useState<SumamryDashboard>();
 
@@ -96,6 +98,29 @@ function DashboardPage() {
 				const starRatings = filteredResponse.result_history.starRatings;
 				setChangedRatingsHeatmap(computeMonthlyChanges(starRatings));
 
+				// average star rating summary section
+				const starRatingLength = filteredResponse.result_history.rating.length;
+				if (starRatingLength > 0) {
+					const starRatingChange = filteredResponse.result_history.rating[starRatingLength - 1] - filteredResponse.result_history.rating[starRatingLength - 2];
+					const starRatingSummaryObject: SumamryDashboard = {
+						increase: starRatingChange > 0 ? true : false,
+						increaseDecreaseBy: starRatingChange > 0 ? starRatingChange : starRatingChange * -1,
+						summaryCategory: 'Average Star Rating',
+						currentCount: filteredResponse.result_history.rating[starRatingLength - 1]
+					}
+					setSummaryStarRating(starRatingSummaryObject);
+				}
+
+				// recommendation status section
+				const recommendationStatusLength = filteredResponse.result_history.recommendationStatus.length;
+				if (recommendationStatusLength > 0) {
+					const recommendationStatusSummaryObject: SumamryDashboard = {
+						summaryCategory: 'Recommendation Status',
+						currentCount: filteredResponse.result_history.recommendationStatus[recommendationStatusLength - 1],
+					}
+					setSummaryRecommendationStatus(recommendationStatusSummaryObject);
+				}
+
 				// engagement summary section
 				const engagementLength = filteredResponse.result_history.totalEngagement.length;
 				// there needs to be a minimum of 2 scheduled scrapes stored
@@ -148,32 +173,37 @@ function DashboardPage() {
 
 			{/* Summary */}
 			<div className='gap-4 grid sm:grid-cols-2 lg:grid-cols-4'>
-				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-					<div className='text-4xl flex justify-center'>
-						<FiArrowUp />
-						<span className='text-4xl'>821</span>
+				{/* Average Star Rating */}
+				{dashboardData && summaryStarRating &&
+					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<div className='text-4xl flex justify-center'>
+							{summaryStarRating.increase ? <FiArrowUp /> : <FiArrowDown />}
+							<span className='text-4xl'>{summaryStarRating.increaseDecreaseBy}</span>
+						</div>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+							{summaryStarRating.summaryCategory}
+						</div>
+						<div className='font-poppins-semibold text-2xl'>
+							{summaryStarRating.currentCount}
+						</div>
 					</div>
-					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-						Comment Count
-					</div>
-					<div className='font-poppins-semibold text-2xl'>
-						19 661
-					</div>
-				</div>
+				}
 
 				{/* Recommendation Status */}
-				<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
-					<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-						Recommendation Status
+				{dashboardData && summaryRecommendationStatus && 
+					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+							{summaryRecommendationStatus.summaryCategory}
+						</div>
+						<div data-testid="dashboard-summary-recomm-status" className='font-poppins-semibold text-2xl pt-3'>
+							{
+								summaryRecommendationStatus.currentCount != ""
+								? summaryRecommendationStatus.currentCount
+								: "N/A"
+							}
+						</div>
 					</div>
-					<div className='font-poppins-semibold text-2xl pt-3'>
-						{dashboardData && dashboardData.result_history &&
-							dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1] != ""
-							? dashboardData.result_history.recommendationStatus[dashboardData.result_history.recommendationStatus.length - 1]
-							: "N/A"
-						}
-					</div>
-				</div>
+				}
 
 				{/* Total Engagements */}
 				{dashboardData && summaryEngagement &&
@@ -429,7 +459,7 @@ function DashboardPage() {
 				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-2 mb-[1rem]'>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-							Ratings
+							Average Star Rating
 							<InfoPopOver
 								data-testid="popup-trustindex-ratings"
 								heading="Trust Index Rating"
