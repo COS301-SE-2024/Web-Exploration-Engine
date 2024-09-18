@@ -325,7 +325,7 @@ function DashboardPage() {
 						})}
 					</div>
 				) : (
-					<p className="bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center">
+					<p data-testid="dashboard-keyword-not-available" className="bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center">
 						No keywords are being tracked
 					</p>
 				)}
@@ -343,7 +343,7 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.newsSentiment ? (
+				{dashboardData && dashboardData.result_history.newsSentiment.negativeAvg.length>0 && dashboardData.result_history.newsSentiment.neutralAvg.length>0 && dashboardData.result_history.newsSentiment.positiveAvg.length>0 ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<AreaChart
 							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -351,7 +351,7 @@ function DashboardPage() {
 						/>
 					</div>
 				) : (
-					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div data-testid="dashboard-news-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						There are no News Sentiment currently available
 					</div>
 				)}
@@ -373,13 +373,15 @@ function DashboardPage() {
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Total Engagments
 					</h3>
-					{dashboardData && dashboardData.result_history.totalEngagement ? (
+					{dashboardData && dashboardData.result_history.totalEngagement.length > 0 ? (
 						<LineChart
 							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 							areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement }]}
 						/>
 					) : (
-						<p>There are no Total Engagements currently available</p>
+						<p data-testid="dashboard-engagements-not-available">
+							There are no Total Engagements currently available
+						</p>
 					)
 					}
 				</div>
@@ -389,13 +391,15 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Comment Count
 						</h3>
-						{dashboardData && dashboardData.result_history.commentCount ? (
+						{dashboardData && dashboardData.result_history.commentCount.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount }]}
 							/>
 						) : (
-							<p>There are no Facebook Comment Count currently available</p>
+							<p data-testid="dashboard-comment-count-not-available">
+								There are no Facebook Comment Count currently available
+							</p>
 						)
 						}
 					</div>
@@ -403,13 +407,13 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Share Count
 						</h3>
-						{dashboardData && dashboardData.result_history.shareCount ? (
+						{dashboardData && dashboardData.result_history.shareCount.length>0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount }]}
 							/>
 						) : (
-							<p>There are no Facebook Share Count currently available</p>
+							<p data-testid="dashboard-share-count-not-available">There are no Facebook Share Count currently available</p>
 						)
 						}
 					</div>
@@ -417,13 +421,13 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Reaction Count
 						</h3>
-						{dashboardData && dashboardData.result_history.reactionCount ? (
+						{dashboardData && dashboardData.result_history.reactionCount.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount }]}
 							/>
 						) : (
-							<p>There are no Facebook Reaction Count currently available</p>
+							<p data-testid="dashboard-reaction-count-not-available">There are no Facebook Reaction Count currently available</p>
 						)
 						}
 					</div>
@@ -431,13 +435,13 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Pintrest - Pin Count
 						</h3>
-						{dashboardData && dashboardData.result_history.pinCount ? (
+						{dashboardData && dashboardData.result_history.pinCount.length>0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount }]}
 							/>
 						) : (
-							<p>There are no Pintrest Pin Count currently available</p>
+							<p data-testid="dashboard-pin-count-not-available">There are no Pintrest Pin Count currently available</p>
 						)
 						}
 					</div>

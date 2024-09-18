@@ -91,4 +91,61 @@ describe('Dashboard page - no data', () => {
         expect(dashboardSiteSpeed).toBeInTheDocument();
         expect(dashboardSiteSpeed).toHaveTextContent('There are no Site Speed Technical SEO Analysis currently available');
     });
+
+    it('SEO Keyword Analysis is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardKeyword = screen.queryByTestId('dashboard-keyword-not-available');
+        expect(dashboardKeyword).toBeInTheDocument();
+        expect(dashboardKeyword).toHaveTextContent('No keywords are being tracked');
+    });
+
+    it('News Sentiment is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardNews = screen.queryByTestId('dashboard-news-not-available');
+        expect(dashboardNews).toBeInTheDocument();
+        expect(dashboardNews).toHaveTextContent('There are no News Sentiment currently available');
+    });
+
+    it('Engagements is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardEngagements = screen.queryByTestId('dashboard-engagements-not-available');
+        expect(dashboardEngagements).toBeInTheDocument();
+        expect(dashboardEngagements).toHaveTextContent('There are no Total Engagements currently available');
+    });
+
+    it('Comment Count is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardCommentCount = screen.queryByTestId('dashboard-comment-count-not-available');
+        expect(dashboardCommentCount).toBeInTheDocument();
+        expect(dashboardCommentCount).toHaveTextContent('There are no Facebook Comment Count currently available');
+    });
+
+    it('Share Count is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardShareCount = screen.queryByTestId('dashboard-share-count-not-available');
+        expect(dashboardShareCount).toBeInTheDocument();
+        expect(dashboardShareCount).toHaveTextContent('There are no Facebook Share Count currently available');
+    });
+
+    it('Reaction Count is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardReactionCount = screen.queryByTestId('dashboard-reaction-count-not-available');
+        expect(dashboardReactionCount).toBeInTheDocument();
+        expect(dashboardReactionCount).toHaveTextContent('There are no Facebook Reaction Count currently available');
+    });
+
+    it('Pin Count is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardReactionCount = screen.queryByTestId('dashboard-pin-count-not-available');
+        expect(dashboardReactionCount).toBeInTheDocument();
+        expect(dashboardReactionCount).toHaveTextContent('There are no Pintrest Pin Count currently available');
+    });
+    
 })
