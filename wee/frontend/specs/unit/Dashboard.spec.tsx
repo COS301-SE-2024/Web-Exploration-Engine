@@ -20,46 +20,46 @@ jest.mock('../../src/app/context/ScheduledScrapingContext', () => ({
 describe('Dashboard page - no data', () => {
     const mockPush = jest.fn();
     const mockSetScheduledScrape = jest.fn();
-  
+
     beforeEach(() => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`id=5000`));
-      (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-      (useScheduledScrapeContext as jest.Mock).mockReturnValue({
-        scheduledScrapeResponse: [
-            {
-                id: '5000',
-                keyword_results: [],
-                result_history: {
-                    NPS: [],
-                    accessibilityScore: [],
-                    bestPracticesScore: [],
-                    commentCount: [],
-                    newsSentiment: {
-                        neutralAvg: [],
-                        negativeAvg: [],
-                        positiveAvg: [],
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`id=5000`));
+        (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+        (useScheduledScrapeContext as jest.Mock).mockReturnValue({
+            scheduledScrapeResponse: [
+                {
+                    id: '5000',
+                    keyword_results: [],
+                    result_history: {
+                        NPS: [],
+                        accessibilityScore: [],
+                        bestPracticesScore: [],
+                        commentCount: [],
+                        newsSentiment: {
+                            neutralAvg: [],
+                            negativeAvg: [],
+                            positiveAvg: [],
+                        },
+                        numReviews: [],
+                        performanceScore: [],
+                        pinCount: [],
+                        rating: [],
+                        reactionCount: [],
+                        recommendationStatus: [],
+                        shareCount: [],
+                        siteSpeed: [],
+                        starRatings: [],
+                        timestampArr: [],
+                        totalEngagement: [],
+                        trustIndex: []
                     },
-                    numReviews: [],
-                    performanceScore: [],
-                    pinCount: [],
-                    rating: [],
-                    reactionCount: [],
-                    recommendationStatus: [],
-                    shareCount: [],
-                    siteSpeed: [],
-                    starRatings: [],
-                    timestampArr: [],
-                    totalEngagement: [],
-                    trustIndex: []
                 },
-            },
-        ],
-        setScheduledScrapeResponse: mockSetScheduledScrape,
-      });
+            ],
+            setScheduledScrapeResponse: mockSetScheduledScrape,
+        });
     });
-  
+
     afterEach(() => {
-      jest.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     it('Render the dashboard page successfully', () => {
@@ -155,7 +155,7 @@ describe('Dashboard page - no data', () => {
         expect(dashboardRating).toBeInTheDocument();
         expect(dashboardRating).toHaveTextContent('There are no Ratings currently available');
     });
-    
+
     it('Number of reviews is not available', () => {
         render(<Dashboard />);
 
@@ -195,4 +195,125 @@ describe('Dashboard page - no data', () => {
         expect(dashboardTrustIndex).toBeInTheDocument();
         expect(dashboardTrustIndex).toHaveTextContent('There are no NPS Reviews currently available');
     });
-})
+});
+
+describe('Dashboard page - no data', () => {
+    const mockPush = jest.fn();
+    const mockSetScheduledScrape = jest.fn();
+
+    beforeEach(() => {
+        (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`id=5000`));
+        (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+        (useScheduledScrapeContext as jest.Mock).mockReturnValue({
+            scheduledScrapeResponse: [
+                {
+                    id: '5000',
+                    keyword_results: [],
+                    result_history: {
+                        NPS: [12, 12, 12],
+                        accessibilityScore: [85, 85, 85],
+                        bestPracticesScore: [100, 100, 100],
+                        commentCount: [63, 49, 55],
+                        newsSentiment: {
+                            neutralAvg: [0.6809093508869409, 0.6460568338632584, 0.6207376215606928],
+                            negativeAvg: [0.00650408846559003, 0.006996740307658911, 0.0069127309252507985],
+                            positiveAvg: [0.3125865735113621, 0.3469464309513569, 0.3723496563732624],
+                        },
+                        numReviews: [64, 64, 64],
+                        performanceScore: [79, 80, 79],
+                        pinCount: [0, 0, 0],
+                        rating: [2.91, 2.91, 2.91],
+                        reactionCount: [356, 339, 336],
+                        recommendationStatus: ['Likely', 'Likely', 'Likely'],
+                        shareCount: [4255, 4261, 4246],
+                        siteSpeed: [4.879087537976563, 5.688592593989111, 4.703195877486319],
+                        starRatings: [
+                            [
+                                {
+                                    "stars": 5,
+                                    "numReviews": 24
+                                },
+                                {
+                                    "stars": 4,
+                                    "numReviews": 5
+                                },
+                                {
+                                    "stars": 3,
+                                    "numReviews": 1
+                                },
+                                {
+                                    "stars": 2,
+                                    "numReviews": 9
+                                },
+                                {
+                                    "stars": 1,
+                                    "numReviews": 25
+                                }
+                            ],
+                            [
+                                {
+                                    "stars": 5,
+                                    "numReviews": 24
+                                },
+                                {
+                                    "stars": 4,
+                                    "numReviews": 5
+                                },
+                                {
+                                    "stars": 3,
+                                    "numReviews": 1
+                                },
+                                {
+                                    "stars": 2,
+                                    "numReviews": 9
+                                },
+                                {
+                                    "stars": 1,
+                                    "numReviews": 25
+                                }
+                            ],
+                            [
+                                {
+                                    "stars": 5,
+                                    "numReviews": 24
+                                },
+                                {
+                                    "stars": 4,
+                                    "numReviews": 5
+                                },
+                                {
+                                    "stars": 3,
+                                    "numReviews": 1
+                                },
+                                {
+                                    "stars": 2,
+                                    "numReviews": 9
+                                },
+                                {
+                                    "stars": 1,
+                                    "numReviews": 25
+                                }
+                            ]
+                        ],
+                        timestampArr: [
+                            "2024-09-13T15:14:12.722Z",
+                            "2024-09-14T15:16:01.727Z",
+                            "2024-09-18T08:41:34.957Z"
+                        ],
+                        totalEngagement: [4674, 4649, 4637],
+                        trustIndex: [3.7, 3.7, 3.7]
+                    },
+                },
+            ],
+            setScheduledScrapeResponse: mockSetScheduledScrape,
+        });
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it('Render the dashboard page successfully', () => {
+        render(<Dashboard />);
+    });
+});
