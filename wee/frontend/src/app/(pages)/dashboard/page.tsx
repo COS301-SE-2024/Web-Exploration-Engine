@@ -471,12 +471,12 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.rating ? (
+						{dashboardData && dashboardData.result_history.rating.length>0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating }]} />
 						) : (
-							<p>There are no Ratings currently available</p>
+							<p data-testid="dashboard-rating-not-available">There are no Ratings currently available</p>
 						)
 						}
 					</div>
@@ -493,12 +493,12 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.numReviews ? (
+						{dashboardData && dashboardData.result_history.numReviews.length>0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews }]} />
 						) : (
-							<p>There are no Number of Reviews currently available</p>
+							<p data-testid="dashboard-reviews-not-available">There are no Number of Reviews currently available</p>
 						)
 						}
 					</div>
@@ -509,7 +509,7 @@ function DashboardPage() {
 						Star Ratings Distribution for Reviews
 					</h3>
 
-					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings ? (
+					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length>0 ? (
 						<StackedColumnChart
 							dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 							dataSeries={[1, 2, 3, 4, 5].map((star) => ({
@@ -531,7 +531,7 @@ function DashboardPage() {
 						/>
 
 					) : (
-						<p>There are no rating data currently available</p>
+						<p data-testid="dashboard-star-rating-not-available">There are no rating data currently available</p>
 					)}
 
 				</div>
@@ -551,7 +551,7 @@ function DashboardPage() {
 							dataSeries={changedRatingsHeatmap}
 						/>
 					) : (
-						<p>The heatmap is not currently available</p>
+						<p data-testid="dashboard-star-rating-heatmap-not-available">The heatmap is not currently available</p>
 					)
 
 					}
@@ -568,12 +568,12 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.trustIndex ? (
+						{dashboardData && dashboardData.result_history.trustIndex.length>0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex }]} />
 						) : (
-							<p>There are no Trust Index currently available</p>
+							<p data-testid="dashboard-trust-index-not-available">There are no Trust Index currently available</p>
 						)
 						}
 					</div>
@@ -590,13 +590,13 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.NPS ? (
+						{dashboardData && dashboardData.result_history.NPS.length>0 ? (
 							<ColumnChartNPS
 								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								dataSeries={dashboardData.result_history.NPS}
 							/>
 						) : (
-							<p>There are no NPS Reviews currently available</p>
+							<p data-testid="dashboard-nps-not-available">There are no NPS Reviews currently available</p>
 						)
 						}
 					</div>

@@ -147,5 +147,52 @@ describe('Dashboard page - no data', () => {
         expect(dashboardReactionCount).toBeInTheDocument();
         expect(dashboardReactionCount).toHaveTextContent('There are no Pintrest Pin Count currently available');
     });
+
+    it('Rating is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardRating = screen.queryByTestId('dashboard-rating-not-available');
+        expect(dashboardRating).toBeInTheDocument();
+        expect(dashboardRating).toHaveTextContent('There are no Ratings currently available');
+    });
     
+    it('Number of reviews is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardReviews = screen.queryByTestId('dashboard-reviews-not-available');
+        expect(dashboardReviews).toBeInTheDocument();
+        expect(dashboardReviews).toHaveTextContent('There are no Number of Reviews currently available');
+    });
+
+    it('Star Ratings is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardStarRatings = screen.queryByTestId('dashboard-star-rating-not-available');
+        expect(dashboardStarRatings).toBeInTheDocument();
+        expect(dashboardStarRatings).toHaveTextContent('There are no rating data currently available');
+    });
+
+    it('Star Ratings Heatmap is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardStarRatings = screen.queryByTestId('dashboard-star-rating-heatmap-not-available');
+        expect(dashboardStarRatings).toBeInTheDocument();
+        expect(dashboardStarRatings).toHaveTextContent('The heatmap is not currently available');
+    });
+
+    it('Trust Index is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardTrustIndex = screen.queryByTestId('dashboard-trust-index-not-available');
+        expect(dashboardTrustIndex).toBeInTheDocument();
+        expect(dashboardTrustIndex).toHaveTextContent('There are no Trust Index currently available');
+    });
+
+    it('NPS is not available', () => {
+        render(<Dashboard />);
+
+        const dashboardTrustIndex = screen.queryByTestId('dashboard-nps-not-available');
+        expect(dashboardTrustIndex).toBeInTheDocument();
+        expect(dashboardTrustIndex).toHaveTextContent('There are no NPS Reviews currently available');
+    });
 })
