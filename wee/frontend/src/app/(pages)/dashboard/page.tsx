@@ -27,12 +27,23 @@ interface RatingsHeatmap {
 	data: number[]
 }
 
+interface SumamryDashboard {
+	increase?: boolean,
+	increaseDecreaseBy?: number,
+	summaryCategory: string,
+	currentCount: number
+}
+
 function DashboardPage() {
 	// scheduled scrape results
 	const { scheduledScrapeResponse, setScheduledScrapeResponse } = useScheduledScrapeContext();
 
 	const [dashboardData, setDashboardData] = React.useState<GetSchedulesResponse | null>(null);
 	const [changedRatingsHeatmap, setChangedRatingsHeatmap] = React.useState<RatingsHeatmap[]>([]);
+
+	// summary section
+	const [summaryEngagement, setSummaryEngagement] = React.useState<SumamryDashboard>();
+	const [summarySiteSpeed, setSummarySiteSpeed] = React.useState<SumamryDashboard>();
 
 	const searchParams = useSearchParams();
 	const id = searchParams.get('id');
@@ -84,6 +95,34 @@ function DashboardPage() {
 
 				const starRatings = filteredResponse.result_history.starRatings;
 				setChangedRatingsHeatmap(computeMonthlyChanges(starRatings));
+
+				// engagement summary section
+				const engagementLength = filteredResponse.result_history.totalEngagement.length;
+				// there needs to be a minimum of 2 scheduled scrapes stored
+				if (engagementLength > 1) {
+					const engagementChange = filteredResponse.result_history.totalEngagement[engagementLength - 1] - filteredResponse.result_history.totalEngagement[engagementLength - 2];
+					const engagementSummaryObject: SumamryDashboard = {
+						increase: engagementChange > 0 ? true : false,
+						increaseDecreaseBy: engagementChange > 0 ? engagementChange : engagementChange * -1,
+						summaryCategory: 'Total Engagement',
+						currentCount: filteredResponse.result_history.totalEngagement[engagementLength - 1]
+					}
+					setSummaryEngagement(engagementSummaryObject);
+				}
+
+				// site speed summary section
+				const siteSpeedLength = filteredResponse.result_history.siteSpeed.length;
+				// there needs to be a minimum of 2 scheduled scrapes stored
+				if (siteSpeedLength > 1) {
+					const siteSpeedChange = filteredResponse.result_history.siteSpeed[siteSpeedLength - 1] - filteredResponse.result_history.siteSpeed[siteSpeedLength - 2];
+					const siteSpeedSummaryObject: SumamryDashboard = {
+						increase: siteSpeedChange > 0 ? true : false,
+						increaseDecreaseBy: siteSpeedChange > 0 ? siteSpeedChange : siteSpeedChange * -1,
+						summaryCategory: 'Site Speed',
+						currentCount: filteredResponse.result_history.siteSpeed[engagementLength - 1]
+					}
+					setSummarySiteSpeed(siteSpeedSummaryObject);
+				}
 			}
 		}
 	}, [id, scheduledScrapeResponse])
@@ -135,6 +174,38 @@ function DashboardPage() {
 						}
 					</div>
 				</div>
+
+				{/* Total Engagements */}
+				{dashboardData && summaryEngagement &&
+					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<div className='text-4xl flex justify-center'>
+							{summaryEngagement.increase ? <FiArrowUp /> : <FiArrowDown />}
+							<span className='text-4xl'>{summaryEngagement.increaseDecreaseBy}</span>
+						</div>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+							{summaryEngagement.summaryCategory}
+						</div>
+						<div className='font-poppins-semibold text-2xl'>
+							{summaryEngagement.currentCount}
+						</div>
+					</div>
+				}
+
+				{/* Site Speed */}
+				{dashboardData && summarySiteSpeed &&
+					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<div className='text-4xl flex justify-center'>
+							{summarySiteSpeed.increase ? <FiArrowUp /> : <FiArrowDown />}
+							<span className='text-4xl'>{summarySiteSpeed.increaseDecreaseBy}</span>
+						</div>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+							{summarySiteSpeed.summaryCategory}
+						</div>
+						<div className='font-poppins-semibold text-2xl'>
+							{summarySiteSpeed.currentCount}
+						</div>
+					</div>
+				}
 			</div>
 
 			{/* Technical SEO Analysis */}
@@ -151,9 +222,9 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.accessibilityScore && dashboardData.result_history.bestPracticesScore && dashboardData.result_history.performanceScore ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart 
-							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-							areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]} 
+						<AreaChart
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+							areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]}
 						/>
 					</div>
 				) : (
@@ -177,8 +248,8 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.siteSpeed ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<LineChart 
-							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+						<LineChart
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 							areaSeries={[{ name: 'Site Speed', data: dashboardData.result_history.siteSpeed.map(value => Math.round(value * 100) / 100) }]}
 						/>
 					</div>
@@ -242,9 +313,9 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.newsSentiment ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart 
-							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-							areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]} 
+						<AreaChart
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+							areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]}
 						/>
 					</div>
 				) : (
@@ -271,13 +342,13 @@ function DashboardPage() {
 						Total Engagments
 					</h3>
 					{dashboardData && dashboardData.result_history.totalEngagement ? (
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-								areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement }]} 
-							/>
-						) : (
-							<p>There are no Total Engagements currently available</p>
-						)
+						<LineChart
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+							areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement }]}
+						/>
+					) : (
+						<p>There are no Total Engagements currently available</p>
+					)
 					}
 				</div>
 
@@ -287,9 +358,9 @@ function DashboardPage() {
 							Facebook - Comment Count
 						</h3>
 						{dashboardData && dashboardData.result_history.commentCount ? (
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-								areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount }]} 
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount }]}
 							/>
 						) : (
 							<p>There are no Facebook Comment Count currently available</p>
@@ -301,9 +372,9 @@ function DashboardPage() {
 							Facebook - Share Count
 						</h3>
 						{dashboardData && dashboardData.result_history.shareCount ? (
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-								areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount }]} 
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount }]}
 							/>
 						) : (
 							<p>There are no Facebook Share Count currently available</p>
@@ -315,9 +386,9 @@ function DashboardPage() {
 							Facebook - Reaction Count
 						</h3>
 						{dashboardData && dashboardData.result_history.reactionCount ? (
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-								areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount }]} 
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount }]}
 							/>
 						) : (
 							<p>There are no Facebook Reaction Count currently available</p>
@@ -329,9 +400,9 @@ function DashboardPage() {
 							Pintrest - Pin Count
 						</h3>
 						{dashboardData && dashboardData.result_history.pinCount ? (
-							<LineChart 
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
-								areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount }]} 
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount }]}
 							/>
 						) : (
 							<p>There are no Pintrest Pin Count currently available</p>
