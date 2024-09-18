@@ -117,9 +117,9 @@ function DashboardPage() {
 					const siteSpeedChange = filteredResponse.result_history.siteSpeed[siteSpeedLength - 1] - filteredResponse.result_history.siteSpeed[siteSpeedLength - 2];
 					const siteSpeedSummaryObject: SumamryDashboard = {
 						increase: siteSpeedChange > 0 ? true : false,
-						increaseDecreaseBy: siteSpeedChange > 0 ? siteSpeedChange : siteSpeedChange * -1,
+						increaseDecreaseBy: siteSpeedChange > 0 ? Math.round(siteSpeedChange * 100)/100 : Math.round(siteSpeedChange * -1 * 100)/100,
 						summaryCategory: 'Site Speed',
-						currentCount: filteredResponse.result_history.siteSpeed[engagementLength - 1]
+						currentCount: Math.round(filteredResponse.result_history.siteSpeed[engagementLength - 1] * 100) / 100
 					}
 					setSummarySiteSpeed(siteSpeedSummaryObject);
 				}
