@@ -151,7 +151,10 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.accessibilityScore && dashboardData.result_history.bestPracticesScore && dashboardData.result_history.performanceScore ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]} />
+						<AreaChart 
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+							areaSeries={[{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.map(value => Math.round(value)) }, { name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.map(value => Math.round(value)) }, { name: 'Performance', data: dashboardData.result_history.performanceScore.map(value => Math.round(value)) }]} 
+						/>
 					</div>
 				) : (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
@@ -174,7 +177,10 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.siteSpeed ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.siteSpeed.map(value => Math.round(value * 100) / 100) }]} />
+						<LineChart 
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+							areaSeries={[{ name: 'Site Speed', data: dashboardData.result_history.siteSpeed.map(value => Math.round(value * 100) / 100) }]}
+						/>
 					</div>
 				) : (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
@@ -236,7 +242,10 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.result_history.newsSentiment ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]} />
+						<AreaChart 
+							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+							areaSeries={[{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.map(value => Math.round(value * 100)) }, { name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.map(value => Math.round(value * 100)) }, { name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.map(value => Math.round(value * 100)) }]} 
+						/>
 					</div>
 				) : (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
@@ -245,7 +254,7 @@ function DashboardPage() {
 				)}
 			</div>
 
-			{/* Facebook */}
+			{/* Social Media */}
 			<div>
 				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					Social Media
@@ -257,13 +266,31 @@ function DashboardPage() {
 					/>
 				</h3>
 
+				<div className='mb-[1rem] bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+						Total Engagments
+					</h3>
+					{dashboardData && dashboardData.result_history.totalEngagement ? (
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+								areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement }]} 
+							/>
+						) : (
+							<p>There are no Total Engagements currently available</p>
+						)
+					}
+				</div>
+
 				<div className='gap-4 grid md:grid-cols-2 2xl:grid-cols-4'>
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Comment Count
 						</h3>
 						{dashboardData && dashboardData.result_history.commentCount ? (
-							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.commentCount }]} />
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+								areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount }]} 
+							/>
 						) : (
 							<p>There are no Facebook Comment Count currently available</p>
 						)
@@ -274,7 +301,10 @@ function DashboardPage() {
 							Facebook - Share Count
 						</h3>
 						{dashboardData && dashboardData.result_history.shareCount ? (
-							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.shareCount }]} />
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+								areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount }]} 
+							/>
 						) : (
 							<p>There are no Facebook Share Count currently available</p>
 						)
@@ -285,7 +315,10 @@ function DashboardPage() {
 							Facebook - Reaction Count
 						</h3>
 						{dashboardData && dashboardData.result_history.reactionCount ? (
-							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.reactionCount }]} />
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+								areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount }]} 
+							/>
 						) : (
 							<p>There are no Facebook Reaction Count currently available</p>
 						)
@@ -296,7 +329,10 @@ function DashboardPage() {
 							Pintrest - Pin Count
 						</h3>
 						{dashboardData && dashboardData.result_history.pinCount ? (
-							<LineChart areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.pinCount }]} />
+							<LineChart 
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))} 
+								areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount }]} 
+							/>
 						) : (
 							<p>There are no Pintrest Pin Count currently available</p>
 						)
@@ -316,6 +352,50 @@ function DashboardPage() {
 						placement="right-end"
 					/>
 				</h3>
+
+				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-2 mb-[1rem]'>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Ratings
+							<InfoPopOver
+								data-testid="popup-trustindex-ratings"
+								heading="Trust Index Rating"
+								content="Add description here"
+								placement="right-end"
+							/>
+						</h3>
+						{dashboardData && dashboardData.result_history.rating ? (
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating }]} />
+						) : (
+							<p>There are no Ratings currently available</p>
+						)
+						}
+					</div>
+					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center '>
+						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+							Number of Reviews
+							<InfoPopOver
+								data-testid="popup-nps-score"
+								heading="NPS Score"
+								content="The score indicates how likely it is for reviewers to recommed a business.</br>
+									</br><i>Less than 0 :</i> Unlikely (Indicated in red)
+									</br><i>1 to 49 :</i> Likely (Indicated in orange)
+									</br><i>Greater than 49 :</i> Very likely (Indicated in green)"
+								placement="right-end"
+							/>
+						</h3>
+						{dashboardData && dashboardData.result_history.numReviews ? (
+							<LineChart
+								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews }]} />
+						) : (
+							<p>There are no Number of Reviews currently available</p>
+						)
+						}
+					</div>
+				</div>
 
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
@@ -384,7 +464,7 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.trustIndex ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								areaSeries={[{ name: 'Ranking', data: dashboardData.result_history.trustIndex }]} />
+								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex }]} />
 						) : (
 							<p>There are no Trust Index currently available</p>
 						)

@@ -9,7 +9,6 @@ import { ChartColours, DarkChartColours } from "./colours";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const lightModeColors = [
-    { from: -50000, to: -1, color: '#38023b', name: 'Very Low' }, 
     { from: 0, to: 500, color: '#b6e4ce', name: 'Low' },       // Light green
     { from: 501, to: 1000, color: '#54b38e', name: 'Medium' },    // Medium green
     { from: 1001, to: 5000, color: '#329874', name: 'High' },      // Darker green
@@ -17,7 +16,6 @@ const lightModeColors = [
 ];
 
 const darkModeColors = [
-    { from: -50000, to: -1, color: '#a288e3', name: 'Very Low' }, 
     { from: 0, to: 500, color: '#dae5d7', name: 'Low' },       // Light gray-green
     { from: 501, to: 1000, color: '#92c3ab', name: 'Medium' },    // Grayish green
     { from: 1001, to: 5000, color: '#5a8c74', name: 'High' },      // Dark gray-green
@@ -58,7 +56,7 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
                 shadeIntensity: 0,
                 colorScale: {
                     ranges: currentTheme === 'dark' ? darkModeColors : lightModeColors,
-                }
+                },
             }
         },
         theme: {
