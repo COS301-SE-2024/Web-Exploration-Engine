@@ -3,7 +3,7 @@ import * as cron from 'node-cron';
 import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
-import { EmailService } from '../email.service';
+import { EmailService } from '../email-service/email.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
 

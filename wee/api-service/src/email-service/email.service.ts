@@ -13,7 +13,7 @@ export class EmailService {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
       },
-      secure: false, // Use TLS
+      secure: false, 
       tls: {
         rejectUnauthorized: false,
       },
@@ -28,6 +28,11 @@ export class EmailService {
       text,
     };
 
-    return this.transporter.sendMail(mailOptions);
+    try {
+      await this.transporter.sendMail(mailOptions);
+      console.log('Email sent successfully to:', to);
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
   }
 }
