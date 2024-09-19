@@ -175,7 +175,7 @@ function DashboardPage() {
 			<div className='gap-4 grid sm:grid-cols-2 lg:grid-cols-4'>
 				{/* Average Star Rating */}
 				{dashboardData && summaryStarRating &&
-					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div data-testid="dashboard-summary-star-ratings" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<div className='text-4xl flex justify-center'>
 							{summaryStarRating.increase ? <FiArrowUp /> : <FiArrowDown />}
 							<span className='text-4xl'>{summaryStarRating.increaseDecreaseBy}</span>
@@ -190,16 +190,16 @@ function DashboardPage() {
 				}
 
 				{/* Recommendation Status */}
-				{dashboardData && summaryRecommendationStatus && 
-					<div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
+				{dashboardData && summaryRecommendationStatus &&
+					<div data-testid="dashboard-summary-recommendation-status" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
 						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400'>
 							{summaryRecommendationStatus.summaryCategory}
 						</div>
 						<div data-testid="dashboard-summary-recomm-status" className='font-poppins-semibold text-2xl pt-3'>
 							{
 								summaryRecommendationStatus.currentCount != ""
-								? summaryRecommendationStatus.currentCount
-								: "N/A"
+									? summaryRecommendationStatus.currentCount
+									: "N/A"
 							}
 						</div>
 					</div>
@@ -343,7 +343,7 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.newsSentiment.negativeAvg.length>0 && dashboardData.result_history.newsSentiment.neutralAvg.length>0 && dashboardData.result_history.newsSentiment.positiveAvg.length>0 ? (
+				{dashboardData && dashboardData.result_history.newsSentiment.negativeAvg.length > 0 && dashboardData.result_history.newsSentiment.neutralAvg.length > 0 && dashboardData.result_history.newsSentiment.positiveAvg.length > 0 ? (
 					<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<AreaChart
 							areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -407,7 +407,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Share Count
 						</h3>
-						{dashboardData && dashboardData.result_history.shareCount.length>0 ? (
+						{dashboardData && dashboardData.result_history.shareCount.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount }]}
@@ -435,7 +435,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Pintrest - Pin Count
 						</h3>
-						{dashboardData && dashboardData.result_history.pinCount.length>0 ? (
+						{dashboardData && dashboardData.result_history.pinCount.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount }]}
@@ -471,7 +471,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.rating.length>0 ? (
+						{dashboardData && dashboardData.result_history.rating.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating }]} />
@@ -493,7 +493,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.numReviews.length>0 ? (
+						{dashboardData && dashboardData.result_history.numReviews.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews }]} />
@@ -507,9 +507,15 @@ function DashboardPage() {
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Star Ratings Distribution for Reviews
+						<InfoPopOver
+							data-testid="popup-trustindex-ratings"
+							heading="Trust Index Rating"
+							content="Add description here"
+							placement="right-end"
+						/>
 					</h3>
 
-					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length>0 ? (
+					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length > 0 ? (
 						<StackedColumnChart
 							dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 							dataSeries={[1, 2, 3, 4, 5].map((star) => ({
@@ -539,6 +545,12 @@ function DashboardPage() {
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center mb-[1rem]'>
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Ratings Intensity Heatmap
+						<InfoPopOver
+							data-testid="popup-trustindex-ratings"
+							heading="Trust Index Rating"
+							content="Add description here"
+							placement="right-end"
+						/>
 					</h3>
 					{dashboardData && changedRatingsHeatmap.length > 0 ? (
 
@@ -568,7 +580,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.trustIndex.length>0 ? (
+						{dashboardData && dashboardData.result_history.trustIndex.length > 0 ? (
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex }]} />
@@ -590,7 +602,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.NPS.length>0 ? (
+						{dashboardData && dashboardData.result_history.NPS.length > 0 ? (
 							<ColumnChartNPS
 								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								dataSeries={dashboardData.result_history.NPS}
