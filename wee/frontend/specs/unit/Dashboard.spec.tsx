@@ -372,4 +372,60 @@ describe('Dashboard page - WITH data', () => {
         expect(dashboardSummarySiteSpeed).toBeInTheDocument();
         expect(dashboardSummarySiteSpeed).toHaveTextContent('0.99Site Speed4.7');
     });
+    
+    it('SEO Tech Section - Light House Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardLightHouseGraph = screen.queryByTestId('dashboard-sitespeed-graph');
+        expect(dashboardLightHouseGraph).toBeInTheDocument();
+    });
+
+    it('SEO Tech Section - Site Speed Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardSiteSpeedGraph = screen.queryByTestId('dashboard-sitespeed-graph');
+        expect(dashboardSiteSpeedGraph).toBeInTheDocument();
+    });
+
+    it('News Sentiment Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardNewsSentimentGraph = screen.queryByTestId('dashboard-newssentiment-graph');
+        expect(dashboardNewsSentimentGraph).toBeInTheDocument();
+    });
+
+    it('Total Engagement Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardEngagementGraph = screen.queryByTestId('dashboard-engagement-graph');
+        expect(dashboardEngagementGraph).toBeInTheDocument();
+    });
+
+    it('Comment Count Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardCommentCountGraph = screen.queryByTestId('dashboard-comment-count-graph');
+        expect(dashboardCommentCountGraph).toBeInTheDocument();
+    });
+
+    it('Share Count Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardShareCountGraph = screen.queryByTestId('dashboard-share-count-graph');
+        expect(dashboardShareCountGraph).toBeInTheDocument();
+    });
+
+    it('Reaction Count Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardReactionCountGraph = screen.queryByTestId('dashboard-reaction-count-graph');
+        expect(dashboardReactionCountGraph).toBeInTheDocument();
+    });
+
+    it('Pin Count Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardPinCountGraph = screen.queryByTestId('dashboard-pin-count-graph');
+        expect(dashboardPinCountGraph).toBeInTheDocument();
+    });
 });
