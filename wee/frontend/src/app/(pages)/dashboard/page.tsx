@@ -311,7 +311,7 @@ function DashboardPage() {
 					<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
 						{dashboardData.keyword_results.map((keyword_result, index) => {
 							const numericRankArr = keyword_result.rankArr.map(rank => {
-								return typeof rank === 'string' ? 11 : rank;
+								return typeof rank === 'string' ? 15 : rank;
 							});
 
 							return (

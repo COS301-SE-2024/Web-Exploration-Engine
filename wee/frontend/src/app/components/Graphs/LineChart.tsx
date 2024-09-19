@@ -62,12 +62,12 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
         },
         yaxis: {
             min: 1,
-            max: 11,
-            tickAmount: 11,
+            max: 15,
+            tickAmount: 15,
             labels: {
                 formatter: (value) => {
-                    const customLabels = ['N/A', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-                    return value > 10 ? customLabels[0] : customLabels[11 - value];
+                    const customLabels = ['N/A', '14', '13', '12', '11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+                    return value > 14 ? customLabels[0] : customLabels[15 - value];
                 },
             },
             stepSize: 1,
@@ -97,7 +97,7 @@ export function LineChartCustomAxis({ areaCategories, areaSeries }: LineInterfac
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
     const series = areaSeries.map((seriesItem) => ({
         ...seriesItem,
-        data: seriesItem.data.map(value => value > 10 ? 11 : value)
+        data: seriesItem.data.map(value => value > 14 ? 15 : value)
     }))
 
     useEffect(() => {
