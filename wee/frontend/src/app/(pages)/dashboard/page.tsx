@@ -100,7 +100,7 @@ function DashboardPage() {
 
 				// average star rating summary section
 				const starRatingLength = filteredResponse.result_history.rating.length;
-				if (starRatingLength > 0) {
+				if (starRatingLength > 1) {
 					const starRatingChange = filteredResponse.result_history.rating[starRatingLength - 1] - filteredResponse.result_history.rating[starRatingLength - 2];
 					const starRatingSummaryObject: SumamryDashboard = {
 						increase: starRatingChange > 0 ? true : false,
