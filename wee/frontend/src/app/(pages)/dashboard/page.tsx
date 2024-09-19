@@ -175,12 +175,15 @@ function DashboardPage() {
 			<div className='gap-4 grid sm:grid-cols-2 lg:grid-cols-4'>
 				{/* Average Star Rating */}
 				{dashboardData && summaryStarRating &&
-					<div data-testid="dashboard-summary-star-ratings" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div
+						data-testid="dashboard-summary-star-ratings"
+						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
+					>
 						<div className='text-4xl flex justify-center'>
 							{summaryStarRating.increase ? <FiArrowUp /> : <FiArrowDown />}
 							<span className='text-4xl'>{summaryStarRating.increaseDecreaseBy}</span>
 						</div>
-						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summaryStarRating.summaryCategory}
 						</div>
 						<div className='font-poppins-semibold text-2xl'>
@@ -191,11 +194,14 @@ function DashboardPage() {
 
 				{/* Recommendation Status */}
 				{dashboardData && summaryRecommendationStatus &&
-					<div data-testid="dashboard-summary-recommendation-status" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
+					<div
+						data-testid="dashboard-summary-recommendation-status"
+						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
+					>
 						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400'>
 							{summaryRecommendationStatus.summaryCategory}
 						</div>
-						<div data-testid="dashboard-summary-recomm-status" className='font-poppins-semibold text-2xl pt-3'>
+						<div data-testid="dashboard-summary-recomm-status" className='font-poppins-semibold text-2xl py-2'>
 							{
 								summaryRecommendationStatus.currentCount != ""
 									? summaryRecommendationStatus.currentCount
@@ -207,12 +213,15 @@ function DashboardPage() {
 
 				{/* Total Engagements */}
 				{dashboardData && summaryEngagement &&
-					<div data-testid="dashboard-summary-engagements" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div
+						data-testid="dashboard-summary-engagements"
+						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
+					>
 						<div className='text-4xl flex justify-center'>
 							{summaryEngagement.increase ? <FiArrowUp /> : <FiArrowDown />}
 							<span className='text-4xl'>{summaryEngagement.increaseDecreaseBy}</span>
 						</div>
-						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summaryEngagement.summaryCategory}
 						</div>
 						<div className='font-poppins-semibold text-2xl'>
@@ -223,12 +232,15 @@ function DashboardPage() {
 
 				{/* Site Speed */}
 				{dashboardData && summarySiteSpeed &&
-					<div data-testid="dashboard-summary-sitespeed" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+					<div
+						data-testid="dashboard-summary-sitespeed"
+						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
+					>
 						<div className='text-4xl flex justify-center'>
 							{summarySiteSpeed.increase ? <FiArrowUp /> : <FiArrowDown />}
 							<span className='text-4xl'>{summarySiteSpeed.increaseDecreaseBy}</span>
 						</div>
-						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
+						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summarySiteSpeed.summaryCategory}
 						</div>
 						<div className='font-poppins-semibold text-2xl'>
