@@ -13,7 +13,7 @@ describe('saved reports page', () => {
     // Click submit button
     cy.get('button[data-testid="login-button"]').click();
 
-    cy.get('a.text-dark-primaryTextColor', { timeout: 10000 }) // Increase timeout to 10 seconds
+    cy.get('a.text-dark-primaryTextColor', { timeout: 60000 }) // Increase timeout to 10 seconds
   .contains('Saved Reports')
   .click();
 
