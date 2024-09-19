@@ -243,9 +243,10 @@ function DashboardPage() {
 				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					SEO Technical Analysis: Light House
 					<InfoPopOver
-						data-testid="popup-seo-technical-analaysis"
-						heading="SEO Technical Analysis"
-						content="Add description here"
+						data-testid="popup-seo-technical-analaysis-light-house"
+						heading="SEO Technical Analysis: Light House"
+						content="The SEO Lighthouse analysis, shown on a graph over time, tracks a website&apos;s performance, accessibility, and adherence to best practices, 
+							illustrating changes in loading speed, user accessibility, and compliance with web standards and security."
 						placement="right-end"
 					/>
 				</h3>
@@ -272,8 +273,9 @@ function DashboardPage() {
 					SEO Technical Analysis: Site Speed
 					<InfoPopOver
 						data-testid="popup-seo-sitespeed-analaysis"
-						heading="SEO Site Speed Analysis"
-						content="Add description here"
+						heading="SEO Technical Analysis: Site Speed"
+						content="The graph shows site speed to monitor and analyze how it changes over time, helping to identify trends and 
+							potential performance issues."
 						placement="right-end"
 					/>
 				</h3>
@@ -299,7 +301,8 @@ function DashboardPage() {
 					<InfoPopOver
 						data-testid="popup-seo-keyword-analaysis"
 						heading="SEO Keyword Analysis"
-						content="Add description here"
+						content="The graphs track and analyze keyword rankings on Google, providing insights into how keyword 
+							positions fluctuate over time."
 						placement="right-end"
 					/>
 				</h3>
@@ -338,7 +341,8 @@ function DashboardPage() {
 					<InfoPopOver
 						data-testid="popup-news-sentiment"
 						heading="News Sentiment"
-						content="Add description here"
+						content="The graph displays changes in sentiment of news towards a business over time, showing positive, negative, and 
+							neutral scores to track shifts in public perception."
 						placement="right-end"
 					/>
 				</h3>
@@ -362,9 +366,10 @@ function DashboardPage() {
 				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					Social Media
 					<InfoPopOver
-						data-testid="popup-seo-keyword-analaysis"
-						heading="SEO Keyword Analysis"
-						content="Add description here"
+						data-testid="popup-social-media"
+						heading="Social Media"
+						content="The graph tracks social media engagement over time, including Facebook reactions, comment counts, share counts, and Pinterest pin counts, 
+							to provide insights into how interactions and visibility evolve."
 						placement="right-end"
 					/>
 				</h3>
@@ -462,12 +467,6 @@ function DashboardPage() {
 			<div>
 				<h3 className="font-poppins-semibold text-xl text-jungleGreen-700 dark:text-jungleGreen-100 pt-4">
 					Reviews
-					<InfoPopOver
-						data-testid="popup-nps-reviews"
-						heading="News Sentiment"
-						content="Add description here"
-						placement="right-end"
-					/>
 				</h3>
 
 				<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-2 mb-[1rem]'>
@@ -475,9 +474,10 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Average Star Rating
 							<InfoPopOver
-								data-testid="popup-trustindex-ratings"
-								heading="Trust Index Rating"
-								content="Add description here"
+								data-testid="popup-avg-star-ratings"
+								heading="Average Star Rating"
+								content="The average star rating is displayed on a graph, providing a visual representation of overall 
+									customer satisfaction over time."
 								placement="right-end"
 							/>
 						</h3>
@@ -496,12 +496,10 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Number of Reviews
 							<InfoPopOver
-								data-testid="popup-nps-score"
-								heading="NPS Score"
-								content="The score indicates how likely it is for reviewers to recommed a business.</br>
-									</br><i>Less than 0 :</i> Unlikely (Indicated in red)
-									</br><i>1 to 49 :</i> Likely (Indicated in orange)
-									</br><i>Greater than 49 :</i> Very likely (Indicated in green)"
+								data-testid="popup-num-of-reviews"
+								heading="Number of Reviews"
+								content="The number of reviews is displayed on a graph, offering a visual representation of review 
+									volume trends over time."
 								placement="right-end"
 							/>
 						</h3>
@@ -522,9 +520,10 @@ function DashboardPage() {
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Star Ratings Distribution for Reviews
 						<InfoPopOver
-							data-testid="popup-trustindex-ratings"
-							heading="Trust Index Rating"
-							content="Add description here"
+							data-testid="popup-star-ratings-distribution"
+							heading="Star Ratings Distribution for Reviews"
+							content="The distribution of review ratings is shown on a graph, illustrating how reviews are 
+								spread across different star levels."
 							placement="right-end"
 						/>
 					</h3>
@@ -562,9 +561,11 @@ function DashboardPage() {
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Ratings Intensity Heatmap
 						<InfoPopOver
-							data-testid="popup-trustindex-ratings"
-							heading="Trust Index Rating"
-							content="Add description here"
+							data-testid="popup-intensity-heatmap"
+							heading="Ratings Intensity Heatmap"
+							content="The Ratings Intensity Heatmap displays the distribution of 1 to 5-star ratings, using color intensity to 
+							highlight where feedback is concentrated. This visualization allows for an immediate understanding of how reviews 
+							vary across different rating levels, making it easier to spot trends and areas for improvement."
 							placement="right-end"
 						/>
 					</h3>
@@ -593,7 +594,9 @@ function DashboardPage() {
 							<InfoPopOver
 								data-testid="popup-trustindex-ratings"
 								heading="Trust Index Rating"
-								content="Add description here"
+								content="The Hellopeter TrustIndex, displayed on a graph, measures a business's credibility by evaluating star ratings, 
+								response times, review volume, and the relevance of recent reviews, with scores from 0 to 10 reflecting the quality of 
+								customer service."
 								placement="right-end"
 							/>
 						</h3>
@@ -614,10 +617,10 @@ function DashboardPage() {
 							<InfoPopOver
 								data-testid="popup-nps-score"
 								heading="NPS Score"
-								content="The score indicates how likely it is for reviewers to recommed a business.</br>
-									</br><i>Less than 0 :</i> Unlikely (Indicated in red)
-									</br><i>1 to 49 :</i> Likely (Indicated in orange)
-									</br><i>Greater than 49 :</i> Very likely (Indicated in green)"
+								content="The NPS (Net Promoter Score), shown on a graph, shows the likelihood that reviewers would recommend a business.</br>
+									</br><i>Score less than 0 :</i> Low likelihood (Indicated in red)
+									</br><i>1 to 49 :</i> Moderate likelihood (Indicated in orange)
+									</br><i>Greater than 49 :</i> High likelihood (Indicated in green)"
 								placement="right-end"
 							/>
 						</h3>
