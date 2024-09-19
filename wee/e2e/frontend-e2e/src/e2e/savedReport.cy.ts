@@ -1,72 +1,51 @@
 describe('saved reports page', () => {
-it('summaries page content should be present', () => {
-    cy.visit('/savedsummaries');
 
-    //Page Section : Save or Download Button
+  it('summaries page content should be present', () => {
+    cy.visit('/');
 
-    cy.get('[data-testid="dropdown-export"]')
-      .should('exist')
-      .should('be.visible')
-      .click();
+    //login first
+    cy.visit('/login');
 
-    cy.get('[data-testid="dropdown-export"]').should('exist');
-    cy.get('[data-testid="dropdown-export"]').should('be.visible');
-    cy.get('[data-testid="dropdown-export"]').click();
+    // Fill out the login form
+    cy.get('input').eq(0).type('testusere2e@example.com'); // Email
+    cy.get('input').eq(1).type('password123');          // Password
 
-    //Page Section : General Statistics
-    cy.get('[data-testid="visual-scraped-stats"]').should('exist');
-    cy.get('[data-testid="visual-scraped-stats"]').should('be.visible');
-    cy.get('[data-testid="visual-scraped-stats"]').screenshot(
-      'visual-scraped-stats'
-    );
+    // Click submit button
+    cy.get('button[data-testid="login-button"]').click();
 
-    cy.get('[data-testid="visual-crawlable-stats"]').should('exist');
-    cy.get('[data-testid="visual-crawlable-stats"]').should('be.visible');
-    cy.get('[data-testid="visual-crawlable-stats"]').screenshot(
-      'visual-crawlable-stats'
-    );
+    cy.get('a.text-dark-primaryTextColor', { timeout: 10000 }) // Increase timeout to 10 seconds
+  .contains('Saved Reports')
+  .click();
 
-    cy.get('[data-testid="visual-avg-scrape-stats"]').should('exist');
-    cy.get('[data-testid="visual-avg-scrape-stats"]').should('be.visible');
-    cy.get('[data-testid="visual-avg-scrape-stats"]').screenshot(
-      'visual-avg-scrape-stats'
-    );
 
-    cy.get('[data-testid="visual-industry-classification"]').should('exist');
-    cy.get('[data-testid="visual-industry-classification"]').should(
-      'be.visible'
-    );
-    cy.get('[data-testid="visual-industry-classification"]').screenshot(
-      'visual-industry-classification'
-    );
+     // check the contents if they exist
+     cy.contains('Home').should('exist');
+     cy.contains('Help').should('exist');
+     cy.contains('Saved Reports').should('exist');
+     cy.contains('Scheduled Tasks').should('exist');
+     cy.contains('My Reports').should('exist');
 
-    cy.get('[data-testid="visual-domain-match"]').should('exist');
-    cy.get('[data-testid="visual-domain-match"]').should('be.visible');
-    cy.get('[data-testid="visual-domain-match"]').screenshot(
-      'visual-domain-match'
-    );
+     cy.contains('Reports').should('exist');
 
-    cy.get('[data-testid="visual-website-status"]').should('exist');
-    cy.get('[data-testid="visual-website-status"]').should('be.visible');
-    cy.get('[data-testid="visual-website-status"]').screenshot(
-      'visual-website-status'
-    );
-  });
+     cy.contains('Total 2 reports saved').should('exist');
 
-  it('should be on right page', () => {
-    cy.visit('/savedreports');
+     cy.contains('Results per page:').should('exist');
 
-    //Page Layout : Report Tab
-    // cy.get('[data-testid="tab-reports"]', { timeout: 10000 }).should('exist');
-    // cy.get('[data-testid="tab-reports"]', { timeout: 10000 }).click();
-    // cy.get('[data-testid="table-reports"]', { timeout: 10000 }).should('exist');
-    // cy.get('[data-testid="table-reports"]', { timeout: 10000 }).should('be.visible');
+     // Verify the table headers and rows (if applicable)
+     cy.get('table').within(() => {
+       cy.contains('NAME').should('exist');
+       cy.contains('TIMESTAMP').should('exist');
+       cy.contains('RESULT & REPORT').should('exist');
+       cy.contains('DELETE').should('exist');
 
-    // //Page Layout : Summary Tab
-    // cy.get('[data-testid="tab-summaries"]', { timeout: 10000 }).should('exist');
-    // cy.get('[data-testid="tab-summaries"]', { timeout: 10000 }).click();
-    // cy.get('[data-testid="table-summaries"]',{ timeout: 10000 }).should('exist');
-    // cy.get('[data-testid="table-summaries"]',{ timeout: 10000 }).should('be.visible');
+       cy.contains('site2Report').should('exist');
+       cy.contains('2024-09-19T07:04:32.94+00:00').should('exist');
+       cy.contains('site1report').should('exist');
+       cy.contains('2024-09-19T07:06:39.02+00:00').should('exist');
+     });
+
 
   });
+
+
 });
