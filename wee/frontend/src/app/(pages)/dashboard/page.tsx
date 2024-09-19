@@ -482,9 +482,11 @@ function DashboardPage() {
 							/>
 						</h3>
 						{dashboardData && dashboardData.result_history.rating.length > 0 ? (
-							<LineChart
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating }]} />
+							<div data-testid='dashboard-avg-star-rating-graph'>
+								<LineChart
+									areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating }]} />
+							</div>
 						) : (
 							<p data-testid="dashboard-rating-not-available">There are no Ratings currently available</p>
 						)
@@ -504,9 +506,11 @@ function DashboardPage() {
 							/>
 						</h3>
 						{dashboardData && dashboardData.result_history.numReviews.length > 0 ? (
-							<LineChart
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews }]} />
+							<div data-testid='dashboard-number-reviews-graph'>
+								<LineChart
+									areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews }]} />
+							</div>
 						) : (
 							<p data-testid="dashboard-reviews-not-available">There are no Number of Reviews currently available</p>
 						)
@@ -526,25 +530,27 @@ function DashboardPage() {
 					</h3>
 
 					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length > 0 ? (
-						<StackedColumnChart
-							dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-							dataSeries={[1, 2, 3, 4, 5].map((star) => ({
-								name: `${star} Star`,
-								data: dashboardData.result_history.starRatings.map((period) => {
-									if (Array.isArray(period)) {
-										const rating = period.find((r) => r.stars === star);
-										return rating ? rating.numReviews : 0;
-									}
-									else if (typeof period === 'object' && Object.keys(period).length === 0) {
-										return 0;
-									}
-									else {
-										console.error('Expected period to be an array, but got:', period);
-										return 0;
-									}
-								})
-							}))}
-						/>
+						<div data-testid='dashboard-rating-distribution-graph'>
+							<StackedColumnChart
+								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								dataSeries={[1, 2, 3, 4, 5].map((star) => ({
+									name: `${star} Star`,
+									data: dashboardData.result_history.starRatings.map((period) => {
+										if (Array.isArray(period)) {
+											const rating = period.find((r) => r.stars === star);
+											return rating ? rating.numReviews : 0;
+										}
+										else if (typeof period === 'object' && Object.keys(period).length === 0) {
+											return 0;
+										}
+										else {
+											console.error('Expected period to be an array, but got:', period);
+											return 0;
+										}
+									})
+								}))}
+							/>
+						</div>
 
 					) : (
 						<p data-testid="dashboard-star-rating-not-available">There are no rating data currently available</p>
@@ -563,15 +569,16 @@ function DashboardPage() {
 						/>
 					</h3>
 					{dashboardData && changedRatingsHeatmap.length > 0 ? (
-
-						<HeatMapChart
-							dataLabel={dashboardData?.result_history.timestampArr.slice(1).map((_, i) => {
-								const prevMonth = new Date(dashboardData.result_history.timestampArr[i]);
-								const nextMonth = new Date(dashboardData.result_history.timestampArr[i + 1]);
-								return `${prevMonth.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}-${nextMonth.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}`;
-							})}
-							dataSeries={changedRatingsHeatmap}
-						/>
+						<div data-testid='dashboard-heatmap-graph'>
+							<HeatMapChart
+								dataLabel={dashboardData?.result_history.timestampArr.slice(1).map((_, i) => {
+									const prevMonth = new Date(dashboardData.result_history.timestampArr[i]);
+									const nextMonth = new Date(dashboardData.result_history.timestampArr[i + 1]);
+									return `${prevMonth.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}-${nextMonth.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}`;
+								})}
+								dataSeries={changedRatingsHeatmap}
+							/>
+						</div>
 					) : (
 						<p data-testid="dashboard-star-rating-heatmap-not-available">The heatmap is not currently available</p>
 					)
@@ -591,9 +598,11 @@ function DashboardPage() {
 							/>
 						</h3>
 						{dashboardData && dashboardData.result_history.trustIndex.length > 0 ? (
-							<LineChart
-								areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex }]} />
+							<div data-testid='trust-index-graph'>
+								<LineChart
+									areaCategories={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex }]} />
+							</div>
 						) : (
 							<p data-testid="dashboard-trust-index-not-available">There are no Trust Index currently available</p>
 						)
@@ -613,10 +622,12 @@ function DashboardPage() {
 							/>
 						</h3>
 						{dashboardData && dashboardData.result_history.NPS.length > 0 ? (
-							<ColumnChartNPS
-								dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								dataSeries={dashboardData.result_history.NPS}
-							/>
+							<div data-testid="nps-graph">
+								<ColumnChartNPS
+									dataLabel={dashboardData.result_history.timestampArr.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									dataSeries={dashboardData.result_history.NPS}
+								/>
+							</div>
 						) : (
 							<p data-testid="dashboard-nps-not-available">There are no NPS Reviews currently available</p>
 						)

@@ -428,4 +428,46 @@ describe('Dashboard page - WITH data', () => {
         const dashboardPinCountGraph = screen.queryByTestId('dashboard-pin-count-graph');
         expect(dashboardPinCountGraph).toBeInTheDocument();
     });
+
+    it('Average Star Rating Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardAvgStarGraph = screen.queryByTestId('dashboard-avg-star-rating-graph');
+        expect(dashboardAvgStarGraph).toBeInTheDocument();
+    });
+
+    it('Num Reviews Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardNumReviewsGraph = screen.queryByTestId('dashboard-number-reviews-graph');
+        expect(dashboardNumReviewsGraph).toBeInTheDocument();
+    });
+
+    it('Rating Distribution Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardRatingDistrGraph = screen.queryByTestId('dashboard-rating-distribution-graph');
+        expect(dashboardRatingDistrGraph).toBeInTheDocument();
+    });
+
+    it('Heatmap Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardHeatMapGraph = screen.queryByTestId('dashboard-heatmap-graph');
+        expect(dashboardHeatMapGraph).toBeInTheDocument();
+    });
+
+    it('Trust Index Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardTrustIndexGraph = screen.queryByTestId('trust-index-graph');
+        expect(dashboardTrustIndexGraph).toBeInTheDocument();
+    });
+
+    it('NPS Graph Present', () => {
+        render(<Dashboard />);
+
+        const dashboardNPSGraph = screen.queryByTestId('nps-graph');
+        expect(dashboardNPSGraph).toBeInTheDocument();
+    });
 });
