@@ -208,6 +208,31 @@ export class SupabaseService {
   //   }
   //   return data;
   // }
+  async getEmailByScheduleId(scheduleId: string): Promise<string> {
+    const { data, error } = await this.supabaseClient
+      .from('scheduled_tasks')
+      .select('user_id')
+      .eq('id', scheduleId)
+      .single(); 
+
+    if (error || !data) {
+      throw new Error(`Failed to get user_id from scheduled task: ${error?.message || 'No data found'}`);
+    }
+
+    const userId = data.user_id;
+
+    const { data: profileData, error: profileError } = await this.supabaseClient
+      .from('profiles')
+      .select('email')
+      .eq('id', userId)
+      .single(); 
+
+    if (profileError || !profileData) {
+      throw new Error(`Failed to get email: ${profileError?.message || 'No data found'}`);
+    }
+
+    return profileData.email;
+  }
 
 }
 
