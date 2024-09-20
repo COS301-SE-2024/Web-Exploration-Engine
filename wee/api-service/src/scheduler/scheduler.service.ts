@@ -205,18 +205,24 @@ export class SchedulerService {
 
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
-    const emailText = `Your URL: ${schedule.url} has been successfully scraped. 
-    Here are some details:
-    - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime}ms
-    - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance}
-    - Total Facebook Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}`;
-
-  try {
-    await this.emailService.sendMail('johane.breytie@gmail.com', 'Scrape Completed', emailText);
-    console.log('Email sent successfully to johane.breytie@gmail.com');
-  } catch (emailError) {
-    console.error('Error sending email:', emailError);
-  }
+    const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
+  
+    if (email) {
+      const emailText = `Your URL: ${schedule.url} has been successfully scraped. 
+        Here are some details:
+        - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime}ms
+        - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance}
+        - Total Facebook Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}`;
+    
+      try {
+        await this.emailService.sendMail(email, 'Scrape Completed', emailText);
+        console.log(`Email sent successfully to ${email}`);
+      } catch (emailError) {
+        console.error('Error sending email:', emailError);
+      }
+    } else {
+      console.error('No email found for schedule ID:', schedule.id);
+    }
   }
 
   async handleKeywordResults(results: any, schedule: ScheduleTaskResponse) {
