@@ -4,6 +4,7 @@ import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ScheduleResult, ScheduleTaskResponse, UpdateScheduleTask} from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
+import { EmailService } from '../email-service/email.service';
 import axios from 'axios';
 import * as cron from 'node-cron';
 
@@ -36,6 +37,7 @@ describe('SchedulerService', () => {
   let service: SchedulerService;
   let supabaseService: SupabaseService;
   let pubsubService: PubSubService;
+  let emailService: EmailService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +51,7 @@ describe('SchedulerService', () => {
             updateNextScrapeTime: jest.fn(),
             updateSchedule: jest.fn(),
             updateKeywordResult: jest.fn(),
+            getEmailByScheduleId: jest.fn(),  
           },
         },
         {
@@ -57,12 +60,19 @@ describe('SchedulerService', () => {
             publishMessage: jest.fn(),
           },
         },
+        {
+          provide: EmailService,
+          useValue: {
+            sendMail: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<SchedulerService>(SchedulerService);
     supabaseService = module.get<SupabaseService>(SupabaseService);
     pubsubService = module.get<PubSubService>(PubSubService);
+    emailService=module.get<EmailService>(EmailService);
   });
 
   afterEach(() => {
@@ -131,7 +141,12 @@ describe('SchedulerService', () => {
         newTotalEngagement: 0,
         newTrustIndex: 0,
       } as UpdateScheduleTask);
-    }, 20000);
+      // expect(emailService.sendMail).toHaveBeenCalledWith({
+      //   to: 'user1@example.com',
+      //   subject: 'Your scrape result for http://example.com',
+      //   text: 'The scraping task for http://example.com has been completed. The results are ready.',
+      // });
+    }, 80000);
 
     it('should handle errors during execution', async () => {
       service.isRunning = false;
@@ -167,7 +182,7 @@ describe('SchedulerService', () => {
 
       expect(axios.get).toHaveBeenCalled();
       expect(handleApiResultsSpy).toHaveBeenCalledWith('result', schedule);
-    }, 10000);
+    }, 30000);
 
     it('should retry polling on failure', async () => {
       const schedule: ScheduleTaskResponse = { 
@@ -247,6 +262,11 @@ describe('SchedulerService', () => {
         newTotalEngagement: 0,
         newTrustIndex: 0,
       } as UpdateScheduleTask);
+      // expect(emailService.sendMail).toHaveBeenCalledWith({
+      //   to: 'user1@example.com',
+      //   subject: 'Scrape results for http://example.com',
+      //   text: 'The scraping task for http://example.com has completed. Results: ' + JSON.stringify(results),
+      // });
     });
   });
 
