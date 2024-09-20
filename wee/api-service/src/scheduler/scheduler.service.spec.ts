@@ -110,6 +110,23 @@ describe('SchedulerService', () => {
       expect(pubsubService.publishMessage).toHaveBeenCalledTimes(2);
       expect(updateSpy).toHaveBeenCalledTimes(2); 
     });
+    it('should log an error if there are no due schedules', async () => {
+      service.isRunning = false;
+      jest.spyOn(supabaseService, 'getDueSchedules').mockResolvedValue([]);
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(); // Mock console.log
+
+      await service.checkSchedules();
+
+      expect(consoleSpy).toHaveBeenCalledWith('No due schedules found');
+      consoleSpy.mockRestore(); // Restore the original console.log
+    });
+
+    it('should not throw error if getDueSchedules fails', async () => {
+      service.isRunning = false;
+      jest.spyOn(supabaseService, 'getDueSchedules').mockRejectedValue(new Error('Failed to get schedules'));
+      await expect(service.checkSchedules()).resolves.not.toThrow();
+      expect(service.isRunning).toBe(false);
+    });
     it('should process due schedules', async () => {
       service.isRunning = false;
       const dueSchedules: ScheduleTaskResponse[] = [{ 
