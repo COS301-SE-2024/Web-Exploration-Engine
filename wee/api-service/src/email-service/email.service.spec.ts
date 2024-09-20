@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmailService } from './email.service';
 import * as nodemailer from 'nodemailer';
 
-// Mock the nodemailer module
 jest.mock('nodemailer');
 
 describe('EmailService', () => {
@@ -10,10 +9,8 @@ describe('EmailService', () => {
   let transporter: jest.Mocked<nodemailer.Transporter>;
 
   beforeEach(async () => {
-    // Clear all instances and calls to constructor and all methods
     jest.clearAllMocks();
 
-    // Mock implementation for createTransport
     transporter = {
       sendMail: jest.fn().mockResolvedValue({}),
     } as any;

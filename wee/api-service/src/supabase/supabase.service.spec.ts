@@ -516,6 +516,131 @@ describe('SupabaseService', () => {
 
       await expect(service.updateKeywordResult(scheduleData)).rejects.toThrow('Failed to update keyword result: Update error');
     });
+  }); describe('getEmailByScheduleId', () => {
+    it('should return the email when data is found', async () => {
+      // Mock the result from `scheduled_tasks`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: { user_id: '123' },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Mock the result from `profiles`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: { email: 'test@example.com' },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      const email = await service.getEmailByScheduleId('scheduleId');
+      expect(email).toBe('test@example.com');
+    });
+
+    it('should throw an error if no data is found for the scheduled task', async () => {
+      // Mock the result from `scheduled_tasks`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: null,
+              error: { message: 'No data found' },
+            }),
+          }),
+        }),
+      });
+
+      await expect(service.getEmailByScheduleId('scheduleId')).rejects.toThrow(
+        'Failed to get user_id from scheduled task: No data found',
+      );
+    });
+
+    it('should throw an error if no data is found for the profile', async () => {
+      // Mock the result from `scheduled_tasks`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: { user_id: '123' },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Mock the result from `profiles`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: null,
+              error: { message: 'No data found' },
+            }),
+          }),
+        }),
+      });
+
+      await expect(service.getEmailByScheduleId('scheduleId')).rejects.toThrow(
+        'Failed to get email: No data found',
+      );
+    });
+
+    it('should throw an error if there is an error while fetching the scheduled task', async () => {
+      // Mock the result from `scheduled_tasks`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: null,
+              error: { message: 'Scheduled task error' },
+            }),
+          }),
+        }),
+      });
+
+      await expect(service.getEmailByScheduleId('scheduleId')).rejects.toThrow(
+        'Failed to get user_id from scheduled task: Scheduled task error',
+      );
+    });
+
+    it('should throw an error if there is an error while fetching the profile', async () => {
+      // Mock the result from `scheduled_tasks`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: { user_id: '123' },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Mock the result from `profiles`
+      supabaseClient.from.mockReturnValueOnce({
+        select: jest.fn().mockReturnValueOnce({
+          eq: jest.fn().mockReturnValueOnce({
+            single: jest.fn().mockResolvedValueOnce({
+              data: null,
+              error: { message: 'Profile error' },
+            }),
+          }),
+        }),
+      });
+
+      await expect(service.getEmailByScheduleId('scheduleId')).rejects.toThrow(
+        'Failed to get email: Profile error',
+      );
+    });
   });
 
 });
