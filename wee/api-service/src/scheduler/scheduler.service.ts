@@ -208,14 +208,30 @@ export class SchedulerService {
     const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
   
     if (email) {
-      const emailText = `Your URL: ${schedule.url} has been successfully scraped. 
-        Here are some details:
-        - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime}ms
-        - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance}
-        - Total Facebook Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}`;
+      const emailText = ` Your URL: ${schedule.url} has been successfully scraped. 
+      Here are the details:
+      
+      - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime} ms
+      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 'N/A'}
+      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 'N/A'}
+      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 'N/A'}
+      - Facebook Total Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}
+      - Facebook Reactions: ${results.shareCountdata?.Facebook?.reaction_count || 0}
+      - Facebook Comments: ${results.shareCountdata?.Facebook?.comment_count || 0}
+      - Facebook Shares: ${results.shareCountdata?.Facebook?.share_count || 0}
+      - Pinterest Pin Count: ${results.shareCountdata?.Pinterest || 0}
+      - Overall Rating: ${results.reviews?.rating || 'N/A'}
+      - Number of Reviews: ${results.reviews?.numberOfReviews || 0}
+      - Trust Index: ${results.reviews?.trustIndex || 'N/A'}
+      - NPS (Net Promoter Score): ${results.reviews?.NPS || 'N/A'}
+      
+      Visit our website for a more detailed view about how your metrics have changed over time.
+      
+      Thank you for using our service!
+    `;
     
       try {
-        await this.emailService.sendMail(email, 'Scrape Completed', emailText);
+        await this.emailService.sendMail(email, `Scheduled scrape completed for ${schedule.url}.`, emailText);
         console.log(`Email sent successfully to ${email}`);
       } catch (emailError) {
         console.error('Error sending email:', emailError);
