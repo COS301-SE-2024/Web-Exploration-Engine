@@ -94,7 +94,22 @@ describe('SchedulerService', () => {
       await service.checkSchedules();
       expect(supabaseService.getDueSchedules).not.toHaveBeenCalled();
     });
+    it('should handle multiple due schedules', async () => {
+      service.isRunning = false;
+      const dueSchedules: ScheduleTaskResponse[] = [
+        { id: '1', user_id: '1', url: 'http://example1.com', frequency: 'daily', next_scrape: new Date().toISOString(), updated_at: new Date().toISOString(), created_at: new Date().toISOString(), result_history: emptyResultHistory, keywords: [], keyword_results: [] },
+        { id: '2', user_id: '2', url: 'http://example2.com', frequency: 'daily', next_scrape: new Date().toISOString(), updated_at: new Date().toISOString(), created_at: new Date().toISOString(), result_history: emptyResultHistory, keywords: [], keyword_results: [] },
+      ];
+      jest.spyOn(supabaseService, 'getDueSchedules').mockResolvedValue(dueSchedules);
+      jest.spyOn(pubsubService, 'publishMessage').mockResolvedValue(undefined);
+      const updateSpy = jest.spyOn(supabaseService, 'updateSchedule').mockResolvedValue(undefined);
+      (axios.get as jest.Mock).mockResolvedValue({ data: { status: 'completed', result: 'result' } });
 
+      await service.checkSchedules();
+
+      expect(pubsubService.publishMessage).toHaveBeenCalledTimes(2);
+      expect(updateSpy).toHaveBeenCalledTimes(2); 
+    });
     it('should process due schedules', async () => {
       service.isRunning = false;
       const dueSchedules: ScheduleTaskResponse[] = [{ 
@@ -312,4 +327,5 @@ describe('SchedulerService', () => {
       expect(end - start).toBeGreaterThanOrEqual(90);
     });
   });
+  
 });
