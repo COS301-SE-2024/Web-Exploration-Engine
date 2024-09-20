@@ -35,6 +35,9 @@ interface SumamryDashboard {
 }
 
 function DashboardPage() {
+	// number of most recent results to display (should be a negative number)
+	const DISPLAY_NUMBER = -10;
+
 	// scheduled scrape results
 	const { scheduledScrapeResponse, setScheduledScrapeResponse } = useScheduledScrapeContext();
 
@@ -268,13 +271,13 @@ function DashboardPage() {
 						<AreaChart
 							areaCategories={
 								dashboardData.result_history.timestampArr
-								.slice(-10)
+								.slice(DISPLAY_NUMBER)
 								.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))
 							}
 							areaSeries={[
-								{name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.slice(-10).map(value => Math.round(value)) }, 
-								{ name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.slice(-10).map(value => Math.round(value)) }, 
-								{ name: 'Performance', data: dashboardData.result_history.performanceScore.slice(-10).map(value => Math.round(value)) }]}
+								{name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }, 
+								{ name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }, 
+								{ name: 'Performance', data: dashboardData.result_history.performanceScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }]}
 						/>
 					</div>
 				) : (
@@ -302,8 +305,8 @@ function DashboardPage() {
 				{dashboardData && dashboardData.result_history.siteSpeed.length > 0 ? (
 					<div data-testid="dashboard-sitespeed-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<LineChart
-							areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-							areaSeries={[{ name: 'Site Speed', data: dashboardData.result_history.siteSpeed.slice(-10).map(value => Math.round(value * 100) / 100) }]}
+							areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+							areaSeries={[{ name: 'Site Speed', data: dashboardData.result_history.siteSpeed.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100) / 100) }]}
 						/>
 					</div>
 				) : (
@@ -328,7 +331,7 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.keyword_results.length > 0 ? (
 					<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
-						{dashboardData.keyword_results.slice(-10).map((keyword_result, index) => {
+						{dashboardData.keyword_results.slice(DISPLAY_NUMBER).map((keyword_result, index) => {
 							const numericRankArr = keyword_result.rankArr.map(rank => {
 								return typeof rank === 'string' ? 15 : rank;
 							});
@@ -339,7 +342,7 @@ function DashboardPage() {
 										{keyword_result.keyword}
 									</h3>
 									<LineChartCustomAxis
-										areaCategories={keyword_result.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+										areaCategories={keyword_result.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 										areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]}
 									/>
 								</div>
@@ -369,11 +372,11 @@ function DashboardPage() {
 				{dashboardData && dashboardData.result_history.newsSentiment.negativeAvg.length > 0 && dashboardData.result_history.newsSentiment.neutralAvg.length > 0 && dashboardData.result_history.newsSentiment.positiveAvg.length > 0 ? (
 					<div data-testid="dashboard-newssentiment-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<AreaChart
-							areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+							areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 							areaSeries={[
-								{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.slice(-10).map(value => Math.round(value * 100)) }, 
-								{ name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.slice(-10).map(value => Math.round(value * 100)) }, 
-								{ name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.slice(-10).map(value => Math.round(value * 100)) }]}
+								{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }, 
+								{ name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }, 
+								{ name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }]}
 						/>
 					</div>
 				) : (
@@ -403,8 +406,8 @@ function DashboardPage() {
 					{dashboardData && dashboardData.result_history.totalEngagement.length > 0 ? (
 						<div data-testid="dashboard-engagement-graph">
 							<LineChart
-								areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-								areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement.slice(-10) }]}
+								areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[{ name: 'Total Engagements', data: dashboardData.result_history.totalEngagement.slice(DISPLAY_NUMBER) }]}
 							/>
 						</div>
 					) : (
@@ -423,8 +426,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.commentCount.length > 0 ? (
 							<div data-testid="dashboard-comment-count-graph">
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount.slice(-10) }]}
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Comment Count', data: dashboardData.result_history.commentCount.slice(DISPLAY_NUMBER) }]}
 								/>
 							</div>
 						) : (
@@ -441,8 +444,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.shareCount.length > 0 ? (
 							<div data-testid="dashboard-share-count-graph">
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount.slice(-10) }]}
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Share Count', data: dashboardData.result_history.shareCount.slice(DISPLAY_NUMBER) }]}
 								/>
 							</div>
 						) : (
@@ -457,8 +460,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.reactionCount.length > 0 ? (
 							<div data-testid="dashboard-reaction-count-graph">
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount.slice(-10) }]}
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Reaction Count', data: dashboardData.result_history.reactionCount.slice(DISPLAY_NUMBER) }]}
 								/>
 							</div>
 						) : (
@@ -473,8 +476,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.pinCount.length > 0 ? (
 							<div data-testid="dashboard-pin-count-graph">
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount.slice(-10) }]}
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Pin Count', data: dashboardData.result_history.pinCount.slice(DISPLAY_NUMBER) }]}
 								/>
 							</div>
 						) : (
@@ -506,8 +509,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.rating.length > 0 ? (
 							<div data-testid='dashboard-avg-star-rating-graph'>
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating.slice(-10) }]} />
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.rating.slice(DISPLAY_NUMBER) }]} />
 							</div>
 						) : (
 							<p data-testid="dashboard-rating-not-available">There are no Ratings currently available</p>
@@ -528,8 +531,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.numReviews.length > 0 ? (
 							<div data-testid='dashboard-number-reviews-graph'>
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews.slice(-10) }]} />
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Reviews', data: dashboardData.result_history.numReviews.slice(DISPLAY_NUMBER) }]} />
 							</div>
 						) : (
 							<p data-testid="dashboard-reviews-not-available">There are no Number of Reviews currently available</p>
@@ -553,10 +556,10 @@ function DashboardPage() {
 					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length > 0 ? (
 						<div data-testid='dashboard-rating-distribution-graph'>
 							<StackedColumnChart
-								dataLabel={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								dataLabel={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								dataSeries={[1, 2, 3, 4, 5].map((star) => ({
 									name: `${star} Star`,
-									data: dashboardData.result_history.starRatings.slice(-10).map((period) => {
+									data: dashboardData.result_history.starRatings.slice(DISPLAY_NUMBER).map((period) => {
 										if (Array.isArray(period)) {
 											const rating = period.find((r) => r.stars === star);
 											return rating ? rating.numReviews : 0;
@@ -625,8 +628,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.trustIndex.length > 0 ? (
 							<div data-testid='trust-index-graph'>
 								<LineChart
-									areaCategories={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex.slice(-10) }]} />
+									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									areaSeries={[{ name: 'Rating', data: dashboardData.result_history.trustIndex.slice(DISPLAY_NUMBER) }]} />
 							</div>
 						) : (
 							<p data-testid="dashboard-trust-index-not-available">There are no Trust Index currently available</p>
@@ -649,8 +652,8 @@ function DashboardPage() {
 						{dashboardData && dashboardData.result_history.NPS.length > 0 ? (
 							<div data-testid="nps-graph">
 								<ColumnChartNPS
-									dataLabel={dashboardData.result_history.timestampArr.slice(-10).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-									dataSeries={dashboardData.result_history.NPS.slice(-10)}
+									dataLabel={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+									dataSeries={dashboardData.result_history.NPS.slice(DISPLAY_NUMBER)}
 								/>
 							</div>
 						) : (
