@@ -438,7 +438,7 @@ function SummaryComponent() {
             <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
               Website status
             </h3>
-            <div className='gap-4 grid md:grid-cols-3'>
+            <div data-testid="visual-website-status" className='gap-4 grid md:grid-cols-3'>
               <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
                 <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus} />
               </div>
