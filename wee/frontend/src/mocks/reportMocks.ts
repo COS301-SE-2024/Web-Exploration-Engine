@@ -260,7 +260,7 @@ export const mockSummaries: ReportRecord[] = [
   {
     id: 1,
     userId: '48787157-7555-4104-bafc-e2c95bbaa959',
-    reportName: 'Test Report',
+    reportName: 'Test Summary',
     reportData: mockReportSummary,
     isSummary: true,
     savedAt: '2021-01-01',
