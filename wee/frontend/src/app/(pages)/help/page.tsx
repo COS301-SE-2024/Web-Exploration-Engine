@@ -75,6 +75,18 @@ const faqs = [
     answer:
       'Sentiment analysis is the process of determining the emotional tone behind a series of words, used to understand the attitudes, opinions, and emotions expressed in a piece of text. WEE utilizes sentiment analysis to evaluate the content of a website, providing insights into whether the text is positive, negative, or neutral. This can help businesses understand customer sentiment and improve their content strategy.',
   },
+  {
+    question: "How does WEE handle reputation management?",
+    answer:
+      "WEE helps with reputation management by scraping news articles and performing sentiment analysis to assess the public perception of your brand. It also scrapes social media platforms like Facebook to collect engagement metrics and scrapes review sites to track the number of reviews per star rating, Net Promoter Score (NPS), and TrustIndex ratings. This provides a comprehensive overview of how your brand is viewed across different channels."
+  },
+  {
+    question: "Does WEE support scheduled scraping?",
+    answer:
+      "Yes, WEE supports scheduled scraping, allowing you to automate data extraction at regular intervals. This feature ensures that your data is always up-to-date without the need for manual intervention, making it easier to track changes over time and stay informed on key metrics."
+  }
+  
+  
 ];
 
 const VideoThumbnail: React.FC<{
