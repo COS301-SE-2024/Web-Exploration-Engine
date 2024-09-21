@@ -20,7 +20,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis, ScrapeNews, Reviews, ShareCountData, StarRating } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -169,6 +169,9 @@ function ResultsComponent() {
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
   const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
+  const [scrapeNews, setScrapeNews] = useState<ScrapeNews[]>([]);
+  const [reviews, setReviews] = useState<Reviews>();
+  const [shareCountData, setShareCountData] = useState<ShareCountData>();
 
   useBeforeUnload();
 
@@ -222,6 +225,9 @@ function ResultsComponent() {
           setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
           setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
           setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+          setScrapeNews(urlResults[0].scrapeNews);
+          setReviews(urlResults[0].reviews);
+          setShareCountData(urlResults[0].shareCountdata);
         }
       }
     }
