@@ -175,6 +175,7 @@ function SummaryComponent() {
                 <Dropdown data-testid="btn-dropdown">
                     <DropdownTrigger>
                         <Button
+                        data-testid="dropdown-export"
                         isLoading={isDownloadInProgress}
                         id="btn-save-export"
                         variant="flat"
