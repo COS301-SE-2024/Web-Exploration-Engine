@@ -299,7 +299,7 @@ export default function ScheduledScrape() {
             {scheduledScrapeResponse.map((schedule, index) => (
               <TableRow key={index}>
                 <TableCell>{schedule.url}</TableCell>
-                <TableCell>{new Date(schedule.next_scrape).toLocaleString()}</TableCell>
+                <TableCell>{new Date(schedule.next_scrape).toLocaleString('en-ZA')}</TableCell>
                 <TableCell>
                   <div className='flex'>
                     <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={

@@ -99,7 +99,9 @@ function DashboardPage() {
 				};
 
 				const starRatings = filteredResponse.result_history.starRatings;
-				setChangedRatingsHeatmap(computeMonthlyChanges(starRatings));
+				if (filteredResponse.result_history.starRatings.length === filteredResponse.result_history.timestampArr.length) {
+					setChangedRatingsHeatmap(computeMonthlyChanges(starRatings));
+				}
 
 				// average star rating summary section
 				const starRatingLength = filteredResponse.result_history.rating.length;
@@ -170,7 +172,7 @@ function DashboardPage() {
 					Dashboard of {dashboardData ? dashboardData.url : 'N/A'}
 				</h1>
 				<h2 className="mt-2 font-poppins-bold text-md sm:text-lg md:text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-					Date of last scheduled scrape: {dashboardData ? new Date(dashboardData.updated_at).toLocaleString() : 'N/A'}
+					Date of last scheduled scrape: {dashboardData ? new Date(dashboardData.updated_at).toLocaleString('en-ZA') : 'N/A'}
 				</h2>
 			</div>
 
@@ -266,27 +268,34 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.accessibilityScore.length > 0 && dashboardData.result_history.bestPracticesScore.length > 0 && dashboardData.result_history.performanceScore.length > 0 ? (
-					<div data-testid="dashboard-lighthouse-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart
-							areaCategories={
-								dashboardData.result_history.timestampArr
-								.slice(DISPLAY_NUMBER)
-								.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))
-							}
-							areaSeries={[
-								{name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }, 
-								{ name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }, 
-								{ name: 'Performance', data: dashboardData.result_history.performanceScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }]}
-						/>
-					</div>
-				) : (
-					<div data-testid="dashboard-lighthouse-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<p>
-							There are no Ligth House Technical SEO Analysis currently available
-						</p>
-					</div>
-				)}
+				{dashboardData &&
+					dashboardData.result_history.accessibilityScore.length > 0 &&
+					dashboardData.result_history.bestPracticesScore.length > 0 &&
+					dashboardData.result_history.performanceScore.length > 0 &&
+					(dashboardData.result_history.accessibilityScore.length === dashboardData.result_history.timestampArr.length) &&
+					(dashboardData.result_history.bestPracticesScore.length === dashboardData.result_history.timestampArr.length) &&
+					(dashboardData.result_history.performanceScore.length === dashboardData.result_history.timestampArr.length)
+					? (
+						<div data-testid="dashboard-lighthouse-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+							<AreaChart
+								areaCategories={
+									dashboardData.result_history.timestampArr
+										.slice(DISPLAY_NUMBER)
+										.map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))
+								}
+								areaSeries={[
+									{ name: 'Accessibility', data: dashboardData.result_history.accessibilityScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) },
+									{ name: 'Best Practices', data: dashboardData.result_history.bestPracticesScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) },
+									{ name: 'Performance', data: dashboardData.result_history.performanceScore.slice(DISPLAY_NUMBER).map(value => Math.round(value)) }]}
+							/>
+						</div>
+					) : (
+						<div data-testid="dashboard-lighthouse-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+							<p>
+								There are no Ligth House Technical SEO Analysis currently available
+							</p>
+						</div>
+					)}
 			</div>
 
 			{/* Site Speed */}
@@ -302,7 +311,7 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.siteSpeed.length > 0 ? (
+				{dashboardData && dashboardData.result_history.siteSpeed.length > 0 && (dashboardData.result_history.siteSpeed.length === dashboardData.result_history.timestampArr.length) ? (
 					<div data-testid="dashboard-sitespeed-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 						<LineChart
 							areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -331,23 +340,26 @@ function DashboardPage() {
 
 				{dashboardData && dashboardData.keyword_results.length > 0 ? (
 					<div className='gap-4 grid md:grid-cols-2 lg:grid-cols-3'>
-						{dashboardData.keyword_results.slice(DISPLAY_NUMBER).map((keyword_result, index) => {
-							const numericRankArr = keyword_result.rankArr.map(rank => {
-								return typeof rank === 'string' ? 15 : rank;
-							});
+						{dashboardData.keyword_results
+							.filter(keyword_result => keyword_result.rankArr.length === keyword_result.timestampArr.length)
+							.slice(DISPLAY_NUMBER)
+							.map((keyword_result, index) => {
+								const numericRankArr = keyword_result.rankArr.map(rank => {
+									return typeof rank === 'string' ? 15 : rank;
+								});
 
-							return (
-								<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center' key={index}>
-									<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-										{keyword_result.keyword}
-									</h3>
-									<LineChartCustomAxis
-										areaCategories={keyword_result.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-										areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]}
-									/>
-								</div>
-							);
-						})}
+								return (
+									<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center' key={index}>
+										<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
+											{keyword_result.keyword}
+										</h3>
+										<LineChartCustomAxis
+											areaCategories={keyword_result.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+											areaSeries={[{ name: 'Ranking', data: numericRankArr as number[] }]}
+										/>
+									</div>
+								);
+							})}
 					</div>
 				) : (
 					<p data-testid="dashboard-keyword-not-available" className="bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center">
@@ -369,21 +381,28 @@ function DashboardPage() {
 					/>
 				</h3>
 
-				{dashboardData && dashboardData.result_history.newsSentiment.negativeAvg.length > 0 && dashboardData.result_history.newsSentiment.neutralAvg.length > 0 && dashboardData.result_history.newsSentiment.positiveAvg.length > 0 ? (
-					<div data-testid="dashboard-newssentiment-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						<AreaChart
-							areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
-							areaSeries={[
-								{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }, 
-								{ name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }, 
-								{ name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }]}
-						/>
-					</div>
-				) : (
-					<div data-testid="dashboard-news-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-						There are no News Sentiment currently available
-					</div>
-				)}
+				{dashboardData &&
+					dashboardData.result_history.newsSentiment.negativeAvg.length > 0 &&
+					dashboardData.result_history.newsSentiment.neutralAvg.length > 0 &&
+					dashboardData.result_history.newsSentiment.positiveAvg.length > 0 &&
+					(dashboardData.result_history.newsSentiment.negativeAvg.length === dashboardData.result_history.timestampArr.length) &&
+					(dashboardData.result_history.newsSentiment.neutralAvg.length === dashboardData.result_history.timestampArr.length) &&
+					(dashboardData.result_history.newsSentiment.positiveAvg.length === dashboardData.result_history.timestampArr.length)
+					? (
+						<div data-testid="dashboard-newssentiment-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+							<AreaChart
+								areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
+								areaSeries={[
+									{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) },
+									{ name: 'neutral', data: dashboardData.result_history.newsSentiment.neutralAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) },
+									{ name: 'negative', data: dashboardData.result_history.newsSentiment.negativeAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) }]}
+							/>
+						</div>
+					) : (
+						<div data-testid="dashboard-news-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+							There are no News Sentiment currently available
+						</div>
+					)}
 			</div>
 
 			{/* Social Media */}
@@ -403,7 +422,7 @@ function DashboardPage() {
 					<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 						Total Engagments
 					</h3>
-					{dashboardData && dashboardData.result_history.totalEngagement.length > 0 ? (
+					{dashboardData && dashboardData.result_history.totalEngagement.length > 0 && (dashboardData.result_history.totalEngagement.length === dashboardData.result_history.timestampArr.length) ? (
 						<div data-testid="dashboard-engagement-graph">
 							<LineChart
 								areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -423,7 +442,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Comment Count
 						</h3>
-						{dashboardData && dashboardData.result_history.commentCount.length > 0 ? (
+						{dashboardData && dashboardData.result_history.commentCount.length > 0 && (dashboardData.result_history.commentCount.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid="dashboard-comment-count-graph">
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -441,7 +460,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Share Count
 						</h3>
-						{dashboardData && dashboardData.result_history.shareCount.length > 0 ? (
+						{dashboardData && dashboardData.result_history.shareCount.length > 0 && (dashboardData.result_history.shareCount.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid="dashboard-share-count-graph">
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -457,7 +476,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Facebook - Reaction Count
 						</h3>
-						{dashboardData && dashboardData.result_history.reactionCount.length > 0 ? (
+						{dashboardData && dashboardData.result_history.reactionCount.length > 0 && (dashboardData.result_history.reactionCount.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid="dashboard-reaction-count-graph">
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -473,7 +492,7 @@ function DashboardPage() {
 						<h3 className="font-poppins-semibold text-md text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
 							Pintrest - Pin Count
 						</h3>
-						{dashboardData && dashboardData.result_history.pinCount.length > 0 ? (
+						{dashboardData && dashboardData.result_history.pinCount.length > 0 && (dashboardData.result_history.pinCount.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid="dashboard-pin-count-graph">
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -506,7 +525,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.rating.length > 0 ? (
+						{dashboardData && dashboardData.result_history.rating.length > 0 && (dashboardData.result_history.rating.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid='dashboard-avg-star-rating-graph'>
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -528,7 +547,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.numReviews.length > 0 ? (
+						{dashboardData && dashboardData.result_history.numReviews.length > 0 && (dashboardData.result_history.numReviews.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid='dashboard-number-reviews-graph'>
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -553,7 +572,7 @@ function DashboardPage() {
 						/>
 					</h3>
 
-					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length > 0 ? (
+					{dashboardData && dashboardData.result_history && dashboardData.result_history.starRatings.length > 0 && (dashboardData.result_history.starRatings.length === dashboardData.result_history.timestampArr.length) ? (
 						<div data-testid='dashboard-rating-distribution-graph'>
 							<StackedColumnChart
 								dataLabel={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -625,7 +644,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.trustIndex.length > 0 ? (
+						{dashboardData && dashboardData.result_history.trustIndex.length > 0 && (dashboardData.result_history.trustIndex.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid='trust-index-graph'>
 								<LineChart
 									areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
@@ -649,7 +668,7 @@ function DashboardPage() {
 								placement="right-end"
 							/>
 						</h3>
-						{dashboardData && dashboardData.result_history.NPS.length > 0 ? (
+						{dashboardData && dashboardData.result_history && dashboardData.result_history.NPS.length > 0 && (dashboardData.result_history.NPS.length === dashboardData.result_history.timestampArr.length) ? (
 							<div data-testid="nps-graph">
 								<ColumnChartNPS
 									dataLabel={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
