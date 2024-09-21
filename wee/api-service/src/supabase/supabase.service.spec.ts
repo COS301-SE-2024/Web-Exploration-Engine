@@ -516,7 +516,9 @@ describe('SupabaseService', () => {
 
       await expect(service.updateKeywordResult(scheduleData)).rejects.toThrow('Failed to update keyword result: Update error');
     });
-  }); describe('getEmailByScheduleId', () => {
+  }); 
+  
+  describe('getEmailByScheduleId', () => {
     it('should return the email when data is found', async () => {
       // Mock the result from `scheduled_tasks`
       supabaseClient.from.mockReturnValueOnce({

@@ -86,55 +86,6 @@ export class SchedulerService {
     }
   }
   
-
-  // async pollForResults(endpoints: string[], schedule: ScheduleTaskResponse) {
-  //   const maxRetries = 20;
-  //   const retryDelay = 10000; // 10 seconds
-  //   const completedEndpoints: string[] = [];
-  
-  //   // Helper function to poll a single endpoint
-  //   const pollSingleEndpoint = async (endpoint: string) => {
-  //     if (completedEndpoints.includes(endpoint)) {
-  //       return; // Skip if already completed
-  //     }
-  //     for (let attempt = 0; attempt < maxRetries; attempt++) {
-
-  //       if (completedEndpoints.includes(endpoint)) {
-  //         return; // Skip if already completed
-  //       }
-
-  //       try {
-  //         console.log(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
-  //         if (!endpoint.includes(encodeURIComponent(schedule.url))) {
-  //           attempt--;
-  //           return;
-
-  //         }
-  //         const response = await axios.get(endpoint);
-  
-  //         if (response.data && response.data.status === 'completed') {
-  //           completedEndpoints.push(endpoint);
-  //           console.log('Updating next scrape time for:', schedule.url);
-  //           await this.supabaseService.updateNextScrapeTime(schedule);
-  //           await this.handleApiResults(response.data.result, schedule);
-  //           break;
-  //         } else {
-  //           await this.delay(retryDelay); // Delay before retrying
-  //         }
-  //       } catch (error) {
-  //         // Log the error and delay before retrying
-  //         await this.delay(retryDelay);
-  //       }
-  //     }
-  //   };
-  
-  //   // Create an array of promises for each endpoint to poll concurrently
-  //   const pollingPromises = endpoints.map(endpoint => pollSingleEndpoint(endpoint));
-  
-  //   // Use Promise.all to wait for all polling to complete
-  //   await Promise.all(pollingPromises);
-  // }
-
   async pollForResults(endpoint: string, schedule: ScheduleTaskResponse) {
     const maxRetries = 20;
     const retryDelay = 10000; // 10 seconds
@@ -152,8 +103,6 @@ export class SchedulerService {
         const response = await axios.get(endpoint);
   
         if (response.data && response.data.status === 'completed') {
-          console.log('Updating next scrape time for:', schedule.url);
-          await this.supabaseService.updateNextScrapeTime(schedule);
           await this.handleApiResults(response.data.result, schedule);
           break; // Exit the loop on success
         } else {
@@ -205,6 +154,10 @@ export class SchedulerService {
 
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
+    // Update the next scrape time for the schedule
+    console.log('Updating next scrape time for:', schedule.url);
+    await this.supabaseService.updateNextScrapeTime(schedule);
+
     const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
     const scheduleUpdateDate = new Date(schedule.updated_at).toLocaleString();
     const nextScrapeDate = new Date(schedule.next_scrape).toLocaleString();
