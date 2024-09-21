@@ -2035,33 +2035,95 @@ function ResultsComponent() {
                     Reviews
                     <InfoPopOver
                       data-testid="popup-reviews"
-                      heading="Social Media"
+                      heading="Reviews"
                       content="More info here"
                       placement="right-end"
                     />
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {reviews ? (
-                      <div>
-                        <ColumnChartWithLables
-                          dataLabel={[
-                            reviews.starRatings[4].stars.toString() + ' stars',
-                            reviews.starRatings[3].stars.toString() + ' stars',
-                            reviews.starRatings[2].stars.toString() + ' stars',
-                            reviews.starRatings[1].stars.toString() + ' stars',
-                            reviews.starRatings[0].stars.toString() + ' star',
-                          ]}
-                          dataSeries={[
-                            reviews.starRatings[4].numReviews,
-                            reviews.starRatings[3].numReviews,
-                            reviews.starRatings[2].numReviews,
-                            reviews.starRatings[1].numReviews,
-                            reviews.starRatings[0].numReviews,
-                          ]}
-                        />
-                      </div>
+                      <>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4'>
+                          <ColumnChartWithLables
+                            dataLabel={[
+                              reviews.starRatings[4].stars.toString() + ' star',
+                              reviews.starRatings[3].stars.toString() + ' stars',
+                              reviews.starRatings[2].stars.toString() + ' stars',
+                              reviews.starRatings[1].stars.toString() + ' stars',
+                              reviews.starRatings[0].stars.toString() + ' stars',
+                            ]}
+                            dataSeries={[
+                              reviews.starRatings[4].numReviews,
+                              reviews.starRatings[3].numReviews,
+                              reviews.starRatings[2].numReviews,
+                              reviews.starRatings[1].numReviews,
+                              reviews.starRatings[0].numReviews,
+                            ]}
+                          />
+                        </div>
+
+                        <div className='gap-6 grid grid-cols-2 sm:grid-cols-5 mt-3'>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="div-images-total" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.NPS}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                NPS
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="div-images-missing-alt" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.numberOfReviews}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Number of reviews
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.rating}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Rating
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.recommendationStatus}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Recommendation Status
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.trustIndex}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Trust Index
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </>
+
                     ) : (
-                      <div>abc</div>
+                      <div>There are no review data currently available</div>
                     )}
                   </div>
                 </div>
