@@ -6,8 +6,11 @@ import { useUserContext } from '../../src/app/context/UserContext';
 import { getReports, deleteReport } from '../../src/app/services/SaveReportService';
 import { useRouter } from 'next/navigation';
 import '@testing-library/jest-dom';
-
 import { createClient } from '../../src/app/utils/supabase/client';
+
+// import mocks
+import { mockReports } from '../../src/mocks/reportMocks';
+import { mockSummaries } from '../../src/mocks/reportMocks';
 
 jest.mock('../../src/app/utils/supabase/client', () => ({
   createClient: jest.fn(),
@@ -41,91 +44,7 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-describe('SavedReports Page', () => {
-  const mockReports = [
-    {
-      id: 0,
-      userId: '1ad80d59-e8b1-426c-8254-4cb96abc4857',
-      reportName: 'Test Report',
-      reportData: { 
-        url: 'https://example.com',
-        domainStatus: "live",
-        robots: {
-          baseUrl: 'https://example.com',
-          allowedPaths: [],
-          disallowedPaths: [],
-          isUrlScrapable: true,
-          isBaseUrlAllowed: true,
-        },
-        metadata: {
-          title: 'Example',
-          description: 'Example description',
-          keywords: 'example, keywords',
-          ogTitle: 'Example',
-          ogDescription: 'Example description',
-          ogImage: 'https://example.com/image.jpg',
-        },
-        industryClassification: {
-          metadataClass: {
-            label: 'Example',
-            score: 0.5,
-          },
-          domainClass: {
-            label: 'Example',
-            score: 0.5,
-          },
-        },
-        logo: 'https://example.com/logo.jpg',
-        images: ['https://example.com/image.jpg'],
-        slogan: 'Example slogan',
-        time: 0,
-      },
-      isSummary: false,
-      savedAt: '2021-01-01',
-    },
-  ];
-
-  const mockSummaries = [
-    {
-      id: 1,
-      userId: '48787157-7555-4104-bafc-e2c95bbaa959',
-      reportName: 'Test Report',
-      reportData: {
-        domainStatus: [200, 404],
-        domainErrorStatus: 1,
-        industryClassification: {
-          unclassifiedUrls: ['https://www.example.com'],
-          industryPercentages: {
-            industries: ['E-commerce', 'Unknown'],
-            percentages: [75, 25],
-          },
-          weakClassification: [
-            {
-              url: 'https://www.example3.com',
-              metadataClass: 'E-commerce',
-              score: 21,
-            },
-          ],
-        },
-        domainMatch: {
-          percentageMatch: 75,
-          mismatchedUrls: [
-            {
-              url: 'https://www.example.com',
-              metadataClass: 'Automotive',
-              domainClass: 'Unknown',
-            },
-          ],
-        },
-        totalUrls: 3,
-        parkedUrls: ['https://www.example2.com'],
-        scrapableUrls: 2,
-        avgTime: 100,
-      },
-      isSummary: true,
-      savedAt: '2021-01-01',
-    },
-  ] 
+describe('SavedReports Page', () => { 
 
   beforeEach(() => {
     (useUserContext as jest.Mock).mockReturnValue({
@@ -153,7 +72,7 @@ describe('SavedReports Page', () => {
     expect(getByText('Test Report')).toBeDefined();
   });
 
-  it('handles pagination correctly', async () => {
+  it('handles pagination correctly on results page', async () => {
     // Render the SavedReports component with mocked reports and pagination controls
     const { getByText, getByLabelText } = render(<SavedReports />);
 
@@ -167,6 +86,40 @@ describe('SavedReports Page', () => {
     // Change page and verify the change
     fireEvent.change(getByLabelText('Number of results per page'), { target: { value: '2' } });
     await waitFor(() => expect(getByText('Test Report')).toBeDefined());
+  });
+
+  it('handles pagination correctly on summaries page', async () => {
+
+    const mockPush = jest.fn();
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
+    });
+
+    (useUserContext as jest.Mock).mockReturnValue({
+      user: { uuid: "48787157-7555-4104-bafc-e2c95bbaa959", emailVerified: true },
+      results: [], // Mocked reports should be set here
+      setResults: jest.fn(),
+      summaries: mockSummaries, // Mocked summaries can be set if needed
+      setSummaries: jest.fn(),
+    });
+
+    const { getByText, getByLabelText } = render(<SavedReports />);
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+    // navigate to summaries page
+
+    const summaries = screen.getByText('Summaries');
+    fireEvent.click(summaries);
+
+    // Mock getReports to resolve with mockReports
+    (getReports as jest.Mock).mockResolvedValue(mockReports);
+
+    // Ensure initial page is loaded correctly
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+    expect(getByText('Test Summary')).toBeDefined();
+
+    // Change page and verify the change
+    fireEvent.change(getByLabelText('Number of results per page'), { target: { value: '2' } });
+    await waitFor(() => expect(getByText('Test Summary')).toBeDefined());
   });
   
   it('deletes a report correctly', async () => {
@@ -183,6 +136,37 @@ describe('SavedReports Page', () => {
     // Confirm delete and check if deleteReport is called with correct ID
     fireEvent.click(getByText('Yes'));
     await waitFor(() => expect(deleteReport).toHaveBeenCalledWith(mockReports[0].id));
+
+    // Ensure fetchReports is called after deletion
+    expect(getReports).toHaveBeenCalledTimes(2); // Check the correct number of calls
+  });
+
+  it ('deletes a summary correctly', async () => {
+    // Mock deleteReport to resolve successfully
+    (deleteReport as jest.Mock).mockResolvedValueOnce();
+
+    (useUserContext as jest.Mock).mockReturnValue({
+      user: { uuid: "48787157-7555-4104-bafc-e2c95bbaa959", emailVerified: true },
+      results: [], // Mocked reports should be set here
+      setResults: jest.fn(),
+      summaries: mockSummaries, // Mocked summaries can be set if needed
+      setSummaries: jest.fn(),
+    });
+
+    // Render the SavedReports component with mocked reports
+    const { getByText, getByTestId } = render(<SavedReports />);
+    await waitFor(() => expect(getReports).toHaveBeenCalledTimes(1));
+    // navigate to summaries page
+
+    const summaries = screen.getByText('Summaries');
+    fireEvent.click(summaries);
+
+    // Click delete button
+    fireEvent.click(getByTestId('btnDelete0'));
+
+    // Confirm delete and check if deleteReport is called with correct ID
+    fireEvent.click(getByText('Yes'));
+    await waitFor(() => expect(deleteReport).toHaveBeenCalledWith(mockSummaries[0].id));
 
     // Ensure fetchReports is called after deletion
     expect(getReports).toHaveBeenCalledTimes(2); // Check the correct number of calls
@@ -222,7 +206,7 @@ describe('SavedReports Page', () => {
     const summaries = screen.getByText('Summaries');
     fireEvent.click(summaries);
     
-    fireEvent.click(getByText('Test Report'));
+    fireEvent.click(getByText('Test Summary'));
     expect(mockPush).toHaveBeenCalledWith('/savedsummaries?id=1');
   });
 
@@ -254,7 +238,4 @@ describe('SavedReports Page', () => {
     // Restore the original console.error
     errorSpy.mockRestore();
   });
-
-  
-  
 });

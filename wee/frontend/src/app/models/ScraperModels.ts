@@ -67,8 +67,6 @@ export interface Metadata {
 }
 
 export interface IndustryClassification {
-  metadataClass: IndustryClassificationCriteria;
-  domainClass: IndustryClassificationCriteria;
   zeroShotMetaDataClassify: IndustryClassificationCriteria[];
   zeroShotDomainClassify: IndustryClassificationCriteria[];
 }

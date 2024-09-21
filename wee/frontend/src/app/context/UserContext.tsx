@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 import { AuthResponse } from "../models/AuthModels";
 import { ReportRecord } from "../models/ReportModels";
 
-interface UserConextType   {
+interface UserContextType   {
     user: AuthResponse | null;
     setUser: (user: AuthResponse | null) => void;
     results: ReportRecord[];
@@ -11,7 +11,7 @@ interface UserConextType   {
     setSummaries: (summaries: ReportRecord[]) => void;
 }
 
-const UserConext = createContext<UserConextType | undefined>(undefined);
+const UserConext = createContext<UserContextType | undefined>(undefined);
 
 export const useUserContext = () => {
     const context = useContext(UserConext);

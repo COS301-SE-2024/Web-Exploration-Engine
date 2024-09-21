@@ -747,34 +747,6 @@ function ResultsComponent() {
           <Tab key="media" data-testid="tab-media" title="Media">
             <Card>
               <CardBody>
-
-                {/* Home page screenshot */}
-                <div className='py-3'>
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
-                    Home page screenshot
-                  </h3>
-
-                  {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,')
-                    ? (
-                      <div className="flex justify-center" data-testid="div-homepagescreenshot">
-                        <div className="flex justify-center">
-                          <Image
-                            data-testid="img-homepagescreenshot"
-                            alt="HomePageScreenShot"
-                            src={homePageScreenShot}
-                            className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
-                          />
-                        </div>
-                      </div>
-                    )
-                    : (
-                      <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
-                        No homepage screenshot available.
-                      </p>
-                    )
-                  }
-                </div>
-
                 {/* Pagination of Images */}
                 {imageList && imageList.length > 0 && (
                   <div  data-testid="pagination-images" className="py-3">
@@ -842,6 +814,33 @@ function ResultsComponent() {
                     </p>
                   </>
                 )}
+
+                {/* Home page screenshot */}
+                <div className='py-3'>
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
+                    Home page screenshot
+                  </h3>
+
+                  {(homePageScreenShot && homePageScreenShot !== 'data:image/png;base64,')
+                    ? (
+                      <div className="flex justify-center" data-testid="div-homepagescreenshot">
+                        <div className="flex justify-center">
+                          <Image
+                            data-testid="img-homepagescreenshot"
+                            alt="HomePageScreenShot"
+                            src={homePageScreenShot}
+                            className="shadow-md shadow-zinc-150 dark:shadow-zinc-900"
+                          />
+                        </div>
+                      </div>
+                    )
+                    : (
+                      <p className="p-4 rounded-lg mb-2 bg-zinc-200 dark:bg-zinc-700">
+                        No homepage screenshot available.
+                      </p>
+                    )
+                  }
+                </div>
 
               </CardBody>
             </Card>
