@@ -1,6 +1,6 @@
-import { AuthResponse } from "../../models/AuthModels";
+import { AuthResponse } from "../models/AuthModels";
 import { createClient } from "../utils/supabase/client";
-import { ReportRecord } from "../../models/ReportModels"
+import { ReportRecord } from "../models/ReportModels"
 
 export async function saveReport(report: ReportRecord) {
 

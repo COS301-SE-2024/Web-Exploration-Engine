@@ -8,8 +8,8 @@ import jsPDF from 'jspdf';
 import '@testing-library/jest-dom';
 
 // models
-import { ScraperResult, Metadata, RobotsResponse } from '../../src/models/ScraperModels';
-import { ReportRecord } from '../../src/models/ReportModels';
+import { ScraperResult, Metadata, RobotsResponse } from '../../src/app/models/ScraperModels';
+import { ReportRecord } from '../../src/app/models/ReportModels';
 
 // mocks
 import { mockReports } from '../../src/mocks/reportMocks';

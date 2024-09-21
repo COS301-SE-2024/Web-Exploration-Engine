@@ -4,7 +4,7 @@ import ThemeSwitch from "../../components/ThemeSwitch";
 import Link from 'next/link';
 import { Modal, ModalContent, ModalBody, Button, useDisclosure, Divider } from "@nextui-org/react";
 import { useState } from "react";
-import { SignUpRequest } from "../../../models/AuthModels";
+import { SignUpRequest } from "../../models/AuthModels";
 import { signUp } from "../../services/AuthService";
 import { MdErrorOutline } from "react-icons/md"
 import WEEInput from '../../components/Util/Input';

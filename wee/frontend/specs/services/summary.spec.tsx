@@ -1,5 +1,5 @@
 import { generateSummary } from '../../src/app/services/SummaryService';
-import { ScraperResult } from '../../src/models/ScraperModels';
+import { ScraperResult } from '../../src/app/models/ScraperModels';
 
 jest.mock('../../src/app/context/ScrapingContext', () => ({
   useScrapingContext: jest.fn(),

@@ -20,7 +20,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -29,7 +29,7 @@ import CircularProgressComparison from "../../components/CircularProgressCompari
 import WEEInput from '../../components/Util/Input';
 import { pollForKeyWordResult } from '../../services/PubSubService';
 import { MdErrorOutline } from "react-icons/md";
-import { SEOKeywordAnalysis } from '../../../models/KeywordAnalysisModels';
+import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import MockCiscoKeywordCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-status-result.json'
 import MockCiscoKeywordMerakiFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-frontend-result.json'

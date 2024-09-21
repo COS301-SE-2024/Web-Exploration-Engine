@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import '@testing-library/jest-dom';
 import { useUserContext } from '../../src/app/context/UserContext';
-import { Summary } from '../../src/models/ScraperModels';
+import { Summary } from '../../src/app/models/ScraperModels';
 
 // mocks
 import { mockSummaries } from '../../src/mocks/reportMocks';

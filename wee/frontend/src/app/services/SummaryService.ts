@@ -1,4 +1,4 @@
-import { ScraperResult, Summary } from '../../models/ScraperModels';
+import { ScraperResult, Summary } from '../models/ScraperModels';
 
 export function generateSummary( scraperResults: ScraperResult[]): Summary {
   const numResults = scraperResults.length;

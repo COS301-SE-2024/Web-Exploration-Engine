@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { ApexOptions } from "apexcharts";
-import IChart from "../../../models/ChartModel";
+import IChart from "../../models/ChartModel";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 

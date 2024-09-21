@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@nextui-org/react';
 import {Divider} from "@nextui-org/react";
 import { useState } from 'react';
-import { LoginRequest, AuthResponse } from '../../../models/AuthModels';
+import { LoginRequest, AuthResponse } from '../../models/AuthModels';
 import { login } from '../../services/AuthService';
 import { googleLogin } from '../../services/OAuthService';
 import { useRouter } from 'next/navigation';

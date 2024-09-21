@@ -1,5 +1,5 @@
-import { ReportRecord } from '../models/ReportModels';
-import { SeoAnalysis, ScraperResult, Summary } from '../models/ScraperModels';
+import { ReportRecord } from '../app/models/ReportModels';
+import { SeoAnalysis, ScraperResult, Summary } from '../app/models/ScraperModels';
 
 export const mockSeoAnalysis: SeoAnalysis = {
   XMLSitemapAnalysis: {

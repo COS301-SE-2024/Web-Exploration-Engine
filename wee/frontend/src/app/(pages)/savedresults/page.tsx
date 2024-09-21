@@ -16,13 +16,13 @@ import { useRouter } from 'next/navigation';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { FiImage, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 import CircularProgressComparison from "../../components/CircularProgressComparison";
-import { SEOKeywordAnalysis } from '../../../models/KeywordAnalysisModels';
+import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 
 

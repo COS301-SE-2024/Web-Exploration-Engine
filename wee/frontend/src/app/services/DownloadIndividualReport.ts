@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis,LightHouseAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis,MobileFriendlinessAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis} from '../../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis,LightHouseAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis,MobileFriendlinessAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;

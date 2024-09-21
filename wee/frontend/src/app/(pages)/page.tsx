@@ -8,7 +8,7 @@ import { useScrapingContext } from "../context/ScrapingContext";
 import { InfoPopOver } from "../components/InfoPopOver";
 
 // Models
-import { ScraperResult, Summary, ErrorResponse } from "../../models/ScraperModels";
+import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
 
 
 export default function Home() {
