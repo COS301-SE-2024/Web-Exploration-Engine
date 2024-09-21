@@ -128,7 +128,7 @@ function ResultsComponent() {
 
   const [keywordError, setKeywordError] = useState('');
   const [keyword, setKeyword] = useState('');
-  const [isKeywordLoading, setKeywordLoading]= useState(false);
+  const [isKeywordLoading, setKeywordLoading] = useState(false);
 
   const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
 
@@ -237,7 +237,7 @@ function ResultsComponent() {
     // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
 
     try {
-      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis, sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis, indexibilityAnalysis, siteSpeedAnalysis, structuredDataAnalysis, mobileFriendlinessAnalysis, lighthouseAnalysis);
     }
     finally {
       setIsDownloadInProgress(false);
@@ -326,12 +326,12 @@ function ResultsComponent() {
     // check that the url is there and valid (and make sure it is in the context)
 
     let url_decoded = decodeURIComponent(url ? url : '');
- 
+
     if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
       console.log(processedUrls)
       url_decoded = processedUrls[0];
     }
-    
+
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
@@ -343,7 +343,7 @@ function ResultsComponent() {
     }
 
     // check that the keyword is entered by the user
-    if (!keyword) { 
+    if (!keyword) {
       setKeywordError("Keyword cannot be empty");
 
       const timer = setTimeout(() => {
@@ -385,14 +385,14 @@ function ResultsComponent() {
         let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
 
         if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
-          if (keyword && keyword =="meraki"){
-          result = MockCiscoKeywordMerakiFrontendResult;
+          if (keyword && keyword == "meraki") {
+            result = MockCiscoKeywordMerakiFrontendResult;
+          }
+          else {
+            result = MockCiscoKeywordCiscoFrontendResult
+          }
         }
-        else {
-          result = MockCiscoKeywordCiscoFrontendResult
-        }
-        }
-        setSeoKeywordAnalysis(result);        
+        setSeoKeywordAnalysis(result);
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
       } catch (error) {
@@ -749,7 +749,7 @@ function ResultsComponent() {
               <CardBody>
                 {/* Pagination of Images */}
                 {imageList && imageList.length > 0 && (
-                  <div  data-testid="pagination-images" className="py-3">
+                  <div data-testid="pagination-images" className="py-3">
                     <span className="flex justify-between">
                       <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
                         Images
@@ -863,7 +863,7 @@ function ResultsComponent() {
                   {/* Enter keyword */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     <div className='flex flex-col sm:flex-row w-full justify-center items-center'>
-                      <Input 
+                      <Input
                         data-testid="keyword-input"
                         label="Enter keywords"
                         value={keyword}
@@ -903,17 +903,17 @@ function ResultsComponent() {
                               <div>
                                 {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
                                   ? <div data-testid="keyword_not_ranked" className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                      Not ranked in top 10
+                                    Not ranked in top 10
+                                  </div>
+                                  :
+                                  <>
+                                    <div className='font-poppins-semibold text-lg'>
+                                      Ranked
                                     </div>
-                                  : 
-                                    <>
-                                      <div className='font-poppins-semibold text-lg'>
-                                        Ranked
-                                      </div>
-                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
-                                        #{seoKeywordAnalysis.ranking}
-                                      </div>
-                                    </>
+                                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
+                                      #{seoKeywordAnalysis.ranking}
+                                    </div>
+                                  </>
                                 }
                               </div>
                             </div>
@@ -934,7 +934,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations
                             </h5>
-                            <p  data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
+                            <p data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
                           </div>
                         </>
                       )}
@@ -1643,7 +1643,7 @@ function ResultsComponent() {
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                         <div data-testid="indexibilityAnalysis" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) ?
-                            indexibilityAnalysis.isIndexable? 'Yes' : 'No'
+                            indexibilityAnalysis.isIndexable ? 'Yes' : 'No'
                             : '-'
                           }
                         </div>
@@ -1939,6 +1939,55 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
+          <Tab key="reputation-management" data-testid="tab-rep-management" title="Reputation Management">
+            <Card>
+              <CardBody>
+                <div>
+                  {/* News Sentiment */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    News Sentiment
+                    <InfoPopOver
+                      data-testid="popup-news-sentiment"
+                      heading="News Sentiment"
+                      content="More info here"
+                      placement="right-end"
+                    />
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    News sentiment stuff here
+                  </div>
+
+                  {/* Social Media */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Social Media
+                    <InfoPopOver
+                      data-testid="popup-social-media"
+                      heading="Social Media"
+                      content="More info here"
+                      placement="right-end"
+                    />
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    Social Media stuff here
+                  </div>
+
+                  {/* Reviews */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Reviews
+                    <InfoPopOver
+                      data-testid="popup-reviews"
+                      heading="Social Media"
+                      content="More info here"
+                      placement="right-end"
+                    />
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    Social Media stuff here
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </Tab>
         </WEETabs>
       </div>
 
@@ -1989,9 +2038,9 @@ function ResultsComponent() {
       </Modal>
 
       {/* successfull save */}
-      <Modal 
-        isOpen={isSuccessOpen} 
-        onOpenChange={onSuccessOpenChange} 
+      <Modal
+        isOpen={isSuccessOpen}
+        onOpenChange={onSuccessOpenChange}
         className="font-poppins-regular"
         placement="center"
       >
