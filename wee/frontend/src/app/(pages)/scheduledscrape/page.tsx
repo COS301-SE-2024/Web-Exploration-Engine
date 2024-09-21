@@ -15,8 +15,10 @@ import { useUserContext } from '../../context/UserContext';
 import { on } from 'events';
 import { set } from 'cypress/types/lodash';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
+import { useScheduledScrapeContext } from '../../context/ScheduledScrapingContext';
 
 export default function ScheduledScrape() {
+  const { scheduledScrapeResponse, setScheduledScrapeResponse } = useScheduledScrapeContext();
   const MAX_URLS = 10; // Define the maximum number of URLs
   const [urlCount, setUrlCount] = React.useState(0); // Track the number of URLs
   const { isOpen: isFirstModalOpen, onOpen: onFirstModalOpen, onOpenChange: onFirstModalOpenChange, onClose: onFirstModalClose } = useDisclosure();
@@ -28,7 +30,6 @@ export default function ScheduledScrape() {
   const [keyword, setKeyword] = React.useState('');
   const [keywordList, setKeywordList] = React.useState<string[]>([]);
   const [modalError, setModalError] = React.useState('');
-  const [schedules, setSchedules] = React.useState<GetSchedulesResponse[]>([]);
   const [loading, setLoading] = React.useState(true); // Loading state
   const [editID, setEditID] = React.useState('');
   const { user } = useUserContext();
@@ -169,8 +170,8 @@ export default function ScheduledScrape() {
     onSecondModalClose();
   }
 
-  const handleDashboardPage = (url: string) => {
-    router.push(`/dashboard?url=${encodeURIComponent(url)}`);
+  const handleDashboardPage = (id: string) => {
+    router.push(`/dashboard?id=${encodeURIComponent(id)}`);
   }
 
   const handleFrequencyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -194,7 +195,8 @@ export default function ScheduledScrape() {
     if (user) {
       const schedules = await getSchedules(user.uuid) as GetSchedulesResponse[];
       console.log('Schedules:', schedules);
-      setSchedules(schedules);
+      // set the scheduled scrape context
+      setScheduledScrapeResponse(schedules);
       setUrlCount(schedules.length);
     }
     else {
@@ -269,7 +271,7 @@ export default function ScheduledScrape() {
             startContent={<FiRefreshCcw  />}
             variant="bordered"
             onPress={loadScheduledScrapingTasks}
-            className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg border-3"
+            className="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4 font-poppins-semibold text-md md:text-lg border-3 border-jungleGreen-700 dark:border-jungleGreen-400"
           >
             Refresh
           </Button>
@@ -294,10 +296,10 @@ export default function ScheduledScrape() {
             <TableColumn>DASHBOARD</TableColumn>
           </TableHeader>
           <TableBody >
-            {schedules.map((schedule, index) => (
+            {scheduledScrapeResponse.map((schedule, index) => (
               <TableRow key={index}>
                 <TableCell>{schedule.url}</TableCell>
-                <TableCell>{new Date(schedule.next_scrape).toLocaleString()}</TableCell>
+                <TableCell>{new Date(schedule.next_scrape).toLocaleString('en-ZA')}</TableCell>
                 <TableCell>
                   <div className='flex'>
                     <span className='mr-4 text-blue-500 dark:text-blue-300 hover:cursor-pointer' onClick={
@@ -311,7 +313,7 @@ export default function ScheduledScrape() {
                 <TableCell>
                   <Button
                     className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
-                    onClick={() => handleDashboardPage('https://takealot.com')}
+                    onClick={() => handleDashboardPage(schedule.id)}
                   // data-testid={'btnDashboard' + index}
                   >
                     View
