@@ -63,6 +63,8 @@ export default function SummaryReport() {
       </Suspense>
     );
 }
+
+
 function SummaryComponent() {
     const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -130,9 +132,25 @@ function SummaryComponent() {
         router.back();
     };
 
-    const handleDownload = () => {
-        console.log("Download");
-    };
+    const handleDownloadReport = async () => {
+        setIsDownloadInProgress(true);
+        const savedSummary = summaries.filter((res) => res.id == id);
+          let summaryData;
+          if(savedSummary && savedSummary[0]) {
+            summaryData = savedSummary[0].reportData as any;
+          }
+        try {
+          await generatePDFReport(
+            summaryData,
+            weakClassification || [],
+            parkedUrls || [],
+            mismatchedUrls || []
+          );
+        }
+        finally {
+          setIsDownloadInProgress(false);
+        }
+      };
 
     return (
         <>
@@ -153,28 +171,51 @@ function SummaryComponent() {
                   {summaryDate}
                 </h2>
                 <div className="mt-4 mr-4 flex justify-end">
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button 
-                            data-testid="dropdown-export"
-                            variant="flat" 
-                            startContent={<FiShare className={iconClasses}/>}
+                <Dropdown data-testid="btn-dropdown">
+                    <DropdownTrigger>
+                        <Button
+                        isLoading={isDownloadInProgress}
+                        id="btn-save-export"
+                        variant="flat"
+                        startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
+                        spinner={
+                            <svg
+                            className="animate-spin h-5 w-5 text-current"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
                             >
-                            Export
-                            </Button>
-                        </DropdownTrigger>
-                          <DropdownMenu variant="flat" aria-label="Dropdown menu with icons" disabledKeys={["save"]}>
-                            <DropdownItem
-                                key="download"
-                                data-testid="dropdown-save"
-                                startContent={<FiDownload className={iconClasses}/>}
-                                description="Download the report to your device"
-                                onAction={handleDownload}
-                            >
-                                Download
-                            </DropdownItem>
-                          </DropdownMenu> 
-                    </Dropdown>
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            />
+                            <path
+                                className="opacity-75"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                fill="currentColor"
+                            />
+                            </svg>
+                        }
+                        >
+                        Export
+                        </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                        <DropdownItem
+                            key="download"
+                            startContent={<FiDownload className={iconClasses} />}
+                            description="Download the report to your device"
+                            onAction={handleDownloadReport}
+                            data-testid="download-report-button"
+                        >
+                            Download
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
                 </div>
             </div>
     

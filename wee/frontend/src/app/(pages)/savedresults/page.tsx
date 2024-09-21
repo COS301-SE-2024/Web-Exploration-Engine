@@ -249,8 +249,17 @@ function ResultsComponent() {
   const indexOfFirstImage = indexOfLastImage - itemsPerPage;
   const currentImages = imageList.slice(indexOfFirstImage, indexOfLastImage);
 
-  const handleDownload = () => {
-    console.log("Download");
+  const downloadSummaryReport = (key: any) => {
+    setIsDownloadInProgress(true);
+
+    // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
+
+    try {
+      handleDownloadReport(reportUrl, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+    }
+    finally {
+      setIsDownloadInProgress(false);
+    }
   };
 
   return (
@@ -274,24 +283,48 @@ function ResultsComponent() {
           <div className="mt-4 mr-4 flex justify-end">
             <Dropdown>
               <DropdownTrigger>
-                <Button 
-                  variant="flat" 
-                  startContent={<FiShare className={iconClasses}/>}
+                <Button
+                  isLoading={isDownloadInProgress}
+                  variant="flat"
+                  data-testid="btn-export-save-report"
+                  startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
+                  spinner={
+                    <svg
+                      className="animate-spin h-5 w-5 text-current"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  }
                 >
-                  Export
+                  Export/Save
                 </Button>
               </DropdownTrigger>
-              <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
-                <DropdownItem
-                  key="download"
-                  startContent={<FiDownload className={iconClasses}/>}
-                  description="Download the report to your device"
-                  onAction={handleDownload}
-                  data-testid="download-report-button"
-                >
-                  Download
-                </DropdownItem>
-              </DropdownMenu> 
+                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                  <DropdownItem
+                    key="download"
+                    startContent={<FiDownload className={iconClasses} />}
+                    description="Download the report to your device"
+                    onAction={downloadSummaryReport}
+                    data-testid="download-report-button"
+                  >
+                    Download
+                  </DropdownItem>
+                </DropdownMenu>
             </Dropdown>
           </div>
         </div>
