@@ -206,32 +206,36 @@ export class SchedulerService {
     console.log('Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
     const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
+    const scheduleUpdateDate = new Date(schedule.updated_at).toLocaleString();
+    const nextScrapeDate = new Date(schedule.next_scrape).toLocaleString();
   
     if (email) {
-      const emailText = ` Your URL: ${schedule.url} has been successfully scraped. 
-      Here are the details:
-      
-      - Site Speed: ${results.seoAnalysis?.siteSpeedAnalysis?.loadTime} ms
-      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 'N/A'}
-      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 'N/A'}
-      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 'N/A'}
+      const emailText = 
+`Your scheduled scraping task for ${schedule.url} has been successfully scraped as of ${scheduleUpdateDate}.\nHere some key metrics:
+      - Average Star Rating: ${results.reviews?.rating || 'N/A'} / 5
+      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 'N/A'} / 100
+      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 'N/A'} / 100
+      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 'N/A'} / 100
       - Facebook Total Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}
       - Facebook Reactions: ${results.shareCountdata?.Facebook?.reaction_count || 0}
       - Facebook Comments: ${results.shareCountdata?.Facebook?.comment_count || 0}
       - Facebook Shares: ${results.shareCountdata?.Facebook?.share_count || 0}
       - Pinterest Pin Count: ${results.shareCountdata?.Pinterest || 0}
-      - Overall Rating: ${results.reviews?.rating || 'N/A'}
       - Number of Reviews: ${results.reviews?.numberOfReviews || 0}
       - Trust Index: ${results.reviews?.trustIndex || 'N/A'}
       - NPS (Net Promoter Score): ${results.reviews?.NPS || 'N/A'}
       
-      Visit our website for a more detailed view about how your metrics have changed over time.
+Visit http://capstone-wee.dns.net.za/ to view the full results and how your metrics have changed over time.
+Your next scrape will take place on ${nextScrapeDate}.
+
       
-      Thank you for using our service!
-    `;
+Thank you for using our service!
+
+Kind regards,
+The Web Exploration Team`;
     
       try {
-        await this.emailService.sendMail(email, `Scheduled scrape completed for ${schedule.url}.`, emailText);
+        await this.emailService.sendMail(email, `New results available! ${schedule.url}`, emailText);
         console.log(`Email sent successfully to ${email}`);
       } catch (emailError) {
         console.error('Error sending email:', emailError);
