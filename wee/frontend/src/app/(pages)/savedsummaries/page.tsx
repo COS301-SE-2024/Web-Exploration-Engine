@@ -164,7 +164,8 @@ function SummaryComponent() {
             </Button>
     
             <div className="mt-4 mb-8 text-center">
-                <h1 className="font-poppins-bold text-4xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+                <h1 className="font-poppins-bold text-4xl text-jungleGreen-800 dark:text-dark-primaryTextColor"
+                 data-testid="summary-title">
                   {summaryName}
                 </h1>
                 <h2 className="mt-4 font-poppins-semibold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">

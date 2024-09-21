@@ -2,41 +2,28 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { Card, CardBody, Image } from '@nextui-org/react';
 import {
-  Button, Tabs, Tab,
+  Button, Tab,
   TableHeader, TableColumn, TableBody, TableRow, TableCell,
-  Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
-  Modal, ModalContent, ModalBody, useDisclosure, Input, ModalFooter, Link, ScrollShadow, Spinner
+  Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Link, ScrollShadow,
 } from '@nextui-org/react';
 import { Accordion, AccordionItem } from '@nextui-org/accordion';
-import { FiShare, FiDownload, FiSave, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
+import { FiShare, FiDownload, FiActivity, FiSmartphone, FiClock, FiCompass, FiLayout, FiTag } from "react-icons/fi";
 import { Chip } from '@nextui-org/react';
 import { useSearchParams } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import WEEPagination from '../../components/Util/Pagination';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from '../../context/ScrapingContext';
 import { useUserContext } from '../../context/UserContext';
 import { InfoPopOver } from '../../components/InfoPopOver';
-import jsPDF from 'jspdf';
-import { saveReport } from '../../services/SaveReportService';
-import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
+import { FiImage, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
 import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
 import CircularProgressSentiment from '../../components/CircularProgressSentiment';
 import CircularProgressComparison from "../../components/CircularProgressComparison";
-import WEEInput from '../../components/Util/Input';
-import { pollForKeyWordResult } from '../../services/PubSubService';
-import { MdErrorOutline } from "react-icons/md";
 import { SEOKeywordAnalysis } from '../../../models/KeywordAnalysisModels';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
-import MockCiscoKeywordCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-status-result.json'
-import MockCiscoKeywordMerakiFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-frontend-result.json'
-import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-cisco-frontend-result.json'
-import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
-import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
-import { result } from 'cypress/types/lodash';
 
 
 interface Classifications {
@@ -274,7 +261,8 @@ function ResultsComponent() {
         </Button>
 
         <div className="mb-8 text-center">
-          <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+          <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor"
+            data-testid='saved-report-name'>
            {reportName ? reportName : "Report"}: {reportUrl}
           </h1>
           <h2 className="mt-4 font-poppins-semibold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
@@ -311,7 +299,7 @@ function ResultsComponent() {
                     </svg>
                   }
                 >
-                  Export/Save
+                  Export
                 </Button>
               </DropdownTrigger>
                 <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
@@ -418,6 +406,7 @@ function ResultsComponent() {
                             radius="sm"
                             color={isCrawlable === true ? 'success' : 'warning'}
                             variant="flat"
+                            data-testid="chip-crawlable"
                           >
                             {isCrawlable === true ? 'Yes' : 'No'}
                           </Chip>
@@ -430,6 +419,7 @@ function ResultsComponent() {
                             radius="sm"
                             color={websiteStatus === 'live' ? 'success' : 'warning'}
                             variant="flat"
+                            data-testid="chip-status"
                           >
                             {websiteStatus === 'live' ? 'Live' : 'Parked'}
                           </Chip>
@@ -522,7 +512,7 @@ function ResultsComponent() {
                     <TableBody>
                       <TableRow key="1">
                         <TableCell>Address</TableCell>
-                        <TableCell>
+                        <TableCell data-testid="p-address">
                           {addresses && addresses.length == 0
                             ? <p>No address available</p>
                             :
@@ -534,7 +524,7 @@ function ResultsComponent() {
                       </TableRow>
                       <TableRow key="2">
                         <TableCell>Email</TableCell>
-                        <TableCell>
+                        <TableCell data-testid="p-email">
                           {emails && emails.length == 0
                             ? <p>No email address available</p>
                             :
@@ -546,7 +536,7 @@ function ResultsComponent() {
                       </TableRow>
                       <TableRow key="3">
                         <TableCell>Phone</TableCell>
-                        <TableCell>
+                        <TableCell data-testid="p-phone">
                           {phones && phones.length == 0
                             ? <p>No phone numbers available</p>
                             :
@@ -558,7 +548,7 @@ function ResultsComponent() {
                       </TableRow>
                       <TableRow key="4">
                         <TableCell>Social Links</TableCell>
-                        <TableCell>
+                        <TableCell data-testid="p-social">
                           {socialLinks && socialLinks.length == 0
                             ? <p>No social links available</p>
                             :
@@ -1587,7 +1577,7 @@ function ResultsComponent() {
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {!sentimentAnalysis || (sentimentAnalysis?.positiveWords.length == 0 && sentimentAnalysis?.negativeWords.length == 0) ? (
-                      <div>There is no positive or negative words to display</div>
+                      <div>There are no positive or negative words to display</div>
                     )
                       : (
                         <>

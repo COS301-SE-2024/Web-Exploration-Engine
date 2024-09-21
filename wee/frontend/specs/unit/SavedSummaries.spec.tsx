@@ -1,21 +1,23 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import SummaryReport from '../../src/app/(pages)/summaryreport/page';
+import SummaryReport from '../../src/app/(pages)/savedsummaries/page';
 import { useRouter } from 'next/navigation';
-import { useScrapingContext } from '../../src/app/context/ScrapingContext';
+import { useSearchParams } from 'next/navigation';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import '@testing-library/jest-dom';
 import { useUserContext } from '../../src/app/context/UserContext';
-import { saveReport } from '../../src/app/services/SaveReportService';
+import { Summary } from '../../src/models/ScraperModels';
 
-// Mock useRouter and useScrapingContext
+// mocks
+import { mockSummaries } from '../../src/mocks/reportMocks';
+
+
 jest.mock('next/navigation', () => ({
+  useSearchParams: jest.fn(),
   useRouter: jest.fn(),
 }));
-jest.mock('../../src/app/context/ScrapingContext', () => ({
-  useScrapingContext: jest.fn(),
-}));
+
 jest.mock('../../src/app/context/UserContext', () => ({
   useUserContext: jest.fn(),
 }));
@@ -68,137 +70,103 @@ jest.mock('../../src/app/services/SaveReportService', () => ({
   saveReport: jest.fn(),
 }));
 
+
+const setSummaryDate = jest.fn();
+const setSummaryName = jest.fn();
+const setDomainStatus = jest.fn();
+const setDomainErrorStatus = jest.fn();
+const setUnclassifiedUrls = jest.fn();
+const setIndustries = jest.fn();
+const setIndustryPercentages = jest.fn();
+const setWeakClassification = jest.fn();
+const setPercentageMatch = jest.fn();
+const setMismatchedUrls = jest.fn();
+const setTotalUrls = jest.fn();
+const setParkedUrls = jest.fn();
+const setscrapableUrls = jest.fn();
+const setAvgTime = jest.fn();
+const setMetaRadar = jest.fn();
+const setDomainRadar = jest.fn();
+const setEmotionsArea = jest.fn();
+
 describe('SummaryReport Page', () => {
   const mockPush = jest.fn();
   const mockBack = jest.fn();
+  const mockID = mockSummaries[0].id;
   
   beforeEach(() => {
     (useRouter as jest.Mock)?.mockReturnValue({ push: mockPush, back: mockBack});
-    (useScrapingContext as jest.Mock).mockReturnValue({ summaryReport: mockSummaryReport });
-    (useUserContext as jest.Mock).mockReturnValue({ user: mockUser });
+    (useUserContext as jest.Mock).mockReturnValue({ 
+      summaries: mockSummaries,
+      setSummaries: jest.fn(),
+    });
+    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams(`id=${mockID}`));
   });
 
-  const mockSummaryReport = {
-    domainStatus: [200, 404],
-    domainErrorStatus: 1,
-    domainRadar: {
-      categories: [
-        "Finance and Banking",
-        "Marine and Shipping",
-        "Logistics and Supply Chain Management",
-        "Entertainment and Media",
-        "Arts and Culture"
-      ],
-      series: [
-        {
-            name: "https://www.nedbank.co.za",
-            data: [
-                68.24797987937927,
-                15.913596749305725,
-                14.516602456569672,
-                0,
-                0
-            ],
-            group: "apexcharts-axis-0"
-        },
-        {
-            name: "https://www.readerswarehouse.co.za",
-            data: [
-                0,
-                0,
-                16.29459708929062,
-                23.511777818202972,
-                16.00102037191391
-            ],
-            group: "apexcharts-axis-0"
-        }
-      ]
-    },
-    industryClassification: {
-      unclassifiedUrls: ['https://www.example.com'],
-      industryPercentages: {
-        industries: ['E-commerce', 'Unknown'],
-        percentages: [75, 25],
-      },
-      weakClassification: [
-        {
-          url: 'https://www.example3.com',
-          metadataClass: 'E-commerce',
-          score: 21,
-        },
-      ],
-    },
-    domainMatch: {
-      percentageMatch: 75,
-      mismatchedUrls: [
-        {
-          url: 'https://www.example.com',
-          metadataClass: 'Automotive',
-          domainClass: 'Unknown',
-        },
-      ],
-    },
-    totalUrls: 3,
-    parkedUrls: ['https://www.example2.com'],
-    scrapableUrls: 2,
-    avgTime: 100,
-    metaRadar: {
-      categories: [
-        "Finance and Banking",
-        "Utilities",
-        "Marine Resources",
-        "Hospitality",
-        "Marine and Shipping",
-        "Telecommunications"
-      ],
-      series: [
-        {
-            name: "https://www.nedbank.co.za",
-            data: [
-                68.75752806663513,
-                18.95316243171692,
-                18.465912342071533,
-                0,
-                0,
-                0
-            ],
-            group: "apexcharts-axis-0"
-        },
-        {
-            name: "https://www.readerswarehouse.co.za",
-            data: [
-                0,
-                0,
-                0,
-                16.464106738567352,
-                15.834927558898926,
-                15.723402798175812
-            ],
-            group: "apexcharts-axis-0"
-        }
-      ]
-    }
-  };
-
-  const mockUser = {
-    uuid: '48787157-7555-4104-bafc-e2c95bbaa959',
-    emailVerified: true,
-  };
   
   it('renders the summary report page correctly', async () => {
     render(<SummaryReport />);
-    expect(screen.getByText('Summary Report')).toBeInTheDocument();
-    expect(screen.getByText('General stats')).toBeInTheDocument();
-    expect(screen.getByText('Domain match')).toBeInTheDocument();
-    expect(screen.getByText('Industry Classification Distribution')).toBeInTheDocument();
-    expect(screen.getByText('Website status')).toBeInTheDocument();
+    expect(screen.getByTestId('summary-title').textContent).toBe('Test Summary');
+
   });
+
 
   it('navigates back to scrape results on button click', () => {
     render(<SummaryReport />);
     fireEvent.click(screen.getByText('Back'));
     expect(mockBack).toHaveBeenCalled();
   });
+ 
+
+  describe('Download Report', () => {
+    it('should call jsPDF and download the PDF when download button is clicked', async () => {
+      render(<SummaryReport />);
+      const dropdownButton = screen.getByRole('button', { name: /export/i });
+      expect(dropdownButton).toBeInTheDocument();
+  
+      // Click the dropdown button to open the menu
+      fireEvent.click(dropdownButton);
+  
+      // Wait for the download button to appear
+      const downloadButton = await screen.findByTestId('download-report-button');
+      expect(downloadButton).toBeInTheDocument();
+  
+      // Create mock chart elements
+      const pieChart = document.createElement('div');
+      pieChart.id = 'pie-chart';
+      document.body.appendChild(pieChart);
+  
+      const barChart = document.createElement('div');
+      barChart.id = 'bar-chart';
+      document.body.appendChild(barChart);
+  
+      const radialChart = document.createElement('div');
+      radialChart.id = 'radial-chart';
+      document.body.appendChild(radialChart);
+  
+      const radarChart = document.createElement('div');
+      radialChart.id = 'radar-chart';
+      document.body.appendChild(radarChart);
+  
+      const areaChart = document.createElement('div');
+      radialChart.id = 'area-chart';
+      document.body.appendChild(areaChart);
+  
+      fireEvent.click(downloadButton);
+  
+      await waitFor(() => {
+        expect(jsPDF).toHaveBeenCalled();
+        expect(html2canvas).toHaveBeenCalledTimes(5);
+      });
+  
+      // Cleanup mock elements
+      document.body.removeChild(pieChart);
+      document.body.removeChild(barChart);
+      document.body.removeChild(radialChart);
+    });
+  });
+
+    
 
   it('displays general stats correctly', () => {
     render(<SummaryReport />);
@@ -232,213 +200,5 @@ describe('SummaryReport Page', () => {
 
     expect(metaRadar).toHaveClass('hidden');
     expect(domainRadar).toHaveClass('hidden');
-  });
-
-  it('should call jsPDF and download the PDF when download button is clicked', async () => {
-    render(<SummaryReport />);
-    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-    expect(dropdownButton).toBeInTheDocument();
-
-    // Click the dropdown button to open the menu
-    fireEvent.click(dropdownButton);
-
-    // Wait for the download button to appear
-    const downloadButton = await screen.findByTestId('download-report-button');
-    expect(downloadButton).toBeInTheDocument();
-
-    // Create mock chart elements
-    const pieChart = document.createElement('div');
-    pieChart.id = 'pie-chart';
-    document.body.appendChild(pieChart);
-
-    const barChart = document.createElement('div');
-    barChart.id = 'bar-chart';
-    document.body.appendChild(barChart);
-
-    const radialChart = document.createElement('div');
-    radialChart.id = 'radial-chart';
-    document.body.appendChild(radialChart);
-
-    const radarChart = document.createElement('div');
-    radialChart.id = 'radar-chart';
-    document.body.appendChild(radarChart);
-
-    const areaChart = document.createElement('div');
-    radialChart.id = 'area-chart';
-    document.body.appendChild(areaChart);
-
-    fireEvent.click(downloadButton);
-
-    await waitFor(() => {
-      expect(jsPDF).toHaveBeenCalled();
-      expect(html2canvas).toHaveBeenCalledTimes(5);
-    });
-
-    // Cleanup mock elements
-    document.body.removeChild(pieChart);
-    document.body.removeChild(barChart);
-    document.body.removeChild(radialChart);
-  });
-
-  it('should display a popup when the save button is clicked', async () => {
-    render(<SummaryReport />);
-  
-    // Ensure the component has rendered and the dropdown button is available
-    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-    expect(dropdownButton).toBeInTheDocument();
-  
-    // Click the dropdown button to open the menu
-    fireEvent.click(dropdownButton);
-  
-    // Wait for the save button to appear
-    const saveButton = await screen.findByTestId('save-report-button');
-    expect(saveButton).toBeInTheDocument();
-  
-    // Click the save button
-    fireEvent.click(saveButton);
-  
-    // wait for popup to appear
-    const modal = await screen.findByTestId('save-report-modal');
-    expect(modal).toBeInTheDocument();
-  });
-
-  it('should enter an error state when no report name is provided', async () => {
-    render(<SummaryReport />);
-  
-    // Ensure the component has rendered and the dropdown button is available
-    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-    expect(dropdownButton).toBeInTheDocument();
-  
-    // Click the dropdown button to open the menu
-    fireEvent.click(dropdownButton);
-  
-    // Wait for the save button to appear
-    const saveButton = await screen.findByTestId('save-report-button');
-    expect(saveButton).toBeInTheDocument();
-  
-    // Click the save button
-    fireEvent.click(saveButton);
-  
-    // wait for popup to appear
-    const modal = await screen.findByTestId('save-report-modal');
-    expect(modal).toBeInTheDocument();
-  
-    // Click the save button in the modal
-    const saveModalButton = screen.getByRole('button', { name: /Save/i });
-    expect(saveModalButton).toBeInTheDocument();
-    fireEvent.click(saveModalButton);
-  
-    await waitFor(() => {
-      expect(saveReport).not.toHaveBeenCalled();
-    });
-
-    // Ensure the error state is displayed in the Input component
-    const inputWithError = screen.getByLabelText('Report Name', { invalid: true, disabled: true });
-    expect(inputWithError).toBeInTheDocument();
-  });
-
-  it('should enter an error state if name is entered then removed', async () => {
-    render(<SummaryReport />);
-
-    // Ensure the component has rendered and the dropdown button is available
-    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-    expect(dropdownButton).toBeInTheDocument();
-
-    // Click the dropdown button to open the menu
-    fireEvent.click(dropdownButton);
-
-    // Wait for the save button to appear
-    const saveButton = await screen.findByTestId('save-report-button');
-    expect(saveButton).toBeInTheDocument();
-
-    // Click the save button
-    fireEvent.click(saveButton);
-
-    // wait for popup to appear
-    const modal = await screen.findByTestId('save-report-modal');
-    expect(modal).toBeInTheDocument();
-
-    // Enter a report name
-    const reportNameInput = screen.getByLabelText(/Report Name/i);
-    expect(reportNameInput).toBeInTheDocument();
-    fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
-
-    // Clear the report name
-    fireEvent.change(reportNameInput, { target: { value: '' } });
-
-    const inputWithError = screen.getByLabelText('Report Name', { invalid: true });
-    expect(inputWithError).toBeInTheDocument();
-  });
-
-  it('should call the saveReport function when the save button is clicked', async () => {
-      render(<SummaryReport />);
-    
-      // Ensure the component has rendered and the dropdown button is available
-      const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-      expect(dropdownButton).toBeInTheDocument();
-    
-      // Click the dropdown button to open the menu
-      fireEvent.click(dropdownButton);
-    
-      // Wait for the save button to appear
-      const saveButton = await screen.findByTestId('save-report-button');
-      expect(saveButton).toBeInTheDocument();
-    
-      // Click the save button
-      fireEvent.click(saveButton);
-    
-      // wait for popup to appear
-      const modal = await screen.findByTestId('save-report-modal');
-      expect(modal).toBeInTheDocument();
-
-      // Enter a report name
-      const reportNameInput = screen.getByLabelText(/Report Name/i);
-      expect(reportNameInput).toBeInTheDocument();
-      fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
-    
-      // Click the save button in the modal
-      const saveModalButton = screen.getByRole('button', { name: /Save/i });
-      expect(saveModalButton).toBeInTheDocument();
-      fireEvent.click(saveModalButton);
-    
-      await waitFor(() => {
-        expect(saveReport).toHaveBeenCalled();
-      });
-  });
-
-  it('should display a success message when the report is saved successfully', async () => {
-    render(<SummaryReport />);
-  
-    // Ensure the component has rendered and the dropdown button is available
-    const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
-    expect(dropdownButton).toBeInTheDocument();
-  
-    // Click the dropdown button to open the menu
-    fireEvent.click(dropdownButton);
-  
-    // Wait for the save button to appear
-    const saveButton = await screen.findByTestId('save-report-button');
-    expect(saveButton).toBeInTheDocument();
-  
-    // Click the save button
-    fireEvent.click(saveButton);
-  
-    // wait for popup to appear
-    const modal = await screen.findByTestId('save-report-modal');
-    expect(modal).toBeInTheDocument();
-
-    // Enter a report name
-    const reportNameInput = screen.getByLabelText(/Report Name/i);
-    expect(reportNameInput).toBeInTheDocument();
-    fireEvent.change(reportNameInput, { target: { value: 'Test Report' } });
-  
-    // Click the save button in the modal
-    const saveModalButton = screen.getByRole('button', { name: /Save/i });
-    expect(saveModalButton).toBeInTheDocument();
-    fireEvent.click(saveModalButton);
-  
-    await waitFor(() => {
-      expect(screen.getByText('Report saved successfully')).toBeDefined();
-    });
   });
 });

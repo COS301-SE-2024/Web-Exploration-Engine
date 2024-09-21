@@ -114,31 +114,31 @@ export const mockReport: ScraperResult = {
      zeroShotMetaDataClassify: [
       // top 3 categories
         {
-          label: 'example',
-          score: 0.1,
+          label: 'Industry 1',
+          score: 0.5,
         },
         {
-          label: 'example',
-          score: 0.1,
+          label: 'Industry 2',
+          score: 0.4,
         },
         {
-          label: 'example',
-          score: 0.1,
+          label: 'Industry 3',
+          score: 0.3,
         },
      ],
       zeroShotDomainClassify: [
         // top 3 categories
           {
-            label: 'example',
-            score: 0.1,
+            label: 'Domain Classification 1',
+            score: 0.155,
           },
           {
-            label: 'example',
-            score: 0.1,
+            label: 'Domain Classification 2',
+            score: 0.144,
           },
           {
-            label: 'example',
-            score: 0.1,
+            label: 'Domain Classification 3',
+            score: 0.122,
           },
       ],
     },
@@ -148,7 +148,7 @@ export const mockReport: ScraperResult = {
     contactInfo: {
       emails: ['example.com'],
       phones: ['123-456-7890'],
-      socialLinks: ['https://example.com'],
+      socialLinks: [],
     },
     time: 0,
     addresses: ['123 Example St'],
