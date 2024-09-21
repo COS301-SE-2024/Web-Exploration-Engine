@@ -1974,7 +1974,59 @@ function ResultsComponent() {
                     />
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
-                    Social Media stuff here
+                    {shareCountData ? (
+
+                      <div className='gap-6 grid grid-cols-2 sm:grid-cols-4'>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="div-images-total" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook.comment_count}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Comment Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="div-images-missing-alt" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook.reaction_count}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Reaction Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook.share_count}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Share Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-[#E60023]'>
+                              {shareCountData.Pinterest}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Pinterest Pin Count
+                            </div>
+                          </div>
+                        </div>
+
+                      </div> )
+                    : (
+                      <div>No social media data is currently available</div>
+                    )
+                    }
                   </div>
 
                   {/* Reviews */}
@@ -1988,7 +2040,8 @@ function ResultsComponent() {
                     />
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
-                    Social Media stuff here
+                    Review stuff
+
                   </div>
                 </div>
               </CardBody>
