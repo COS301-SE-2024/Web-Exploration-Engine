@@ -1,5 +1,5 @@
 'use server'
-import { LoginRequest, SignUpRequest } from '../models/AuthModels';
+import { LoginRequest, SignUpRequest } from '../../models/AuthModels';
 import { createClient } from '../utils/supabase/server';
 
 export async function login(req: LoginRequest) {

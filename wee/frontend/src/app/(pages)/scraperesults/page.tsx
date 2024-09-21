@@ -19,7 +19,7 @@ import {
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import { ScraperResult, Result, ErrorResponse} from '../../models/ScraperModels';
+import { ScraperResult, Result, ErrorResponse} from '../../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 import { pollForResult } from '../../services/PubSubService';

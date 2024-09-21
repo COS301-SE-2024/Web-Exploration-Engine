@@ -10,8 +10,8 @@ import { useScrapingContext } from '../../src/app/context/ScrapingContext'
 import jsPDF from 'jspdf';
 import { saveReport } from '../../src/app/services/SaveReportService';
 // models
-import { ReportRecord } from '../../src/app/models/ReportModels';
-import { ScraperResult } from '../../src/app/models/ScraperModels';
+import { ReportRecord } from '../../src/models/ReportModels';
+import { ScraperResult } from '../../src/models/ScraperModels';
 import '@testing-library/jest-dom';
 import exp from 'constants';
 

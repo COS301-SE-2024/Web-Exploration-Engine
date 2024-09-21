@@ -6,8 +6,11 @@ import { useUserContext } from '../../src/app/context/UserContext';
 import { getReports, deleteReport } from '../../src/app/services/SaveReportService';
 import { useRouter } from 'next/navigation';
 import '@testing-library/jest-dom';
-
 import { createClient } from '../../src/app/utils/supabase/client';
+
+// import mocks
+import { mockReports } from '../../src/mocks/reportMocks';
+import { mockSummaries } from '../../src/mocks/reportMocks';
 
 jest.mock('../../src/app/utils/supabase/client', () => ({
   createClient: jest.fn(),
@@ -41,91 +44,7 @@ jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
 
-describe('SavedReports Page', () => {
-  const mockReports = [
-    {
-      id: 0,
-      userId: '1ad80d59-e8b1-426c-8254-4cb96abc4857',
-      reportName: 'Test Report',
-      reportData: { 
-        url: 'https://example.com',
-        domainStatus: "live",
-        robots: {
-          baseUrl: 'https://example.com',
-          allowedPaths: [],
-          disallowedPaths: [],
-          isUrlScrapable: true,
-          isBaseUrlAllowed: true,
-        },
-        metadata: {
-          title: 'Example',
-          description: 'Example description',
-          keywords: 'example, keywords',
-          ogTitle: 'Example',
-          ogDescription: 'Example description',
-          ogImage: 'https://example.com/image.jpg',
-        },
-        industryClassification: {
-          metadataClass: {
-            label: 'Example',
-            score: 0.5,
-          },
-          domainClass: {
-            label: 'Example',
-            score: 0.5,
-          },
-        },
-        logo: 'https://example.com/logo.jpg',
-        images: ['https://example.com/image.jpg'],
-        slogan: 'Example slogan',
-        time: 0,
-      },
-      isSummary: false,
-      savedAt: '2021-01-01',
-    },
-  ];
-
-  const mockSummaries = [
-    {
-      id: 1,
-      userId: '48787157-7555-4104-bafc-e2c95bbaa959',
-      reportName: 'Test Report',
-      reportData: {
-        domainStatus: [200, 404],
-        domainErrorStatus: 1,
-        industryClassification: {
-          unclassifiedUrls: ['https://www.example.com'],
-          industryPercentages: {
-            industries: ['E-commerce', 'Unknown'],
-            percentages: [75, 25],
-          },
-          weakClassification: [
-            {
-              url: 'https://www.example3.com',
-              metadataClass: 'E-commerce',
-              score: 21,
-            },
-          ],
-        },
-        domainMatch: {
-          percentageMatch: 75,
-          mismatchedUrls: [
-            {
-              url: 'https://www.example.com',
-              metadataClass: 'Automotive',
-              domainClass: 'Unknown',
-            },
-          ],
-        },
-        totalUrls: 3,
-        parkedUrls: ['https://www.example2.com'],
-        scrapableUrls: 2,
-        avgTime: 100,
-      },
-      isSummary: true,
-      savedAt: '2021-01-01',
-    },
-  ] 
+describe('SavedReports Page', () => { 
 
   beforeEach(() => {
     (useUserContext as jest.Mock).mockReturnValue({

@@ -1,5 +1,5 @@
 'use server'
-import { ScheduleTask, GetSchedulesResponse, ScheduleTaskResponse, ScheduleResult } from '../models/ScheduleModels'
+import { ScheduleTask, GetSchedulesResponse, ScheduleTaskResponse, ScheduleResult } from '../../models/ScheduleModels'
 import { createClient } from '../utils/supabase/server';
 
 const supabaseClient = createClient();

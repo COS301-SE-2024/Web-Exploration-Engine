@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import { AuthResponse } from "../models/AuthModels";
-import { ReportRecord } from "../models/ReportModels";
+import { AuthResponse } from "../../models/AuthModels";
+import { ReportRecord } from "../../models/ReportModels";
 
 interface UserConextType   {
     user: AuthResponse | null;

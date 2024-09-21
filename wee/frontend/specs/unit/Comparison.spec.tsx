@@ -4,7 +4,7 @@ import Comparison from '../../src/app/(pages)/comparison/page';
 import '@testing-library/jest-dom';
 import {useScrapingContext} from '../../src/app/context/ScrapingContext';
 import { useRouter } from 'next/navigation';
-import { LightHouseAnalysis, LightHouseRecommendations, LightHouseScore, MetaDescriptionAnalysis, MobileFriendlinessAnalysis, SiteSpeedAnalysis, UniqueContentAnalysis, ImageAnalysis, RepeatedWords, ReasonsMap, SEOError } from '../../src/app/models/ScraperModels';
+import { LightHouseAnalysis, LightHouseRecommendations, LightHouseScore, MetaDescriptionAnalysis, MobileFriendlinessAnalysis, SiteSpeedAnalysis, UniqueContentAnalysis, ImageAnalysis, RepeatedWords, ReasonsMap, SEOError } from '../../src/models/ScraperModels';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),

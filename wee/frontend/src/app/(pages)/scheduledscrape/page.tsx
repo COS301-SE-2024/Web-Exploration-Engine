@@ -9,7 +9,7 @@ import { MdErrorOutline } from "react-icons/md";
 import { now, getLocalTimeZone } from "@internationalized/date";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ScheduleTask, GetSchedulesResponse } from '../../models/ScheduleModels';
+import { ScheduleTask, GetSchedulesResponse } from '../../../models/ScheduleModels';
 import { createScheduleTask, getSchedules, updateKeywords, deleteSchedule } from '../../services/ScheduledScrapingService';
 import { useUserContext } from '../../context/UserContext';
 import { on } from 'events';

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { Summary, ScraperResult, ErrorResponse } from "../models/ScraperModels";
+import { Summary, ScraperResult, ErrorResponse } from "../../models/ScraperModels";
 
 interface ScrapingContextType {
     results: ScraperResult[];

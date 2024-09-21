@@ -1,5 +1,5 @@
 'use client';
-import {Tabs, Tab, Card, CardBody, Spinner} from "@nextui-org/react";
+import {Tab, Card, CardBody, Spinner} from "@nextui-org/react";
 import React, { Suspense, useEffect, useState } from 'react';
 import WEEPagination from '../../components/Util/Pagination';
 import {
