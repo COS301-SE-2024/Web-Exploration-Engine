@@ -37,6 +37,7 @@ import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pu
 import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
 import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
 import { result } from 'cypress/types/lodash';
+import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface Classifications {
   label: string;
@@ -2022,10 +2023,10 @@ function ResultsComponent() {
                           </div>
                         </div>
 
-                      </div> )
-                    : (
-                      <div>No social media data is currently available</div>
-                    )
+                      </div>)
+                      : (
+                        <div>No social media data is currently available</div>
+                      )
                     }
                   </div>
 
@@ -2040,8 +2041,28 @@ function ResultsComponent() {
                     />
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
-                    Review stuff
-
+                    {reviews ? (
+                      <div>
+                        <ColumnChartWithLables
+                          dataLabel={[
+                            reviews.starRatings[4].stars.toString() + ' stars',
+                            reviews.starRatings[3].stars.toString() + ' stars',
+                            reviews.starRatings[2].stars.toString() + ' stars',
+                            reviews.starRatings[1].stars.toString() + ' stars',
+                            reviews.starRatings[0].stars.toString() + ' star',
+                          ]}
+                          dataSeries={[
+                            reviews.starRatings[4].numReviews,
+                            reviews.starRatings[3].numReviews,
+                            reviews.starRatings[2].numReviews,
+                            reviews.starRatings[1].numReviews,
+                            reviews.starRatings[0].numReviews,
+                          ]}
+                        />
+                      </div>
+                    ) : (
+                      <div>abc</div>
+                    )}
                   </div>
                 </div>
               </CardBody>
