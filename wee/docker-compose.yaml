@@ -8,6 +8,7 @@ services:
     env_file:
       - webscraper/.env
     command: sh -c 'redis-server --requirepass "$$REDIS_PASSWORD"'
+    restart: always
 
   webscraper:
     build: 
@@ -33,6 +34,7 @@ services:
       - redis-cache
     volumes:
       - /home/techodyssey/logs/webscraper:/logs
+    restart: always
 
   api-service:
     build:
@@ -47,6 +49,7 @@ services:
     depends_on:
       webscraper:
         condition: service_healthy
+    restart: always
 
   frontend:
     build:
@@ -61,3 +64,4 @@ services:
     depends_on:
       - webscraper 
       - api-service
+    restart: always
