@@ -4,8 +4,6 @@ import path from 'path';
 
 // Custom format to handle message and service extraction
 const customFormat = winston.format((info) => {
-  console.log(info);
-  console.log('==========================================');
 
   // Check if the message is passed as a string and the second argument is a string
   if (
@@ -19,7 +17,7 @@ const customFormat = winston.format((info) => {
       info.meta = splat; // Keep the original message
     }
   }
-  console.log(info);
+  
   return info;
 })();
 

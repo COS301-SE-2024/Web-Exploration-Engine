@@ -4,9 +4,6 @@ import path from 'path';
 
 // Custom format to handle message and service extraction
 const customFormat = winston.format((info) => {
-  console.log(info);
-  console.log('==========================================');
-
   // Check if the message is passed as a string and the second argument is a string
   if (
     typeof info.message === 'string' &&
@@ -19,7 +16,6 @@ const customFormat = winston.format((info) => {
       info.meta = splat; // Keep the original message
     }
   }
-  console.log(info);
   return info;
 })();
 
@@ -32,11 +28,10 @@ const getLogger = (fileName = 'application') => {
     maxFiles: '100d',
   });
 
-
   // Create the logger instance
   const logger = winston.createLogger({
     format: winston.format.combine(
-      winston.format.timestamp(),  
+      winston.format.timestamp(),
       customFormat,
       winston.format.json() // Output the logs in JSON format
     ),
