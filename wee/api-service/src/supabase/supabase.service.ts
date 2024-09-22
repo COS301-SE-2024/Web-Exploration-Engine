@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
 import { ScheduleTask, UpdateScheduleTask, ScheduleTaskResponse, updateKeywordResult } from '../models/scheduleTaskModels';
-import logger from '../logging/webscraperlogger';
-const serviceName = "[SupabaseService]";
 
 @Injectable()
 export class SupabaseService {
@@ -87,7 +85,6 @@ export class SupabaseService {
       .eq('id', id);
 
     if (error) {
-      logger.info(serviceName,`Failed to update schedule`,error.message);
       throw new Error(`Failed to update schedule: ${error.message}`);
     }
     return data;
@@ -125,7 +122,6 @@ export class SupabaseService {
       .eq('id', id);
 
     if (error) {
-      logger.error(serviceName,`Failed to update keyword result`,error.message);
       throw new Error(`Failed to update keyword result: ${error.message}`);
     }
     return data;
@@ -133,7 +129,6 @@ export class SupabaseService {
 
   async getDueSchedules() {
     console.log('Getting due schedules...');
-    logger.info(serviceName,'Getting due schedules');
 
     // get the current date and time
     const now = new Date();
@@ -144,7 +139,6 @@ export class SupabaseService {
       .lte('next_scrape', now.toISOString());
 
     if (error) {
-      logger.error(serviceName,`Failed to fetch due schedules: ${error.message}`);
       throw new Error(`Failed to fetch due schedules: ${error.message}`);
     }
     return data as ScheduleTaskResponse[];
@@ -159,7 +153,6 @@ export class SupabaseService {
       try {
         nextScrape = this.calculateNextScrapeTime(frequency);
       } catch (error) {
-        logger.error(serviceName,`Failed to calculate next scrape time: ${error.message}`);
         throw new Error(`Failed to calculate next scrape time: ${error.message}`);
       }
 
@@ -170,7 +163,6 @@ export class SupabaseService {
         .eq('id', id);
 
       if (error) {
-        logger.error(serviceName,`Failed to update next scrape time: ${error.message}`);
         throw new Error(`Failed to update next scrape time: ${error.message}`);
       }
     
@@ -218,5 +210,4 @@ export class SupabaseService {
   // }
 
 }
-
 
