@@ -129,6 +129,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wee
+            docker compose down
             docker compose build --no-cache
             docker compose up --detach --force-recreate
           command_timeout: 900s
