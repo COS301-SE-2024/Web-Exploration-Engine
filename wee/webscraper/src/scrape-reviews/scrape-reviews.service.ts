@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { ReviewData } from '../models/ServiceModels';
-import logger from '../../logging/webscraperlogger';
-const serviceName = '[ScrapeReviewsService]';
 
 @Injectable()
 export class ScrapeReviewsService {
   async scrapeReviews(url: string, browser: puppeteer.Browser): Promise<ReviewData> {
     console.log(`Starting review scraping for URL: ${url}`);
-    logger.info(serviceName,`Starting review scraping for URL: ${url}`,url);
 
     const businessName = this.extractBusinessNameFromUrl(url);
     if (!businessName) {
@@ -189,7 +186,6 @@ export class ScrapeReviewsService {
       const hostname = new URL(url).hostname;
       const businessName = hostname.replace('www.', '').split('.')[0].replace(/-/g, ' ');
 
-      logger.info(serviceName,`Business name extracted from URL`,businessName);
       console.log(`Business name extracted from URL: ${businessName}`);
       return businessName;
     } catch (error) {
