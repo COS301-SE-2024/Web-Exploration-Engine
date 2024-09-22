@@ -14,7 +14,7 @@ import {
   Chip,
   Button,
   Spinner,
-  Selection
+  Tooltip
 } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
@@ -23,6 +23,12 @@ import { ScraperResult, Result, ErrorResponse} from '../../models/ScraperModels'
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 import { pollForResult } from '../../services/PubSubService';
+import MockGithubResult from '../../../../cypress/fixtures/pub-sub/github-scraper-result.json'
+import MockSteersResult from '../../../../cypress/fixtures/pub-sub/steers-scraper-result.json'
+import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-result.json'
+import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
+import useBeforeUnload from '../../hooks/useBeforeUnload';
+import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-result.json'
 
 function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
@@ -50,6 +56,8 @@ function ResultsComponent() {
   const [selectedCrawlableFilter, setSelectedCrawlableFilter] =
     React.useState('');
   const router = useRouter();
+
+  useBeforeUnload();
 
   const filteredResultItems = React.useMemo(() => {
     let filteredUrls = [...results];
@@ -207,7 +215,21 @@ const getScrapingResults = async (url: string) => {
 
     // Poll the API until the scraping is done
     try {
-      const result = await pollForResult(url) as Result;
+      let result = await pollForResult(url) as Result;
+      
+      if ( url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') ) {
+        console.log(process.env.Tes)
+          if (url.includes('mock.test.wimpy'))
+            result = MockWimpyResult;
+          else if (url.includes('mock.test.github'))
+            result = MockGithubResult;
+          else if (url.includes('mock.test.steers'))
+            result = MockSteersResult;
+          else if (url.includes('mock.test.insecure'))
+            result = MockInsecureResult;
+          else if (url.includes('mock.test.cisco'))
+            result = MockCiscoResult;
+        }
 
       if ('errorStatus' in result) {
         const errorResponse = { ...result, url };
@@ -424,9 +446,9 @@ const getScrapingResults = async (url: string) => {
             </h1>
             <Button
               data-testid="btn-report-summary"
-              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
               onClick={handleSummaryPage}
-              disabled={isLoading}
+              disabled={isLoading || results.length === 1}
             >
               View overall summary report
             </Button>

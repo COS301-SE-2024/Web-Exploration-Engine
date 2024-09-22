@@ -62,15 +62,22 @@ For local development (you need the redis docker container running BEFORE starti
 ```powershell
 docker pull redis
 ``` 
+
 ```powershell
 docker run -d -p 6379:6379 --name myRedisContainer redis redis-server --requirepass <ADD YOUR REDIS PASSWORD HERE>
 ``` 
+
+To re-run container : 
+
+```powershell
+docker start myRedisContainer
+```
 
 Redis Notes:
 View keys currently in cache:
 ```powershell
 keys *
-``` 
+```
 
 Get object stored to the corresponding key:
 ```powershell

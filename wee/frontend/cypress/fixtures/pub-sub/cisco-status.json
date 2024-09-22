@@ -1,0 +1,4 @@
+{
+    "status": "completed",
+    "pollingURL":"/status?type=scrape&url=https%3A%2F%2Fmeraki.cisco.com%2F"
+}
