@@ -66,7 +66,6 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
-
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -104,144 +103,151 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrape(url: string) {
-    console.log("Started scaping")
-    const start = performance.now();
+  //   console.log("Started scaping")
+  //   const start = performance.now();
 
-    // create puppeteer instance
-    const proxy = this.proxyService.getProxy();
-    let browser: puppeteer.Browser;
-    try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
+  //   // create puppeteer instance
+  //   const proxy = this.proxyService.getProxy();
+  //   let browser: puppeteer.Browser;
+  //   try {
+  //     browser = await puppeteer.launch({
+  //       args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+  //     });
 
-    } catch (error) {
-      console.error('Failed to launch browser', error);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: `Failed to launch browser ${error}`,
-      } as ErrorResponse;
-    }
+  //   } catch (error) {
+  //     console.error('Failed to launch browser', error);
+  //     return {
+  //       errorStatus: 500,
+  //       errorCode: '500 Internal Server Error',
+  //       errorMessage: `Failed to launch browser ${error}`,
+  //     } as ErrorResponse;
+  //   }
 
-    const data = {
-      url: '',
-      domainStatus: '',
-      robots: null as RobotsResponse | ErrorResponse | null,
-      metadata: null as Metadata | ErrorResponse | null,
-      industryClassification: null as IndustryClassification | null,
-      logo: '',
-      images: [],
-      slogan: '',
-      contactInfo: { emails: [], phones: [] },
-      addresses: [],
-      screenshot:'' as string | ErrorResponse,
-      seoAnalysis: null as any,
-      sentiment: null as SentimentClassification | null,
-      scrapeNews: [],
-      shareCountdata: null as any,
-      time: 0,
-      reviews: null as ReviewData | null,
-    } as ScrapeResult;
+  //   const data = {
+  //     url: '',
+  //     domainStatus: '',
+  //     robots: null as RobotsResponse | ErrorResponse | null,
+  //     metadata: null as Metadata | ErrorResponse | null,
+  //     industryClassification: null as IndustryClassification | null,
+  //     logo: '',
+  //     images: [],
+  //     slogan: '',
+  //     contactInfo: { emails: [], phones: [] },
+  //     addresses: [],
+  //     screenshot:'' as string | ErrorResponse,
+  //     seoAnalysis: null as any,
+  //     sentiment: null as SentimentClassification | null,
+  //     scrapeNews: [],
+  //     shareCountdata: null as any,
+  //     time: 0,
+  //     reviews: null as ReviewData | null,
+  //   } as ScrapeResult;
 
-    data.url = url;
+  //   data.url = url;
 
-  // Scrape robots.txt status concurrently
-    const robotsPromise = this.robotsService.readRobotsFile(url);
-    const statusPromise = this.scrapeStatusService.scrapeStatus(url);
+  // // Scrape robots.txt status concurrently
+  //   const robotsPromise = this.robotsService.readRobotsFile(url);
+  //   const statusPromise = this.scrapeStatusService.scrapeStatus(url);
 
-    const [robots, domainStatus] = await Promise.all([robotsPromise, statusPromise]);
+  //   const [robots, domainStatus] = await Promise.all([robotsPromise, statusPromise]);
 
-    data.domainStatus = domainStatus;
+  //   data.domainStatus = domainStatus;
 
-    if ('errorStatus' in robots) {
-      data.robots = robots as ErrorResponse;
-      // close browser
-      await browser.close();
-      // stop early if robots.txt scraping fails
-      const end = performance.now();
-      const time = (end - start) / 1000;
-      data.time = parseFloat(time.toFixed(4));
-      return data;
-    }
+  //   if ('errorStatus' in robots) {
+  //     data.robots = robots as ErrorResponse;
+  //     // close browser
+  //     await browser.close();
+  //     // stop early if robots.txt scraping fails
+  //     const end = performance.now();
+  //     const time = (end - start) / 1000;
+  //     data.time = parseFloat(time.toFixed(4));
+  //     return data;
+  //   }
 
-    data.robots = robots as RobotsResponse;
-
-
-  // Serially scrape metadata and all services that depend on only robots.txt
-    const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
-    const screenshotPromise = this.screenshotService.captureScreenshot(url, data.robots, browser);
-    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, browser);
-    const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
+  //   data.robots = robots as RobotsResponse;
 
 
-
-    const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
-
-    if ('errorStatus' in screenshot) {
-      data.screenshot = screenshot as ErrorResponse;
-    } else {
-      data.screenshot = screenshot.screenshot;
-    }
-
-    // add error handling for contactInfo and addresses
-    data.contactInfo = contactInfo;
-
-    data.addresses = addresses.addresses;
-
-    if ('errorStatus' in metadata) {
-      data.metadata = metadata as ErrorResponse;
-      // close browser
-      await browser.close();
-      const end = performance.now();
-      const time = (end - start) / 1000;
-      data.time = parseFloat(time.toFixed(4));
-      return data; // return early if metadata scraping fails
-    } else {
-      data.metadata = metadata as Metadata;
-    }
-
-    data.seoAnalysis = seoAnalysis;
-
-  // Scrape services dependent on metadata
-    const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
-    const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
-    const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
-    const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
-
-    const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
-    const shareCountPromise = this.shareCountService.getShareCount(url);
-    const reviewsPromise = this.reviewsService.scrapeReviews(url, browser);
-
-    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
-      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
-    ]);
-
-    // add error handling industryClassification
-    data.industryClassification = industryClassification as IndustryClassification;
-
-    data.logo = logo;
-
-    data.images = images;
-
-    data.sentiment = sentimentAnalysis;
+  // // Serially scrape metadata and all services that depend on only robots.txt
+  //   const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
+  //   const screenshotPromise = this.screenshotService.captureScreenshot(url, data.robots, browser);
+  //   const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, browser);
+  //   const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
+  //   const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
 
 
-    data.scrapeNews = newsScraping;
+
+  //   const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
+
+  //   if ('errorStatus' in screenshot) {
+  //     data.screenshot = screenshot as ErrorResponse;
+  //   } else {
+  //     data.screenshot = screenshot.screenshot;
+  //   }
+
+  //   // add error handling for contactInfo and addresses
+  //   data.contactInfo = contactInfo;
+
+  //   data.addresses = addresses.addresses;
+
+  //   if ('errorStatus' in metadata) {
+  //     data.metadata = metadata as ErrorResponse;
+  //     // close browser
+  //     await browser.close();
+  //     const end = performance.now();
+  //     const time = (end - start) / 1000;
+  //     data.time = parseFloat(time.toFixed(4));
+  //     return data; // return early if metadata scraping fails
+  //   } else {
+  //     data.metadata = metadata as Metadata;
+  //   }
+
+  //   data.seoAnalysis = seoAnalysis;
+
+  // // Scrape services dependent on metadata
+  //   const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
+  //   const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
+  //   const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
+  //   const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
+
+  //   const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
+  //   const shareCountPromise = this.shareCountService.getShareCount(url);
+  //   const reviewsPromise = this.reviewsService.scrapeReviews(url, browser);
+
+  //   const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
+  //     industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
+  //   ]);
+
+  //   // add error handling industryClassification
+  //   data.industryClassification = industryClassification as IndustryClassification;
+
+  //   data.logo = logo;
+
+  //   data.images = images;
+
+  //   data.sentiment = sentimentAnalysis;
+
+
+  //   data.scrapeNews = newsScraping;
     
-    data.shareCountdata = shareCount;
+  //   data.shareCountdata = shareCount;
 
-    data.reviews = reviews;
+  //   data.reviews = reviews;
 
-    // close browser
-    await browser.close();
+  //   // close browser
+  //   await browser.close();
 
-    const end = performance.now();
-    const time = (end - start) / 1000;
-    data.time = parseFloat(time.toFixed(4));
+  //   const end = performance.now();
+  //   const time = (end - start) / 1000;
+  //   data.time = parseFloat(time.toFixed(4));
 
-    return data;
+  //   return data;
+
+   return {
+      errorStatus: 500,
+      errorCode: '500 Internal Server Error',
+      errorMessage: 'Not implemented',
+    } as ErrorResponse;
+   
   }
 
   async readRobotsFile(url: string) {
@@ -560,6 +566,98 @@ export class ScraperService implements OnModuleInit {
     await browser.close();
     return keywordAnalysis;
   }
+  
+  async getShareCount(url: string) {
+    try {
+      const shareCount = await this.shareCountService.getShareCount(url);
+      return shareCount;
+    } catch (error) {
+      logger.error(`${serviceName} Failed to get share count for ${url}: ${error}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Failed to get share count for ${url}: ${error}`,
+      } as ErrorResponse;
+    }
+  }
+
+  async scrapeNews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+
+    try {
+      const newsData = await this.newsScraperService.fetchNewsArticles(url);
+      return newsData;
+    } catch (error) {
+      logger.error(`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Error scraping news: ${error instanceof Error ? error.message : String(error)}`,
+      } as ErrorResponse;
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
+  }
+
+  async scrapeReviews(url: string) {
+    const robotsResponse = await this.robotsService.readRobotsFile(url);
+    if ('errorStatus' in robotsResponse) {
+      return robotsResponse;
+    }
+  
+    let browser: puppeteer.Browser;
+    const proxy = this.proxyService.getProxy();
+  
+    try {
+      browser = await puppeteer.launch({
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+    } catch (error) {
+      logger.error(`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: 'Failed to launch browser',
+      } as ErrorResponse;
+    }
+  
+    try {
+      const reviewsData = await this.reviewsService.scrapeReviews(url, browser);
+      return reviewsData;
+    } catch (error) {
+      logger.error(`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      return {
+        errorStatus: 500,
+        errorCode: '500 Internal Server Error',
+        errorMessage: `Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`,
+      } as ErrorResponse;
+    } finally {
+      if (browser) {
+        await browser.close();
+      }
+    }
+  }
 
   async listenForScrapingTasks() {
     const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
@@ -657,13 +755,19 @@ export class ScraperService implements OnModuleInit {
 
         try {
           const result = await this.scrapeWebsite(data, type);
-          const completeData = {
-            status: 'completed',
-            result,
-          };
-          await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
-
-          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+          if ('errorStatus' in result) {
+            await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error', error: result }));
+            console.error(`Error scraping URL: ${url}, Type: ${type}`);
+            // retry?
+          } else {
+            const completeData = {
+              status: 'completed',
+              result,
+            };
+            await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+            console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+          }
+          
           // Performance Logging
           const duration = performance.now() - start;
           console.log(`Duration of ${serviceName} : ${duration}`);
@@ -677,19 +781,6 @@ export class ScraperService implements OnModuleInit {
     }
   }
 
-  async getShareCount(url: string) {
-    try {
-      const shareCount = await this.shareCountService.getShareCount(url);
-      return shareCount;
-    } catch (error) {
-      logger.error(`${serviceName} Failed to get share count for ${url}: ${error}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: `Failed to get share count for ${url}: ${error}`,
-      } as ErrorResponse;
-    }
-  }
   async getCachedData(cacheKey: string) {
     const cachedDataString:string = await this.cacheManager.get(cacheKey);
     if (cachedDataString) {
@@ -706,83 +797,6 @@ export class ScraperService implements OnModuleInit {
     }
     return null;
   }
-  async scrapeNews(url: string) {
-    const robotsResponse = await this.robotsService.readRobotsFile(url);
-    if ('errorStatus' in robotsResponse) {
-      return robotsResponse;
-    }
-
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
-
-    try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
-    } catch (error) {
-      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
-      } as ErrorResponse;
-    }
-
-    try {
-      const newsData = await this.newsScraperService.fetchNewsArticles(url);
-      return newsData;
-    } catch (error) {
-      logger.error(`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: `Error scraping news: ${error instanceof Error ? error.message : String(error)}`,
-      } as ErrorResponse;
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
-  }
-  async scrapeReviews(url: string) {
-    const robotsResponse = await this.robotsService.readRobotsFile(url);
-    if ('errorStatus' in robotsResponse) {
-      return robotsResponse;
-    }
-  
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
-  
-    try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
-    } catch (error) {
-      logger.error(`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
-      } as ErrorResponse;
-    }
-  
-    try {
-      const reviewsData = await this.reviewsService.scrapeReviews(url, browser);
-      return reviewsData;
-    } catch (error) {
-      logger.error(`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: `Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`,
-      } as ErrorResponse;
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
-  }
-  
 
 }
 
