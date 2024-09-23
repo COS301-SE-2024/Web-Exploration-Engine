@@ -1950,67 +1950,15 @@ function ResultsComponent() {
             <Card>
               <CardBody>
                 <div>
-                  {/* News Sentiment */}
-                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
-                    News Sentiment
-                    <InfoPopOver
-                      data-testid="popup-news-sentiment"
-                      heading="News Sentiment"
-                      content="More info here"
-                      placement="right-end"
-                    />
-                  </h3>
-                  
-                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
-                    {scrapeNews && scrapeNews.length > 0 ? (
-                      <>
-                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4'>
-                          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
-                            Average News Sentiment
-                          </h3>
-
-                          <DonutChart
-                            dataLabel={['Positive', 'Neutral', 'Negative']}
-                            dataSeries={[
-                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / scrapeNews.length) * 100,
-                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / scrapeNews.length) * 100,
-                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / scrapeNews.length) * 100
-                            ]}
-                            legendPosition='right'
-                          />
-                        </div>
-                        <div>
-                          {scrapeNews.map((news) => (
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:flex md:justify-between my-3'>
-                              <div>
-                                <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
-                                  {news.title}
-                                </div>
-                                <div><span className='font-poppins-semibold'>Published on: </span>{news.pubDate}</div>
-                                <div><span className='font-poppins-semibold'>Source: </span>{news.source}</div>
-                              </div>
-                              <div className='flex justify-around mt-4 md:mt-0'>
-                                <CircularProgressComparison label="Positive" value={news.sentimentScores.positive * 100} />
-                                <CircularProgressComparison label="Neutral" value={news.sentimentScores.neutral * 100} />
-                                <CircularProgressComparison label="Negative" value={news.sentimentScores.negative * 100} />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
-                    ) : (
-                      <div>No news sentiment data is currently available</div>
-                    )}
-
-                  </div>
 
                   {/* Social Media */}
                   <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
-                    Social Media
+                    Social Media Engagement Metrics
                     <InfoPopOver
                       data-testid="popup-social-media"
-                      heading="Social Media"
-                      content="More info here"
+                      heading="Social Media Engagement Metrics"
+                      content="This data reflects engagement metrics from social media platforms, including Facebook reactions, comments, shares, and Pinterest pins. It provides insights into how these interactions influence visibility 
+                      and audience engagement."
                       placement="right-end"
                     />
                   </h3>
@@ -2168,6 +2116,60 @@ function ResultsComponent() {
                     ) : (
                       <div>There are no review data currently available</div>
                     )}
+                  </div>
+
+                  {/* News Sentiment */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    News Sentiment
+                    <InfoPopOver
+                      data-testid="popup-news-sentiment"
+                      heading="News Sentiment"
+                      content="More info here"
+                      placement="right-end"
+                    />
+                  </h3>
+
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {scrapeNews && scrapeNews.length > 0 ? (
+                      <>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4'>
+                          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+                            Average News Sentiment
+                          </h3>
+
+                          <DonutChart
+                            dataLabel={['Positive', 'Neutral', 'Negative']}
+                            dataSeries={[
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / scrapeNews.length) * 100,
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / scrapeNews.length) * 100,
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / scrapeNews.length) * 100
+                            ]}
+                            legendPosition='right'
+                          />
+                        </div>
+                        <div>
+                          {scrapeNews.map((news) => (
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:flex md:justify-between my-3'>
+                              <div>
+                                <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
+                                  {news.title}
+                                </div>
+                                <div><span className='font-poppins-semibold'>Published on: </span>{news.pubDate}</div>
+                                <div><span className='font-poppins-semibold'>Source: </span>{news.source}</div>
+                              </div>
+                              <div className='flex justify-around mt-4 md:mt-0'>
+                                <CircularProgressComparison label="Positive" value={news.sentimentScores.positive * 100} />
+                                <CircularProgressComparison label="Neutral" value={news.sentimentScores.neutral * 100} />
+                                <CircularProgressComparison label="Negative" value={news.sentimentScores.negative * 100} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div>No news sentiment data is currently available</div>
+                    )}
+
                   </div>
                 </div>
               </CardBody>
