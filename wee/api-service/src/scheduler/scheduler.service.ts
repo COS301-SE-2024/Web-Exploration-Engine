@@ -3,6 +3,7 @@ import * as cron from 'node-cron';
 import axios from 'axios';
 import { SupabaseService } from '../supabase/supabase.service';
 import { PubSubService } from '../pub-sub/pub_sub.service';
+import { EmailService } from '../email-service/email.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
 import logger from '../logging/webscraperlogger';
@@ -15,7 +16,8 @@ export class SchedulerService {
 
   constructor(
     private readonly supabaseService: SupabaseService,
-    private readonly pubsubService: PubSubService
+    private readonly pubsubService: PubSubService,
+    private readonly emailService: EmailService 
   ) {
     logger.info(serviceName,'Scheduler service initialized');
     this.topicName = process.env.GOOGLE_CLOUD_TOPIC;
@@ -86,56 +88,7 @@ export class SchedulerService {
       this.isRunning = false; // Release lock
     }
   }
-  
-
-  // async pollForResults(endpoints: string[], schedule: ScheduleTaskResponse) {
-  //   const maxRetries = 20;
-  //   const retryDelay = 10000; // 10 seconds
-  //   const completedEndpoints: string[] = [];
-  
-  //   // Helper function to poll a single endpoint
-  //   const pollSingleEndpoint = async (endpoint: string) => {
-  //     if (completedEndpoints.includes(endpoint)) {
-  //       return; // Skip if already completed
-  //     }
-  //     for (let attempt = 0; attempt < maxRetries; attempt++) {
-
-  //       if (completedEndpoints.includes(endpoint)) {
-  //         return; // Skip if already completed
-  //       }
-
-  //       try {
-  //         logger.info(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
-  //         if (!endpoint.includes(encodeURIComponent(schedule.url))) {
-  //           attempt--;
-  //           return;
-
-  //         }
-  //         const response = await axios.get(endpoint);
-  
-  //         if (response.data && response.data.status === 'completed') {
-  //           completedEndpoints.push(endpoint);
-  //           logger.info(serviceName,'Updating next scrape time for:', schedule.url);
-  //           await this.supabaseService.updateNextScrapeTime(schedule);
-  //           await this.handleApiResults(response.data.result, schedule);
-  //           break;
-  //         } else {
-  //           await this.delay(retryDelay); // Delay before retrying
-  //         }
-  //       } catch (error) {
-  //         // Log the error and delay before retrying
-  //         await this.delay(retryDelay);
-  //       }
-  //     }
-  //   };
-  
-  //   // Create an array of promises for each endpoint to poll concurrently
-  //   const pollingPromises = endpoints.map(endpoint => pollSingleEndpoint(endpoint));
-  
-  //   // Use Promise.all to wait for all polling to complete
-  //   await Promise.all(pollingPromises);
-  // }
-
+ 
   async pollForResults(endpoint: string, schedule: ScheduleTaskResponse) {
     const maxRetries = 20;
     const retryDelay = 10000; // 10 seconds
@@ -153,8 +106,6 @@ export class SchedulerService {
         const response = await axios.get(endpoint);
   
         if (response.data && response.data.status === 'completed') {
-          logger.info(serviceName,'Updating next scrape time for:', schedule.url);
-          await this.supabaseService.updateNextScrapeTime(schedule);
           await this.handleApiResults(response.data.result, schedule);
           break; // Exit the loop on success
         } else {
@@ -206,6 +157,48 @@ export class SchedulerService {
 
     logger.info(serviceName,'Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
+    // Update the next scrape time for the schedule
+    logger.info(serviceName,'Updating next scrape time for:', schedule.url);
+    await this.supabaseService.updateNextScrapeTime(schedule);
+
+    const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
+    const scheduleUpdateDate = new Date(schedule.updated_at).toLocaleString();
+    const nextScrapeDate = new Date(schedule.next_scrape).toLocaleString();
+  
+    if (email) {
+      const emailText = 
+`Your scheduled scraping task for ${schedule.url} has been successfully scraped as of ${scheduleUpdateDate}.\nHere some key metrics:
+      - Average Star Rating: ${results.reviews?.rating || 'N/A'} / 5
+      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 'N/A'} / 100
+      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 'N/A'} / 100
+      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 'N/A'} / 100
+      - Facebook Total Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}
+      - Facebook Reactions: ${results.shareCountdata?.Facebook?.reaction_count || 0}
+      - Facebook Comments: ${results.shareCountdata?.Facebook?.comment_count || 0}
+      - Facebook Shares: ${results.shareCountdata?.Facebook?.share_count || 0}
+      - Pinterest Pin Count: ${results.shareCountdata?.Pinterest || 0}
+      - Number of Reviews: ${results.reviews?.numberOfReviews || 0}
+      - Trust Index: ${results.reviews?.trustIndex || 'N/A'}
+      - NPS (Net Promoter Score): ${results.reviews?.NPS || 'N/A'}
+      
+Visit http://capstone-wee.dns.net.za/ to view the full results and how your metrics have changed over time.
+Your next scrape will take place on ${nextScrapeDate}.
+
+      
+Thank you for using our service!
+
+Kind regards,
+The Web Exploration Team`;
+    
+      try {
+        await this.emailService.sendMail(email, `New results available! ${schedule.url}`, emailText);
+        console.log(`Email sent successfully to ${email}`);
+      } catch (emailError) {
+        console.error('Error sending email:', emailError);
+      }
+    } else {
+      console.error('No email found for schedule ID:', schedule.id);
+    }
   }
 
   async handleKeywordResults(results: any, schedule: ScheduleTaskResponse) {
