@@ -591,7 +591,7 @@ export default function Comparison() {
                         <div className='gap-2 grid xl:grid-cols-3'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-commentcount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.shareCountdata.Facebook ?
                                             websiteOne.shareCountdata.Facebook.comment_count
                                             : '-'
@@ -605,7 +605,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-reactioncount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.shareCountdata.Facebook ?
                                             websiteOne.shareCountdata.Facebook.reaction_count
                                             : '-'
@@ -619,7 +619,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-sharecount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.shareCountdata.Facebook ?
                                             websiteOne.shareCountdata.Facebook.share_count
                                             : '-'
@@ -646,7 +646,7 @@ export default function Comparison() {
                         <div className='gap-2 grid xl:grid-cols-3'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-commentcount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.shareCountdata.Facebook ?
                                             websiteTwo.shareCountdata.Facebook.comment_count
                                             : '-'
@@ -660,7 +660,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-reactioncount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.shareCountdata.Facebook ?
                                             websiteTwo.shareCountdata.Facebook.reaction_count
                                             : '-'
@@ -674,7 +674,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-sharecount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.shareCountdata.Facebook ?
                                             websiteTwo.shareCountdata.Facebook.share_count
                                             : '-'
@@ -742,7 +742,7 @@ export default function Comparison() {
             </div>
 
             {/* Reviews */}
-            <div data-testid="sect-social-media" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-reviews" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Reviews
                 </div>
@@ -751,7 +751,7 @@ export default function Comparison() {
                         <div className='gap-2 grid xl:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-nps" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.reviews ?
                                             websiteOne.reviews.NPS
                                             : '-'
@@ -765,7 +765,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-rating" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.reviews ?
                                             websiteOne.reviews.rating
                                             : '-'
@@ -779,7 +779,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website1-trustindex" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.reviews ?
                                             websiteOne.reviews.trustIndex
                                             : '-'
@@ -793,10 +793,10 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.reviews ?
+                                    <div data-testid="website1-recommendation-status" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.reviews && websiteOne?.reviews.recommendationStatus !== "" ?
                                             websiteOne.reviews.recommendationStatus
-                                            : '-'
+                                            : 'NA'
                                         }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
@@ -820,7 +820,7 @@ export default function Comparison() {
                         <div className='gap-2 grid xl:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-nps" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.reviews?
                                             websiteTwo.reviews.NPS
                                             : '-'
@@ -834,7 +834,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-rating" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.reviews ?
                                             websiteTwo.reviews.rating
                                             : '-'
@@ -848,7 +848,7 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                    <div data-testid="website2-trustindex" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteTwo?.reviews ?
                                             websiteTwo.reviews.trustIndex
                                             : '-'
@@ -862,10 +862,10 @@ export default function Comparison() {
 
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
-                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.reviews ?
+                                    <div data-testid="website2-recommendation-status" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.reviews && websiteTwo?.reviews.recommendationStatus !== ""  ?
                                             websiteTwo.reviews.recommendationStatus
-                                            : '-'
+                                            : 'N/A'
                                         }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
