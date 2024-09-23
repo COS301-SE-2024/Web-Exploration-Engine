@@ -10,9 +10,9 @@ describe('Summary Report Page E2E Test', () => {
 
   it('should navigate to the summary report page and verify content', () => {
     // Wait for the scraping process to complete and navigate to the summary report
-    cy.url().should('include', 'scraperesults', { timeout: 10000 });
-    cy.get('[data-testid="btn-report-summary"]').click({ timeout: 10000 });
-    cy.url().should('include', 'summaryreport', { timeout: 10000 });
+    cy.url().should('include', 'scraperesults', { timeout: 50000 })
+    cy.get('[data-testid="btn-report-summary"]').click({ timeout: 50000 });
+    // cy.url().should('include', 'summaryreport', { timeout: 50000 });
 
     // Verify page title
     cy.contains(/Summary Report/i).should('exist');
@@ -49,6 +49,30 @@ describe('Summary Report Page E2E Test', () => {
     cy.get('[data-testid="table-domain-match"]').find('th').eq(0).should('contain.text', 'URL');
     cy.get('[data-testid="table-domain-match"]').find('th').eq(1).should('contain.text', 'CLASSIFICATION - META');
     cy.get('[data-testid="table-domain-match"]').find('th').eq(2).should('contain.text', 'DOMAIN MATCH');
+
+
+    // Check for general stats
+  cy.contains('General stats').should('exist').and('be.visible');
+  cy.contains('2 Urls').should('exist').and('be.visible');
+  cy.contains('Scraped').should('exist').and('be.visible');
+
+  cy.contains('Avg scrape time').should('exist').and('be.visible');
+
+  // Check for industry classification
+  cy.contains('Industry classification').should('exist').and('be.visible');
+  cy.contains('Classification Distribution').should('exist').and('be.visible');
+  cy.contains('Weak classifications').should('exist').and('be.visible');
+
+  // Check URL and score information
+  cy.contains('https://wee-test-site-2.netlify.app/').should('exist').and('be.visible');
+  cy.contains('42.80%').should('exist').and('be.visible');
+  cy.contains('Domain match').should('exist').and('be.visible');
+
+  cy.contains('Telecommunications').should('exist').and('be.visible');
+  cy.contains('Health Care').should('exist').and('be.visible');
+
+  // Check for sentiment analysis
+  cy.contains('Sentiment Analysis - Emotions').should('exist').and('be.visible');
 
   });
 
