@@ -139,9 +139,16 @@ export function ColumnChartWithLables({ dataLabel, dataSeries }: IChart) {
         theme: {
             mode: currentTheme === 'dark' ? 'dark' : 'light'
         },
+        xaxis: {
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
         yaxis: {
             axisBorder: {
-                show: true
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         },
         grid: {
