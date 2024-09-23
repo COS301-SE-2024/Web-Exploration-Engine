@@ -68,7 +68,7 @@ export class ScrapeContactInfoService {
 
       // Performance Logging
       const duration = performance.now() - start;
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',url);
 
     }
   }
