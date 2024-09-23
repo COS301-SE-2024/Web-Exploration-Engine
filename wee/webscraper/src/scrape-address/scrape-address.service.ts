@@ -70,7 +70,7 @@ export class ScrapeAddressService {
     } finally {
       // Performance Logging
       const duration = performance.now() - start;
-       logger.info(serviceName,'duration',duration,'url',url);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       if (page) {
         await page.close();

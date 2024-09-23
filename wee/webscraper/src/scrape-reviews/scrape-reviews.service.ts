@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { ReviewData } from '../models/ServiceModels';
+import { performance } from 'perf_hooks';
+const serviceName = "[ScrapeReviewsService]";
+import logger from '../../logging/webscraperlogger';
 
 @Injectable()
 export class ScrapeReviewsService {
   async scrapeReviews(url: string, browser: puppeteer.Browser): Promise<ReviewData> {
     console.log(`Starting review scraping for URL: ${url}`);
+    logger.debug(`${serviceName}`);  
+    const start = performance.now();
 
     const businessName = this.extractBusinessNameFromUrl(url);
     if (!businessName) {
@@ -16,6 +21,10 @@ export class ScrapeReviewsService {
 
     const reviews = await this.scrapeReviewsViaGoogle(businessName, browser);
     //console.log(`Scraped ${reviews.length} reviews.`);
+    // Performance Logging
+    const duration = performance.now() - start;
+    console.log(`Duration of ${serviceName} : ${duration}`);
+    logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
     return reviews;
   }

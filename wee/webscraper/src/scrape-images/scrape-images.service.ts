@@ -49,7 +49,7 @@ export class ScrapeImagesService {
 
       // Performance Logging
       const duration = performance.now() - start;
-      logger.info(serviceName,'duration',duration,'url',url);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
             return Array.from(images).map((img: HTMLImageElement) => img.src);
         });
 
@@ -63,7 +63,7 @@ export class ScrapeImagesService {
         // Performance Logging
         const duration = performance.now() - start;
         console.log(`Duration of ${serviceName} : ${duration}`);
-        logger.info(serviceName,'duration',duration,'url',url);
+        logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
         
         if (page) {
             await page.close();
