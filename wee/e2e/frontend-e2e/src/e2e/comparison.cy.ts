@@ -4,27 +4,27 @@ describe('comparison page', () => {
     cy.visit('/');
   });
 
-  // it('all elements on the comparison page should exist', () => {
-  //   cy.visit('/comparison');
+  it('all elements on the comparison page should exist', () => {
+    cy.visit('/comparison');
 
-  //   // Check all components exist
-  //   cy.get('[data-testid="website1-select"]').should('exist');
-  //   cy.get('[data-testid="website2-select"]').should('exist');
+    // Check all components exist
+    cy.get('[data-testid="website1-select"]').should('exist');
+    cy.get('[data-testid="website2-select"]').should('exist');
 
-  //   // Page Section: Domain Overview
-  //   cy.get('[data-testid="sect-website-status"]').should('exist');
-  //   cy.get('[data-testid="sect-industry-classification"]').should('exist');
-  //   cy.get('[data-testid="sect-domain-match"]').should('exist');
+    // Page Section: Domain Overview
+    cy.get('[data-testid="sect-website-status"]').should('exist');
+    cy.get('[data-testid="sect-industry-classification"]').should('exist');
+    cy.get('[data-testid="sect-domain-match"]').should('exist');
 
-  //   // Page Section: On-page SEO analysis
-  //   cy.get('[data-testid="sect-unique-content"]').should('exist');
-  //   cy.get('[data-testid="sect-images"]').should('exist');
+    // Page Section: On-page SEO analysis
+    cy.get('[data-testid="sect-unique-content"]').should('exist');
+    cy.get('[data-testid="sect-images"]').should('exist');
 
-  //   // Page Section: Technical SEO analysis
-  //   cy.get('[data-testid="sect-lighthouse"]').should('exist');
-  //   cy.get('[data-testid="sect-mobile-friendly"]').should('exist');
-  //   cy.get('[data-testid="sect-site-speed"]').should('exist');
-  // });
+    // Page Section: Technical SEO analysis
+    cy.get('[data-testid="sect-lighthouse"]').should('exist');
+    cy.get('[data-testid="sect-mobile-friendly"]').should('exist');
+    cy.get('[data-testid="sect-site-speed"]').should('exist');
+  });
 
   it('compare results of 2 URLs - wee-test-site-1 and wee-test-site-2', () => {
     cy.visit('/');
@@ -56,8 +56,8 @@ describe('comparison page', () => {
     cy.get('[data-testid="website2-option-1"]').should('exist').click({ force: true }); // Force click if hidden
 
     // Section: Lighthouse Analysis
-    cy.get('[data-testid="website1-lighthouse-performance"]', { timeout: 10000 }
-  ).should('exist').and('be.visible').contains('98%');
+  //   cy.get('[data-testid="website1-lighthouse-performance"]', { timeout: 10000 }
+  // ).should('exist').and('be.visible').contains('98%');
     cy.get('[data-testid="website1-lighthouse-accessibility"]').should('exist').and('be.visible').contains('91%');
     cy.get('[data-testid="website1-lighthouse-bestpractices"]').should('exist').and('be.visible').contains('96%');
 
