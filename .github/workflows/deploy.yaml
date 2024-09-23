@@ -87,6 +87,11 @@ jobs:
           envkey_PROXIES: ${{secrets.PROXIES}}
           envkey_NEXT_PUBLIC_API_ENDPOINT : ${{secrets.API_ENDPOINT}}
           envkey_TECHNICAL_SEO_API_KEY: ${{secrets.TECHNICAL_SEO_API_KEY}}
+          envkey_SMTP_HOST: ${{secrets.SMTP_HOST}}
+          envkey_SMTP_PORT: ${{secrets.SMTP_PORT}}
+          envkey_SMTP_USER: ${{secrets.SMTP_USER}}
+          envkey_SMTP_FROM: ${{secrets.SMTP_FROM}}
+          envkey_SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
           directory: wee/api-service
           file_name: .env
           fail_on_empty: false
@@ -124,4 +129,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd wee
-            docker compose up --build --detach --force-recreate
+            docker compose down
+            docker compose build --no-cache
+            docker compose up --detach --force-recreate
+          command_timeout: 900s
