@@ -24,6 +24,7 @@ import { generatePDFReport } from '../../services/DownloadSummaryReport'
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
+import { sum } from 'cypress/types/lodash';
 
 interface weakClassification {
   url: string;
@@ -597,7 +598,34 @@ export default function SummaryReport() {
           )}
 
         </div>
-
+        {summaryReport.averageStarRating && summaryReport.averageStarRating.length == 5 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+                Average Star Ratings for Reviews
+              </h3>
+              <ColumnChartWithLables
+                dataLabel={[
+                  '5 stars',
+                  '4 stars',
+                  '3 stars',
+                  '2 stars',
+                  '1 star'
+                ]}
+                dataSeries={[
+                  summaryReport.averageStarRating[4],
+                  summaryReport.averageStarRating[3],
+                  summaryReport.averageStarRating[2],
+                  summaryReport.averageStarRating[1],
+                  summaryReport.averageStarRating[0],
+                ]}
+              />
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+              There are no average star rating data currently available
+            </div>
+            )
+        }
       </div>
 
       {/* Confirm save */}

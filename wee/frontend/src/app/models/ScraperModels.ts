@@ -291,7 +291,8 @@ export interface Summary {
   topRating : {
     urls: string[],
     scores: number[]
-  }
+  },
+  averageStarRating: number[]
 }
 
 export interface Graph {
