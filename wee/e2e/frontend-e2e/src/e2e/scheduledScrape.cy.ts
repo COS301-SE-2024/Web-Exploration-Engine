@@ -32,6 +32,9 @@ cy.contains('19/10/2024, 09:25:54').should('exist').and('be.visible');
 //add scraping task
 cy.get('[data-testid="btn-add-scraping-task"]').click();
 
+cy.get('input[aria-label="Url to scrape"]').type('https://wee-test-site-2.netlify.app/,https://wee-test-site-2.netlify.app/');
+
+
 
 
   });
