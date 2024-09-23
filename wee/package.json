@@ -32,6 +32,7 @@
     "@nextui-org/system": "^2.2.0",
     "@nextui-org/table": "^2.0.34",
     "@nextui-org/theme": "^2.2.4",
+    "@sentry/nextjs": "^8.30.0",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.3",
     "@testing-library/user-event": "^14.5.2",
