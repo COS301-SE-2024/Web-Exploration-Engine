@@ -93,7 +93,7 @@ export class ScrapeMetadataService {
       // Performance Logging
       const duration = performance.now() - start;
       console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       if (page) {
         await page.close();

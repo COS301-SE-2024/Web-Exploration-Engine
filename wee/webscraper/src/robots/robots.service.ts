@@ -33,7 +33,7 @@ export class RobotsService {
       // Performance Logging
       const duration = performance.now() - start;
       //console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
 
         return {
           allowedPaths: [],
@@ -63,7 +63,7 @@ export class RobotsService {
       // Performance Logging
       const duration = performance.now() - start;
       //console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
         
         return {
           allowedPaths: [],
@@ -103,7 +103,7 @@ export class RobotsService {
       // Performance Logging
       const duration = performance.now() - start;
       //console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
 
       return {
         allowedPaths: Array.from(allowedPaths),

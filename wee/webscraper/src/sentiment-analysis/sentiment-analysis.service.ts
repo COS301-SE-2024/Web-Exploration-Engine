@@ -3,6 +3,7 @@ import { SentimentClassification, Metadata } from '../models/ServiceModels';
 import logger from '../../logging/webscraperlogger';
 const serviceName = '[SentimentAnalysisService]';
 import axios from 'axios';
+import { performance } from 'perf_hooks';
 import { error } from 'console';
 
 @Injectable()
@@ -21,10 +22,16 @@ export class SentimentAnalysisService {
     metadata: Metadata
   ): Promise<SentimentClassification> {
     try {
+      const start = performance.now();
       const sentimentAnalysis = await this.sentimentAnalysis(metadata);
       const { positiveWords, negativeWords } =
         await this.getPositiveNegativeWords(metadata);
       const emotions = await this.analyzeEmotions(metadata);
+
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       return {
         sentimentAnalysis,
