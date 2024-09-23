@@ -16,5 +16,23 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
       .contains('Scheduled Tasks')
       .click();
 
+      cy.contains('Scheduled Scraping Tasks').should('exist').and('be.visible');
+cy.contains('1 tasks scheduled. 9 slots remaining.').should('exist').and('be.visible');
+
+// Checking table headers (if they exist)
+cy.contains('URL').should('exist').and('be.visible');
+cy.contains('NEXT SCHEDULED SCRAPE').should('exist').and('be.visible');
+cy.contains('ACTIONS').should('exist').and('be.visible');
+cy.contains('DASHBOARD').should('exist').and('be.visible');
+
+// Checking specific URL and scheduled scrape time
+cy.contains('https://wee-test-site-2.netlify.app/').should('exist').and('be.visible');
+cy.contains('19/10/2024, 09:25:54').should('exist').and('be.visible');
+
+//add scraping task
+cy.get('[data-testid="btn-add-scraping-task"]').click();
+
+
+
   });
 });
