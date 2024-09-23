@@ -8,6 +8,20 @@ import { ChartColours, DarkChartColours } from "./colours";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
+const lightModeColors = [
+    { from: -Infinity, to: -1, color: '#54B38E', name: 'Very Low' },
+    { from: 0, to: 750, color: '#22795C', name: 'Low' },
+    { from: 751, to: 5000, color: '#184d3d', name: 'Medium' },
+    { from: 5001, to: Infinity, color: '#0A241D', name: 'High' },
+];
+
+const darkModeColors = [
+    { from: -Infinity, to: -1, color: '#86cfb0', name: 'Very Low' },
+    { from: 0, to: 750, color: '#329874', name: 'Low' },
+    { from: 751, to: 5000, color: '#1B614B', name: 'Medium' },
+    { from: 5001, to: Infinity, color: '#144033', name: 'High' },
+];
+
 export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -40,14 +54,10 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
         plotOptions: {
             heatmap: {
                 shadeIntensity: 0,
+                reverseNegativeShade: true,
                 colorScale: {
-                    ranges: [
-                        { from: 0, to: 15, color: '#b6e4ce', name: 'Low' },       // Light green
-                        { from: 16, to: 30, color: '#54b38e', name: 'Medium' },    // Medium green
-                        { from: 31, to: 50, color: '#329874', name: 'High' },      // Darker green
-                        { from: 51, to: 100, color: '#144033', name: 'Very High' }  // Darkest green
-                    ]
-                }
+                    ranges: currentTheme === 'dark' ? darkModeColors : lightModeColors,
+                },
             }
         },
         theme: {
@@ -66,9 +76,12 @@ export function HeatMapChart({ dataLabel, dataSeries }: IChart) {
                 color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
             }
         },
-        grid: {
-            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        stroke: {
+            colors: currentTheme === 'dark' ? ['#D7D7D7'] : ['#BBBBBB'],
         },
+        dataLabels: {
+            enabled: false
+        }
     });
 
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));

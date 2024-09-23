@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios'; 
 import xml2js from 'xml2js';
 import logger from '../../logging/webscraperlogger';
-
+import { performance } from 'perf_hooks';
 const serviceName = "[NewsScraperService]";
 
 //remember: changed to deployed version
@@ -11,11 +11,12 @@ const serviceName = "[NewsScraperService]";
 
 @Injectable()
 export class NewsScraperService {
-  private readonly HUGGING_FACE_SENTIMENT_API_URL = 'https://capstone-wee.dns.net.za/hugging-face/Positive-negative'
+  private readonly HUGGING_FACE_SENTIMENT_API_URL = process.env.SENTIMENT_ANALYSIS_API_URL;
 
   async fetchNewsArticles(url: string): Promise<{ title: string; link: string; source: string; pubDate: string; sentimentScores?: { positive: number; negative: number; neutral: number } }[]> {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
+      logger.info(`${serviceName} Starting fetchNewsArticles for URL: ${url}`,'url',url,'service',serviceName);
 
       const businessName = this.extractBusinessName(url);
       console.log(`${serviceName} Extracted business name: ${businessName}`);

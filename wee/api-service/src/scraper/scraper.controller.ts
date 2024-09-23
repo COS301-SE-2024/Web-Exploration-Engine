@@ -10,12 +10,35 @@ import { PubSubService } from '../pub-sub/pub_sub.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Cache } from 'cache-manager';
 import {
-  ScrapeOperation, RobotsOperation, MetadataOperation, StatusOperation, ClassifyIndustryOperation, ImagesOperation, LogoOperation, ScreenshotOperation, ContactInfoOperation, AddressesOperation, SeoAnalysisOperation,
-  ScraperQuery, ScraperResponse200, ScraperResponse400, ScraperResponse500, NewsOperation,  socialAnalyticsOperation,ReviewsOperation,
-  GetJobStatusQuery, GetJobStatusTypeQuery, GetJobStatusOperation, GetJobStatusResponse200, GetJobStatusResponse400, GetJobStatusKeywordQuery,
+  ScrapeOperation,
+  RobotsOperation,
+  MetadataOperation,
+  StatusOperation,
+  ClassifyIndustryOperation,
+  ImagesOperation,
+  LogoOperation,
+  ScreenshotOperation,
+  ContactInfoOperation,
+  AddressesOperation,
+  SeoAnalysisOperation,
+  ScraperQuery,
+  ScraperResponse200,
+  ScraperResponse400,
+  ScraperResponse500,
+  NewsOperation,
+  socialAnalyticsOperation,
+  ReviewsOperation,
+  GetJobStatusQuery,
+  GetJobStatusTypeQuery,
+  GetJobStatusOperation,
+  GetJobStatusResponse200,
+  GetJobStatusResponse400,
+  GetJobStatusKeywordQuery,
 } from './scraper.api';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
+const serviceName = '[ScrapeController]';
+import logger from '../logging/webscraperlogger';
 
 @ApiTags('Scraping')
 @Controller('scraper')
@@ -49,7 +72,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scraping task for url: ', url);
+      logger.info(serviceName, 'Publishing scraping task for url: ', url);
       const message = {
         type: 'scrape',
         data: { url },
@@ -63,10 +86,14 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrape method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrape method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrape method:', error);
+        logger.error(serviceName, 'Unhandled error in scrape method:', error);
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -92,7 +119,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing read-robots task for url: ', url);
+      logger.info(serviceName, 'Publishing read-robots task for url: ', url);
       const message = {
         type: 'read-robots',
         data: { url },
@@ -106,10 +133,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in readRobotsFile method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in readRobotsFile method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in readRobotsFile method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in readRobotsFile method:',
+          error.message
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -135,7 +170,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-metadata task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing scrape-metadata task for url: ',
+        url
+      );
       const message = {
         type: 'scrape-metadata',
         data: { url },
@@ -149,10 +188,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeMetadata method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeMetadata method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeMetadata method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeMetadata method:',
+          error.message
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -178,7 +225,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-metadata task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing scrape-metadata task for url: ',
+        url
+      );
       const message = {
         type: 'scrape-status',
         data: { url },
@@ -192,10 +243,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeStatus method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeStatus method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeStatus method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeStatus method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -221,7 +280,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing classify-industry task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing classify-industry task for url: ',
+        url
+      );
       const message = {
         type: 'classify-industry',
         data: { url },
@@ -235,13 +298,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn(
+        logger.warn(
+          serviceName,
           'Handled error in classifyIndustry method:',
           error.message
         );
         throw error;
       } else {
-        console.error('Unhandled error in classifyIndustry method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in classifyIndustry method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -267,7 +335,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-images task for url: ', url);
+      logger.info(serviceName, 'Publishing scrape-images task for url: ', url);
       const message = {
         type: 'scrape-images',
         data: { url },
@@ -281,10 +349,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeImages method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeImages method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeImages method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeImages method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -310,7 +386,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-logo task for url: ', url);
+      logger.info(serviceName, 'Publishing scrape-logo task for url: ', url);
       const message = {
         type: 'scrape-logo',
         data: { url },
@@ -324,10 +400,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeLogo method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeLogo method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeLogo method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeLogo method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -353,7 +437,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing screenshot task for url: ', url);
+      logger.info(serviceName, 'Publishing screenshot task for url: ', url);
       const message = {
         type: 'screenshot',
         data: { url },
@@ -367,10 +451,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in getScreenshot method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in getScreenshot method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in getScreenshot method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in getScreenshot method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -396,7 +488,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-contact-info task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing scrape-contact-info task for url: ',
+        url
+      );
       const message = {
         type: 'scrape-contact-info',
         data: { url },
@@ -410,13 +506,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn(
+        logger.warn(
+          serviceName,
           'Handled error in scrapeContactInfo method:',
           error.message
         );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeContactInfo method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeContactInfo method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -442,7 +543,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing scrape-addresses task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing scrape-addresses task for url: ',
+        url
+      );
       const message = {
         type: 'scrape-addresses',
         data: { url },
@@ -456,10 +561,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeAddresses method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeAddresses method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeAddresses method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeAddresses method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -485,7 +598,7 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing seo-analysis task for url: ', url);
+      logger.info(serviceName, 'Publishing seo-analysis task for url: ', url);
       const message = {
         type: 'seo-analysis',
         data: { url },
@@ -499,10 +612,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in seoAnalysis method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in seoAnalysis method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in seoAnalysis method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in seoAnalysis method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -534,7 +655,11 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log('Publishing keyword analysis task for url: ', url);
+      logger.info(
+        serviceName,
+        'Publishing keyword analysis task for url: ',
+        url
+      );
       const message = {
         type: 'keyword-analysis',
         data: { url, keyword },
@@ -548,10 +673,18 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in keywordAnalysis method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in keywordAnalysis method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in keywordAnalysis method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in keywordAnalysis method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -571,19 +704,19 @@ export class ScraperController {
       if (!url) {
         throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
       }
-  
+
       const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
       if (!urlPattern.test(url)) {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
-  
-      console.log("Publishing scrape-news task for url: ", url);
+
+      logger.info(serviceName, 'Publishing scrape-news task for url: ', url);
       const message = {
         type: 'scrape-news',
         data: { url },
       };
       await this.pubsubService.publishMessage(this.topicName, message);
-  
+
       return {
         message: 'Scrape news task published',
         status: 'processing',
@@ -591,15 +724,26 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in scrapeNews method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeNews method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in scrapeNews method:', error);
-        throw new HttpException('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeNews method:',
+          error
+        );
+        throw new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
       }
     }
   }
-  
+
   @socialAnalyticsOperation
   @ScraperQuery
   @ScraperResponse200
@@ -617,7 +761,8 @@ export class ScraperController {
         throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
       }
 
-      console.log(
+      logger.info(
+        serviceName,
         'Publishing ShareCount Social Media analytics task for url: ',
         url
       );
@@ -634,73 +779,85 @@ export class ScraperController {
       };
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn(
+        logger.warn(
+          serviceName,
           'Handled error in shareCount analytics method:',
           error.message
         );
         throw error;
       } else {
-        console.error('Unhandled error in shareCount analytics method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in shareCount analytics method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     }
-
   }
 
   @ReviewsOperation
-@ScraperQuery
-@ScraperResponse200
-@ScraperResponse400
-@ScraperResponse500
-@Get('scrape-reviews')
-async scrapeReviews(@Query('url') url: string) {
-  try {
-    if (!url) {
-      throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
-    }
+  @ScraperQuery
+  @ScraperResponse200
+  @ScraperResponse400
+  @ScraperResponse500
+  @Get('scrape-reviews')
+  async scrapeReviews(@Query('url') url: string) {
+    try {
+      if (!url) {
+        throw new HttpException('URL is required', HttpStatus.BAD_REQUEST);
+      }
 
-    const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-    if (!urlPattern.test(url)) {
-      throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
-    }
+      const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+      if (!urlPattern.test(url)) {
+        throw new HttpException('Invalid URL format', HttpStatus.BAD_REQUEST);
+      }
 
-    console.log('Publishing scrape-reviews task for url: ', url);
-    const message = {
-      type: 'scrape-reviews',
-      data: { url },
-    };
-    await this.pubsubService.publishMessage(this.topicName, message);
+      logger.info(serviceName, 'Publishing scrape-reviews task for url: ', url);
+      const message = {
+        type: 'scrape-reviews',
+        data: { url },
+      };
+      await this.pubsubService.publishMessage(this.topicName, message);
 
-    return {
-      message: 'Scrape reviews task published',
-      status: 'processing',
-      pollingUrl: `/status/scrape-reviews/${encodeURIComponent(url)}`,
-    };
-  } catch (error) {
-    if (error instanceof HttpException) {
-      console.warn('Handled error in scrapeReviews method:', error.message);
-      throw error;
-    } else {
-      console.error('Unhandled error in scrapeReviews method:', error);
-      throw new HttpException(
-        'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      return {
+        message: 'Scrape reviews task published',
+        status: 'processing',
+        pollingUrl: `/status/scrape-reviews/${encodeURIComponent(url)}`,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        logger.warn(
+          serviceName,
+          'Handled error in scrapeReviews method:',
+          error.message
+        );
+        throw error;
+      } else {
+        logger.error(
+          serviceName,
+          'Unhandled error in scrapeReviews method:',
+          error
+        );
+        throw new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
     }
   }
-}
 
-@Get('status')
+  @Get('status')
   @GetJobStatusOperation
   @GetJobStatusResponse200
   @GetJobStatusResponse400
   @GetJobStatusTypeQuery
   @GetJobStatusQuery
   async getJobStatus(@Query('type') type: string, @Query('url') url: string) {
-    console.log(url, type);
+    logger.info(serviceName, url, type);
     try {
       const acceptedTypes = [
         'scrape',
@@ -735,10 +892,18 @@ async scrapeReviews(@Query('url') url: string) {
       return JSON.parse(jobData);
     } catch (error) {
       if (error instanceof HttpException) {
-        console.warn('Handled error in getJobStatus method:', error.message);
+        logger.warn(
+          serviceName,
+          'Handled error in getJobStatus method:',
+          error.message
+        );
         throw error;
       } else {
-        console.error('Unhandled error in getJobStatus method:', error);
+        logger.error(
+          serviceName,
+          'Unhandled error in getJobStatus method:',
+          error
+        );
         throw new HttpException(
           'Internal server error',
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -771,15 +936,22 @@ async scrapeReviews(@Query('url') url: string) {
   }
   catch(error) {
     if (error instanceof HttpException) {
-      console.warn('Handled error in getJobStatus method:', error.message);
+      logger.warn(
+        serviceName,
+        'Handled error in getJobStatus method:',
+        error.message
+      );
       throw error;
     } else {
-      console.error('Unhandled error in getJobStatus method:', error);
+      logger.error(
+        serviceName,
+        'Unhandled error in getJobStatus method:',
+        error
+      );
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
-
 }

@@ -5,3 +5,4 @@ node_modules/.bin/node-which
 my.secrets
 *.log
 *-audit.json
+wee/webscraper/logging/logs.json

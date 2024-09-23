@@ -32,6 +32,14 @@ export default function Home() {
     }
 
     const handleScraping = () => {
+      const timestamp = new Date().toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      
       if (!url) {
           setError('URL cannot be empty');
 

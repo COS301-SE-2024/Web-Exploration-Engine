@@ -76,9 +76,9 @@ export async function signUp(req: SignUpRequest) {
 
 export async function forgotPassword(email: string) {
   const supabase = createClient();
+  const redirectUrl = process.env.NEXT_PUBLIC_FORGOT_PASSWORD_URL;
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:3000/reset-password',
-    // redirectTo:'https://capstone-wee.dns.net.za/reset-password', add this when deployed
+    redirectTo: redirectUrl,
   });
 
   if (error) {

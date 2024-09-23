@@ -29,6 +29,7 @@ export class SeoAnalysisService {
       htmlContent = await this.fetchHtmlContent(url);
     } catch (error) {
       //console.error(`Error fetching HTML content: ${error.message}`);
+      logger.error(serviceName,`Error fetching HTML content: ${error.message}`,error.message);
       return {
         error: `Error fetching HTML content: ${error.message}`,
       };
@@ -67,8 +68,8 @@ export class SeoAnalysisService {
 
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      //console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
       
     return {
       titleTagsAnalysis,
@@ -197,6 +198,7 @@ export class SeoAnalysisService {
   
     if (!username || !password) {
       //console.error('Proxy username or password not set');
+      logger.error(serviceName,'Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
@@ -296,8 +298,8 @@ export class SeoAnalysisService {
       };
     } catch (error) {
 
-      logger.error(serviceName,` Error analyzing images using Puppeteer: ${error.message}`);
       //console.error(`Error analyzing images using Puppeteer: ${error.message}`);
+      logger.error(serviceName,` Error analyzing images using Puppeteer: ${error.message}`);
 
       return {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
@@ -471,6 +473,7 @@ export class SeoAnalysisService {
   
     if (!username || !password) {
       //console.error('Proxy username or password not set');
+      logger.error(serviceName,'Proxy username or password not set');
       return {
         error: 'Proxy username or password not set',
       };
@@ -512,7 +515,7 @@ export class SeoAnalysisService {
       };
     } catch (error) {
       //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
-      logger.error(serviceName,` Error analyzing mobile-friendliness: ${error.message}`);
+      logger.error(serviceName,` Error analyzing mobile-friendliness: `,error.message);
 
       //console.error(`Error analyzing mobile-friendliness: ${error.message}`);
       // return {
@@ -584,7 +587,7 @@ export class SeoAnalysisService {
     } catch (error) {
 
       //console.error(`Error fetching XML sitemap: ${error.message}`);
-      logger.error(serviceName,` Error fetching XML sitemap: ${error.message}`);
+      logger.error(serviceName,` Error fetching XML sitemap `,error.message);
 
       return {
         isSitemapValid: false,

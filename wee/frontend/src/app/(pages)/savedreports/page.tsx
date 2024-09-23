@@ -1,5 +1,5 @@
 'use client';
-import {Tabs, Tab, Card, CardBody} from "@nextui-org/react";
+import {Tab, Card, CardBody, Spinner} from "@nextui-org/react";
 import React, { Suspense, useEffect, useState } from 'react';
 import WEEPagination from '../../components/Util/Pagination';
 import {
@@ -36,6 +36,7 @@ function ResultsComponent() {
 
   async function fetchReports() {
     console.log("Fetching reports for user: ", user)
+    setLoading(true); // Set loading to true before fetching reports
     if(!user) {
       console.error('User not found');
       return;
@@ -48,12 +49,13 @@ function ResultsComponent() {
       const formattedSummaryReports = reportsData.filter(item => item.isSummary);
       setResults(formattedReports);
       setSummaries(formattedSummaryReports);
-      setLoading(false);
+      
     } catch (error) {
       setError((error as Error).message || 'An error occurred');
       console.error('Error fetching reports:', error);
-      setLoading(false);
     }
+
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -151,6 +153,11 @@ function ResultsComponent() {
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
+                        {loading ? (
+                          <div className="flex w-full justify-center">
+                            <Spinner color="default" />
+                          </div>
+                        ) : (<>
                         {results.length > 0 && (
                           <div className="flex w-full justify-center">
                             <WEEPagination
@@ -164,6 +171,8 @@ function ResultsComponent() {
                             />
                           </div>
                         )}
+                        </>)
+                        }
                       </>
                     }
                     classNames={{
@@ -255,21 +264,29 @@ function ResultsComponent() {
                     aria-label="Scrape result table"
                     bottomContent={
                       <>
-                        {summaries.length > 0 && (
+                        {loading ? (
                           <div className="flex w-full justify-center">
-                            <WEEPagination
-                              loop
-                              showControls
-                              color="stone"
-                              page={summaryPage}
-                              total={summaryPages}
-                              onChange={(page) => setSummaryPage(page)}
-                              aria-label="Pagination"
-                            />
+                            <Spinner color="default" />
                           </div>
-                        )}
+                        ) : (<>
+                          {summaries.length > 0 && (
+                            <div className="flex w-full justify-center">
+                              <WEEPagination
+                                loop
+                                showControls
+                                color="stone"
+                                page={summaryPage}
+                                total={summaryPages}
+                                onChange={(page) => setSummaryPage(page)}
+                                aria-label="Pagination"
+                              />
+                            </div>
+                          )}
+                        </>)
+                        }
                       </>
                     }
+                  
                     classNames={{
                       wrapper: 'min-h-[222px]',
                     }}

@@ -8,35 +8,6 @@ export class SupabaseService {
   serviceKey = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;
   private readonly supabaseClient = createClient(this.supabaseURL, this.serviceKey);
 
-  // async createSchedule(scheduleData: ScheduleTask) {
-  //   const { user_id, url, frequency, next_scrape } = scheduleData;
-
-  //   let nextScrape: Date;
-
-  //   if (next_scrape) {
-  //     nextScrape = new Date(next_scrape); // may have to fix this - time zone issue
-  //   } else {
-  //     nextScrape = new Date();
-  //   }
-
-  //   const { data, error } = await this.supabaseClient
-  //     .from('scheduled_tasks')
-  //     .insert([
-  //       { 
-  //         user_id, 
-  //         url, 
-  //         frequency, 
-  //         next_scrape: nextScrape.toISOString(),
-  //         result_history: [] 
-  //       },
-  //     ]);
-
-  //   if (error) {
-  //     throw new Error(`Failed to create schedule: ${error}`);
-  //   }
-  //   return data;
-  // }
-
   async updateSchedule(scheduleData: UpdateScheduleTask) {
     const { id, result_history, newCommentCount, newShareCount, newReactionCount, newTotalEngagement, newNewsSentiment, newRating, newNumReviews, newTrustIndex, newNPS, newRecommendationStatus, newStarRatings, newSiteSpeed, newPerformanceScore, newAccessibilityScore, newBestPracticesScore, newPinCount } = scheduleData;
     
@@ -197,18 +168,31 @@ export class SupabaseService {
     return nextScrape.toISOString();
   }
   
-  // async getScheduleById(id: string) {
-  //   const { data, error } = await this.supabaseClient
-  //     .from('scheduled_tasks')
-  //     .select('*')
-  //     .eq('id', id);
+  async getEmailByScheduleId(scheduleId: string): Promise<string> {
+    const { data, error } = await this.supabaseClient
+      .from('scheduled_tasks')
+      .select('user_id')
+      .eq('id', scheduleId)
+      .single(); 
 
-  //   if (error) {
-  //     throw new Error(`Failed to get schedule: ${error.message}`);
-  //   }
-  //   return data;
-  // }
+    if (error || !data) {
+      throw new Error(`Failed to get user_id from scheduled task: ${error?.message || 'No data found'}`);
+    }
+
+    const userId = data.user_id;
+
+    const { data: profileData, error: profileError } = await this.supabaseClient
+      .from('profiles')
+      .select('email')
+      .eq('id', userId)
+      .single(); 
+
+    if (profileError || !profileData) {
+      throw new Error(`Failed to get email: ${profileError?.message || 'No data found'}`);
+    }
+
+    return profileData.email;
+  }
 
 }
-
 

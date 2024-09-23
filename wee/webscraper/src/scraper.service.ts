@@ -36,7 +36,7 @@ import {
 } from './models/ServiceModels';
 
 const serviceName = "[ScraperService]";
-logger.info(`${serviceName}`);
+logger.info(serviceName);
 @Injectable()
 export class ScraperService implements OnModuleInit {
 
@@ -104,7 +104,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrape(url: string) {
-    console.log("Started scaping")
+    logger.info(serviceName,"Started scaping")
     const start = performance.now();
 
     // create puppeteer instance
@@ -116,7 +116,7 @@ export class ScraperService implements OnModuleInit {
       });
 
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -212,7 +212,7 @@ export class ScraperService implements OnModuleInit {
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
     const shareCountPromise = this.shareCountService.getShareCount(url);
-    const reviewsPromise = this.reviewsService.scrapeReviews(url);
+    const reviewsPromise = this.reviewsService.scrapeReviews(url, browser);
 
     const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
       industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
@@ -260,7 +260,7 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch(); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -296,7 +296,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -333,7 +333,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -370,7 +370,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -408,7 +408,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -435,7 +435,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -462,7 +462,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -489,7 +489,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -516,7 +516,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -548,7 +548,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -564,7 +564,7 @@ export class ScraperService implements OnModuleInit {
   async listenForScrapingTasks() {
     const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
     if (!subscriptionName) {
-      console.error('GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
+      logger.error(serviceName,'GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
       return;
     }
 
@@ -572,12 +572,12 @@ export class ScraperService implements OnModuleInit {
       try {
         await this.handleMessage(message);
       } catch (error) {
-        console.error('Error handling message', error);
+        logger.error(serviceName,'Error handling message', error);
       }
     };
 
     await this.pubsub.subscribe(subscriptionName, messageHandler);
-    console.log('Subscribed to scraping tasks, listening for messages...');
+    logger.info(serviceName,'Subscribed to scraping tasks, listening for messages...');
   }
 
   async handleMessage(message) {
@@ -590,21 +590,20 @@ export class ScraperService implements OnModuleInit {
     // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
     const maxAge = 5 * 60 * 1000;
 
-    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`);
-    console.log(`Message Age: ${messageAge} ms`);
+    logger.info(serviceName,`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`,'message-id',message.id);
 
     if (messageAge > maxAge) {
-        console.log(`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`);
+        logger.info(serviceName,`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`,'message-id',message.id);
         // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
         message.nack();
         // Return error response??
     } else {
         // Process the message if it is within acceptable age limits
-        console.log(`Processing message: ${message.data.toString()}`);
+        //logger.info(serviceName,`Processing message: ${message.data.toString()}`);
         message.ack();
 
         const start = performance.now();
-        console.log(message.data, message.data.toString());
+        logger.info(serviceName, 'message-id',message.id, 'message-id',message.data.toString());
         const { data, type } = JSON.parse(message.data.toString());
         if (!data) {
           return {
@@ -634,7 +633,7 @@ export class ScraperService implements OnModuleInit {
             if (cachedData.status === 'completed') {
               const end = performance.now();
               const times = (end - start) / 1000;
-              console.log('CACHE HIT for url: ', url, " time: ", times);
+              logger.info(serviceName,'CACHE HIT for url: ', url, " time: ", times);
 
               // Update time field
               cachedData.result.time = parseFloat(times.toFixed(4));
@@ -643,14 +642,13 @@ export class ScraperService implements OnModuleInit {
 
           // Performance Logging
           const duration = performance.now() - start;
-          console.log(`Duration of ${serviceName} : ${duration}, cache-hit`);
-          logger.info(`Duration of ${serviceName} : ${duration}, cache-hit`);
+          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-hit`);
             return;
           }
         }
 
         // Scrape if not in cache/already processing (CACHE MISS or error status)
-        console.log('CACHE MISS - SCRAPE');
+        //logger.info(serviceName,'CACHE MISS - SCRAPE');
 
         // Add to cache as processing
         await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
@@ -663,13 +661,12 @@ export class ScraperService implements OnModuleInit {
           };
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
 
-          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
+          logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
           // Performance Logging
           const duration = performance.now() - start;
-          console.log(`Duration of ${serviceName} : ${duration}`);
-          logger.info(serviceName,'duration',duration);
-        } catch (error) {
-          console.error(`Error scraping URL: ${url}`, error);
+          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
+         } catch (error) {
+          logger.error(serviceName,`Error scraping URL: ${url}`, error);
           await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
         }
 
@@ -682,7 +679,7 @@ export class ScraperService implements OnModuleInit {
       const shareCount = await this.shareCountService.getShareCount(url);
       return shareCount;
     } catch (error) {
-      logger.error(`${serviceName} Failed to get share count for ${url}: ${error}`);
+      logger.error(serviceName,`${serviceName} Failed to get share count for ${url}: ${error}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -697,10 +694,10 @@ export class ScraperService implements OnModuleInit {
       if (data.status === 'completed') {
         return data;
       } else if (data.status === 'processing') {
-        console.log(`Already processing ojb: ${cacheKey}`);
+        logger.info(serviceName,`Already processing ojb: ${cacheKey}`);
         return null;
       } else if (data.status === 'error') {
-        console.error(`Error during scraping job: ${cacheKey}`, data.error);
+        logger.error(serviceName,`Error during scraping job: ${cacheKey}`, data.error);
         return null;
       }
     }
@@ -720,7 +717,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(serviceName,`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -732,7 +729,7 @@ export class ScraperService implements OnModuleInit {
       const newsData = await this.newsScraperService.fetchNewsArticles(url);
       return newsData;
     } catch (error) {
-      logger.error(`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(serviceName,`${serviceName} Error scraping news: ${error instanceof Error ? error.message : String(error)}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -758,7 +755,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      logger.error(`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(serviceName,`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -767,10 +764,10 @@ export class ScraperService implements OnModuleInit {
     }
   
     try {
-      const reviewsData = await this.reviewsService.scrapeReviews(url);
+      const reviewsData = await this.reviewsService.scrapeReviews(url, browser);
       return reviewsData;
     } catch (error) {
-      logger.error(`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(serviceName,`Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
