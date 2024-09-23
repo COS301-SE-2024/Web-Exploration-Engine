@@ -12,7 +12,7 @@ describe('Scraping Functionality', () => {
     cy.get('[data-testid="btn-start-scraping"]').should('exist');
   });
   it('should scrape multiple URLs and redirect to results page', () => {
-    // Visit the homepage
+
     cy.visit('/');
 
 
@@ -109,6 +109,41 @@ describe('Scraping and Results Page', () => {
     // Navigate to the Sentimental Analysis Tab (if applicable)
     cy.get('[data-testid="tab-sentiment"]').click();
     cy.contains(/sentiment/i).should('exist');
+
+
+    // Sentiment Analysis details
+    cy.contains('Positive and Negative Words').should('exist').and('be.visible');
+    cy.contains('Welcome to Astro.').should('exist').and('be.visible');
+    cy.contains('Emotions Confidence Score').should('exist').and('be.visible');
+
+    // Emotion confidence scores and percentages
+    cy.contains('1%').should('exist').and('be.visible'); // Anger
+    cy.contains('Anger').should('exist').and('be.visible');
+    cy.contains('😡').should('exist').and('be.visible');
+
+    cy.contains('0%').should('exist').and('be.visible'); // Disgust
+    cy.contains('Disgust').should('exist').and('be.visible');
+    cy.contains('🤢').should('exist').and('be.visible');
+
+    cy.contains('1%').should('exist').and('be.visible'); // Fear
+    cy.contains('Fear').should('exist').and('be.visible');
+    cy.contains('😱').should('exist').and('be.visible');
+
+    cy.contains('3%').should('exist').and('be.visible'); // Joy
+    cy.contains('Joy').should('exist').and('be.visible');
+    cy.contains('😊').should('exist').and('be.visible');
+
+    cy.contains('87%').should('exist').and('be.visible'); // Neutral
+    cy.contains('Neutral').should('exist').and('be.visible');
+    cy.contains('😐').should('exist').and('be.visible');
+
+    cy.contains('1%').should('exist').and('be.visible'); // Sadness
+    cy.contains('Sadness').should('exist').and('be.visible');
+    cy.contains('😢').should('exist').and('be.visible');
+
+    cy.contains('7%').should('exist').and('be.visible'); // Surprise
+    cy.contains('Surprise').should('exist').and('be.visible');
+    cy.contains('😲').should('exist').and('be.visible');
   });
 });
 
