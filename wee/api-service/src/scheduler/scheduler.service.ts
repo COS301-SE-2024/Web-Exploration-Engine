@@ -6,6 +6,8 @@ import { PubSubService } from '../pub-sub/pub_sub.service';
 import { EmailService } from '../email-service/email.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
+import logger from '../logging/webscraperlogger';
+const serviceName = "[SchedulerService]";
 
 @Injectable()
 export class SchedulerService {
@@ -17,7 +19,7 @@ export class SchedulerService {
     private readonly pubsubService: PubSubService,
     private readonly emailService: EmailService 
   ) {
-    console.log('Scheduler service initialized');
+    logger.info(serviceName,'Scheduler service initialized');
     this.topicName = process.env.GOOGLE_CLOUD_TOPIC;
 
     // Schedule the cron job to run every minute
@@ -28,20 +30,21 @@ export class SchedulerService {
 
   async checkSchedules() {
     if (this.isRunning) {
-      console.log('Job already running, skipping...');
+      logger.info(serviceName,'Job already running, skipping...');
       return; // Prevent new job if one is already running
     }
   
     this.isRunning = true; // Set lock
   
     try {
-      console.log('Checking schedules...');
+      logger.info(serviceName,'Checking schedules...');
       const dueSchedules = await this.supabaseService.getDueSchedules() as ScheduleTaskResponse[];
       if (!dueSchedules || dueSchedules.length === 0) {
-        console.log('No due schedules found');
+        logger.info(serviceName,'No due schedules found');
         return;
       }
-      console.log('Number of due schedules:', dueSchedules.length);
+      console.info(serviceName,'Number of due schedules:', dueSchedules.length);
+      logger.info(serviceName,'Number of due schedules:', dueSchedules.length);
   
       const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
       const pollScrapeEndpoint = `${apiUrl}/scraper/status?type=scrape`;
@@ -80,23 +83,23 @@ export class SchedulerService {
       // Execute all polling operations concurrently
       await Promise.all(pollingPromises);
     } catch (error) {
-      console.error('Error during job execution:', error);
+      logger.error(serviceName,'Error during job execution:', error);
     } finally {
       this.isRunning = false; // Release lock
     }
   }
-  
+ 
   async pollForResults(endpoint: string, schedule: ScheduleTaskResponse) {
     const maxRetries = 20;
     const retryDelay = 10000; // 10 seconds
   
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        console.log(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
+        logger.info(`Polling API endpoint: ${endpoint}, for task: ${schedule.url}, attempt ${attempt + 1}`);
         
         // Validate if the endpoint is correct for the schedule's URL
         // if (!endpoint.includes(encodeURIComponent(schedule.url))) {
-        //   console.log('Invalid endpoint for schedule, skipping...');
+        //   logger.info(serviceName,'Invalid endpoint for schedule, skipping...');
         //   return;
         // }
   
@@ -106,11 +109,11 @@ export class SchedulerService {
           await this.handleApiResults(response.data.result, schedule);
           break; // Exit the loop on success
         } else {
-          console.log(`Attempt ${attempt + 1} failed. Retrying after ${retryDelay / 1000} seconds...`);
+          logger.info(`Attempt ${attempt + 1} failed. Retrying after ${retryDelay / 1000} seconds...`);
           await this.delay(retryDelay); // Delay before retrying
         }
       } catch (error) {
-        console.error('Error while polling API:', error);
+        logger.error(serviceName,'Error while polling API:', error);
         await this.delay(retryDelay); // Delay before retrying on error
       }
     }
@@ -128,7 +131,7 @@ export class SchedulerService {
 
   async handleScrapeResults(results: ScrapeResult, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
-    console.log('Received scrape results for URL:', schedule.url );
+    logger.info(serviceName,'Received scrape results for URL:', schedule.url );
     
     // Example of updating Supabase with the results
     const updateMessage = {
@@ -152,10 +155,10 @@ export class SchedulerService {
       newBestPracticesScore: results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 0,
     } as UpdateScheduleTask;
 
-    console.log('Updating scrape results');
+    logger.info(serviceName,'Updating scrape results');
     await this.supabaseService.updateSchedule(updateMessage);
     // Update the next scrape time for the schedule
-    console.log('Updating next scrape time for:', schedule.url);
+    logger.info(serviceName,'Updating next scrape time for:', schedule.url);
     await this.supabaseService.updateNextScrapeTime(schedule);
 
     const email = await this.supabaseService.getEmailByScheduleId(schedule.id);
@@ -200,7 +203,7 @@ The Web Exploration Team`;
 
   async handleKeywordResults(results: any, schedule: ScheduleTaskResponse) {
     // Process results and update Supabase or take further actions
-    console.log('Received keyword results for url and keyword:', results.url, results.keyword);
+    logger.info(serviceName,'Received keyword results for url and keyword:', results.url, results.keyword);
 
     const updateKeywordResult = {
       id: schedule.id,
@@ -210,7 +213,7 @@ The Web Exploration Team`;
       newTopTen: results.topTen,
     } as updateKeywordResult;
 
-    console.log('Updating keyword results');
+    logger.info(serviceName,'Updating keyword results');
     await this.supabaseService.updateKeywordResult(updateKeywordResult);
   }
   

@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { URL } from 'url';
+import logger from '../../logging/webscraperlogger';
+const serviceName = "[KeywordAnalysisService]";
 
 @Injectable()
 export class KeywordAnalysisService {
@@ -13,7 +15,7 @@ export class KeywordAnalysisService {
         const password = process.env.PROXY_PASSWORD;
 
         if (!username || !password) {
-            console.error('Proxy username or password not set');
+            console.error(serviceName,'Proxy username or password not set');
             return { 
                 url,
                 keyword,
@@ -80,7 +82,7 @@ export class KeywordAnalysisService {
                 recommendation: recommendation
             };
         } catch (error) {
-            console.error(`Failed to get keyword ranking: ${error.message}`);
+            logger.error(serviceName,`Failed to get keyword ranking `,error.message);
             return { 
                 url,
                 keyword,
