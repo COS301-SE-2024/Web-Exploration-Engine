@@ -2147,20 +2147,29 @@ function ResultsComponent() {
                             legendPosition='right'
                           />
                         </div>
-                        <div>
+                        <div className='gap-3 grid md:grid-cols-2 my-3'>
                           {scrapeNews.map((news) => (
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:flex md:justify-between my-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 '>
                               <div>
                                 <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
                                   {news.title}
                                 </div>
                                 <div><span className='font-poppins-semibold'>Published on: </span>{news.pubDate}</div>
                                 <div><span className='font-poppins-semibold'>Source: </span>{news.source}</div>
-                              </div>
-                              <div className='flex justify-around mt-4 md:mt-0'>
-                                <CircularProgressComparison label="Positive" value={news.sentimentScores.positive * 100} />
-                                <CircularProgressComparison label="Neutral" value={news.sentimentScores.neutral * 100} />
-                                <CircularProgressComparison label="Negative" value={news.sentimentScores.negative * 100} />
+                                <Link href={news.link} target="_blank" rel="noopener noreferrer">
+                                  Read article
+                                </Link>
+
+                                <ColumnChartWithLables
+                                  dataLabel={[
+                                    'Positive', 'Neutral', 'Negative'
+                                  ]}
+                                  dataSeries={[
+                                    Math.round(news.sentimentScores.positive * 100),
+                                    Math.round(news.sentimentScores.neutral * 100),
+                                    Math.round(news.sentimentScores.negative * 100)
+                                  ]}
+                                />
                               </div>
                             </div>
                           ))}

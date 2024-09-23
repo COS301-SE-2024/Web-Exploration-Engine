@@ -748,7 +748,7 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        <div className='gap-2 grid xl:grid-cols-3'>
+                        <div className='gap-2 grid xl:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
@@ -790,6 +790,20 @@ export default function Comparison() {
                                     </div>
                                 </div>
                             </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.reviews ?
+                                            websiteOne.reviews.recommendationStatus
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Recommendation Status
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -803,7 +817,7 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        <div className='gap-2 grid xl:grid-cols-3'>
+                        <div className='gap-2 grid xl:grid-cols-2'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
@@ -842,6 +856,20 @@ export default function Comparison() {
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
                                         Trust Index
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.reviews ?
+                                            websiteTwo.reviews.recommendationStatus
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Recommendation Status
                                     </div>
                                 </div>
                             </div>
