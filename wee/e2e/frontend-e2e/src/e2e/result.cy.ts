@@ -3,50 +3,50 @@ import { TIMEOUT } from "dns";
 describe('Scraping Functionality', () => {
   const testUrls = 'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/';
 
-//   it('should load the home page correctly', () => {
-//   cy.visit('/');
-//   cy.contains(/The Web Exploration Engine/i).should('exist');
-//   });
+  it('should load the home page correctly', () => {
+  cy.visit('/');
+  cy.contains(/The Web Exploration Engine/i).should('exist');
+  });
 
-//   it('should display the scraping interface', () => {
-//     cy.visit('/');
-//     cy.get('[data-testid="scraping-textarea-home"]').should('exist');
-//     cy.get('[data-testid="btn-start-scraping"]').should('exist');
-//   });
-//   it('should scrape multiple URLs and redirect to results page', () => {
+  it('should display the scraping interface', () => {
+    cy.visit('/');
+    cy.get('[data-testid="scraping-textarea-home"]').should('exist');
+    cy.get('[data-testid="btn-start-scraping"]').should('exist');
+  });
+  it('should scrape multiple URLs and redirect to results page', () => {
 
-//     cy.visit('/');
-
-
-//     // Enter the test URLs into the textarea
-//     cy.get('[data-testid="scraping-textarea-home"]').type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
-
-//     // Intercept the scraping requests without stubbing them
-//     cy.intercept('GET', '**/api/scraper**').as('startScraping');
+    cy.visit('/');
 
 
-//     cy.get('[data-testid="btn-start-scraping"]').click();
+    // Enter the test URLs into the textarea
+    cy.get('[data-testid="scraping-textarea-home"]').type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
 
-//     // Wait for the scraping request to complete
-//     cy.wait('@startScraping');
-
-//     // Now check for the status or result page
-//     cy.url().should('include', '/scraperesults');
-//   });
+    // Intercept the scraping requests without stubbing them
+    cy.intercept('GET', '**/api/scraper**').as('startScraping');
 
 
-//   it('should handle URL validation errors', () => {
-//     cy.visit('/');
+    cy.get('[data-testid="btn-start-scraping"]').click();
 
-//     // Enter an invalid URL
-//     cy.get('[data-testid="scraping-textarea-home"]').type('invalid-url');
+    // Wait for the scraping request to complete
+    cy.wait('@startScraping');
 
-//     // Click the "Start scraping" button
-//     cy.get('[data-testid="btn-start-scraping"]').click();
+    // Now check for the status or result page
+    cy.url().should('include', '/scraperesults');
+  });
 
-//     // Assert that an error message is displayed
-//     cy.contains(/Please enter valid URLs/i).should('exist');
-//   });
+
+  it('should handle URL validation errors', () => {
+    cy.visit('/');
+
+    // Enter an invalid URL
+    cy.get('[data-testid="scraping-textarea-home"]').type('invalid-url');
+
+    // Click the "Start scraping" button
+    cy.get('[data-testid="btn-start-scraping"]').click();
+
+    // Assert that an error message is displayed
+    cy.contains(/Please enter valid URLs/i).should('exist');
+  });
 });
 
 describe('Scraping and Results Page', () => {
