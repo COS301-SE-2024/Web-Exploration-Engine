@@ -279,6 +279,18 @@ export interface Summary {
   },
   emotionsArea: {
     series: Graph[]
+  },
+  topNPS : {
+    urls: string[],
+    scores: number[]
+  },
+  topTrustIndex : {
+    urls: string[],
+    scores: number[]
+  },
+  topRating : {
+    urls: string[],
+    scores: number[]
   }
 }
 

@@ -24,6 +24,62 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
 
   const emotionsAreaSeries: { name: string; data: number[] }[] = [];
 
+  let topNPSUrls: string[] = [];
+  let topNPSScores: number[] = [];
+
+  let topTrustIndexUrls: string[] = [];
+  let topTrustIndexScores: number[] = [];
+
+  let topRatingUrls: string[] = [];
+  let topRatingScores: number[] = [];
+
+  // Get top 3 NPS scores
+  for (const result of scraperResults) {
+    if (result.reviews !== undefined && result.reviews.NPS !== undefined && result.url) {
+      topNPSUrls.push(result.url);
+      topNPSScores.push(result.reviews.NPS);
+
+      topTrustIndexUrls.push(result.url);
+      topTrustIndexScores.push(result.reviews.trustIndex);
+
+      topRatingUrls.push(result.url);
+      topRatingScores.push(result.reviews.rating);
+    }
+  }
+
+  const combinedNPS = topNPSUrls.map((url, index) => ({
+    url,
+    score: topNPSScores[index],
+  }));
+
+  const combinedTrustIndex = topTrustIndexUrls.map((url, index) => ({
+    url,
+    score: topTrustIndexScores[index],
+  }));
+
+  const combinedRating = topRatingUrls.map((url, index) => ({
+    url,
+    score: topRatingScores[index],
+  }));
+  
+  combinedNPS.sort((a, b) => b.score - a.score);
+  combinedTrustIndex.sort((a, b) => b.score - a.score);
+  combinedRating.sort((a, b) => b.score - a.score);
+  
+  // Select the top 3 results
+  // nps
+  const top3NPSResults = combinedNPS.slice(0, 3);
+  topNPSUrls = top3NPSResults.map(result => result.url);
+  topNPSScores = top3NPSResults.map(result => result.score);
+  // trust index
+  const top3TrustIndexResults = combinedTrustIndex.slice(0, 3);
+  topTrustIndexUrls = top3TrustIndexResults.map(result => result.url);
+  topTrustIndexScores = top3TrustIndexResults.map(result => result.score);
+  // rating
+  const top3RatingResults = combinedRating.slice(0, 3);
+  topRatingUrls = top3RatingResults.map(result => result.url);
+  topRatingScores = top3RatingResults.map(result => result.score);
+
   // EMOTIONS AREA
   for (const result of scraperResults) {
     if (result.sentiment && JSON.stringify(result.sentiment.emotions) !== '{}') {
@@ -213,6 +269,18 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
     },
     emotionsArea: {
       series: emotionsAreaSeries,
+    },
+    topNPS: {
+      urls: topNPSUrls,
+      scores: topNPSScores,
+    },
+    topTrustIndex: {
+      urls: topTrustIndexUrls,
+      scores: topTrustIndexScores,
+    },
+    topRating: {
+      urls: topRatingUrls,
+      scores: topRatingScores
     }
   }
 }

@@ -23,6 +23,7 @@ import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
+import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface weakClassification {
   url: string;
@@ -540,6 +541,62 @@ export default function SummaryReport() {
             </div>
           ) : (<></>)
         }
+
+        {/* Reviews */}
+
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+          Reviews
+        </h3>
+        <div className='gap-2 grid lg:grid-cols-3'>
+          {summaryReport.topNPS && summaryReport.topNPS.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 NPS Scores
+              </h3>
+              <ColumnChartWithLables
+                dataLabel={summaryReport.topNPS.urls}
+                dataSeries={summaryReport.topNPS.scores}
+              />
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no NPS score data currently available
+            </div>
+          )}
+
+          {summaryReport.topTrustIndex && summaryReport.topTrustIndex.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 Trust Index Scores
+              </h3>
+              <ColumnChartWithLables
+                dataLabel={summaryReport.topTrustIndex.urls}
+                dataSeries={summaryReport.topTrustIndex.scores}
+              />
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no trust index score data currently available
+            </div>
+          )}
+
+          {summaryReport.topRating && summaryReport.topRating.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 Rating Scores
+              </h3>
+              <ColumnChartWithLables
+                dataLabel={summaryReport.topRating.urls}
+                dataSeries={summaryReport.topRating.scores}
+              />
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no rating score data currently available
+            </div>
+          )}
+
+        </div>
 
       </div>
 
