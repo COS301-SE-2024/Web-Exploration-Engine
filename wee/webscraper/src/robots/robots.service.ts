@@ -28,11 +28,11 @@ export class RobotsService {
 
       // Check if website has a robots.txt file -- if not, return an empty set
       if (response.status === 404) {
-        console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
+        //console.warn(`robots.txt does not exist for ${robotstxtUrl}`);
         logger.warn(serviceName,` robots.txt does not exist for ${robotstxtUrl}`);
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
+      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration);
 
         return {
@@ -54,15 +54,15 @@ export class RobotsService {
 
       // Parse the robots.txt file
       const robotstxt = await response.text();
-      console.warn(`obtained robot txt file ${robotstxtUrl}`);
+      //console.warn(`obtained robot txt file ${robotstxtUrl}`);
 
 
       if (!robotstxt) {
-        console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
+        //console.warn(`robots.txt content is empty for ${robotstxtUrl}`);
         logger.warn(serviceName,`robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
+      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration);
         
         return {
@@ -102,7 +102,7 @@ export class RobotsService {
       });
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
+      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration);
 
       return {

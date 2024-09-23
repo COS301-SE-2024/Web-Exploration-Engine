@@ -50,19 +50,18 @@ export class ScreenshotService {
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
-      console.log("Screenshot", url, typeof screenshotBase64);
+      //logger.info("Screenshot", url, typeof screenshotBase64);
 
       return { screenshot: screenshotBase64 };
 
     } catch (error) {
-      console.error('Failed to capture screenshot', error);
+      logger.error(serviceName,'Failed to capture screenshot', error);
       return {
         screenshot: '',
       }
     } finally {
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration);
       if (page) {
         await page.close();
