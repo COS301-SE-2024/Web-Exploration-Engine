@@ -20,7 +20,7 @@ export interface ScraperResult {
 
 export interface ScrapeNews {
   link: string,
-  pubData: string,
+  pubDate: string,
   sentimentScores: SentimentAnalysisCategories,
   source: string,
   title: string,

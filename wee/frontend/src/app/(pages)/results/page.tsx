@@ -1961,7 +1961,29 @@ function ResultsComponent() {
                     />
                   </h3>
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
-                    News sentiment stuff here
+                    {scrapeNews ? (
+                      <div>
+                        {scrapeNews.map((news) => (
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 md:flex md:justify-between my-3'>
+                            <div>
+                              <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
+                                {news.title}
+                              </div>
+                              <div><span className='font-poppins-semibold'>Published on: </span>{news.pubDate}</div>
+                              <div><span className='font-poppins-semibold'>Source: </span>{news.source}</div>
+                            </div>
+                            <div className='flex justify-around mt-4 md:mt-0'>
+                              <CircularProgressComparison label="Positive" value={news.sentimentScores.positive} />
+                              <CircularProgressComparison label="Neutral" value={news.sentimentScores.neutral} />
+                              <CircularProgressComparison label="Negative" value={news.sentimentScores.negative} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>No news sentiment data is currently available</div>
+                    )}
+                    
                   </div>
 
                   {/* Social Media */}
