@@ -5,7 +5,7 @@ import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook, FiFacebook } from "react-icons/fi";
 import CircularProgressComparison from "../../components/CircularProgressComparison";
 import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis, UniqueContentAnalysis } from "../../models/ScraperModels";
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
@@ -25,7 +25,7 @@ function isMobileFriendlinessAnalysis(data: MobileFriendlinessAnalysis | SEOErro
 }
 
 function isImageAnalysis(data: ImageAnalysis | SEOError): data is ImageAnalysis {
-    return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data ;
+    return 'errorUrls' in data || 'missingAltTextCount' in data || 'nonOptimizedCount' in data || 'reasonsMap' in data || 'recommendations' in data || 'totalImages' in data;
 }
 
 function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
@@ -55,7 +55,7 @@ export default function Comparison() {
     }
 
     return (
-        <div className="min-h-screen p-4"> 
+        <div className="min-h-screen p-4">
             <Button
                 className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                 onClick={backToScrapeResults}
@@ -105,16 +105,16 @@ export default function Comparison() {
 
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center mt-3'>
                 Domain Overview
-                <InfoPopOver 
+                <InfoPopOver
                     data-testid="popup-info-domain-info"
-                    heading="Domain Overview" 
+                    heading="Domain Overview"
                     content="This section provides important tags to classify the website based on the extracted information. </br></br>
                         <i>Status</i>: This field indicates if the website is live or parked. A live website is one that is active and accessible to users. A parked website is a domain that is registered but not in use. </br></br>
                         <i>*Industry Classification</i>: This field provides the industry classification of the website based on its metadata. </br>
                         <i>*Domain match</i>: This field provides the domain classification of the website based on the url of the website. </br>
                         <i>*Confidence Score</i>: This field provides the confidence score of the classification. </br></br>
-                        <i>Note</i>: The fields marked with an asterisk (*) are generated using zero-shot machine learning models. These models provide a confidence score for each classification." 
-                    placement="bottom" 
+                        <i>Note</i>: The fields marked with an asterisk (*) are generated using zero-shot machine learning models. These models provide a confidence score for each classification."
+                    placement="bottom"
                 />
             </h4>
 
@@ -157,22 +157,22 @@ export default function Comparison() {
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotMetaDataClassify[0].label ? websiteOne.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : (websiteOne.industryClassification ? 
-                                <ColumnChart 
+                            !websiteOne ? '' : (websiteOne.industryClassification ?
+                                <ColumnChart
                                     dataLabel={[
-                                        websiteOne.industryClassification.zeroShotMetaDataClassify[1].label, 
-                                        websiteOne.industryClassification.zeroShotMetaDataClassify[0].label, 
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[1].label,
+                                        websiteOne.industryClassification.zeroShotMetaDataClassify[0].label,
                                         websiteOne.industryClassification.zeroShotMetaDataClassify[2].label
-                                    ]} 
-                                    dataSeries={[
-                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
-                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
-                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
                                     ]}
-                                /> 
+                                    dataSeries={[
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[1].score * 100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotMetaDataClassify[2].score * 100).toFixed(2)
+                                    ]}
+                                />
                                 : ''
                             )
-                        }                        
+                        }
                     </div>
 
                     <div className="text-center m-auto">
@@ -192,23 +192,23 @@ export default function Comparison() {
                             {!websiteTwo ? '-' : (websiteTwo.industryClassification && websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label ? websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteTwo ? '' : (websiteTwo.industryClassification ? 
+                            !websiteTwo ? '' : (websiteTwo.industryClassification ?
 
-                                <ColumnChart 
+                                <ColumnChart
                                     dataLabel={[
-                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label, 
-                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label, 
+                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[1].label,
+                                        websiteTwo.industryClassification.zeroShotMetaDataClassify[0].label,
                                         websiteTwo.industryClassification.zeroShotMetaDataClassify[2].label
-                                    ]} 
-                                    dataSeries={[
-                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score*100).toFixed(2),
-                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score*100).toFixed(2),
-                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score*100).toFixed(2)
                                     ]}
-                                /> 
+                                    dataSeries={[
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[1].score * 100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[0].score * 100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotMetaDataClassify[2].score * 100).toFixed(2)
+                                    ]}
+                                />
                                 : ''
                             )
-                        }  
+                        }
                     </div>
                 </div>
             </div>
@@ -227,22 +227,22 @@ export default function Comparison() {
                             {!websiteOne ? '-' : (websiteOne.industryClassification && websiteOne.industryClassification.zeroShotDomainClassify[0].label ? websiteOne.industryClassification.zeroShotDomainClassify[0].label : 'N/A')}
                         </div>
                         {
-                            !websiteOne ? '' : (websiteOne.industryClassification ? 
-                                <ColumnChart 
+                            !websiteOne ? '' : (websiteOne.industryClassification ?
+                                <ColumnChart
                                     dataLabel={[
-                                        websiteOne.industryClassification.zeroShotDomainClassify[1].label, 
-                                        websiteOne.industryClassification.zeroShotDomainClassify[0].label, 
+                                        websiteOne.industryClassification.zeroShotDomainClassify[1].label,
+                                        websiteOne.industryClassification.zeroShotDomainClassify[0].label,
                                         websiteOne.industryClassification.zeroShotDomainClassify[2].label
-                                    ]} 
-                                    dataSeries={[
-                                        (websiteOne.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
-                                        (websiteOne.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
-                                        (websiteOne.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
                                     ]}
-                                /> 
+                                    dataSeries={[
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[1].score * 100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2),
+                                        (websiteOne.industryClassification.zeroShotDomainClassify[2].score * 100).toFixed(2)
+                                    ]}
+                                />
                                 : ''
                             )
-                        }    
+                        }
                     </div>
 
                     <div className="text-center m-auto">
@@ -263,34 +263,34 @@ export default function Comparison() {
                         </div>
                         {
                             !websiteTwo ? '' : (websiteTwo.industryClassification ?
-                                <ColumnChart 
+                                <ColumnChart
                                     dataLabel={[
-                                        websiteTwo.industryClassification.zeroShotDomainClassify[1].label, 
-                                        websiteTwo.industryClassification.zeroShotDomainClassify[0].label, 
+                                        websiteTwo.industryClassification.zeroShotDomainClassify[1].label,
+                                        websiteTwo.industryClassification.zeroShotDomainClassify[0].label,
                                         websiteTwo.industryClassification.zeroShotDomainClassify[2].label
-                                    ]} 
-                                    dataSeries={[
-                                        (websiteTwo.industryClassification.zeroShotDomainClassify[1].score*100).toFixed(2),
-                                        (websiteTwo.industryClassification.zeroShotDomainClassify[0].score*100).toFixed(2),
-                                        (websiteTwo.industryClassification.zeroShotDomainClassify[2].score*100).toFixed(2)
                                     ]}
-                                /> 
+                                    dataSeries={[
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[1].score * 100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[0].score * 100).toFixed(2),
+                                        (websiteTwo.industryClassification.zeroShotDomainClassify[2].score * 100).toFixed(2)
+                                    ]}
+                                />
                                 : ''
                             )
-                        }  
+                        }
                     </div>
                 </div>
             </div>
 
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 On-Page SEO Analysis
-                <InfoPopOver 
+                <InfoPopOver
                     data-testid="popup-info-onpage-seo"
-                    heading="On-page SEO Analysis" 
+                    heading="On-page SEO Analysis"
                     content="On-page SEO analysis involves fine-tuning webpages to improve their search engine visibility and enhance the user experience. By optimizing content directly on the page, we aim to achieve higher rankings on platforms like Google, ultimately driving more organic traffic to the site. </br></br>
                         <i>Unique Content</i>: Text from body tag is extracted and processed. The calculated percentage of unique words can be used to avoid keyword stuffing which enhances SEO. </br>
-                        <i>Images</i>: All image elemenets are extracted and checked for alt text, image optimization and formats like PNG, JPEG, WebP, and SVG. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO. </br>" 
-                    placement="bottom" 
+                        <i>Images</i>: All image elemenets are extracted and checked for alt text, image optimization and formats like PNG, JPEG, WebP, and SVG. Proper alt text improves accessibility and search rankings, while optimised images enhance loading times and user experience, benefiting SEO. </br>"
+                    placement="bottom"
                 />
             </h4>
 
@@ -304,7 +304,7 @@ export default function Comparison() {
                         <div data-testid="website1-uniquewords" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteOne?.seoAnalysis.uniqueContentAnalysis) ?
                                 websiteOne?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
-                                : '0%'                            
+                                : '0%'
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
@@ -323,9 +323,9 @@ export default function Comparison() {
 
                     <div className="text-center w-1/3">
                         <div data-testid="website2-uniquewords" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
-                            {websiteTwo?.seoAnalysis &&  websiteTwo?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteTwo?.seoAnalysis.uniqueContentAnalysis) ?
+                            {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.uniqueContentAnalysis && isUniqueContentAnalysis(websiteTwo?.seoAnalysis.uniqueContentAnalysis) ?
                                 websiteTwo?.seoAnalysis.uniqueContentAnalysis.uniqueWordsPercentage.toFixed(2) + '%'
-                                : '0%'                            
+                                : '0%'
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
@@ -336,7 +336,7 @@ export default function Comparison() {
             </div>
 
             {/* Image on page */}
-            <div  data-testid="sect-images" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-images" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Images
                 </div>
@@ -349,7 +349,7 @@ export default function Comparison() {
                                         {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
                                             websiteOne.seoAnalysis.imageAnalysis.missingAltTextCount
                                             : '-'
-                                        }                                        
+                                        }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
                                         Missing Alt. Text
@@ -360,10 +360,10 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-nonOptimized" className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.seoAnalysis &&  websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
+                                        {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteOne.seoAnalysis.imageAnalysis) ?
                                             websiteOne.seoAnalysis.imageAnalysis.nonOptimizedCount
                                             : '-'
-                                        }       
+                                        }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
                                         Non-Optimized
@@ -390,7 +390,7 @@ export default function Comparison() {
                                         {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
                                             websiteTwo.seoAnalysis.imageAnalysis.missingAltTextCount
                                             : '-'
-                                        }       
+                                        }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
                                         Missing Alt. Text
@@ -404,7 +404,7 @@ export default function Comparison() {
                                         {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.imageAnalysis && isImageAnalysis(websiteTwo.seoAnalysis.imageAnalysis) ?
                                             websiteTwo.seoAnalysis.imageAnalysis.nonOptimizedCount
                                             : '-'
-                                        }      
+                                        }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
                                         Non-Optimized
@@ -418,19 +418,19 @@ export default function Comparison() {
 
             <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
                 Technical SEO Analysis
-                <InfoPopOver 
+                <InfoPopOver
                     data-testid="popup-info-technical-seo"
-                    heading="Technical SEO Analysis" 
+                    heading="Technical SEO Analysis"
                     content="Technical SEO analysis refers to anything that makes your site easier for search engines to crawl, index and render. </br></br>
                         <i>Light House</i>: The Google PageSpeed Insights API is used to fetch scores for performance, accessibility, and best practices </br>
                         <i>Mobile Friendliness</i>: The viewport is configured to simulate a mobile device (375x667 pixels), sets mobile and touch capabilities, and checks if the page is fully loaded and responsive at the specified width. Mobile-friendly sites improve user experience, enhance SEO due to Google&apos;s mobile-first indexing, and can boost conversion rates by ensuring ease of use on mobile devices. </br>
-                        <i>Site Speed</i>: The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and engagement, and can boost SEO by enhancing search rankings and driving more traffic. </br>"                
-                        placement="bottom" 
+                        <i>Site Speed</i>: The Google PageSpeed Insights API is used to check whether the load time exceeds 3 seconds. Faster load times improve user experience and engagement, and can boost SEO by enhancing search rankings and driving more traffic. </br>"
+                    placement="bottom"
                 />
             </h4>
 
             {/* LightHouseAnalysis */}
-            <div  data-testid="sect-lighthouse" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-lighthouse" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Light House
                 </div>
@@ -439,23 +439,23 @@ export default function Comparison() {
                         <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website1-lighthouse-performance" className="flex justify-center">
                                 {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    <CircularProgressComparison label="Performance" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.performance} />
                                     :
-                                    <CircularProgressComparison label="Performance" value={0}/>
+                                    <CircularProgressComparison label="Performance" value={0} />
                                 }
                             </div>
                             <div data-testid="website1-lighthouse-accessibility" className="flex justify-center">
                                 {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    <CircularProgressComparison label="Accessibility" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.accessibility} />
                                     :
-                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                    <CircularProgressComparison label="Accessibility" value={0} />
                                 }
                             </div>
                             <div data-testid="website1-lighthouse-bestpractices" className="flex justify-center">
                                 {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteOne?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    <CircularProgressComparison label="Best Practices" value={websiteOne?.seoAnalysis.lighthouseAnalysis.scores.bestPractices} />
                                     :
-                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                    <CircularProgressComparison label="Best Practices" value={0} />
                                 }
                             </div>
                         </div>
@@ -471,26 +471,26 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                    <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
+                        <div className='gap-3 grid md:grid-cols-2 lg:grid-cols-3 '>
                             <div data-testid="website2-lighthouse-performance" className="flex justify-center">
                                 {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance}/>
+                                    <CircularProgressComparison label="Performance" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.performance} />
                                     :
-                                    <CircularProgressComparison label="Performance" value={0}/>
+                                    <CircularProgressComparison label="Performance" value={0} />
                                 }
                             </div>
                             <div data-testid="website2-lighthouse-accessibility" className="flex justify-center">
                                 {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility}/>
+                                    <CircularProgressComparison label="Accessibility" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.accessibility} />
                                     :
-                                    <CircularProgressComparison label="Accessibility" value={0}/>
+                                    <CircularProgressComparison label="Accessibility" value={0} />
                                 }
                             </div>
                             <div data-testid="website2-lighthouse-bestpractices" className="flex justify-center">
                                 {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.lighthouseAnalysis && isLightHouse(websiteTwo?.seoAnalysis.lighthouseAnalysis) ?
-                                    <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices}/>
+                                    <CircularProgressComparison label="Best Practices" value={websiteTwo?.seoAnalysis.lighthouseAnalysis.scores.bestPractices} />
                                     :
-                                    <CircularProgressComparison label="Best Practices" value={0}/>
+                                    <CircularProgressComparison label="Best Practices" value={0} />
                                 }
                             </div>
                         </div>
@@ -539,7 +539,7 @@ export default function Comparison() {
                         <div data-testid="website1-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {websiteOne?.seoAnalysis && websiteOne?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteOne?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteOne?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
-                                : '0'                            
+                                : '0'
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
@@ -560,7 +560,7 @@ export default function Comparison() {
                         <div data-testid="website2-sitespeed" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                             {websiteTwo?.seoAnalysis && websiteTwo?.seoAnalysis.siteSpeedAnalysis && isSiteSpeedAnalysis(websiteTwo?.seoAnalysis.siteSpeedAnalysis) ?
                                 websiteTwo?.seoAnalysis.siteSpeedAnalysis.loadTime.toFixed(2)
-                                : '0'                            
+                                : '0'
                             }
                         </div>
                         <div className='font-poppins-semibold text-sm sm:text-lg'>
@@ -568,7 +568,126 @@ export default function Comparison() {
                         </div>
                     </div>
                 </div>
-            </div>                     
+            </div>
+
+            <h4 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100 text-lg text-center'>
+                Online Reputation Management
+                <InfoPopOver
+                    data-testid="popup-info-technical-seo"
+                    heading="Online Reputation Management"
+                    content="abc"
+                    placement="bottom"
+                />
+            </h4>
+
+            {/* Social Media - Facebook */}
+            <div data-testid="sect-site-speed" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Social Media Engagement
+                </div>
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        <div className='gap-2 grid lg:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.shareCountdata.Facebook ?
+                                            websiteOne.shareCountdata.Facebook.comment_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Comment Count
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.shareCountdata.Facebook?
+                                            websiteOne.shareCountdata.Facebook.reaction_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Reaction Count
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.shareCountdata.Facebook ?
+                                            websiteOne.shareCountdata.Facebook.share_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Share Count
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiFacebook />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Social Media Engagement
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        <div className='gap-2 grid lg:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.shareCountdata.Facebook ?
+                                            websiteTwo.shareCountdata.Facebook.comment_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Comment Count
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.shareCountdata.Facebook?
+                                            websiteTwo.shareCountdata.Facebook.reaction_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Reaction Count
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.shareCountdata.Facebook ?
+                                            websiteTwo.shareCountdata.Facebook.share_count
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Share Count
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
