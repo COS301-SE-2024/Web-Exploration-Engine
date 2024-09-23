@@ -5,7 +5,7 @@ import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook, FiFacebook, FiBookOpen } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook, FiFacebook, FiBookOpen, FiEdit } from "react-icons/fi";
 import CircularProgressComparison from "../../components/CircularProgressComparison";
 import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis, UniqueContentAnalysis } from "../../models/ScraperModels";
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
@@ -742,6 +742,113 @@ export default function Comparison() {
             </div>
 
             {/* Reviews */}
+            <div data-testid="sect-social-media" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Reviews
+                </div>
+                <div className="flex justify-between ">
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        <div className='gap-2 grid xl:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.reviews ?
+                                            websiteOne.reviews.NPS
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        NPS
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.reviews ?
+                                            websiteOne.reviews.rating
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Rating
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteOne?.reviews ?
+                                            websiteOne.reviews.trustIndex
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Trust Index
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center sm:pb-1'>
+                            <FiEdit />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Reviews
+                        </div>
+                    </div>
+
+                    <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
+                        <div className='gap-2 grid xl:grid-cols-3'>
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.reviews?
+                                            websiteTwo.reviews.NPS
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        NPS
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.reviews ?
+                                            websiteTwo.reviews.rating
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Rating
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
+                                <div>
+                                    <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                        {websiteTwo?.reviews ?
+                                            websiteTwo.reviews.trustIndex
+                                            : '-'
+                                        }
+                                    </div>
+                                    <div className='font-poppins-semibold text-lg'>
+                                        Trust Index
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
