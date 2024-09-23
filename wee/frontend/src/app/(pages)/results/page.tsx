@@ -1969,7 +1969,7 @@ function ResultsComponent() {
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
-                            <div data-testid="div-images-total" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                            <div data-testid="result-facebook-comment-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
                               {shareCountData.Facebook.comment_count}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
@@ -1980,7 +1980,7 @@ function ResultsComponent() {
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
-                            <div data-testid="div-images-missing-alt" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                            <div data-testid="result-facebook-reaction-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
                               {shareCountData.Facebook.reaction_count}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
@@ -1991,7 +1991,7 @@ function ResultsComponent() {
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
-                            <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                            <div data-testid="result-facebook-share-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
                               {shareCountData.Facebook.share_count}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
@@ -2002,7 +2002,7 @@ function ResultsComponent() {
 
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
-                            <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-[#E60023]'>
+                            <div data-testid="result-pintrest-pin-count" className='font-poppins-bold text-5xl text-[#E60023]'>
                               {shareCountData.Pinterest}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
@@ -2057,7 +2057,7 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
-                              <div data-testid="div-images-total" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="result-reviews-nps" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {reviews.NPS}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
@@ -2068,7 +2068,7 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
-                              <div data-testid="div-images-missing-alt" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="result-reviews-number-reviews" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {reviews.numberOfReviews}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
@@ -2079,7 +2079,7 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
-                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="result-reviews-rating" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {reviews.rating}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
@@ -2090,7 +2090,7 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
-                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-2xl lg:text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="result-reviews-recommendation-status" className='font-poppins-bold text-2xl lg:text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {reviews.recommendationStatus}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
@@ -2101,7 +2101,7 @@ function ResultsComponent() {
 
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
-                              <div data-testid="nonOptimisedImages" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                              <div data-testid="result-reviews-trustindex" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                 {reviews.trustIndex}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
