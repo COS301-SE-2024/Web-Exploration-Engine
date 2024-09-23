@@ -5,12 +5,13 @@ import { Button, SelectItem } from '@nextui-org/react';
 import { useScrapingContext } from '../../context/ScrapingContext';
 import { useRouter } from 'next/navigation';
 import { ScraperResult } from '../../models/ScraperModels';
-import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook, FiFacebook } from "react-icons/fi";
+import { FiCheck, FiSearch, FiEye, FiSmartphone, FiClock, FiActivity, FiImage, FiBook, FiFacebook, FiBookOpen } from "react-icons/fi";
 import CircularProgressComparison from "../../components/CircularProgressComparison";
 import { LightHouseAnalysis, SEOError, SiteSpeedAnalysis, MobileFriendlinessAnalysis, ImageAnalysis, UniqueContentAnalysis } from "../../models/ScraperModels";
 import { ColumnChart } from "../../components/Graphs/ColumnChart";
 import { InfoPopOver } from "../../components/InfoPopOver";
 import useBeforeUnload from "../../hooks/useBeforeUnload";
+import { DonutChart } from "../../components/Graphs/DonutChart";
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
     return 'scores' in data || 'diagnostics' in data;
@@ -581,13 +582,13 @@ export default function Comparison() {
             </h4>
 
             {/* Social Media - Facebook */}
-            <div data-testid="sect-site-speed" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+            <div data-testid="sect-social-media" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
                 <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
                     Social Media Engagement
                 </div>
                 <div className="flex justify-between ">
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        <div className='gap-2 grid lg:grid-cols-3'>
+                        <div className='gap-2 grid xl:grid-cols-3'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
@@ -605,7 +606,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.shareCountdata.Facebook?
+                                        {websiteOne?.shareCountdata.Facebook ?
                                             websiteOne.shareCountdata.Facebook.reaction_count
                                             : '-'
                                         }
@@ -642,7 +643,7 @@ export default function Comparison() {
                     </div>
 
                     <div className='text-center font-poppins-bold text-4xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 my-auto w-1/3'>
-                        <div className='gap-2 grid lg:grid-cols-3'>
+                        <div className='gap-2 grid xl:grid-cols-3'>
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-missingAltText" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
@@ -660,7 +661,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-nonOptimized" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.shareCountdata.Facebook?
+                                        {websiteTwo?.shareCountdata.Facebook ?
                                             websiteTwo.shareCountdata.Facebook.reaction_count
                                             : '-'
                                         }
@@ -688,6 +689,59 @@ export default function Comparison() {
                     </div>
                 </div>
             </div>
+
+            {/* News Sentiment */}
+            <div data-testid="sect-news-sentiment" className="bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 my-3">
+                <div className="sm:hidden font-poppins-semibold text-lg text-center pb-2">
+                    Average Sentiment
+                </div>
+                <div className="flex justify-between ">
+                    <div className="text-center w-1/3">
+                        {
+                            !websiteOne ? '' : (websiteOne.scrapeNews ?
+                                <DonutChart
+                                    dataLabel={['Positive', 'Neutral', 'Negative']}
+                                    dataSeries={[
+                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteOne.scrapeNews.length) * 100,
+                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteOne.scrapeNews.length) * 100,
+                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteOne.scrapeNews.length) * 100
+                                    ]}
+                                    legendPosition='right'
+                                />
+                                : ''
+                            )
+                        }
+                    </div>
+
+                    <div className="text-center m-auto">
+                        <div className='flex text-5xl justify-center'>
+                            <FiBookOpen />
+                        </div>
+                        <div className='hidden font-poppins-semibold text-md sm:text-lg sm:flex'>
+                            Average News Sentiment
+                        </div>
+                    </div>
+
+                    <div className="text-center w-1/3">
+                        {
+                            !websiteTwo ? '' : (websiteTwo.scrapeNews ?
+                                <DonutChart
+                                    dataLabel={['Positive', 'Neutral', 'Negative']}
+                                    dataSeries={[
+                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteTwo.scrapeNews.length) * 100,
+                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteTwo.scrapeNews.length) * 100,
+                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteTwo.scrapeNews.length) * 100
+                                    ]}
+                                    legendPosition='right'
+                                />
+                                : ''
+                            )
+                        }
+                    </div>
+                </div>
+            </div>
+
+            {/* Reviews */}
         </div>
     );
 }
