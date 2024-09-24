@@ -548,14 +548,14 @@ export default function SummaryReport() {
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
           Social Media Engagement
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
           {summaryReport.socialMetrics ? (
             <StackedColumnChart
               dataLabel={summaryReport.socialMetrics.urls}
               dataSeries={[
-                { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount }, 
-                { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount }, 
-                {name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
+                { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount },
+                { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount },
+                { name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
             />
 
           ) : (
@@ -573,10 +573,12 @@ export default function SummaryReport() {
               <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
                 Top 3 NPS Scores
               </h3>
-              <ColumnChartWithLables
-                dataLabel={summaryReport.topNPS.urls}
-                dataSeries={summaryReport.topNPS.scores}
-              />
+              <span data-testid='nps-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topNPS.urls}
+                  dataSeries={summaryReport.topNPS.scores}
+                />
+              </span>
             </div>
           ) : (
             <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
@@ -589,10 +591,12 @@ export default function SummaryReport() {
               <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
                 Top 3 Trust Index Scores
               </h3>
-              <ColumnChartWithLables
-                dataLabel={summaryReport.topTrustIndex.urls}
-                dataSeries={summaryReport.topTrustIndex.scores}
-              />
+              <span data-testid='trustindex-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topTrustIndex.urls}
+                  dataSeries={summaryReport.topTrustIndex.scores}
+                />
+              </span>
             </div>
           ) : (
             <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
@@ -605,10 +609,12 @@ export default function SummaryReport() {
               <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
                 Top 3 Rating Scores
               </h3>
-              <ColumnChartWithLables
-                dataLabel={summaryReport.topRating.urls}
-                dataSeries={summaryReport.topRating.scores}
-              />
+              <span data-testid='rating-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topRating.urls}
+                  dataSeries={summaryReport.topRating.scores}
+                />
+              </span>
             </div>
           ) : (
             <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
@@ -622,22 +628,24 @@ export default function SummaryReport() {
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
               Average Star Ratings for Reviews
             </h3>
-            <ColumnChartWithLables
-              dataLabel={[
-                '5 stars',
-                '4 stars',
-                '3 stars',
-                '2 stars',
-                '1 star'
-              ]}
-              dataSeries={[
-                summaryReport.averageStarRating[4],
-                summaryReport.averageStarRating[3],
-                summaryReport.averageStarRating[2],
-                summaryReport.averageStarRating[1],
-                summaryReport.averageStarRating[0],
-              ]}
-            />
+            <span data-testid='star-ratings-review-graph'>
+              <ColumnChartWithLables
+                dataLabel={[
+                  '5 stars',
+                  '4 stars',
+                  '3 stars',
+                  '2 stars',
+                  '1 star'
+                ]}
+                dataSeries={[
+                  summaryReport.averageStarRating[4],
+                  summaryReport.averageStarRating[3],
+                  summaryReport.averageStarRating[2],
+                  summaryReport.averageStarRating[1],
+                  summaryReport.averageStarRating[0],
+                ]}
+              />
+            </span>
           </div>
         ) : (
           <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
@@ -652,13 +660,16 @@ export default function SummaryReport() {
         </h3>
         <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
           {summaryReport.newsSentiment ? (
-            <StackedColumnChart
-              dataLabel={summaryReport.socialMetrics.urls}
-              dataSeries={[
-                { name: 'Positive', data: summaryReport.newsSentiment.positive }, 
-                { name: 'Neutral', data: summaryReport.newsSentiment.neutral }, 
-                {name: 'Negative', data: summaryReport.newsSentiment.negative }]}
-            />
+            <span data-testid='stacked-column-chart-news-sentiment'>
+
+              <StackedColumnChart
+                dataLabel={summaryReport.socialMetrics.urls}
+                dataSeries={[
+                  { name: 'Positive', data: summaryReport.newsSentiment.positive },
+                  { name: 'Neutral', data: summaryReport.newsSentiment.neutral },
+                  { name: 'Negative', data: summaryReport.newsSentiment.negative }]}
+              />
+            </span>
 
           ) : (
             <div>There are no news sentiment data currently available</div>

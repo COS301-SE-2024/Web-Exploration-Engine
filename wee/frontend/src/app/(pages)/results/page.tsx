@@ -1970,7 +1970,7 @@ function ResultsComponent() {
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
                             <div data-testid="result-facebook-comment-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
-                              {shareCountData.Facebook.comment_count}
+                              {shareCountData.Facebook && shareCountData.Facebook.comment_count ? shareCountData.Facebook.comment_count : '-'}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
                               Facebook Comment Count
@@ -1981,7 +1981,7 @@ function ResultsComponent() {
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
                             <div data-testid="result-facebook-reaction-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
-                              {shareCountData.Facebook.reaction_count}
+                              {shareCountData.Facebook && shareCountData.Facebook.reaction_count ? shareCountData.Facebook.reaction_count : '-'}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
                               Facebook Reaction Count
@@ -1992,7 +1992,7 @@ function ResultsComponent() {
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
                             <div data-testid="result-facebook-share-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
-                              {shareCountData.Facebook.share_count}
+                              {shareCountData.Facebook && shareCountData.Facebook.share_count ? shareCountData.Facebook.share_count : '-'}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
                               Facebook Share Count
@@ -2003,7 +2003,7 @@ function ResultsComponent() {
                         <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                           <div>
                             <div data-testid="result-pintrest-pin-count" className='font-poppins-bold text-5xl text-[#E60023]'>
-                              {shareCountData.Pinterest}
+                              {shareCountData.Pinterest ? shareCountData.Pinterest : '-'}
                             </div>
                             <div className='font-poppins-semibold text-lg'>
                               Pinterest Pin Count
