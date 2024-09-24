@@ -33,8 +33,8 @@ export function generateSummary( scraperResults: ScraperResult[]): Summary {
   let topRatingUrls: string[] = [];
   let topRatingScores: number[] = [];
 
-  let totalStars: number[] = [0,0,0,0,0];
-  let numberStars: number[] = [0,0,0,0,0];
+  const totalStars: number[] = [0,0,0,0,0];
+  const numberStars: number[] = [0,0,0,0,0];
   const averageStars: number[] = [];
 
   // Get top 3 NPS scores
