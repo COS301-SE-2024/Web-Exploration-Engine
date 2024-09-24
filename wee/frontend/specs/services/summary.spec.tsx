@@ -1225,4 +1225,36 @@ describe('SummaryService', () => {
     )
   });
 
+  it('social metrics', () => {
+    const summary = generateSummary(scraperResults);
+
+    const socialMetricsUrls= ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"];
+    const expectedShareCount = [7037, 6631, 15790, 3032];
+    const expectedCommentCount = [180,714,589,841];
+    const expectedReactionCount = [12103, 1905,17311,10190];
+
+    expect(summary.socialMetrics).toEqual({
+      urls: socialMetricsUrls,
+      facebookShareCount: expectedShareCount,
+      facebookCommentCount: expectedCommentCount,
+      facebookReactionCount: expectedReactionCount
+    })
+  });
+
+  it('news sentiment', () => {
+    const summary = generateSummary(scraperResults);
+
+    const newsSentimentUrls= ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"];
+    const expectedPositive = [31,31,3,3];
+    const expectedNeutral = [68,68,51,51];
+    const expectedNegative = [0,0,46,46];
+
+    expect(summary.newsSentiment).toEqual({
+      urls: newsSentimentUrls,
+      positive: expectedPositive,
+      neutral: expectedNeutral,
+      negative: expectedNegative
+    })
+  });
+
 });

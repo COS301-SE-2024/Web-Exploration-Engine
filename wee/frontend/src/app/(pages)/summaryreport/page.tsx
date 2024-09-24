@@ -25,6 +25,7 @@ import { AreaChart } from '../../components/Graphs/AreaChart';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 import { sum } from 'cypress/types/lodash';
+import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 
 interface weakClassification {
   url: string;
@@ -543,8 +544,26 @@ export default function SummaryReport() {
           ) : (<></>)
         }
 
-        {/* Reviews */}
+        {/* Social Media Engagement */}
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+          Social Media Engagement
+        </h3>
+        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+          {summaryReport.socialMetrics ? (
+            <StackedColumnChart
+              dataLabel={summaryReport.socialMetrics.urls}
+              dataSeries={[
+                { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount }, 
+                { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount }, 
+                {name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
+            />
 
+          ) : (
+            <div>There are no social metric data currently available</div>
+          )}
+        </div>
+
+        {/* Reviews */}
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
           Reviews
         </h3>
@@ -599,33 +618,53 @@ export default function SummaryReport() {
 
         </div>
         {summaryReport.averageStarRating && summaryReport.averageStarRating.length == 5 ? (
-            <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
-              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
-                Average Star Ratings for Reviews
-              </h3>
-              <ColumnChartWithLables
-                dataLabel={[
-                  '5 stars',
-                  '4 stars',
-                  '3 stars',
-                  '2 stars',
-                  '1 star'
-                ]}
-                dataSeries={[
-                  summaryReport.averageStarRating[4],
-                  summaryReport.averageStarRating[3],
-                  summaryReport.averageStarRating[2],
-                  summaryReport.averageStarRating[1],
-                  summaryReport.averageStarRating[0],
-                ]}
-              />
-            </div>
-          ) : (
-            <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
-              There are no average star rating data currently available
-            </div>
-            )
+          <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+              Average Star Ratings for Reviews
+            </h3>
+            <ColumnChartWithLables
+              dataLabel={[
+                '5 stars',
+                '4 stars',
+                '3 stars',
+                '2 stars',
+                '1 star'
+              ]}
+              dataSeries={[
+                summaryReport.averageStarRating[4],
+                summaryReport.averageStarRating[3],
+                summaryReport.averageStarRating[2],
+                summaryReport.averageStarRating[1],
+                summaryReport.averageStarRating[0],
+              ]}
+            />
+          </div>
+        ) : (
+          <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+            There are no average star rating data currently available
+          </div>
+        )
         }
+
+        {/* News */}
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+          Average News Sentiment
+        </h3>
+        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+          {summaryReport.newsSentiment ? (
+            <StackedColumnChart
+              dataLabel={summaryReport.socialMetrics.urls}
+              dataSeries={[
+                { name: 'Positive', data: summaryReport.newsSentiment.positive }, 
+                { name: 'Neutral', data: summaryReport.newsSentiment.neutral }, 
+                {name: 'Negative', data: summaryReport.newsSentiment.negative }]}
+            />
+
+          ) : (
+            <div>There are no news sentiment data currently available</div>
+          )}
+        </div>
+
       </div>
 
       {/* Confirm save */}

@@ -292,7 +292,19 @@ export interface Summary {
     urls: string[],
     scores: number[]
   },
-  averageStarRating: number[]
+  averageStarRating: number[],
+  socialMetrics: {
+    urls: string[],
+    facebookShareCount: number[],
+    facebookCommentCount: number[],
+    facebookReactionCount: number[]
+  },
+  newsSentiment: {
+    urls: string[],
+    positive: number[],
+    neutral: number[],
+    negative: number[]
+  }
 }
 
 export interface Graph {

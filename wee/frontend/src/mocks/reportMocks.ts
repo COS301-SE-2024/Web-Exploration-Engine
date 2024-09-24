@@ -364,7 +364,19 @@ export const mockReportSummary: Summary = {
     ],
     scores: [1.83, 1.65, 1.56]
   },
-  averageStarRating: [827.75, 85, 98, 1757, 6846.25]
+  averageStarRating: [827.75, 85, 98, 1757, 6846.25],
+  socialMetrics: {
+    urls: ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"],
+    facebookShareCount: [7037, 6631, 15790, 3032],
+    facebookCommentCount: [180,714,589,841],
+    facebookReactionCount: [12103, 1905,17311,10190],
+  },
+  newsSentiment: {
+    urls: ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"],
+    positive: [31,31,3,3],
+    neutral: [68,68,51,51],
+    negative: [0,0,46,46]
+  }
 }
 
 export const mockReports: ReportRecord[] = [
