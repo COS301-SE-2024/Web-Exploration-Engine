@@ -1796,6 +1796,28 @@ describe('Results Component', () => {
         });
     });
 
+    it('Reputation Management: Social Media Engagement Metrics Unavailable', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    shareCountdata: null,
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const ORMTab = screen.getByRole('tab', { name: /Reputation Management/i });
+        fireEvent.click(ORMTab);
+
+        await waitFor(() => {
+            expect(screen.getByText('No social media data is currently available')).toBeInTheDocument();
+        });
+    });
+
     it('Reputation Management: Reviews', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
@@ -1847,6 +1869,134 @@ describe('Results Component', () => {
             expect(screen.queryByTestId('result-reviews-rating')?.textContent).toBe("1.65");
             expect(screen.queryByTestId('result-reviews-recommendation-status')?.textContent).toBe("");
             expect(screen.queryByTestId('result-reviews-trustindex')?.textContent).toBe("2.8");
+        });
+    });
+
+    it('Reputation Management: Reviews Unavailable', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    reviews: null
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const ORMTab = screen.getByRole('tab', { name: /Reputation Management/i });
+        fireEvent.click(ORMTab);
+
+        await waitFor(() => {
+            expect(screen.getByText('There are no review data currently available')).toBeInTheDocument();
+        });
+    });
+
+    it('Reputation Management: News', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    scrapeNews: [
+                        {
+                            title: "Level up your Heritage Day with Nando’s tips for the perfect braai - CapeTown ETC",
+                            link: "https://news.google.com/rss/articles/CBMihAFBVV95cUxOVU9aT3l1aENfUHlOS0w2THl3RlZoOUZTU1RoZEcydU9LU1JaYlBpTDd2ZmQwbG1PMjRVbE5NTUR1RjJVOFVhTFg0bGphVmtYU28xTGhyTXRHQ045N0ZGQ2NmaXdReXVwSmRwcmMxaEJJV2lvSWZ4OEN1Tk4xNGFQMW03cGk?oc=5",
+                            source: "CapeTown ETC",
+                            pubDate: "Sun, 22 Sep 2024 13:00:56 GMT",
+                            sentimentScores: {
+                                positive: 0.7899376153945923,
+                                negative: 0.0015594614669680595,
+                                neutral: 0.2085028886795044
+                            }
+                        },
+                        {
+                            title: "Nando's Stick it out ad brings humour to South Africa's daily struggles - Bizcommunity.com",
+                            link: "https://news.google.com/rss/articles/CBMitAFBVV95cUxOT2M3dU9fMEEyNFdGNXZmUHVrenBiQjR6Y2o0NVljNnVZcDJTYktzdmtPVnVvRWpLUGRrNHh4OFRQVkN4cmJMZlJCNUxjU0ZNNHZwYXFzOGkzT0Vic09LcG5vQzFmSkZ5V1ZiRDU4RnAzNVJFaFFHclp5VlJZeXVpbGZPekFWYy16bmhMMFROYXpKOHFBdlItcDgtVEx4ZWhrQ2ZneE9vbGlMYkFUcmFHcDhEY2U?oc=5",
+                            source: "Bizcommunity.com",
+                            pubDate: "Thu, 12 Sep 2024 07:00:00 GMT",
+                            sentimentScores: {
+                                positive: 0.3234110176563263,
+                                negative: 0.005732724908739328,
+                                neutral: 0.670856237411499
+                            }
+                        },
+                        {
+                            title: "South African restaurant Nando's Peri-Peri prepares for first Austin opening while eyeing expansion - The Business Journals",
+                            link: "https://news.google.com/rss/articles/CBMimwFBVV95cUxNXzc2NlFuZDlwY2FZRXc4dFlxN2N1Rkxla2JZT2J4emtBY2pvblVuQzVoc2hKZUcxSDVBYWU3TU9XSUZZTmxqN3N4N0ozd0d4NUZ6QjlOc1Q5UWRJZTRvRTVUSHZNM0E1dGZ4azYtdEp4UERlUlJMTnlST0pkMzFPWmtJdzdWbWFuMnVZVVRfUjJLWnlyODRVV2dMMA?oc=5",
+                            source: "The Business Journals",
+                            pubDate: "Mon, 23 Sep 2024 12:56:00 GMT",
+                            sentimentScores: {
+                                positive: 0.09960536658763885,
+                                negative: 0.0022338044364005327,
+                                neutral: 0.8981608748435974
+                            }
+                        },
+                        {
+                            title: "The men behind Nando’s – South Africa’s global peri-peri chicken empire - BusinessTech",
+                            link: "https://news.google.com/rss/articles/CBMitwFBVV95cUxOVnlJbkhXalBkei1URzY3R3dkVmdDUTZTSF9NcDVFYWdmV3pyUVlXZF8ySkk3WVJCNGNMR0lwQ0lhNFhvM3lJbl9BSW0zbjViYXpDamhwOW50X2RaU0ZBUlVlQ3EybnpSZ2QwMWMxV2FZN0JEVWtrSmZaN3FPa2pGek9UdjZKOWkxblhLYlNzNUpvU29lX2twSThKdVFuaGRneUk5OTNyMDR3S1NpSUdTcUh1M0JiWEk?oc=5",
+                            source: "BusinessTech",
+                            pubDate: "Thu, 25 Jul 2024 07:00:00 GMT",
+                            sentimentScores: {
+                                positive: 0.020457826554775238,
+                                negative: 0.010590984486043453,
+                                neutral: 0.9689511060714722
+                            }
+                        },
+                        {
+                            title: "Nando’s is SA’s official support group — and releases new dish to prove it - TimesLIVE",
+                            link: "https://news.google.com/rss/articles/CBMixgFBVV95cUxNaWtIUHliTWREZkUxVlJnMHNOWl94ZGRYTnNKVnhVVWZKQThqRWZmZHUxVDlDZXl5aENJOW16RkF1eGxNZG5LR1VXRXN3N2VBNjQ4WjJFZmY0bTVNRW93NWlFTElINUh2c1pyTDVocjVIVmVWUW56eDhoWEtyLU8yX1AydTd1czM5WVBnZ1QwTFA5ODYyZHZxN1JkS3luXzRleHh4UkhXd2lha1NTcGJUd1lYaWc0N0lRaDlxOWV5Tm9ZY0E3UEHSAcsBQVVfeXFMUEdadVBzZjMwNmhRcUZkOHdBWGVyNzIzX1V0NlhzblVfOXg5cFNGQjhQUlM3a3dBMkZ5WHlfOHI3QUliMEREa05vN0Q0LWJpTEtGaFRqQmtUbG03eEZ6WFFFbWU3TFgtQzRDVXlaVEx0dzN6RzVVYjNhaU9ZRmxjU081OGhWbS1jM1hUWFlwbmdJRmktYlROQ1FWajYyVW5zamc5YUlva0ZLaDM0Wmc2OTlSa0xmRVdfMVlNRTc1dkIyQWZ6REUtVy1pUlk?oc=5",
+                            source: "TimesLIVE",
+                            pubDate: "Fri, 30 Aug 2024 07:00:00 GMT",
+                            sentimentScores: {
+                                positive: 0.32251447439193726,
+                                negative: 0.0028901200275868177,
+                                neutral: 0.6745954155921936
+                            }
+                        }
+                    ],
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const ORMTab = screen.getByRole('tab', { name: /Reputation Management/i });
+        fireEvent.click(ORMTab);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId('donut-chart-news-sentiment')?.textContent).toBe("Average News Sentiment");
+
+            expect(screen.getByText('Level up your Heritage Day with Nando’s tips for the perfect braai - CapeTown ETC')).toBeInTheDocument();
+            expect(screen.getByText("Nando's Stick it out ad brings humour to South Africa's daily struggles - Bizcommunity.com")).toBeInTheDocument();
+            expect(screen.getByText("South African restaurant Nando's Peri-Peri prepares for first Austin opening while eyeing expansion - The Business Journals")).toBeInTheDocument();
+            expect(screen.getByText("The men behind Nando’s – South Africa’s global peri-peri chicken empire - BusinessTech")).toBeInTheDocument();
+            expect(screen.getByText("Nando’s is SA’s official support group — and releases new dish to prove it - TimesLIVE")).toBeInTheDocument();
+        });
+    });
+
+    it('Reputation Management: News Unavailable', async () => {
+        (useScrapingContext as jest.Mock).mockReturnValueOnce({
+            results: [
+                {
+                    ...mockResults[0],
+                    scrapeNews: null
+                },
+            ],
+        });
+
+        await act(async () => {
+            render(<Results />);
+        });
+
+        const ORMTab = screen.getByRole('tab', { name: /Reputation Management/i });
+        fireEvent.click(ORMTab);
+
+        await waitFor(() => {
+            expect(screen.getByText('No news sentiment data is currently available')).toBeInTheDocument();
         });
     });
 

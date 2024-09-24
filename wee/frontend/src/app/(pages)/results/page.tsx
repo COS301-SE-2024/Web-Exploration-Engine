@@ -2013,7 +2013,7 @@ function ResultsComponent() {
 
                       </div>)
                       : (
-                        <div>No social media data is currently available</div>
+                        <div className='social-media-not-available'>No social media data is currently available</div>
                       )
                     }
                   </div>
@@ -2058,7 +2058,7 @@ function ResultsComponent() {
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
                               <div data-testid="result-reviews-nps" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {reviews.NPS}
+                                {reviews && reviews.NPS ? reviews.NPS : '-'}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
                                 NPS
@@ -2069,7 +2069,7 @@ function ResultsComponent() {
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
                               <div data-testid="result-reviews-number-reviews" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {reviews.numberOfReviews}
+                                {reviews && reviews.numberOfReviews ? reviews.numberOfReviews : '-'}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
                                 Number of reviews
@@ -2080,7 +2080,7 @@ function ResultsComponent() {
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
                               <div data-testid="result-reviews-rating" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {reviews.rating}
+                                {reviews && reviews.rating ? reviews.rating : '-'}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
                                 Rating
@@ -2091,7 +2091,7 @@ function ResultsComponent() {
                           <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
                             <div>
                               <div data-testid="result-reviews-recommendation-status" className='font-poppins-bold text-2xl lg:text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                {reviews.recommendationStatus}
+                                {reviews && reviews.numberOfReviews ? reviews.recommendationStatus : '-'}
                               </div>
                               <div className='font-poppins-semibold text-lg'>
                                 Recommendation Status
@@ -2132,7 +2132,7 @@ function ResultsComponent() {
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
                     {scrapeNews && scrapeNews.length > 0 ? (
                       <>
-                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4'>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4' data-testid='donut-chart-news-sentiment'>
                           <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
                             Average News Sentiment
                           </h3>
