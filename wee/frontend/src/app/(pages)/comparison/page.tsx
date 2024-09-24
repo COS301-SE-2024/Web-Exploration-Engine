@@ -576,7 +576,8 @@ export default function Comparison() {
                 <InfoPopOver
                     data-testid="popup-info-technical-seo"
                     heading="Online Reputation Management"
-                    content="abc"
+                    content="Online Reputation Management (ORM) refers to the process of influencing and managing the public perception of a business or brand on the internet. 
+                    It involves monitoring and addressing any online content, such as reviews, social media comments, news articles, to maintain or improve one's reputation."
                     placement="bottom"
                 />
             </h4>

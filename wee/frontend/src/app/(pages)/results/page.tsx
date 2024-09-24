@@ -2024,7 +2024,12 @@ function ResultsComponent() {
                     <InfoPopOver
                       data-testid="popup-reviews"
                       heading="Reviews"
-                      content="More info here"
+                      content="<i>Star Ratings for Reviews: </i>Displays how reviews are distributed across various star levels, providing an overview of customer feedback.</br></br>
+                              <i>NPS (Net Promoter Score): </i>Reflects the likelihood of customers recommending a business, with scores below 0 indicating low likelihood, scores 
+                              between 1 and 49 showing moderate likelihood, and scores above 49 signifying a strong likelihood of recommendation.</br></br>      
+                              <i>Average Star Rating: </i>Offers an overall indication of customer satisfaction based on the ratings given.</br></br>
+                              <i>Hellopeter TrustIndex: </i>Assesses a business's credibility by analyzing factors such as star ratings, response times, review volume, and recent 
+                              review relevance. Scores range from 0 to 10, representing the quality of customer service.</br>"
                       placement="right-end"
                     />
                   </h3>
@@ -2124,7 +2129,8 @@ function ResultsComponent() {
                     <InfoPopOver
                       data-testid="popup-news-sentiment"
                       heading="News Sentiment"
-                      content="More info here"
+                      content="Reflects the overall sentiment of news coverage about a business over time, highlighting positive, negative, and neutral scores for the 10 most recent news 
+                            articles to indicate public perception."
                       placement="right-end"
                     />
                   </h3>
@@ -2148,8 +2154,8 @@ function ResultsComponent() {
                           />
                         </div>
                         <div className='gap-3 grid md:grid-cols-2 my-3'>
-                          {scrapeNews.map((news) => (
-                            <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 '>
+                          {scrapeNews.map((news, index) => (
+                            <div key={index} className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 '>
                               <div>
                                 <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
                                   {news.title}
