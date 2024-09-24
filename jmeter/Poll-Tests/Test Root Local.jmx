@@ -102,6 +102,11 @@
             <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/results_solo_poll_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="results_poll_graph" elementType="Argument">
+            <stringProp name="Argument.name">results_poll_graph</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/poll_graph_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </elementProp>
     </TestPlan>
@@ -299,7 +304,7 @@
           <hashTree/>
         </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">5</stringProp>
+          <stringProp name="LoopController.loops">25</stringProp>
         </LoopController>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="root poll">
@@ -449,7 +454,7 @@
                   <connectTime>true</connectTime>
                 </value>
               </objProp>
-              <stringProp name="filename">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/root-poll-graph.xml</stringProp>
+              <stringProp name="filename">${results_poll_graph}</stringProp>
             </ResultCollector>
             <hashTree/>
             <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
