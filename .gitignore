@@ -5,3 +5,6 @@ node_modules/.bin/node-which
 my.secrets
 *.log
 *-audit.json
+/jmeter/Load-Tests/results
+/jmeter/Poll-Tests/results
+/jmeter/Poll-Tests/root-poll/beginner results
