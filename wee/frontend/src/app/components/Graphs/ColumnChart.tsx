@@ -154,6 +154,9 @@ export function ColumnChartWithLables({ dataLabel, dataSeries }: IChart) {
         grid: {
             borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
         },
+        legend: {
+            show:false
+        }
     });
 
     const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));

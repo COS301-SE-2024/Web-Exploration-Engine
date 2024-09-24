@@ -796,7 +796,7 @@ export default function Comparison() {
                                     <div data-testid="website1-recommendation-status" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
                                         {websiteOne?.reviews && websiteOne?.reviews.recommendationStatus !== "" ?
                                             websiteOne.reviews.recommendationStatus
-                                            : 'NA'
+                                            : 'N/A'
                                         }
                                     </div>
                                     <div className='font-poppins-semibold text-lg'>
