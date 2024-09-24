@@ -1,0 +1,3 @@
+Request URL: http://localhost:3002/api/scraper/status?url=https://scrapeninja.net&type=scrape
+Request Method: GET
+Headers:
