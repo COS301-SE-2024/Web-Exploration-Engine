@@ -79,25 +79,35 @@
           </elementProp>
           <elementProp name="results_file_time" elementType="Argument">
             <stringProp name="Argument.name">results_file_time</stringProp>
-            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/resultstree_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/results_root_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="results_file_poll_timeout_time" elementType="Argument">
-            <stringProp name="Argument.name">results_file_poll_timeout_time</stringProp>
-            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/resultstree_${pollingInterval}_${timeout}_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+          <elementProp name="results_root_poll_file_time" elementType="Argument">
+            <stringProp name="Argument.name">results_root_poll_file_time</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/resuts_full_root_and_poll_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="results_file_threads_poll_timeout_time" elementType="Argument">
-            <stringProp name="Argument.name">results_file_threads_poll_timeout_time</stringProp>
-            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/resultstree_${pollingInterval}_${timeout}_${__numThreads}_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+          <elementProp name="results_root_file_time" elementType="Argument">
+            <stringProp name="Argument.name">results_root_file_time</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/results_root_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="results_solo_root" elementType="Argument">
+            <stringProp name="Argument.name">results_solo_root</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/results_solo_root_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="results_solo_poll" elementType="Argument">
+            <stringProp name="Argument.name">results_solo_poll</stringProp>
+            <stringProp name="Argument.value">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/results_solo_poll_${__time(yyyyMMdd_HHmmss)}.xml</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
       </elementProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="User Group 6" enabled="false">
-        <intProp name="ThreadGroup.num_threads">6</intProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="users-1">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
@@ -132,9 +142,8 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion" enabled="true">
-            <stringProp name="DurationAssertion.duration">10000</stringProp>
-            <stringProp name="Assertion.scope">all</stringProp>
+          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion">
+            <stringProp name="DurationAssertion.duration">2000</stringProp>
           </DurationAssertion>
           <hashTree/>
           <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results">
@@ -175,154 +184,6 @@
             <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
-            <objProp>
-              <name>saveConfig</name>
-              <value class="SampleSaveConfiguration">
-                <time>true</time>
-                <latency>true</latency>
-                <timestamp>true</timestamp>
-                <success>true</success>
-                <label>true</label>
-                <code>true</code>
-                <message>true</message>
-                <threadName>true</threadName>
-                <dataType>true</dataType>
-                <encoding>false</encoding>
-                <assertions>true</assertions>
-                <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>false</xml>
-                <fieldNames>true</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
-                <responseDataOnError>false</responseDataOnError>
-                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-                <assertionsResultsToSave>0</assertionsResultsToSave>
-                <bytes>true</bytes>
-                <sentBytes>true</sentBytes>
-                <url>true</url>
-                <threadCounts>true</threadCounts>
-                <idleTime>true</idleTime>
-                <connectTime>true</connectTime>
-              </value>
-            </objProp>
-            <stringProp name="filename"></stringProp>
-          </ResultCollector>
-          <hashTree/>
-          <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
-            <objProp>
-              <name>saveConfig</name>
-              <value class="SampleSaveConfiguration">
-                <time>true</time>
-                <latency>true</latency>
-                <timestamp>true</timestamp>
-                <success>true</success>
-                <label>true</label>
-                <code>true</code>
-                <message>true</message>
-                <threadName>true</threadName>
-                <dataType>true</dataType>
-                <encoding>false</encoding>
-                <assertions>true</assertions>
-                <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>false</xml>
-                <fieldNames>true</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
-                <responseDataOnError>false</responseDataOnError>
-                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-                <assertionsResultsToSave>0</assertionsResultsToSave>
-                <bytes>true</bytes>
-                <sentBytes>true</sentBytes>
-                <url>true</url>
-                <threadCounts>true</threadCounts>
-                <idleTime>true</idleTime>
-                <connectTime>true</connectTime>
-              </value>
-            </objProp>
-            <stringProp name="filename"></stringProp>
-          </ResultCollector>
-          <hashTree/>
-          <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
-            <objProp>
-              <name>saveConfig</name>
-              <value class="SampleSaveConfiguration">
-                <time>true</time>
-                <latency>true</latency>
-                <timestamp>true</timestamp>
-                <success>true</success>
-                <label>true</label>
-                <code>true</code>
-                <message>true</message>
-                <threadName>true</threadName>
-                <dataType>true</dataType>
-                <encoding>false</encoding>
-                <assertions>true</assertions>
-                <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>false</xml>
-                <fieldNames>true</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
-                <responseDataOnError>false</responseDataOnError>
-                <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-                <assertionsResultsToSave>0</assertionsResultsToSave>
-                <bytes>true</bytes>
-                <sentBytes>true</sentBytes>
-                <url>true</url>
-                <threadCounts>true</threadCounts>
-                <idleTime>true</idleTime>
-                <connectTime>true</connectTime>
-              </value>
-            </objProp>
-            <stringProp name="filename"></stringProp>
-          </ResultCollector>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="root poll">
-          <stringProp name="TestPlan.comments">Poll the correspond pollingURL to check 
-</stringProp>
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
-          <stringProp name="HTTPSampler.port">3002</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">${path-scraper}status</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="url" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">${var1}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">url</stringProp>
-              </elementProp>
-              <elementProp name="type" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">scrape</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">type</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion">
-            <stringProp name="DurationAssertion.duration">10000</stringProp>
-            <stringProp name="Assertion.scope">all</stringProp>
-          </DurationAssertion>
-          <hashTree/>
           <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
@@ -337,27 +198,29 @@
                 <message>true</message>
                 <threadName>true</threadName>
                 <dataType>true</dataType>
-                <encoding>false</encoding>
+                <encoding>true</encoding>
                 <assertions>true</assertions>
                 <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>false</xml>
+                <responseData>true</responseData>
+                <samplerData>true</samplerData>
+                <xml>true</xml>
                 <fieldNames>true</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
+                <responseHeaders>true</responseHeaders>
+                <requestHeaders>true</requestHeaders>
                 <responseDataOnError>false</responseDataOnError>
                 <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
                 <assertionsResultsToSave>0</assertionsResultsToSave>
                 <bytes>true</bytes>
                 <sentBytes>true</sentBytes>
                 <url>true</url>
+                <fileName>true</fileName>
                 <threadCounts>true</threadCounts>
+                <sampleCount>true</sampleCount>
                 <idleTime>true</idleTime>
                 <connectTime>true</connectTime>
               </value>
             </objProp>
-            <stringProp name="filename"></stringProp>
+            <stringProp name="filename">${results_solo_root}</stringProp>
           </ResultCollector>
           <hashTree/>
           <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
@@ -416,10 +279,10 @@
                 <subresults>true</subresults>
                 <responseData>false</responseData>
                 <samplerData>false</samplerData>
-                <xml>true</xml>
-                <fieldNames>false</fieldNames>
+                <xml>false</xml>
+                <fieldNames>true</fieldNames>
                 <responseHeaders>false</responseHeaders>
-                <requestHeaders>true</requestHeaders>
+                <requestHeaders>false</requestHeaders>
                 <responseDataOnError>false</responseDataOnError>
                 <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
                 <assertionsResultsToSave>0</assertionsResultsToSave>
@@ -427,96 +290,173 @@
                 <sentBytes>true</sentBytes>
                 <url>true</url>
                 <threadCounts>true</threadCounts>
-                <sampleCount>true</sampleCount>
                 <idleTime>true</idleTime>
                 <connectTime>true</connectTime>
               </value>
             </objProp>
-            <stringProp name="filename">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/root-poll-graph.xml</stringProp>
+            <stringProp name="filename"></stringProp>
           </ResultCollector>
           <hashTree/>
-          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor - Save Scrape results" enabled="false">
-            <stringProp name="cacheKey">true</stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="script">import groovy.json.JsonOutput
-
-// Specify the folder and file name for the text file
-def textFilePath = &apos;/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Load-Tests/results/response_&apos; + System.currentTimeMillis() + &apos;.txt&apos;
-
-// Specify the folder and file name for the JSON file
-def jsonFilePath = &apos;/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Load-Tests/results/json_response_&apos; + System.currentTimeMillis() + &apos;.json&apos;
-
-// Log file paths for debugging
-log.info(&apos;Text file path: &apos; + textFilePath)
-log.info(&apos;JSON file path: &apos; + jsonFilePath)
-
-// Open the text file for writing
-def textFile = new File(textFilePath)
-textFile.withWriter { writer -&gt;
-    writer &lt;&lt; &apos;Response Code: &apos; + prev.getResponseCode() + &apos;\n&apos;
-    writer &lt;&lt; &apos;Response Message: &apos; + prev.getResponseMessage() + &apos;\n&apos;
-    writer &lt;&lt; &apos;Response Body: &apos; + prev.getResponseDataAsString() + &apos;\n&apos;
-    writer &lt;&lt; &apos;\n--- Request Details ---\n&apos;
-    writer &lt;&lt; &apos;Request URL: &apos; + sampler.getUrl() + &apos;\n&apos;
-    writer &lt;&lt; &apos;Request Method: &apos; + sampler.getMethod() + &apos;\n&apos;
-    writer &lt;&lt; &apos;Headers:\n&apos;
-    sampler.getHeaderManager().getHeaders().each { header -&gt;
-        writer &lt;&lt; header.getName() + &apos;: &apos; + header.getValue() + &apos;\n&apos;
-    }
-    writer &lt;&lt; &apos;Request Body: &apos; + sampler.getQueryString() + &apos;\n&apos;
-}
-
-// Create a JSON object for the JSON file
-def jsonResponse = [
-    responseCode   : prev.getResponseCode(),
-    responseMessage: prev.getResponseMessage(),
-    responseBody   : prev.getResponseDataAsString(),
-    requestDetails : [
-        url    : sampler.getUrl(),
-        method : sampler.getMethod(),
-        headers: sampler.getHeaderManager().getHeaders().collectEntries { header -&gt;
-            [header.getName(), header.getValue()]
-        },
-        body   : sampler.getQueryString()
-    ]
-]
-
-// Open the JSON file for writing
-def jsonFile = new File(jsonFilePath)
-jsonFile.withWriter { writer -&gt;
-    writer &lt;&lt; &apos;Response Code: &apos; + prev.getResponseCode() + &apos;\n&apos;
-    writer.write(JsonOutput.prettyPrint(JsonOutput.toJson(jsonResponse)))
-}
-
-// Log completion
-log.info(&apos;Files saved successfully.&apos;)
+        </hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">5</stringProp>
+        </LoopController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="root poll">
+            <stringProp name="TestPlan.comments">Poll the correspond pollingURL to check 
 </stringProp>
-            <stringProp name="scriptLanguage">groovy</stringProp>
-          </JSR223PostProcessor>
-          <hashTree/>
-          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor - Check Content">
-            <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"></stringProp>
-            <stringProp name="filename"></stringProp>
-            <stringProp name="cacheKey">true</stringProp>
-            <stringProp name="script">import groovy.json.JsonSlurper
-
-// Parse the response
-def response = prev.getResponseDataAsString()
-def jsonResponse = new JsonSlurper().parseText(response)
-
-// Update the status
-vars.put(&apos;status&apos;, jsonResponse.status)
-
-// Check for an error message
-if (jsonResponse.data &amp;&amp; jsonResponse.data.error) {
-    // Log the error message if present
-    log.error(&quot;Error message found: &quot; + jsonResponse.data.error)
-}
-</stringProp>
-          </JSR223PostProcessor>
-          <hashTree/>
+            <stringProp name="HTTPSampler.domain">localhost</stringProp>
+            <stringProp name="HTTPSampler.port">3002</stringProp>
+            <stringProp name="HTTPSampler.protocol">http</stringProp>
+            <stringProp name="HTTPSampler.path">${path-scraper}status</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="url" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">${var1}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">url</stringProp>
+                </elementProp>
+                <elementProp name="type" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">scrape</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">type</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="Duration Assertion">
+              <stringProp name="DurationAssertion.duration">2000</stringProp>
+              <stringProp name="Assertion.scope">all</stringProp>
+            </DurationAssertion>
+            <hashTree/>
+            <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+              <boolProp name="ResultCollector.error_logging">false</boolProp>
+              <objProp>
+                <name>saveConfig</name>
+                <value class="SampleSaveConfiguration">
+                  <time>true</time>
+                  <latency>true</latency>
+                  <timestamp>true</timestamp>
+                  <success>true</success>
+                  <label>true</label>
+                  <code>true</code>
+                  <message>true</message>
+                  <threadName>true</threadName>
+                  <dataType>true</dataType>
+                  <encoding>false</encoding>
+                  <assertions>true</assertions>
+                  <subresults>true</subresults>
+                  <responseData>false</responseData>
+                  <samplerData>true</samplerData>
+                  <xml>true</xml>
+                  <fieldNames>true</fieldNames>
+                  <responseHeaders>true</responseHeaders>
+                  <requestHeaders>true</requestHeaders>
+                  <responseDataOnError>false</responseDataOnError>
+                  <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                  <assertionsResultsToSave>0</assertionsResultsToSave>
+                  <bytes>true</bytes>
+                  <sentBytes>true</sentBytes>
+                  <url>true</url>
+                  <fileName>true</fileName>
+                  <threadCounts>true</threadCounts>
+                  <sampleCount>true</sampleCount>
+                  <idleTime>true</idleTime>
+                  <connectTime>true</connectTime>
+                </value>
+              </objProp>
+              <stringProp name="filename">${results_solo_poll}</stringProp>
+            </ResultCollector>
+            <hashTree/>
+            <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+              <boolProp name="ResultCollector.error_logging">false</boolProp>
+              <objProp>
+                <name>saveConfig</name>
+                <value class="SampleSaveConfiguration">
+                  <time>true</time>
+                  <latency>true</latency>
+                  <timestamp>true</timestamp>
+                  <success>true</success>
+                  <label>true</label>
+                  <code>true</code>
+                  <message>true</message>
+                  <threadName>true</threadName>
+                  <dataType>true</dataType>
+                  <encoding>false</encoding>
+                  <assertions>true</assertions>
+                  <subresults>true</subresults>
+                  <responseData>false</responseData>
+                  <samplerData>false</samplerData>
+                  <xml>false</xml>
+                  <fieldNames>true</fieldNames>
+                  <responseHeaders>false</responseHeaders>
+                  <requestHeaders>false</requestHeaders>
+                  <responseDataOnError>false</responseDataOnError>
+                  <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                  <assertionsResultsToSave>0</assertionsResultsToSave>
+                  <bytes>true</bytes>
+                  <sentBytes>true</sentBytes>
+                  <url>true</url>
+                  <threadCounts>true</threadCounts>
+                  <idleTime>true</idleTime>
+                  <connectTime>true</connectTime>
+                </value>
+              </objProp>
+              <stringProp name="filename"></stringProp>
+            </ResultCollector>
+            <hashTree/>
+            <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results">
+              <boolProp name="ResultCollector.error_logging">false</boolProp>
+              <objProp>
+                <name>saveConfig</name>
+                <value class="SampleSaveConfiguration">
+                  <time>true</time>
+                  <latency>true</latency>
+                  <timestamp>true</timestamp>
+                  <success>true</success>
+                  <label>true</label>
+                  <code>true</code>
+                  <message>true</message>
+                  <threadName>true</threadName>
+                  <dataType>true</dataType>
+                  <encoding>false</encoding>
+                  <assertions>true</assertions>
+                  <subresults>true</subresults>
+                  <responseData>false</responseData>
+                  <samplerData>false</samplerData>
+                  <xml>true</xml>
+                  <fieldNames>false</fieldNames>
+                  <responseHeaders>false</responseHeaders>
+                  <requestHeaders>true</requestHeaders>
+                  <responseDataOnError>false</responseDataOnError>
+                  <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                  <assertionsResultsToSave>0</assertionsResultsToSave>
+                  <bytes>true</bytes>
+                  <sentBytes>true</sentBytes>
+                  <url>true</url>
+                  <threadCounts>true</threadCounts>
+                  <sampleCount>true</sampleCount>
+                  <idleTime>true</idleTime>
+                  <connectTime>true</connectTime>
+                </value>
+              </objProp>
+              <stringProp name="filename">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/root-poll-graph.xml</stringProp>
+            </ResultCollector>
+            <hashTree/>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+              <stringProp name="ConstantTimer.delay">5000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+          </hashTree>
           <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
             <stringProp name="ConstantTimer.delay">5000</stringProp>
           </ConstantTimer>
@@ -2905,82 +2845,6 @@ if (jsonResponse.data &amp;&amp; jsonResponse.data.error) {
           </ResultCollector>
           <hashTree/>
         </hashTree>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Results Tree">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>true</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>true</responseHeaders>
-              <requestHeaders>true</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-              <sentBytes>true</sentBytes>
-              <url>true</url>
-              <threadCounts>true</threadCounts>
-              <sampleCount>true</sampleCount>
-              <idleTime>true</idleTime>
-              <connectTime>true</connectTime>
-            </value>
-          </objProp>
-          <stringProp name="filename">/home/ndlovu/GitHub/Web-Exploration-Engine/jmeter/Poll-Tests/root-poll/resultstree.xml</stringProp>
-        </ResultCollector>
-        <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="Dynamic Results Tree">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>true</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>true</responseHeaders>
-              <requestHeaders>true</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-              <sentBytes>true</sentBytes>
-              <url>true</url>
-              <threadCounts>true</threadCounts>
-              <sampleCount>true</sampleCount>
-              <idleTime>true</idleTime>
-              <connectTime>true</connectTime>
-            </value>
-          </objProp>
-          <stringProp name="filename">${results_file_time}</stringProp>
-        </ResultCollector>
-        <hashTree/>
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
@@ -3067,31 +2931,6 @@ if (jsonResponse.data &amp;&amp; jsonResponse.data.error) {
           <boolProp name="stopThread">true</boolProp>
           <stringProp name="variableNames">var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var20, var21, var22, var23, var24, var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, var39, var40, var41, var42, var43, var44, var45, var46, var47, var48, var49, var50, var51, var52, var53, var54, var55, var56, var57, var58, var59, var60</stringProp>
         </CSVDataSet>
-        <hashTree/>
-        <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file">
-          <stringProp name="FileSaver.filename">./res</stringProp>
-          <boolProp name="FileSaver.errorsonly">false</boolProp>
-          <boolProp name="FileSaver.successonly">false</boolProp>
-          <boolProp name="FileSaver.skipsuffix">false</boolProp>
-          <boolProp name="FileSaver.skipautonumber">false</boolProp>
-          <boolProp name="FileSaver.ignoreTC">false</boolProp>
-          <boolProp name="FileSaver.addTimstamp">true</boolProp>
-          <stringProp name="FileSaver.variablename">res.xml</stringProp>
-        </ResultSaver>
-        <hashTree/>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="JSR223 Polling Config">
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script">// Initialize variables
-vars.put(&apos;startTime&apos;, String.valueOf(System.currentTimeMillis()))
-vars.put(&apos;pollingInterval&apos;, &apos;5000&apos;) // 5 seconds
-vars.put(&apos;timeout&apos;, &apos;300000&apos;) // 5 minutes
-vars.put(&apos;status&apos;, &apos;processing&apos;) // Initial status
-</stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
-          <stringProp name="TestPlan.comments">Set polling interval, timout interval and initial status</stringProp>
-        </JSR223Sampler>
         <hashTree/>
       </hashTree>
     </hashTree>
