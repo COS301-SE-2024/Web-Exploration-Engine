@@ -137,12 +137,13 @@ export class ScrapeReviewsService {
       // change review count to number
       let reviewCountNumber = 0;
       if (reviewCount !== 'No review count found') {
-        reviewCountNumber = parseInt(reviewCount);
+        const cleanReviewCount = reviewCount.replace(/,/g, ''); 
+        reviewCountNumber = parseInt(cleanReviewCount, 10); 
         // check if NaN
         if (isNaN(reviewCountNumber)) {
           reviewCountNumber = 0;
         }
-      }
+}
 
       // change trustindex rating to number
       let trustindexRatingNumber = 0;
