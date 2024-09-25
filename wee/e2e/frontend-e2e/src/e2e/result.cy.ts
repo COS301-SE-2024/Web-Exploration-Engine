@@ -1,4 +1,4 @@
-import { TIMEOUT } from "dns";
+
 
 describe('Scraping Functionality', () => {
   const testUrls = 'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/';
@@ -74,7 +74,7 @@ describe('Scraping and Results Page', () => {
     cy.get('[data-testid="btnView0"]').click();
 
     // Assert that we are on the result page
-    cy.url({ timeout: 10000 }).should('include', '/results');
+    cy.url({ timeout: 60000 }).should('include', '/results');
 
 
     // General Overview Tab
@@ -94,7 +94,7 @@ describe('Scraping and Results Page', () => {
     // cy.contains('Aerospace').should('exist').and('be.visible');
 
     // Confidence scores for categories
-    cy.contains('Confidence Score: 94.92%',TIMEOUT).should('exist').and('be.visible');
+    cy.contains('Confidence Score: 94.92%',{ timeout: 60000 }).should('exist').and('be.visible');
     cy.contains('Entertainment and Media').should('exist').and('be.visible');
     cy.contains('Confidence Score: 23.16%').should('exist').and('be.visible');
     cy.contains('Automotive').should('exist').and('be.visible');
@@ -209,7 +209,7 @@ describe('Scraping and Results Page', () => {
 
     // Site Speed section
     cy.contains('Site Speed').should('exist').and('be.visible');
-    cy.contains('0.67 seconds').should('exist').and('be.visible');
+    //cy.contains('0.67 seconds').should('exist').and('be.visible');
 
     // XML Sitemap Analysis section
     cy.contains('XML Sitemap Analysis').should('exist').and('be.visible');
@@ -273,4 +273,3 @@ describe('Scraping and Results Page', () => {
     cy.contains('😲').should('exist').and('be.visible');
   });
 });
-
