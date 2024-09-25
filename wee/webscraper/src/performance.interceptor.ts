@@ -8,8 +8,10 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { performance } from 'perf_hooks';
-import logger from '../logging/webscraperlogger';
+import getLogger from '../logging/webscraperlogger';
+const logger = getLogger();
 const serviceName = "[PerformanceInterceptor]";
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class PerformanceInterceptor implements NestInterceptor {

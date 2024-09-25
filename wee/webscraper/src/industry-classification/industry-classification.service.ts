@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { IndustryClassification, Metadata } from '../models/ServiceModels';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 import axios from 'axios';
 const serviceName = '[IndustryClassificationService]';
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class IndustryClassificationService {

@@ -4,10 +4,14 @@ import { ErrorResponse } from '../models/ServiceModels';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { performance } from 'perf_hooks';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 import fetch from 'node-fetch';
 
 const serviceName = "[RobotsService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
+
+
 @Injectable()
 export class RobotsService {
   // Returns all the paths user agent can scrape in the form of an array

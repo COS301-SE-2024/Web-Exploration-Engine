@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { SentimentClassification, Metadata } from '../models/ServiceModels';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
+const logger = getLogger();
 const serviceName = '[SentimentAnalysisService]';
+logger.info(serviceName, 'Service started');
 import axios from 'axios';
 import { performance } from 'perf_hooks';
-import { error } from 'console';
+import { error, log } from 'console';
 
 @Injectable()
 export class SentimentAnalysisService {

@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
 import { performance } from 'perf_hooks';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
+
 const serviceName = "[ScrapeContactInfoService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
+
+
 @Injectable()
 export class ScrapeContactInfoService {
   /**

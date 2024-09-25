@@ -2,7 +2,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { performance } from 'perf_hooks';
-import logger from '../logging/webscraperlogger';
+import getLogger from '../logging/webscraperlogger'
 import { Cache } from 'cache-manager';
 import * as puppeteer from 'puppeteer';
 
@@ -34,9 +34,11 @@ import {
   ScrapeResult,
   ReviewData,
 } from './models/ServiceModels';
+import { error } from 'console';
 
 const serviceName = "[ScraperService]";
-logger.info(serviceName);
+const logger = getLogger();
+logger.info('Scraper service initialised',serviceName);
 @Injectable()
 export class ScraperService implements OnModuleInit {
 
@@ -66,7 +68,6 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
-
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -104,7 +105,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrape(url: string) {
-    logger.info(serviceName,"Started scaping")
+    logger.info('Scraping task started', serviceName, {url, type: 'scrape'});
     const start = performance.now();
 
     // create puppeteer instance
@@ -116,7 +117,7 @@ export class ScraperService implements OnModuleInit {
       });
 
     } catch (error) {
-      logger.error(serviceName,'Failed to launch browser', error);
+      logger.error('Scraping task failed', serviceName, {url, type: 'scrape', error: "Failed to launch browser"});
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -240,6 +241,9 @@ export class ScraperService implements OnModuleInit {
     const end = performance.now();
     const time = (end - start) / 1000;
     data.time = parseFloat(time.toFixed(4));
+    const duration = end - start;
+
+    logger.info('Scraping task completed successfully', serviceName, {url, type: 'scrape', duration});
 
     return data;
   }
@@ -564,7 +568,7 @@ export class ScraperService implements OnModuleInit {
   async listenForScrapingTasks() {
     const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
     if (!subscriptionName) {
-      logger.error(serviceName,'GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
+      logger.error("Environment variable error", serviceName, {variable: 'GOOGLE_CLOUD_SUBSCRIPTION', type: 'string', error: 'not set'});
       return;
     }
 
@@ -572,12 +576,12 @@ export class ScraperService implements OnModuleInit {
       try {
         await this.handleMessage(message);
       } catch (error) {
-        logger.error(serviceName,'Error handling message', error);
+        logger.error('Error handling message', serviceName, {error: error.message});
       }
     };
 
     await this.pubsub.subscribe(subscriptionName, messageHandler);
-    logger.info(serviceName,'Subscribed to scraping tasks, listening for messages...');
+    logger.info('Subscribed to Pub/Sub topic', serviceName, {subscriptionName});
   }
 
   async handleMessage(message) {
@@ -590,27 +594,24 @@ export class ScraperService implements OnModuleInit {
     // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
     const maxAge = 5 * 60 * 1000;
 
-    logger.info(serviceName,`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`,'message-id',message.id);
+    logger.info('Received scraping task', serviceName, {messageId: message.id, messageAge, publishTime});
 
     if (messageAge > maxAge) {
-        logger.info(serviceName,`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`,'message-id',message.id);
+        logger.info('Stale message', serviceName, {descraiption: 'Message is to old, will be moved to a dead-letter topic after 5 retries', messageId: message.id, messageAge, maxAge});
         // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
         message.nack();
         // Return error response??
     } else {
         // Process the message if it is within acceptable age limits
-        //logger.info(serviceName,`Processing message: ${message.data.toString()}`);
-        message.ack();
+        //logger.info(serviceName,`Processing message: ${message.data.toString()}`)
 
         const start = performance.now();
-        logger.info(serviceName, 'message-id',message.id, 'message-id',message.data.toString());
         const { data, type } = JSON.parse(message.data.toString());
         if (!data) {
-          return {
-            errorStatus: 500,
-            errorCode: '500 Internal Server Error',
-            errorMessage: 'No data provided in message',
-          } as ErrorResponse
+          message.nack();
+          logger.error('Error processing message', serviceName, {error: 'Data field is required'});
+          throw new Error('Data field is required');
+          
         }
 
         const { url } = data;
@@ -633,16 +634,17 @@ export class ScraperService implements OnModuleInit {
             if (cachedData.status === 'completed') {
               const end = performance.now();
               const times = (end - start) / 1000;
-              logger.info(serviceName,'CACHE HIT for url: ', url, " time: ", times);
+              logger.info('Cache hit for scraping task', serviceName, {url, type, cacheKey});
 
               // Update time field
               cachedData.result.time = parseFloat(times.toFixed(4));
               await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
             }
 
-          // Performance Logging
-          const duration = performance.now() - start;
-          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-hit`);
+            // Performance Logging
+            const duration = performance.now() - start;
+            logger.info('Scraping task completed', serviceName, {duration, url, type, cacheHit: true});
+            message.ack();
             return;
           }
         }
@@ -651,7 +653,9 @@ export class ScraperService implements OnModuleInit {
         //logger.info(serviceName,'CACHE MISS - SCRAPE');
 
         // Add to cache as processing
+        logger.info('Cache miss for scraping task', serviceName, {url, type, cacheKey});
         await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+        message.ack();
 
         try {
           const result = await this.scrapeWebsite(data, type);
@@ -661,16 +665,14 @@ export class ScraperService implements OnModuleInit {
           };
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
 
-          logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
+          // logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
           // Performance Logging
           const duration = performance.now() - start;
-          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
+          // logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
          } catch (error) {
-          logger.error(serviceName,`Error scraping URL: ${url}`, error);
+          // logger.error(serviceName,`Error scraping URL: ${url}`, error);
           await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
         }
-
-
     }
   }
 

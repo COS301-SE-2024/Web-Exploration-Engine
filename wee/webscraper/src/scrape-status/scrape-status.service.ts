@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { ErrorResponse } from '../models/ServiceModels';
 import { performance } from 'perf_hooks';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 const serviceName = "[ScrapeStatusService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 /**
  * Service for handling website status related functionality.

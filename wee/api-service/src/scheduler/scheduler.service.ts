@@ -6,7 +6,8 @@ import { PubSubService } from '../pub-sub/pub_sub.service';
 import { EmailService } from '../email-service/email.service';
 import { ScheduleTask, ScheduleTaskResponse, UpdateScheduleTask, updateKeywordResult } from '../models/scheduleTaskModels';
 import { ScrapeResult } from '../models/scraperModels';
-import logger from '../logging/webscraperlogger';
+import getLogger from 'api-service/logging/webscraperlogger';
+const logger = getLogger();
 const serviceName = "[SchedulerService]";
 
 @Injectable()

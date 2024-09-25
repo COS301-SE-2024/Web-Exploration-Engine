@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { ReviewData } from '../models/ServiceModels';
 import { performance } from 'perf_hooks';
+import getLogger from 'webscraper/logging/webscraperlogger';
+
 const serviceName = "[ScrapeReviewsService]";
-import logger from '../../logging/webscraperlogger';
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class ScrapeReviewsService {

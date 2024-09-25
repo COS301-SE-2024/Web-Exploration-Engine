@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import { URL } from 'url';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 const serviceName = "[KeywordAnalysisService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class KeywordAnalysisService {

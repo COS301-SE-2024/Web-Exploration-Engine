@@ -38,7 +38,8 @@ import {
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { PerformanceInterceptor } from './performance.interceptor';
 const serviceName = '[ScrapeController]';
-import logger from '../logging/webscraperlogger';
+import getLogger from 'api-service/logging/webscraperlogger';
+const logger = getLogger();
 
 @ApiTags('Scraping')
 @Controller('scraper')

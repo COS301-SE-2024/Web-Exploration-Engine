@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios'; 
 import xml2js from 'xml2js';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 const serviceName = "[NewsScraperService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 //remember: changed to deployed version
 // const HUGGING_FACE_SENTIMENT_API_URL = 'https://api-inference.huggingface.co/models/finiteautomata/bertweet-base-sentiment-analysis';

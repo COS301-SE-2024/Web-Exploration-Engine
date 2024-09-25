@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PubSub } from '@google-cloud/pubsub';
-import logger from '../logging/webscraperlogger';
+import getLogger from 'api-service/logging/webscraperlogger';
+const logger = getLogger();
 const serviceName = "[PubSubService]";
 @Injectable()
 export class PubSubService {

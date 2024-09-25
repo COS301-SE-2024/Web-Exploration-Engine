@@ -2,10 +2,12 @@
 import { Injectable } from '@nestjs/common';
 import { RobotsResponse, ErrorResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 import * as fs from 'fs/promises';
 const serviceName = "[ScreenshotService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class ScreenshotService {

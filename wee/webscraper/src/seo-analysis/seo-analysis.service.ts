@@ -4,9 +4,11 @@ import axios from 'axios';
 import * as puppeteer from 'puppeteer';
 import { RobotsResponse } from '../models/ServiceModels';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 import { performance } from 'perf_hooks';
 const serviceName = "[SeoAnalysisService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 @Injectable()
 export class SeoAnalysisService {

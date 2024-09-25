@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import logger from '../../logging/webscraperlogger';
+import getLogger from 'webscraper/logging/webscraperlogger';
 const serviceName = "[ShareCountService]";
+const logger = getLogger();
+logger.info(serviceName, 'Service started');
 
 export class ShareCountService {
   private apiKey: string;

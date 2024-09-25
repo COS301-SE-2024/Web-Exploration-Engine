@@ -9,12 +9,23 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-- job_name: system
-  static_configs:
-  - targets:
-      - localhost
-    labels:
-      job: varlogs
-      __path__: /var/log/*.log
-       job: root
-      __path__: wee
+  # Configuration for the Web Scraper logs
+  - job_name: system
+    static_configs:
+      - targets:
+          - loki
+        labels:
+          job: apiservice
+          path: /var/log/*.log # Update to the path where API service logs are located
+
+      # - targets:
+      #     - localhost
+      #   labels:
+      #     job: varlogs
+      #     __path__: "/var/log/*.log"  # Generic log path for system logs
+      # - targets:
+      #     - localhost
+      #   labels:
+      #     job: webscraper
+      #     __path__: "/var/log/webscraper-*.log"  # Update to the path where webscraper logs are located
+
