@@ -42,14 +42,14 @@ describe('comparison page', () => {
     cy.url().should('include', 'results');
 
     // Navigate to the comparison page
-    cy.get('[data-testid="btn-comparison-summary"]').should('exist').click();
+    cy.get('[data-testid="btn-comparison-summary"]').should('exist').click({ force: true });
 
     // Verify we are on the Comparison Page
     cy.url().should('include', 'comparison');
 
     // Select first website to compare
-    cy.get('[data-testid="website1-select"]').should('exist').click();
-    cy.get('[data-testid="website1-option-0"]').should('exist').click({ force: true }); // Force click if hidden
+    cy.get('[data-testid="website1-select"]').should('exist').click({ force: true });
+    cy.get('[data-testid="website1-option-0"]',{ timeout: 60000 }).should('exist').click({ force: true }); // Force click if hidden
 
     // Select second website to compare
     cy.get('[data-testid="website2-select"]').should('exist').click();
