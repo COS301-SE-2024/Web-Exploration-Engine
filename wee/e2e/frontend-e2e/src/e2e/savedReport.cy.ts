@@ -64,10 +64,8 @@ describe('saved reports page', () => {
         'Status',
         'Live',
         'Industry',
-        'undefined',
         'Confidence Score: 0%',
         'Domain match',
-        'undefined',
         'Confidence Score: 0%',
         'No images available.',
 

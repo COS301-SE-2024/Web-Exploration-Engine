@@ -27,8 +27,8 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
 
     // Wait for the scheduled tasks message to appear
     cy.contains('1 tasks scheduled. 9 slots remaining.')
-      .should('exist')
-      .and('be.visible');
+    .should('be.visible') // Wait until the element is visible
+    .and('exist'); // Then check if it exists
 
     // Checking table headers (if they exist)
     cy.contains('URL').should('exist').and('be.visible');

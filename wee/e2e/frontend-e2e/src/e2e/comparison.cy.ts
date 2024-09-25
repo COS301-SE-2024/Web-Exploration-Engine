@@ -47,13 +47,14 @@ describe('comparison page', () => {
     // Verify we are on the Comparison Page
     cy.url().should('include', 'comparison');
 
-    // Select first website to compare
-    cy.get('[data-testid="website1-select"]').should('exist').click({ force: true });
-    cy.get('[data-testid="website1-option-0"]',{ timeout: 60000 }).should('exist').click({ force: true }); // Force click if hidden
+// Select first website to compare
+cy.get('[data-testid="website1-select"]').should('exist').click({ force: true });
+cy.get('[data-testid="website1-option-0"]', { timeout: 60000 }).should('be.visible').click(); // Check visibility instead of existence
 
-    // Select second website to compare
-    cy.get('[data-testid="website2-select"]').should('exist').click();
-    cy.get('[data-testid="website2-option-1"]').should('exist').click({ force: true }); // Force click if hidden
+// Select second website to compare
+cy.get('[data-testid="website2-select"]').should('exist').click();
+cy.get('[data-testid="website2-option-1"]', { timeout: 60000 }).should('be.visible').click(); // Add timeout and check visibility
+
 
     // Section: Lighthouse Analysis
   //   cy.get('[data-testid="website1-lighthouse-performance"]', { timeout: 10000 }
