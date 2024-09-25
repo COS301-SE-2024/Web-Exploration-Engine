@@ -185,8 +185,8 @@ function DashboardPage() {
 						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
 					>
 						<div className='text-4xl flex justify-center'>
-							{summaryStarRating.increase ? <FiArrowUp /> : <FiArrowDown />}
-							<span className='text-4xl'>{summaryStarRating.increaseDecreaseBy}</span>
+							{summaryStarRating.increaseDecreaseBy === 0 ? '' : (summaryStarRating.increase ? <FiArrowUp /> : <FiArrowDown />)}
+							<span className='text-4xl'>{summaryStarRating.increaseDecreaseBy === 0 ? '' : (summaryStarRating.increaseDecreaseBy ? summaryStarRating.increaseDecreaseBy.toFixed(2) : '-')}</span>
 						</div>
 						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summaryStarRating.summaryCategory}
@@ -223,8 +223,8 @@ function DashboardPage() {
 						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
 					>
 						<div className='text-4xl flex justify-center'>
-							{summaryEngagement.increase ? <FiArrowUp /> : <FiArrowDown />}
-							<span className='text-4xl'>{summaryEngagement.increaseDecreaseBy}</span>
+							{summaryEngagement.increaseDecreaseBy === 0 ? '' : (summaryEngagement.increase ? <FiArrowUp /> : <FiArrowDown />)}
+							<span className='text-4xl'>{summaryEngagement.increaseDecreaseBy === 0 ? '' : (summaryEngagement.increaseDecreaseBy ? summaryEngagement.increaseDecreaseBy.toFixed(2) : '-')}</span>
 						</div>
 						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summaryEngagement.summaryCategory}
@@ -242,8 +242,8 @@ function DashboardPage() {
 						className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'
 					>
 						<div className='text-4xl flex justify-center'>
-							{summarySiteSpeed.increase ? <FiArrowUp /> : <FiArrowDown />}
-							<span className='text-4xl'>{summarySiteSpeed.increaseDecreaseBy}</span>
+							{summarySiteSpeed.increaseDecreaseBy === 0 ? '' : (summarySiteSpeed.increase ? <FiArrowUp /> : <FiArrowDown />)}
+							<span className='text-4xl'>{summarySiteSpeed.increaseDecreaseBy === 0 ? '' : (summarySiteSpeed.increaseDecreaseBy ? summarySiteSpeed.increaseDecreaseBy.toFixed(2) : '-')}</span>
 						</div>
 						<div className='font-poppins-bold text-2xl text-jungleGreen-800 dark:text-jungleGreen-400 py-2'>
 							{summarySiteSpeed.summaryCategory}

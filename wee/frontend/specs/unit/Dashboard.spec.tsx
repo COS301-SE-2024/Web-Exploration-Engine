@@ -324,7 +324,7 @@ describe('Dashboard page - WITH data', () => {
 
         const dashboardSummaryStarRating = screen.queryByTestId('dashboard-summary-star-ratings');
         expect(dashboardSummaryStarRating).toBeInTheDocument();
-        expect(dashboardSummaryStarRating).toHaveTextContent('0Average Star Rating2.91');
+        expect(dashboardSummaryStarRating).toHaveTextContent('Average Star Rating2.91');
     });
 
     it('Summary Section - Recommendation Status - Likely', () => {
@@ -362,7 +362,7 @@ describe('Dashboard page - WITH data', () => {
 
         const dashboardSummaryEngagements = screen.queryByTestId('dashboard-summary-engagements');
         expect(dashboardSummaryEngagements).toBeInTheDocument();
-        expect(dashboardSummaryEngagements).toHaveTextContent('12Total Engagement4637');
+        expect(dashboardSummaryEngagements).toHaveTextContent('12.00Total Engagement4637');
     });
 
     it('Summary Section - SiteSpeed', () => {

@@ -204,28 +204,37 @@ function ResultsComponent() {
           setDomainClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotDomainClassify : []);
           setMetaData(urlResults[0].metadata);
 
-          const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
-          const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
-          setHomePageScreenShot(screenShotUrl);
+          if (urlResults[0].screenshot) {
+            const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
+            const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
+            setHomePageScreenShot(screenShotUrl);
+          }
 
           setAddresses(urlResults[0].addresses);
-          setEmails(urlResults[0].contactInfo.emails);
-          setPhones(urlResults[0].contactInfo.phones);
-          setSocialLinks(urlResults[0].contactInfo.socialLinks);
-          setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
-          setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
-          setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
-          setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
-          setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
-          setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
-          setSentimentAnalysis(urlResults[0].sentiment);
-          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
-          setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
-          setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
-          setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
-          setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
-          setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
-          setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+
+          if (urlResults[0].contactInfo) {
+            setEmails(urlResults[0].contactInfo.emails);
+            setPhones(urlResults[0].contactInfo.phones);
+            setSocialLinks(urlResults[0].contactInfo.socialLinks);
+          }
+
+          if (urlResults[0].seoAnalysis) {
+            setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
+            setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
+            setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
+            setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
+            setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
+            setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
+            setSentimentAnalysis(urlResults[0].sentiment);
+            setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
+            setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
+            setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
+            setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
+            setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
+            setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
+            setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+          }
+
           setScrapeNews(urlResults[0].scrapeNews);
           setReviews(urlResults[0].reviews);
           setShareCountData(urlResults[0].shareCountdata);

@@ -549,7 +549,12 @@ export default function SummaryReport() {
           Social Media Engagement
         </h3>
         <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
-          {summaryReport.socialMetrics ? (
+          {summaryReport.socialMetrics 
+          && summaryReport.socialMetrics.urls?.length > 0 
+            && summaryReport.socialMetrics.facebookCommentCount?.length > 0 
+            && summaryReport.socialMetrics.facebookReactionCount?.length > 0 
+            && summaryReport.socialMetrics.facebookShareCount?.length > 0 
+          ? (
             <StackedColumnChart
               dataLabel={summaryReport.socialMetrics.urls}
               dataSeries={[
