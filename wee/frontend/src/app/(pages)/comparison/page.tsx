@@ -593,7 +593,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-commentcount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.shareCountdata.Facebook ?
+                                        {websiteOne?.shareCountdata && websiteOne?.shareCountdata.Facebook && websiteOne.shareCountdata.Facebook.comment_count ?
                                             websiteOne.shareCountdata.Facebook.comment_count
                                             : '-'
                                         }
@@ -607,7 +607,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-reactioncount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.shareCountdata.Facebook ?
+                                        {websiteOne?.shareCountdata && websiteOne?.shareCountdata.Facebook && websiteOne.shareCountdata.Facebook.reaction_count ?
                                             websiteOne.shareCountdata.Facebook.reaction_count
                                             : '-'
                                         }
@@ -621,7 +621,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website1-sharecount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteOne?.shareCountdata.Facebook ?
+                                        {websiteOne?.shareCountdata && websiteOne?.shareCountdata.Facebook && websiteOne.shareCountdata.Facebook.share_count ?
                                             websiteOne.shareCountdata.Facebook.share_count
                                             : '-'
                                         }
@@ -648,7 +648,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website2-commentcount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.shareCountdata.Facebook ?
+                                        {websiteTwo?.shareCountdata && websiteTwo?.shareCountdata.Facebook && websiteTwo.shareCountdata.Facebook.comment_count ?
                                             websiteTwo.shareCountdata.Facebook.comment_count
                                             : '-'
                                         }
@@ -662,7 +662,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website2-reactioncount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.shareCountdata.Facebook ?
+                                        {websiteTwo?.shareCountdata && websiteTwo?.shareCountdata.Facebook && websiteTwo.shareCountdata.Facebook.reaction_count ?
                                             websiteTwo.shareCountdata.Facebook.reaction_count
                                             : '-'
                                         }
@@ -676,7 +676,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website2-sharecount" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.shareCountdata.Facebook ?
+                                        {websiteTwo?.shareCountdata && websiteTwo?.shareCountdata.Facebook && websiteTwo.shareCountdata.Facebook.share_count ?
                                             websiteTwo.shareCountdata.Facebook.share_count
                                             : '-'
                                         }
