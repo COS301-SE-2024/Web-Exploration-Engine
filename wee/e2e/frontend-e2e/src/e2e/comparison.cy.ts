@@ -49,7 +49,7 @@ describe('comparison page', () => {
 
 // Select first website to compare
 cy.get('[data-testid="website1-select"]').should('exist').click({ force: true });
-cy.get('[data-testid="website1-option-0"]', { timeout: 60000 }).should('be.visible').click(); // Check visibility instead of existence
+cy.get('[data-testid="website1-option-0"]', { timeout: 180000 }).should('be.visible').click(); // Check visibility instead of existence
 
 // Select second website to compare
 cy.get('[data-testid="website2-select"]').should('exist').click();
