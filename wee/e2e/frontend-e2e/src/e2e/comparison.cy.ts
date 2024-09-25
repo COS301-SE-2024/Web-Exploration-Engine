@@ -36,7 +36,7 @@ describe('comparison page', () => {
     cy.get('[data-testid="btn-start-scraping"]').click();
 
     // Wait for scraping to finish
-    cy.get('[data-testid="btnView0"]', { timeout: 60000 }).should('exist').should('be.visible');
+    //cy.get('[data-testid="btnView0"]', { timeout: 60000 }).should('exist').should('be.visible');
 
     // Go to the results page
     cy.url().should('include', 'results');

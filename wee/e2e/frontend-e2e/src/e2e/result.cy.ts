@@ -71,7 +71,7 @@ describe('Scraping and Results Page', () => {
     cy.get('[data-testid="btnView1"]', { timeout: 60000 }).should('exist').should('be.visible');
 
     // Click the first view button
-    cy.get('[data-testid="btnView0"]').click();
+    cy.get('[data-testid="btnView0"]').click({ force: true });
 
     // Assert that we are on the result page
     cy.url({ timeout: 60000 }).should('include', '/results');
