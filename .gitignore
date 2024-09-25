@@ -8,3 +8,4 @@ my.secrets
 /jmeter/Load-Tests/results
 /jmeter/Poll-Tests/results
 /jmeter/Poll-Tests/root-poll/beginner results
+/jmeter/Poll-Tests/root-poll
