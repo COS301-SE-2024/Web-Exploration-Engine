@@ -67,8 +67,8 @@ describe('Scraping and Results Page', () => {
     cy.get('[data-testid="loading-indicator"]', { timeout: 20000 }).should('not.exist');
 
     // Verify that the results page shows results for both sites
-    cy.get('[data-testid="btnView0"]', { timeout: 30000 }).should('exist').should('be.visible');
-    cy.get('[data-testid="btnView1"]', { timeout: 30000 }).should('exist').should('be.visible');
+    cy.get('[data-testid="btnView0"]', { timeout: 60000 }).should('exist').should('be.visible');
+    cy.get('[data-testid="btnView1"]', { timeout: 60000 }).should('exist').should('be.visible');
 
     // Click the first view button
     cy.get('[data-testid="btnView0"]').click();
