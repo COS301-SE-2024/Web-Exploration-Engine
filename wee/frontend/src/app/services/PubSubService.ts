@@ -26,7 +26,7 @@ export async function pollForResult(url: string) {
           resolve(jobData.result);
         } else if (jobData.status === 'error') {
           clearInterval(intervalId); // Stop polling if the job failed
-          reject(new Error('Job failed'));
+          resolve(jobData.error); // error state handled in the calling function
         } else {
           console.log('Job status:', jobData.status);
         }
