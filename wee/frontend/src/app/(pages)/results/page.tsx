@@ -204,9 +204,11 @@ function ResultsComponent() {
           setDomainClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotDomainClassify : []);
           setMetaData(urlResults[0].metadata);
 
-          const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
-          const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
-          setHomePageScreenShot(screenShotUrl);
+          if (urlResults[0].screenshot) {
+            const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
+            const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
+            setHomePageScreenShot(screenShotUrl);
+          }
 
           setAddresses(urlResults[0].addresses);
 
