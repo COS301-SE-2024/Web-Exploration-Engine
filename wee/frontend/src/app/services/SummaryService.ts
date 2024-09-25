@@ -49,7 +49,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
   // news sentiment average for each url
   for (const result of scraperResults) {
-    if (result.url && result.scrapeNews.length > 0) {
+    if (result.url && result.scrapeNews && result.scrapeNews.length > 0) {
       newsSentimentUrls.push(result.url);
 
       newsSentimentPositive.push(
@@ -84,7 +84,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
   // Get top 3 NPS scores
   for (const result of scraperResults) {
-    if (result.reviews !== undefined && result.reviews.NPS !== undefined && result.reviews.trustIndex !== undefined && result.reviews.rating !== undefined && result.reviews.starRatings !== undefined && result.reviews.starRatings.length > 0 && result.url) {
+    if (result.url && result.reviews !== undefined && result.reviews.NPS !== undefined && result.reviews.trustIndex !== undefined && result.reviews.rating !== undefined && result.reviews.starRatings !== undefined && result.reviews.starRatings.length > 0 ) {
       topNPSUrls.push(result.url);
       topNPSScores.push(result.reviews.NPS);
 
@@ -103,7 +103,9 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
   // calculate the average for the review stars
   for (let i = 0; i < 5; i++) {
-    averageStars[i] = totalStars[i] / numberStars[i];
+    if (numberStars[i] !== 0) {
+      averageStars[i] = totalStars[i] / numberStars[i];
+    }
   }
 
   const combinedNPS = topNPSUrls.map((url, index) => ({
