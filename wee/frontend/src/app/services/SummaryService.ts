@@ -84,7 +84,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
   // Get top 3 NPS scores
   for (const result of scraperResults) {
-    if (result.url && result.reviews !== undefined && result.reviews.NPS !== undefined && result.reviews.trustIndex !== undefined && result.reviews.rating !== undefined && result.reviews.starRatings !== undefined && result.reviews.starRatings.length > 0 ) {
+    if (result.url && result.reviews && result.reviews.NPS && result.reviews.trustIndex && result.reviews.rating && result.reviews.starRatings && result.reviews.starRatings.length > 0 ) {
       topNPSUrls.push(result.url);
       topNPSScores.push(result.reviews.NPS);
 
