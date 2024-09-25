@@ -13,6 +13,43 @@ export interface ScraperResult {
   screenshot: string;
   seoAnalysis: SeoAnalysis;
   sentiment: SentimentAnalysis;
+  scrapeNews: ScrapeNews[];
+  reviews: Reviews;
+  shareCountdata: ShareCountData;
+}
+
+export interface ScrapeNews {
+  link: string,
+  pubDate: string,
+  sentimentScores: SentimentAnalysisCategories,
+  source: string,
+  title: string,
+}
+
+export interface Reviews {
+  NPS: number,
+  numberOfReviews: number,
+  rating: number,
+  recommendationStatus: string,
+  starRatings: StarRating[],
+  trustIndex: number
+}
+
+export interface ShareCountData {
+  Facebook: {
+    comment_count: number,
+    comment_plugin_count: number,
+    og_object: null,
+    reaction_count: number,
+    share_count: number,
+    total_count: number
+  },
+  Pinterest: number
+}
+
+export interface StarRating {
+  stars: number,
+  numReviews: number
 }
 
 export interface SentimentAnalysis {
@@ -242,6 +279,31 @@ export interface Summary {
   },
   emotionsArea: {
     series: Graph[]
+  },
+  topNPS : {
+    urls: string[],
+    scores: number[]
+  },
+  topTrustIndex : {
+    urls: string[],
+    scores: number[]
+  },
+  topRating : {
+    urls: string[],
+    scores: number[]
+  },
+  averageStarRating: number[],
+  socialMetrics: {
+    urls: string[],
+    facebookShareCount: number[],
+    facebookCommentCount: number[],
+    facebookReactionCount: number[]
+  },
+  newsSentiment: {
+    urls: string[],
+    positive: number[],
+    neutral: number[],
+    negative: number[]
   }
 }
 
