@@ -19,8 +19,7 @@ export class ScrapeContactInfoService {
 
     // Check if the URL is allowed to be scraped
     if (!robots.isUrlScrapable) {
-      logger.warn(serviceName,`Crawling not allowed for this URL`);
-      console.error('Crawling not allowed for this URL');
+      logger.warn(serviceName,`Crawling not allowed for this URL`,url);
       return { emails: [], phones: [], socialLinks: [] };
     }
 
@@ -59,8 +58,7 @@ export class ScrapeContactInfoService {
 
       return { emails, phones, socialLinks };
     } catch (error) {
-      console.error(`${serviceName} Failed to scrape contact info: ${error.message}`);
-      console.error(`Failed to scrape contact info: ${error.message}`);
+      logger.error(`${serviceName} Failed to scrape contact info `,error.message);
 
       return { emails: [], phones: [], socialLinks: [] };
     } finally {
@@ -70,8 +68,7 @@ export class ScrapeContactInfoService {
 
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
     }
   }

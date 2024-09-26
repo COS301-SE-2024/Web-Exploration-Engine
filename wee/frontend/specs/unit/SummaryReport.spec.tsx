@@ -177,6 +177,43 @@ describe('SummaryReport Page', () => {
             group: "apexcharts-axis-0"
         }
       ]
+    },
+    topNPS : {
+      urls: [
+        "http://example2.com",
+        "http://example1.com",
+        "http://example4.com",
+      ],
+      scores: [-57, -58, -77]
+    },
+    topTrustIndex : {
+      urls: [
+        "http://example2.com",
+        "http://example1.com",
+        "http://example4.com",
+      ],
+      scores: [2.8, 2.7, 2.2]
+    },
+    topRating : {
+      urls: [
+        "http://example1.com",
+        "http://example2.com",
+        "http://example4.com",
+      ],
+      scores: [1.83, 1.65, 1.56]
+    },
+    averageStarRating: [827.75, 85, 98, 1757, 6846.25],
+    socialMetrics: {
+      urls: ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"],
+      facebookShareCount: [7037, 6631, 15790, 3032],
+      facebookCommentCount: [180,714,589,841],
+      facebookReactionCount: [12103, 1905,17311,10190],
+    },
+    newsSentiment: {
+      urls: ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"],
+      positive: [31,31,3,3],
+      neutral: [68,68,51,51],
+      negative: [0,0,46,46]
     }
   };
 
@@ -232,6 +269,24 @@ describe('SummaryReport Page', () => {
 
     expect(metaRadar).toHaveClass('hidden');
     expect(domainRadar).toHaveClass('hidden');
+  });
+
+  it('determine whether social media engagement graph and info are displayed', () => {
+    render(<SummaryReport />);
+    expect(screen.queryByTestId('socialMetricsGraph')).toBeInTheDocument();
+  });
+
+  it('determine that the 4 review related graphs are present', () => {
+    render(<SummaryReport />);
+    expect(screen.queryByTestId('nps-scores-graph')).toBeInTheDocument();
+    expect(screen.queryByTestId('trustindex-scores-graph')).toBeInTheDocument();
+    expect(screen.queryByTestId('rating-scores-graph')).toBeInTheDocument();
+    expect(screen.queryByTestId('star-ratings-review-graph')).toBeInTheDocument();
+  })
+
+  it('determine that news sentiment graph is present', () => {
+    render(<SummaryReport />);
+    expect(screen.queryByTestId('stacked-column-chart-news-sentiment')).toBeInTheDocument();
   });
 
   it('should call jsPDF and download the PDF when download button is clicked', async () => {

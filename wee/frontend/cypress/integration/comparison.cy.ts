@@ -27,6 +27,10 @@ describe('comparison page', () => {
     cy.get('[data-testid="sect-mobile-friendly"]').should('exist');
     cy.get('[data-testid="sect-site-speed"]').should('exist');
 
+    // Page Section : 
+    cy.get('[data-testid="sect-social-media"]').should('exist');
+    cy.get('[data-testid="sect-news-sentiment"]').should('exist');
+    cy.get('[data-testid="sect-reviews"]').should('exist');
   });
 
   it('compare results of 2 urls - github, steers', () => {

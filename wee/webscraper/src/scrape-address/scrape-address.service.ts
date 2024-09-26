@@ -18,9 +18,8 @@ export class ScrapeAddressService {
     const start = performance.now();
 
     if (!robots.isBaseUrlAllowed) {
-      logger.warn(serviceName,`Crawling not allowed for this URL`);
-      console.error('Crawling not allowed for this URL');
-      return { addresses: [] };
+      logger.warn(serviceName,`Crawling not allowed for this URL`,'url',url);
+       return { addresses: [] };
     }
 
     // proxy authentication
@@ -66,14 +65,12 @@ export class ScrapeAddressService {
 
       return { addresses: validAddresses };
     } catch (error) {
-      logger.error(serviceName,` Failed to scrape addresses: ${error.message}`);
-      console.error(`Failed to scrape addresses: ${error.message}`);
-      return { addresses: [] };
+      logger.error(serviceName,` Failed to scrape addresses `,error.message);
+       return { addresses: [] };
     } finally {
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
-      logger.info(serviceName,'duration',duration);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       if (page) {
         await page.close();

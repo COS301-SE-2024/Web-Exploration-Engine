@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
+import logger from '../../logging/webscraperlogger';
+const serviceName = "[ShareCountService]";
 
 export class ShareCountService {
   private apiKey: string;
@@ -21,7 +23,8 @@ export class ShareCountService {
       // console.log(response.data);
       return response.data;
     } catch (error) {
-      console.error('Error fetching share count:', error);
+      //console.error('Error fetching share count:', error);
+      logger.error(serviceName,'Error fetching share count:', error.message);
       return null;
     }
   }

@@ -231,11 +231,11 @@ const getScrapingResults = async (url: string) => {
             result = MockCiscoResult;
         }
 
-      if ('errorStatus' in result) {
+      if (result && 'errorStatus' in result) {
         const errorResponse = { ...result, url };
         setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])
       }
-      else {
+      else if (result) {
         // Assuming setResults is a function to update the state or handle results
         setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
       }

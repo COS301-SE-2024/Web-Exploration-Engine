@@ -36,7 +36,7 @@ import {
 } from './models/ServiceModels';
 
 const serviceName = "[ScraperService]";
-logger.info(`${serviceName}`);
+logger.info(serviceName);
 @Injectable()
 export class ScraperService implements OnModuleInit {
 
@@ -66,7 +66,6 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
-
     switch (type) {
       case 'scrape':
         return this.scrape(data.url);
@@ -104,7 +103,7 @@ export class ScraperService implements OnModuleInit {
   }
 
   async scrape(url: string) {
-    console.log("Started scaping")
+    logger.info(serviceName,"Started scaping")
     const start = performance.now();
 
     // create puppeteer instance
@@ -116,7 +115,7 @@ export class ScraperService implements OnModuleInit {
       });
 
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -242,6 +241,13 @@ export class ScraperService implements OnModuleInit {
     data.time = parseFloat(time.toFixed(4));
 
     return data;
+
+  //  return {
+  //     errorStatus: 500,
+  //     errorCode: '500 Internal Server Error',
+  //     errorMessage: 'Not implemented',
+  //   } as ErrorResponse;
+   
   }
 
   async readRobotsFile(url: string) {
@@ -260,7 +266,7 @@ export class ScraperService implements OnModuleInit {
     try {
       browser = await puppeteer.launch(); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -296,7 +302,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -333,7 +339,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -370,7 +376,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -408,7 +414,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       });
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -435,7 +441,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -462,7 +468,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -489,7 +495,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -516,7 +522,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -548,7 +554,7 @@ export class ScraperService implements OnModuleInit {
         args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
       }); // add proxy here
     } catch (error) {
-      console.error('Failed to launch browser', error);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
@@ -560,123 +566,7 @@ export class ScraperService implements OnModuleInit {
     await browser.close();
     return keywordAnalysis;
   }
-
-  async listenForScrapingTasks() {
-    const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
-    if (!subscriptionName) {
-      console.error('GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
-      return;
-    }
-
-    const messageHandler = async (message) => {
-      try {
-        await this.handleMessage(message);
-      } catch (error) {
-        console.error('Error handling message', error);
-      }
-    };
-
-    await this.pubsub.subscribe(subscriptionName, messageHandler);
-    console.log('Subscribed to scraping tasks, listening for messages...');
-  }
-
-  async handleMessage(message) {
-    // Get the publish time of the message - when message was originally published
-    const publishTime = message.publishTime;
-
-    // Calculate the age of the message in milliseconds
-    const messageAge = Date.now() - publishTime.getTime();
-
-    // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
-    const maxAge = 5 * 60 * 1000;
-
-    console.log(`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`);
-    console.log(`Message Age: ${messageAge} ms`);
-
-    if (messageAge > maxAge) {
-        console.log(`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`);
-        // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
-        message.nack();
-        // Return error response??
-    } else {
-        // Process the message if it is within acceptable age limits
-        console.log(`Processing message: ${message.data.toString()}`);
-        message.ack();
-
-        const start = performance.now();
-        console.log(message.data, message.data.toString());
-        const { data, type } = JSON.parse(message.data.toString());
-        if (!data) {
-          return {
-            errorStatus: 500,
-            errorCode: '500 Internal Server Error',
-            errorMessage: 'No data provided in message',
-          } as ErrorResponse
-        }
-
-        const { url } = data;
-        let cacheKey: string;
-
-        // separate cache key format for keyword analysis - need to account for key word input
-        if (type === 'keyword-analysis') {
-          const { keyword } = data;
-          cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
-        } else {
-          cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
-        }
-
-        // Cache check and update logic
-        const cachedData = await this.getCachedData(cacheKey);
-        if (cachedData) {
-          // check if error status
-          if (cachedData.status !== 'error') {
-            // update time if cache proccessing is completed
-            if (cachedData.status === 'completed') {
-              const end = performance.now();
-              const times = (end - start) / 1000;
-              console.log('CACHE HIT for url: ', url, " time: ", times);
-
-              // Update time field
-              cachedData.result.time = parseFloat(times.toFixed(4));
-              await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
-            }
-
-          // Performance Logging
-          const duration = performance.now() - start;
-          console.log(`Duration of ${serviceName} : ${duration}, cache-hit`);
-          logger.info(`Duration of ${serviceName} : ${duration}, cache-hit`);
-            return;
-          }
-        }
-
-        // Scrape if not in cache/already processing (CACHE MISS or error status)
-        console.log('CACHE MISS - SCRAPE');
-
-        // Add to cache as processing
-        await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
-
-        try {
-          const result = await this.scrapeWebsite(data, type);
-          const completeData = {
-            status: 'completed',
-            result,
-          };
-          await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
-
-          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
-          // Performance Logging
-          const duration = performance.now() - start;
-          console.log(`Duration of ${serviceName} : ${duration}`);
-          logger.info(serviceName,'duration',duration);
-        } catch (error) {
-          console.error(`Error scraping URL: ${url}`, error);
-          await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
-        }
-
-
-    }
-  }
-
+  
   async getShareCount(url: string) {
     try {
       const shareCount = await this.shareCountService.getShareCount(url);
@@ -690,22 +580,7 @@ export class ScraperService implements OnModuleInit {
       } as ErrorResponse;
     }
   }
-  async getCachedData(cacheKey: string) {
-    const cachedDataString:string = await this.cacheManager.get(cacheKey);
-    if (cachedDataString) {
-      const data = JSON.parse(cachedDataString);
-      if (data.status === 'completed') {
-        return data;
-      } else if (data.status === 'processing') {
-        console.log(`Already processing ojb: ${cacheKey}`);
-        return null;
-      } else if (data.status === 'error') {
-        console.error(`Error during scraping job: ${cacheKey}`, data.error);
-        return null;
-      }
-    }
-    return null;
-  }
+
   async scrapeNews(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
@@ -744,6 +619,7 @@ export class ScraperService implements OnModuleInit {
       }
     }
   }
+
   async scrapeReviews(url: string) {
     const robotsResponse = await this.robotsService.readRobotsFile(url);
     if ('errorStatus' in robotsResponse) {
@@ -782,7 +658,136 @@ export class ScraperService implements OnModuleInit {
       }
     }
   }
-  
+
+  async listenForScrapingTasks() {
+    const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
+    if (!subscriptionName) {
+      logger.error(serviceName,'GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
+      return;
+    }
+
+    const messageHandler = async (message) => {
+      try {
+        await this.handleMessage(message);
+      } catch (error) {
+        logger.error(serviceName,'Error handling message', error);
+      }
+    };
+
+    await this.pubsub.subscribe(subscriptionName, messageHandler);
+    logger.info(serviceName,'Subscribed to scraping tasks, listening for messages...');
+  }
+
+  async handleMessage(message) {
+    // Get the publish time of the message - when message was originally published
+    const publishTime = message.publishTime;
+
+    // Calculate the age of the message in milliseconds
+    const messageAge = Date.now() - publishTime.getTime();
+
+    // Define a threshold for maximum age, e.g., 5 minutes (300,000 milliseconds)
+    const maxAge = 5 * 60 * 1000;
+
+    logger.info(serviceName,`Received Message ID: ${message.id} Message age: ${messageAge} ms Publish time: ${publishTime}`,'message-id',message.id);
+
+    if (messageAge > maxAge) {
+        logger.info(serviceName,`Message ${message.id} is too old. It will be moved to a dead-letter topic after 5 retries.`,'message-id',message.id);
+        // Handle stale messages (e.g., nack, move to a dead-letter topic, log, etc.)
+        message.nack();
+        // Return error response??
+    } else {
+        // Process the message if it is within acceptable age limits
+        //logger.info(serviceName,`Processing message: ${message.data.toString()}`);
+        message.ack();
+
+        const start = performance.now();
+        logger.info(serviceName, 'message-id',message.id, 'message-id',message.data.toString());
+        const { data, type } = JSON.parse(message.data.toString());
+        if (!data) {
+          return {
+            errorStatus: 500,
+            errorCode: '500 Internal Server Error',
+            errorMessage: 'No data provided in message',
+          } as ErrorResponse
+        }
+
+        const { url } = data;
+        let cacheKey: string;
+
+        // separate cache key format for keyword analysis - need to account for key word input
+        if (type === 'keyword-analysis') {
+          const { keyword } = data;
+          cacheKey = `${url}-keyword-${keyword}`; // eg https://www.google.com-keyword-analysis
+        } else {
+          cacheKey = `${url}-${type}`; // eg https://www.google.com-scrape
+        }
+
+        // Cache check and update logic
+        const cachedData = await this.getCachedData(cacheKey);
+        if (cachedData) {
+          // check if error status
+          if (cachedData.status !== 'error') {
+            // update time if cache proccessing is completed
+            if (cachedData.status === 'completed') {
+              const end = performance.now();
+              const times = (end - start) / 1000;
+              logger.info(serviceName,'CACHE HIT for url: ', url, " time: ", times);
+
+              // Update time field
+              cachedData.result.time = parseFloat(times.toFixed(4));
+              await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
+            }
+
+          // Performance Logging
+          const duration = performance.now() - start;
+          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-hit`);
+            return;
+          }
+        }
+
+        // Scrape if not in cache/already processing (CACHE MISS or error status)
+        //logger.info(serviceName,'CACHE MISS - SCRAPE');
+
+        // Add to cache as processing
+        await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'processing', pollingURL: `/scraper/status/${encodeURIComponent(url)}` }));
+
+        try {
+          const result = await this.scrapeWebsite(data, type);
+          const completeData = {
+            status: 'completed',
+            result,
+          };
+          await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
+
+          logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
+          // Performance Logging
+          const duration = performance.now() - start;
+          logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
+         } catch (error) {
+          logger.error(serviceName,`Error scraping URL: ${url}`, error);
+          await this.cacheManager.set(cacheKey, JSON.stringify({ status: 'error' }));
+        }
+
+
+    }
+  }
+
+  async getCachedData(cacheKey: string) {
+    const cachedDataString:string = await this.cacheManager.get(cacheKey);
+    if (cachedDataString) {
+      const data = JSON.parse(cachedDataString);
+      if (data.status === 'completed') {
+        return data;
+      } else if (data.status === 'processing') {
+        logger.info(serviceName,`Already processing ojb: ${cacheKey}`);
+        return null;
+      } else if (data.status === 'error') {
+        logger.error(serviceName,`Error during scraping job: ${cacheKey}`, data.error);
+        return null;
+      }
+    }
+    return null;
+  }
 
 }
 

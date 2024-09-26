@@ -20,7 +20,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis, ScrapeNews, Reviews, ShareCountData, StarRating } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -37,6 +37,7 @@ import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pu
 import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
 import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
 import { result } from 'cypress/types/lodash';
+import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface Classifications {
   label: string;
@@ -128,7 +129,7 @@ function ResultsComponent() {
 
   const [keywordError, setKeywordError] = useState('');
   const [keyword, setKeyword] = useState('');
-  const [isKeywordLoading, setKeywordLoading]= useState(false);
+  const [isKeywordLoading, setKeywordLoading] = useState(false);
 
   const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
 
@@ -169,6 +170,9 @@ function ResultsComponent() {
   const [indexibilityAnalysis, setIndexibilityAnalysis] = useState<IndexabilityAnalysis | SEOError>();
   const [structuredDataAnalysis, setStructuredDataAnalysis] = useState<StructuredDataAnalysis | SEOError>();
   const [seoKeywordAnalysis, setSeoKeywordAnalysis] = useState<SEOKeywordAnalysis>();
+  const [scrapeNews, setScrapeNews] = useState<ScrapeNews[]>([]);
+  const [reviews, setReviews] = useState<Reviews>();
+  const [shareCountData, setShareCountData] = useState<ShareCountData>();
 
   useBeforeUnload();
 
@@ -200,28 +204,40 @@ function ResultsComponent() {
           setDomainClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotDomainClassify : []);
           setMetaData(urlResults[0].metadata);
 
-          const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
-          const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
-          setHomePageScreenShot(screenShotUrl);
+          if (urlResults[0].screenshot) {
+            const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
+            const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
+            setHomePageScreenShot(screenShotUrl);
+          }
 
           setAddresses(urlResults[0].addresses);
-          setEmails(urlResults[0].contactInfo.emails);
-          setPhones(urlResults[0].contactInfo.phones);
-          setSocialLinks(urlResults[0].contactInfo.socialLinks);
-          setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
-          setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
-          setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
-          setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
-          setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
-          setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
-          setSentimentAnalysis(urlResults[0].sentiment);
-          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
-          setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
-          setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
-          setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
-          setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
-          setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
-          setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+
+          if (urlResults[0].contactInfo) {
+            setEmails(urlResults[0].contactInfo.emails);
+            setPhones(urlResults[0].contactInfo.phones);
+            setSocialLinks(urlResults[0].contactInfo.socialLinks);
+          }
+
+          if (urlResults[0].seoAnalysis) {
+            setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
+            setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
+            setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
+            setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
+            setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
+            setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
+            setSentimentAnalysis(urlResults[0].sentiment);
+            setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
+            setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
+            setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
+            setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
+            setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
+            setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
+            setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+          }
+
+          setScrapeNews(urlResults[0].scrapeNews);
+          setReviews(urlResults[0].reviews);
+          setShareCountData(urlResults[0].shareCountdata);
         }
       }
     }
@@ -237,7 +253,7 @@ function ResultsComponent() {
     // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
 
     try {
-      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis, sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis, indexibilityAnalysis, siteSpeedAnalysis, structuredDataAnalysis, mobileFriendlinessAnalysis, lighthouseAnalysis);
     }
     finally {
       setIsDownloadInProgress(false);
@@ -326,12 +342,12 @@ function ResultsComponent() {
     // check that the url is there and valid (and make sure it is in the context)
 
     let url_decoded = decodeURIComponent(url ? url : '');
- 
+
     if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
       console.log(processedUrls)
       url_decoded = processedUrls[0];
     }
-    
+
     if (!url || !processedUrls.includes(url_decoded.toString())) {
       setKeywordError("URL is not valid");
 
@@ -343,7 +359,7 @@ function ResultsComponent() {
     }
 
     // check that the keyword is entered by the user
-    if (!keyword) { 
+    if (!keyword) {
       setKeywordError("Keyword cannot be empty");
 
       const timer = setTimeout(() => {
@@ -385,14 +401,14 @@ function ResultsComponent() {
         let result = await pollForKeyWordResult(url.toString(), keyword) as SEOKeywordAnalysis;
 
         if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') {
-          if (keyword && keyword =="meraki"){
-          result = MockCiscoKeywordMerakiFrontendResult;
+          if (keyword && keyword == "meraki") {
+            result = MockCiscoKeywordMerakiFrontendResult;
+          }
+          else {
+            result = MockCiscoKeywordCiscoFrontendResult
+          }
         }
-        else {
-          result = MockCiscoKeywordCiscoFrontendResult
-        }
-        }
-        setSeoKeywordAnalysis(result);        
+        setSeoKeywordAnalysis(result);
         console.log('Keyword result after polling: ', result);
         setKeywordLoading(false);
       } catch (error) {
@@ -749,7 +765,7 @@ function ResultsComponent() {
               <CardBody>
                 {/* Pagination of Images */}
                 {imageList && imageList.length > 0 && (
-                  <div  data-testid="pagination-images" className="py-3">
+                  <div data-testid="pagination-images" className="py-3">
                     <span className="flex justify-between">
                       <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2">
                         Images
@@ -863,7 +879,7 @@ function ResultsComponent() {
                   {/* Enter keyword */}
                   <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 my-2'>
                     <div className='flex flex-col sm:flex-row w-full justify-center items-center'>
-                      <Input 
+                      <Input
                         data-testid="keyword-input"
                         label="Enter keywords"
                         value={keyword}
@@ -903,17 +919,17 @@ function ResultsComponent() {
                               <div>
                                 {seoKeywordAnalysis.ranking && seoKeywordAnalysis.ranking == 'Not ranked in the top results'
                                   ? <div data-testid="keyword_not_ranked" className='font-poppins-bold text-4xl lg:text-6xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                      Not ranked in top 10
+                                    Not ranked in top 10
+                                  </div>
+                                  :
+                                  <>
+                                    <div className='font-poppins-semibold text-lg'>
+                                      Ranked
                                     </div>
-                                  : 
-                                    <>
-                                      <div className='font-poppins-semibold text-lg'>
-                                        Ranked
-                                      </div>
-                                      <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
-                                        #{seoKeywordAnalysis.ranking}
-                                      </div>
-                                    </>
+                                    <div className='font-poppins-bold text-6xl text-jungleGreen-800 dark:text-jungleGreen-400' data-testid="keyword_ranked">
+                                      #{seoKeywordAnalysis.ranking}
+                                    </div>
+                                  </>
                                 }
                               </div>
                             </div>
@@ -934,7 +950,7 @@ function ResultsComponent() {
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
                               Recommendations
                             </h5>
-                            <p  data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
+                            <p data-testid='p_keyword_recommendations'>{seoKeywordAnalysis.recommendation}</p>
                           </div>
                         </>
                       )}
@@ -1643,7 +1659,7 @@ function ResultsComponent() {
                       <div className='bg-zinc-300 dark:bg-zinc-800 p-4 rounded-xl text-center flex justify-center items-center'>
                         <div data-testid="indexibilityAnalysis" className='font-poppins-bold text-3xl sm:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400 pt-4'>
                           {indexibilityAnalysis && isIndexibilityAnalysis(indexibilityAnalysis) ?
-                            indexibilityAnalysis.isIndexable? 'Yes' : 'No'
+                            indexibilityAnalysis.isIndexable ? 'Yes' : 'No'
                             : '-'
                           }
                         </div>
@@ -1939,6 +1955,250 @@ function ResultsComponent() {
               </CardBody>
             </Card>
           </Tab>
+          <Tab key="reputation-management" data-testid="tab-rep-management" title="Reputation Management">
+            <Card>
+              <CardBody>
+                <div>
+
+                  {/* Social Media */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Social Media Engagement Metrics
+                    <InfoPopOver
+                      data-testid="popup-social-media"
+                      heading="Social Media Engagement Metrics"
+                      content="This data reflects engagement metrics from social media platforms, including Facebook reactions, comments, shares, and Pinterest pins. It provides insights into how these interactions influence visibility 
+                      and audience engagement."
+                      placement="right-end"
+                    />
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {shareCountData ? (
+
+                      <div className='gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="result-facebook-comment-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook && shareCountData.Facebook.comment_count ? shareCountData.Facebook.comment_count : '-'}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Comment Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="result-facebook-reaction-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook && shareCountData.Facebook.reaction_count ? shareCountData.Facebook.reaction_count : '-'}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Reaction Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="result-facebook-share-count" className='font-poppins-bold text-5xl text-[#316FF6]'>
+                              {shareCountData.Facebook && shareCountData.Facebook.share_count ? shareCountData.Facebook.share_count : '-'}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Facebook Share Count
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                          <div>
+                            <div data-testid="result-pintrest-pin-count" className='font-poppins-bold text-5xl text-[#E60023]'>
+                              {shareCountData.Pinterest ? shareCountData.Pinterest : '-'}
+                            </div>
+                            <div className='font-poppins-semibold text-lg'>
+                              Pinterest Pin Count
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>)
+                      : (
+                        <div className='social-media-not-available'>No social media data is currently available</div>
+                      )
+                    }
+                  </div>
+
+                  {/* Reviews */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    Reviews
+                    <InfoPopOver
+                      data-testid="popup-reviews"
+                      heading="Reviews"
+                      content="<i>Star Ratings for Reviews: </i>Displays how reviews are distributed across various star levels, providing an overview of customer feedback.</br></br>
+                              <i>NPS (Net Promoter Score): </i>Reflects the likelihood of customers recommending a business, with scores below 0 indicating low likelihood, scores 
+                              between 1 and 49 showing moderate likelihood, and scores above 49 signifying a strong likelihood of recommendation.</br></br>      
+                              <i>Average Star Rating: </i>Offers an overall indication of customer satisfaction based on the ratings given.</br></br>
+                              <i>Hellopeter TrustIndex: </i>Assesses a business's credibility by analyzing factors such as star ratings, response times, review volume, and recent 
+                              review relevance. Scores range from 0 to 10, representing the quality of customer service.</br>"
+                      placement="right-end"
+                    />
+                  </h3>
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {reviews ? (
+                      <>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4'>
+                          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+                            Star Ratings for Reviews
+                          </h3>
+                          <ColumnChartWithLables
+                            dataLabel={[
+                              reviews.starRatings[4].stars.toString() + ' star',
+                              reviews.starRatings[3].stars.toString() + ' stars',
+                              reviews.starRatings[2].stars.toString() + ' stars',
+                              reviews.starRatings[1].stars.toString() + ' stars',
+                              reviews.starRatings[0].stars.toString() + ' stars',
+                            ]}
+                            dataSeries={[
+                              reviews.starRatings[4].numReviews,
+                              reviews.starRatings[3].numReviews,
+                              reviews.starRatings[2].numReviews,
+                              reviews.starRatings[1].numReviews,
+                              reviews.starRatings[0].numReviews,
+                            ]}
+                          />
+                        </div>
+
+                        <div className='gap-6 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 mt-3'>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="result-reviews-nps" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews && reviews.NPS ? reviews.NPS : '-'}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                NPS
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="result-reviews-number-reviews" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews && reviews.numberOfReviews ? reviews.numberOfReviews : '-'}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Number of reviews
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="result-reviews-rating" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews && reviews.rating ? reviews.rating : '-'}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Rating
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="result-reviews-recommendation-status" className='font-poppins-bold text-2xl lg:text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews && reviews.numberOfReviews ? reviews.recommendationStatus : '-'}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Recommendation Status
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl text-center flex justify-center items-center p-4'>
+                            <div>
+                              <div data-testid="result-reviews-trustindex" className='font-poppins-bold text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
+                                {reviews.trustIndex}
+                              </div>
+                              <div className='font-poppins-semibold text-lg'>
+                                Trust Index
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </>
+
+                    ) : (
+                      <div>There are no review data currently available</div>
+                    )}
+                  </div>
+
+                  {/* News Sentiment */}
+                  <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 p-2 px-0 pb-0">
+                    News Sentiment
+                    <InfoPopOver
+                      data-testid="popup-news-sentiment"
+                      heading="News Sentiment"
+                      content="Reflects the overall sentiment of news coverage about a business over time, highlighting positive, negative, and neutral scores for the 10 most recent news 
+                            articles to indicate public perception."
+                      placement="right-end"
+                    />
+                  </h3>
+
+                  <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-3 mb-2'>
+                    {scrapeNews && scrapeNews.length > 0 ? (
+                      <>
+                        <div className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4' data-testid='donut-chart-news-sentiment'>
+                          <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+                            Average News Sentiment
+                          </h3>
+
+                          <DonutChart
+                            dataLabel={['Positive', 'Neutral', 'Negative']}
+                            dataSeries={[
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / scrapeNews.length) * 100,
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / scrapeNews.length) * 100,
+                              (scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / scrapeNews.length) * 100
+                            ]}
+                            legendPosition='right'
+                          />
+                        </div>
+                        <div className='gap-3 grid md:grid-cols-2 my-3'>
+                          {scrapeNews.map((news, index) => (
+                            <div key={index} className='bg-zinc-300 dark:bg-zinc-800 rounded-xl p-4 '>
+                              <div>
+                                <div className='text-md text-jungleGreen-700 dark:text-jungleGreen-100 font-poppins-semibold'>
+                                  {news.title}
+                                </div>
+                                <div><span className='font-poppins-semibold'>Published on: </span>{news.pubDate}</div>
+                                <div><span className='font-poppins-semibold'>Source: </span>{news.source}</div>
+                                <Link href={news.link} target="_blank" rel="noopener noreferrer">
+                                  Read article
+                                </Link>
+
+                                <ColumnChartWithLables
+                                  dataLabel={[
+                                    'Positive', 'Neutral', 'Negative'
+                                  ]}
+                                  dataSeries={[
+                                    Math.round(news.sentimentScores.positive * 100),
+                                    Math.round(news.sentimentScores.neutral * 100),
+                                    Math.round(news.sentimentScores.negative * 100)
+                                  ]}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div>No news sentiment data is currently available</div>
+                    )}
+
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </Tab>
         </WEETabs>
       </div>
 
@@ -1989,9 +2249,9 @@ function ResultsComponent() {
       </Modal>
 
       {/* successfull save */}
-      <Modal 
-        isOpen={isSuccessOpen} 
-        onOpenChange={onSuccessOpenChange} 
+      <Modal
+        isOpen={isSuccessOpen}
+        onOpenChange={onSuccessOpenChange}
         className="font-poppins-regular"
         placement="center"
       >
