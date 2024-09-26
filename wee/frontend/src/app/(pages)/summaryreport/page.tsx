@@ -549,23 +549,23 @@ export default function SummaryReport() {
           Social Media Engagement
         </h3>
         <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
-          {summaryReport.socialMetrics 
-          && summaryReport.socialMetrics.urls?.length > 0 
-            && summaryReport.socialMetrics.facebookCommentCount?.length > 0 
-            && summaryReport.socialMetrics.facebookReactionCount?.length > 0 
-            && summaryReport.socialMetrics.facebookShareCount?.length > 0 
-          ? (
-            <StackedColumnChart
-              dataLabel={summaryReport.socialMetrics.urls}
-              dataSeries={[
-                { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount },
-                { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount },
-                { name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
-            />
+          {summaryReport.socialMetrics
+            && summaryReport.socialMetrics.urls?.length > 0
+            && summaryReport.socialMetrics.facebookCommentCount?.length > 0
+            && summaryReport.socialMetrics.facebookReactionCount?.length > 0
+            && summaryReport.socialMetrics.facebookShareCount?.length > 0
+            ? (
+              <StackedColumnChart
+                dataLabel={summaryReport.socialMetrics.urls}
+                dataSeries={[
+                  { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount },
+                  { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount },
+                  { name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
+              />
 
-          ) : (
-            <div>There are no social metric data currently available</div>
-          )}
+            ) : (
+              <div>There are no social metric data currently available</div>
+            )}
         </div>
 
         {/* Reviews */}
@@ -664,7 +664,7 @@ export default function SummaryReport() {
           Average News Sentiment
         </h3>
         <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
-          {summaryReport.newsSentiment ? (
+          {summaryReport.newsSentiment && summaryReport.newsSentiment.urls.length > 0 && summaryReport.newsSentiment.positive.length > 0 && summaryReport.newsSentiment.negative.length > 0 && summaryReport.newsSentiment.neutral.length > 0 ? (
             <span data-testid='stacked-column-chart-news-sentiment'>
 
               <StackedColumnChart
