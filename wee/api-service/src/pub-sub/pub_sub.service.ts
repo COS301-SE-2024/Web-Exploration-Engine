@@ -21,6 +21,9 @@ export class PubSubService {
         .topic(topicName).publishMessage({ data: dataBuffer });
       //console.log(`Message ${messageId} published.`);
       logger.info(serviceName,`Message ${messageId} published.`,messageId);
+      const url = data.data.url || data.url || 'No URL provided';
+      const type = data.data.type || data.type || 'No type provided';
+      console.log(`Message ${messageId} published for url: ${url}, type: ${type}`);
     } catch (error) {
       //console.error(`Error publishing message: ${error}`);
       logger.info(serviceName,`Error publishing message `,error);

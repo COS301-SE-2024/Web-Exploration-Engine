@@ -39,8 +39,7 @@ services:
     command: >
       sh -c "npx nx serve api-service --skip-nx-cache --configuration=production --verbose"
     depends_on:
-      webscraper:
-        condition: service_healthy
+      - webscraper
     restart: unless-stopped
 
   frontend:

@@ -104,6 +104,7 @@ export class ScraperService implements OnModuleInit {
 
   async scrape(url: string) {
     logger.info(serviceName,"Started scaping")
+    console.log(`Starting scraping for URL: ${url}`);
     const start = performance.now();
 
     // create puppeteer instance
@@ -760,6 +761,7 @@ export class ScraperService implements OnModuleInit {
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
 
           logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
+          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
           // Performance Logging
           const duration = performance.now() - start;
           logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
@@ -782,7 +784,8 @@ export class ScraperService implements OnModuleInit {
         logger.info(serviceName,`Already processing ojb: ${cacheKey}`);
         return null;
       } else if (data.status === 'error') {
-        logger.error(serviceName,`Error during scraping job: ${cacheKey}`, data.error);
+        // clear cache if error
+        await this.cacheManager.del(cacheKey); // allow rescrape if error is cached
         return null;
       }
     }

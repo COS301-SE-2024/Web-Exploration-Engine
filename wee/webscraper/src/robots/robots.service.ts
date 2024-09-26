@@ -32,7 +32,6 @@ export class RobotsService {
         logger.warn(serviceName,` robots.txt does not exist for ${robotstxtUrl}`);
       // Performance Logging
       const duration = performance.now() - start;
-      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
 
         return {
@@ -62,7 +61,6 @@ export class RobotsService {
         logger.warn(serviceName,`robots.txt content is empty for ${robotstxtUrl} ${RobotsService}`);
       // Performance Logging
       const duration = performance.now() - start;
-      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
         
         return {
@@ -102,7 +100,6 @@ export class RobotsService {
       });
       // Performance Logging
       const duration = performance.now() - start;
-      //console.log(`Duration of ${serviceName} : ${duration}`);
       logger.info(serviceName,'duration',duration,'url',robotstxtUrl);
 
       return {
@@ -177,6 +174,7 @@ export class RobotsService {
   }
 
   async readRobotsFile(url: string): Promise<RobotsResponse | ErrorResponse> {
+    const start = performance.now();
     // Check if the URL parameter is provided
     if (!url) {
       return {
@@ -197,6 +195,10 @@ export class RobotsService {
         disallowedPaths,
         allowedPaths
       );
+
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}, for url: ${baseUrl}`);
       return {
         baseUrl,
         allowedPaths,
