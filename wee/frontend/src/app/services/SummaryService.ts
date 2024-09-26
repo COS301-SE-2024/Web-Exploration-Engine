@@ -50,7 +50,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // news sentiment average for each url
   for (const result of scraperResults) {
     if (result.url && result.scrapeNews && result.scrapeNews.length > 0) {
-      newsSentimentUrls.push(result.url);
+      newsSentimentUrls.push((new URL(result.url)).hostname);
 
       newsSentimentPositive.push(
         Math.round(
@@ -75,7 +75,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // social media metrics
   for (const result of scraperResults) {
     if (result.url && result.shareCountdata && result.shareCountdata.Facebook) {
-      socialMediaUrls.push(result.url);
+      socialMediaUrls.push((new URL(result.url)).hostname);
       socialMediaFacebookShareCount.push(result.shareCountdata.Facebook.share_count);
       socialMediaFacebookCommentCount.push(result.shareCountdata.Facebook.comment_count);
       socialMediaFacebookReactionCount.push(result.shareCountdata.Facebook.reaction_count);
@@ -85,13 +85,13 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // Get top 3 NPS scores
   for (const result of scraperResults) {
     if (result.url && result.reviews && result.reviews.NPS && result.reviews.trustIndex && result.reviews.rating && result.reviews.starRatings && result.reviews.starRatings.length > 0 ) {
-      topNPSUrls.push(result.url);
+      topNPSUrls.push((new URL(result.url)).hostname);;
       topNPSScores.push(result.reviews.NPS);
 
-      topTrustIndexUrls.push(result.url);
+      topTrustIndexUrls.push((new URL(result.url)).hostname);
       topTrustIndexScores.push(result.reviews.trustIndex);
 
-      topRatingUrls.push(result.url);
+      topRatingUrls.push((new URL(result.url)).hostname);
       topRatingScores.push(result.reviews.rating);
 
       for (let i = 0; i < result.reviews.starRatings.length; i++) {
@@ -104,7 +104,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // calculate the average for the review stars
   for (let i = 0; i < 5; i++) {
     if (numberStars[i] !== 0) {
-      averageStars[i] = totalStars[i] / numberStars[i];
+      averageStars[i] = Math.round(totalStars[i] / numberStars[i]);
     }
   }
 

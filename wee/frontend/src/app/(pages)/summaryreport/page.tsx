@@ -274,12 +274,12 @@ export default function SummaryReport() {
 
         {/* General stats */}
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2">
-          General stats
+          General Statistics
         </h3>
         <div className='gap-4 grid sm:grid-cols-3'>
 
           {/* Scraped stats */}
-          <div data-testid="visual-scraped-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+          <div data-testid="visual-scraped-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
             <div className='text-5xl flex justify-center'>
               <FiSearch />
             </div>
@@ -292,7 +292,7 @@ export default function SummaryReport() {
           </div>
 
           {/* Crawlable stats */}
-          <div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+          <div data-testid="visual-crawlable-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
             <div className='text-5xl flex justify-center'>
               <FiCheck />
             </div>
@@ -305,7 +305,7 @@ export default function SummaryReport() {
           </div>
 
           {/* Avg scrape stats */}
-          <div data-testid="visual-avg-scrape-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
+          <div data-testid="visual-avg-scrape-stats" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center flex flex-col justify-center h-full'>
             <div className='text-5xl flex justify-center'>
               <FiClock />
             </div>
@@ -384,7 +384,7 @@ export default function SummaryReport() {
         </div> {/* Grid */}
 
         {/* Domain match */}
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Domain match
           <InfoPopOver
             heading="Domain Match"
@@ -442,7 +442,7 @@ export default function SummaryReport() {
         </div> {/* Grid */}
 
         {/* Classification Distribution */}
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Industry Classification Distribution
           <InfoPopOver
             heading="Industry Classification Distribution"
@@ -524,7 +524,7 @@ export default function SummaryReport() {
           </div>
         </div> {/* Grid */}
 
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Sentiment Analysis - Emotions
           <InfoPopOver
             heading="Sentiment Analysis - Emotions"
@@ -545,10 +545,15 @@ export default function SummaryReport() {
         }
 
         {/* Social Media Engagement */}
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Social Media Engagement
+          <InfoPopOver
+            heading="Social Media Engagement"
+            content="abc"
+            placement="top"
+          />
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
+        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4' data-testid="socialMetricsGraph">
           {summaryReport.socialMetrics
             && summaryReport.socialMetrics.urls?.length > 0
             && summaryReport.socialMetrics.facebookCommentCount?.length > 0
@@ -569,8 +574,13 @@ export default function SummaryReport() {
         </div>
 
         {/* Reviews */}
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Reviews
+          <InfoPopOver
+            heading="Reviews"
+            content="abc"
+            placement="top"
+          />
         </h3>
         <div className='gap-2 grid lg:grid-cols-3'>
           {summaryReport.topNPS && summaryReport.topNPS.urls.length > 0 ? (
@@ -636,11 +646,11 @@ export default function SummaryReport() {
             <span data-testid='star-ratings-review-graph'>
               <ColumnChartWithLables
                 dataLabel={[
-                  '5 stars',
-                  '4 stars',
-                  '3 stars',
+                  '1 star',
                   '2 stars',
-                  '1 star'
+                  '3 stars',
+                  '4 stars',
+                  '5 stars',
                 ]}
                 dataSeries={[
                   summaryReport.averageStarRating[4],
@@ -660,15 +670,20 @@ export default function SummaryReport() {
         }
 
         {/* News */}
-        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
           Average News Sentiment
+          <InfoPopOver
+            heading="Average News Sentiment"
+            content="abc"
+            placement="top"
+          />
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4'>
           {summaryReport.newsSentiment && summaryReport.newsSentiment.urls.length > 0 && summaryReport.newsSentiment.positive.length > 0 && summaryReport.newsSentiment.negative.length > 0 && summaryReport.newsSentiment.neutral.length > 0 ? (
             <span data-testid='stacked-column-chart-news-sentiment'>
 
               <StackedColumnChart
-                dataLabel={summaryReport.socialMetrics.urls}
+                dataLabel={summaryReport.newsSentiment.urls}
                 dataSeries={[
                   { name: 'Positive', data: summaryReport.newsSentiment.positive },
                   { name: 'Neutral', data: summaryReport.newsSentiment.neutral },
