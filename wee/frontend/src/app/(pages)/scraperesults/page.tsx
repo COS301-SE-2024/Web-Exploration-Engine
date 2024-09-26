@@ -19,7 +19,7 @@ import {
 import { useRouter } from 'next/navigation';
 import WEETable from '../../components/Util/Table';
 import { useScrapingContext } from '../../context/ScrapingContext';
-import { ScraperResult, Result, ErrorResponse} from '../../models/ScraperModels';
+import { ScraperResult, Result, ErrorResponse, UndefinedResponse } from '../../models/ScraperModels';
 import Link from 'next/link';
 import { generateSummary } from '../../services/SummaryService';
 import { pollForResult } from '../../services/PubSubService';
@@ -30,16 +30,44 @@ import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-sc
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-result.json'
 
-function isErrorResponse(data: ScraperResult | ErrorResponse): data is ErrorResponse {
-  return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
+// function isErrorResponse(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ErrorResponse {
+//   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
+// }
+
+// function isUndefinedResponse(data: ScraperResult | ErrorResponse | UndefinedResponse): data is UndefinedResponse {
+//   return 'url' in data && !('domainStatus' in data) && !('errorStatus' in data);
+// }
+
+function isScrapedResult(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ScraperResult {
+  return (
+    'url' in data &&
+    'domainStatus' in data &&
+    'robots' in data &&
+    'metadata' in data &&
+    'industryClassification' in data &&
+    'logo' in data &&
+    'images' in data &&
+    'slogan' in data &&
+    'contactInfo' in data &&
+    'time' in data &&
+    'addresses' in data &&
+    'screenshot' in data &&
+    'seoAnalysis' in data &&
+    'sentiment' in data &&
+    'scrapeNews' in data &&
+    'reviews' in data &&
+    'shareCountdata' in data
+  );
 }
 
 function ResultsComponent() {
   const {
     urls,
     setUrls,
-    errorResults, 
+    errorResults,
     setErrorResults,
+    undefinedResults,
+    setUndefinedResults,
     results,
     setResults,
     setSummaryReport,
@@ -53,8 +81,7 @@ function ResultsComponent() {
   const [searchValue, setSearchValue] = React.useState('');
   const hasSearchFilter = Boolean(searchValue);
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState('');
-  const [selectedCrawlableFilter, setSelectedCrawlableFilter] =
-    React.useState('');
+  const [selectedCrawlableFilter, setSelectedCrawlableFilter] = React.useState('');
   const router = useRouter();
 
   useBeforeUnload();
@@ -127,10 +154,33 @@ function ResultsComponent() {
     return filteredUrls;
   }, [errorResults, searchValue, selectedStatusFilter, selectedCrawlableFilter])
 
+  const filteredUndefinedItems = React.useMemo(() => {
+    let undefinedUrls = [...undefinedResults];
+
+    // Apply status filter
+    if (selectedStatusFilter === 'Live') {
+      undefinedUrls = [];
+    }
+
+    // Apply crawlable filter
+    if (selectedCrawlableFilter === 'Yes') {
+      undefinedUrls = [];
+    }
+
+    // Apply search filter
+    if (hasSearchFilter) {
+      undefinedUrls = undefinedUrls.filter((url) =>
+        url.url?.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    }
+
+    return undefinedUrls;
+  }, [undefinedResults, searchValue, selectedStatusFilter, selectedCrawlableFilter])
+
   const filteredItems = React.useMemo(() => {
     // Combine filtered results and errors
-    return [...filteredResultItems, ...filteredErrorItems];
-  }, [filteredResultItems, filteredErrorItems]);
+    return [...filteredResultItems, ...filteredErrorItems, ...filteredUndefinedItems];
+  }, [filteredResultItems, filteredErrorItems, filteredUndefinedItems]);
 
   const handleResultPage = (url: string) => {
     router.push(`/results?url=${encodeURIComponent(url)}`);
@@ -158,7 +208,7 @@ function ResultsComponent() {
 
   useEffect(() => {
     console.log('urls length: ', urls.length);
-    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length)) {
+    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
           // add to array of urls still being processed
@@ -182,6 +232,7 @@ function ResultsComponent() {
         // Generate summary report
         console.log('Results:', results);
         console.log('ErrorResults:', errorResults);
+        console.log('UndefinedResults:', undefinedResults);
         const summary = generateSummary(results);
         console.log('Summary:', summary);
         setSummaryReport(summary);
@@ -191,34 +242,34 @@ function ResultsComponent() {
   }, [urls.length]);
 
   useEffect(() => {
-    if (urls.length === (results.length + errorResults.length)) {
+    if (urls.length === (results.length + errorResults.length + undefinedResults.length)) {
       setIsLoading(false);
       // allows to navigate back to this page without rescraping the urls
       setUrls([]);
     }
-  }, [results, errorResults]);
+  }, [results, errorResults, undefinedResults]);
 
-// Function to initiate scraping and handle results
-const getScrapingResults = async (url: string) => {
-  try {
-    // CHANGE TO DEPLOYED VERSION
-    const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
-    console.log('API URL:', apiUrl);
-    const response = await fetch(
-      `${apiUrl}/scraper?url=${encodeURIComponent(url)}`
-    );
-    if (!response.ok) {
-      throw new Error(`Error initiating scrape: ${response.statusText}`);
-    }
-    const initData = await response.json();
-    console.log('Scrape initiation response:', initData);
-
-    // Poll the API until the scraping is done
+  // Function to initiate scraping and handle results
+  const getScrapingResults = async (url: string) => {
     try {
-      let result = await pollForResult(url) as Result;
-      
-      if ( url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true') ) {
-        console.log(process.env.Tes)
+      // CHANGE TO DEPLOYED VERSION
+      const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3002/api';
+      console.log('API URL:', apiUrl);
+      const response = await fetch(
+        `${apiUrl}/scraper?url=${encodeURIComponent(url)}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error initiating scrape: ${response.statusText}`);
+      }
+      const initData = await response.json();
+      console.log('Scrape initiation response:', initData);
+
+      // Poll the API until the scraping is done
+      try {
+        let result = await pollForResult(url) as Result;
+
+        if (url.includes('mock.test.') && (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT == 'true')) {
+          console.log(process.env.Tes)
           if (url.includes('mock.test.wimpy'))
             result = MockWimpyResult;
           else if (url.includes('mock.test.github'))
@@ -231,24 +282,28 @@ const getScrapingResults = async (url: string) => {
             result = MockCiscoResult;
         }
 
-      if (result && 'errorStatus' in result) {
-        const errorResponse = { ...result, url };
-        setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])
+        if (result && 'errorStatus' in result) {
+          const errorResponse = { ...result, url };
+          setErrorResults((prevErrorResults) => [...prevErrorResults, errorResponse] as ErrorResponse[])
+        }
+        else if (result) {
+          // Assuming setResults is a function to update the state or handle results
+          setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
+        }
+        else {
+          const undefinedResponse = { url };
+          setUndefinedResults((prevResults: UndefinedResponse[]) => [...prevResults, undefinedResponse] as UndefinedResponse[])
+        }
+        console.log('Scraping result:', result);
+
+      } catch (error) {
+        console.error('Error when scraping website:', error);
       }
-      else if (result) {
-        // Assuming setResults is a function to update the state or handle results
-        setResults((prevResults: ScraperResult[]) => [...prevResults, result] as ScraperResult[]);
-      }
-      console.log('Scraping result:', result);
-      
+
     } catch (error) {
       console.error('Error when scraping website:', error);
     }
-    
-  } catch (error) {
-    console.error('Error when scraping website:', error);
-  }
-};
+  };
 
 
   const onSearchChange = (value: string) => {
@@ -392,25 +447,17 @@ const getScrapingResults = async (url: string) => {
           {items.map((item, index) => (
             <TableRow key={index} data-testid="table-row">
               <TableCell >
-                {isErrorResponse(item) ? (
-                  item.url ? item.url : 'Error'                  
-                ) : (
+                {isScrapedResult(item) ? (
                   item.url &&
-                    <Link href={`/results?url=${encodeURIComponent(item.url)}`} >
-                      {item.url}
-                    </Link>                  
+                  <Link href={`/results?url=${encodeURIComponent(item.url)}`} >
+                    {item.url}
+                  </Link>
+                ) : (
+                  item.url ? item.url : 'Error'
                 )}
               </TableCell>
               <TableCell className="text-center hidden sm:table-cell">
-                {isErrorResponse(item) ? (
-                  <Chip
-                    radius="sm"
-                    color="danger"
-                    variant="flat"
-                  >
-                    Error
-                  </Chip>
-                ) : (
+                {isScrapedResult(item) ? (
                   <Chip
                     radius="sm"
                     color={item.domainStatus === 'live' ? 'success' : 'warning'}
@@ -418,12 +465,18 @@ const getScrapingResults = async (url: string) => {
                   >
                     {item.domainStatus === 'live' ? 'Yes' : 'No'}
                   </Chip>
+                ) : (
+                  <Chip
+                    radius="sm"
+                    color="danger"
+                    variant="flat"
+                  >
+                    Error
+                  </Chip>
                 )}
               </TableCell>
               <TableCell className="text-center hidden sm:table-cell">
-                {isErrorResponse(item) ? (
-                  <></>                  
-                ) : (
+                {isScrapedResult(item) ? (
                   item.url &&
                   <Button
                     className="font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
@@ -431,7 +484,9 @@ const getScrapingResults = async (url: string) => {
                     data-testid={'btnView' + index}
                   >
                     View
-                  </Button>           
+                  </Button>
+                ) : (
+                  <></>
                 )}
               </TableCell>
             </TableRow>
@@ -440,32 +495,32 @@ const getScrapingResults = async (url: string) => {
       </WEETable>
 
       <div className='sm:flex sm:justify-between'>
-          <div>
-            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-              Summary
-            </h1>
-            <Button
-              data-testid="btn-report-summary"
-              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
-              onClick={handleSummaryPage}
-              disabled={isLoading || results.length === 1}
-            >
-              View overall summary report
-            </Button>
-          </div>
+        <div>
+          <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Summary
+          </h1>
+          <Button
+            data-testid="btn-report-summary"
+            className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
+            onClick={handleSummaryPage}
+            disabled={isLoading || results.length === 1}
+          >
+            View overall summary report
+          </Button>
+        </div>
 
-          <div>
-            <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
-              Comparison
-            </h1>
-            <Button
-              data-testid="btn-comparison-summary"
-              className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
-              onClick={handleComparisonPage}
-            >
-              View comparison report
-            </Button>
-          </div>
+        <div>
+          <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+            Comparison
+          </h1>
+          <Button
+            data-testid="btn-comparison-summary"
+            className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-wait"
+            onClick={handleComparisonPage}
+          >
+            View comparison report
+          </Button>
+        </div>
       </div>
 
     </div>
