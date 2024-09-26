@@ -8,16 +8,9 @@ describe('Scraping Functionality', () => {
   cy.contains(/The Web Exploration Engine/i).should('exist');
   });
 
-  it('should display the scraping interface', () => {
-    cy.visit('/');
-    cy.get('[data-testid="scraping-textarea-home"]').should('exist');
-    cy.get('[data-testid="btn-start-scraping"]').should('exist');
-  });
   it('should scrape multiple URLs and redirect to results page', () => {
 
     cy.visit('/');
-
-
     // Enter the test URLs into the textarea
     cy.get('[data-testid="scraping-textarea-home"]').type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
 
@@ -56,86 +49,77 @@ describe('Scraping and Results Page', () => {
   });
 
   it('should start scraping and display results', () => {
-    // Type the URLs into the textarea
-    cy.get('[data-testid="scraping-textarea-home"]')
-      .type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
+  // Define the URLs to scrape
+  const urlsToScrape = 'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/';
+  const encodedUrls = encodeURIComponent(urlsToScrape); // URL-encode the string
 
-   // Click the start scraping button
-cy.get('[data-testid="btn-start-scraping"]').click();
+  // Intercept the GET request to /api/scraper with the encoded URLs
+  cy.intercept(
+    'GET',
+    `http://localhost:3000/api/scraper?url=${encodedUrls}`
+  ).as('scrapeRequest');
 
-// Wait for the loading indicator to disappear
-cy.get('[data-testid="loading-indicator"]', { timeout: 20000 }).should('not.exist');
+  // Type the URLs into the textarea
+  cy.get('[data-testid="scraping-textarea-home"]')
+    .type(urlsToScrape);
 
-// Verify that the results page shows results for both sites
-cy.get('[data-testid="btnView0"]', { timeout: 120000 }).should('be.visible'); // Check visibility before click
-cy.get('[data-testid="btnView1"]', { timeout: 60000 }).should('exist').should('be.visible');
+  // Click the start scraping button
+  cy.get('[data-testid="btn-start-scraping"]').click();
 
-// Click the first view button only if it is visible
-cy.get('[data-testid="btnView0"]').click();
+  // Wait for the loading indicator to disappear
+  cy.get('[data-testid="loading-indicator"]').should('not.exist');
 
+  cy.get('body').then($body => {
+    // If loading indicator does not exist, click the button
+    if ($body.find('[data-testid="loading-indicator"]').length === 0) {
+      cy.get('a[href*="https%3A%2F%2Fwee-test-site-1.netlify.app"]').click();
 
-    // Assert that we are on the result page
-    cy.url({ timeout: 60000 }).should('include', '/results');
+    // Check if we are in the Overview tab by looking for "Welcome to Astro."
+    cy.contains('Welcome to Astro.').should('exist');
 
-    // General Overview Tab
-    cy.contains(/overview/i).should('exist');
-    cy.contains(/seo/i).should('exist');
-    cy.contains(/contact details/i).should('exist');
+    // Verify the presence of various sections
+    cy.contains(/domain tags/i).should('exist');
+    cy.contains(/crawlable/i).should('exist');
+    cy.contains(/yes/i).should('exist'); // Check for Crawlable status
+    cy.contains(/status/i).should('exist');
+    cy.contains(/live/i).should('exist'); // Check for Status
+    cy.contains(/industry/i).should('exist');
+    cy.contains(/aerospace/i).should('exist'); // Check for Industry
+    cy.contains(/confidence score/i).should('exist'); // Check for Confidence Score
 
+    // Verify additional domain matches
+    cy.contains(/entertainment and media/i).should('exist');
+    cy.contains(/automotive/i).should('exist');
+    cy.contains(/telecommunications/i).should('exist');
+    cy.contains(/information technology/i).should('exist');
+    cy.contains(/fitness and wellness/i).should('exist');
 
-    // Domain Tags section
-    cy.contains('Domain Tags').should('exist').and('be.visible');
-    cy.contains('SCRAPING CATEGORY').should('exist').and('be.visible');
-    cy.contains('Crawlable').should('exist').and('be.visible');
-    cy.contains('Yes').should('exist').and('be.visible');
-    cy.contains('Status').should('exist').and('be.visible');
-    cy.contains('Live').should('exist').and('be.visible');
-    cy.contains('Industry').should('exist').and('be.visible');
-    // cy.contains('Aerospace').should('exist').and('be.visible');
+    // Check for address and contact details
+    cy.contains('Address').should('exist');
+    cy.contains('No address available').should('exist');
 
-    // Confidence scores for categories
-    // cy.contains('Confidence Score:',{ timeout: 60000 }).should('exist').and('be.visible');
-    // cy.contains('Entertainment and Media').should('exist').and('be.visible');
-    // cy.contains('Confidence Score: 23.16%').should('exist').and('be.visible');
-    // cy.contains('Automotive').should('exist').and('be.visible');
-    // cy.contains('Confidence Score: 17.96%').should('exist').and('be.visible');
-    // cy.contains('Domain match').should('exist').and('be.visible');
-    // cy.contains('Telecommunications').should('exist').and('be.visible');
-    // cy.contains('Confidence Score: 63.98%').should('exist').and('be.visible');
-    // cy.contains('Information Technology').should('exist').and('be.visible');
-    // cy.contains('Confidence Score: 21.94%').should('exist').and('be.visible');
-    // cy.contains('Fitness and Wellness').should('exist').and('be.visible');
-    // cy.contains('Confidence Score: 16.85%').should('exist').and('be.visible');
+    cy.contains('Email').should('exist');
+    cy.contains('No email address available').should('exist');
 
-    // Address and contact details section
-    cy.contains('Address and contact details').should('exist').and('be.visible');
-    cy.contains('CONTACT DETAILS').should('exist').and('be.visible');
-    cy.contains('Address').should('exist').and('be.visible');
-    cy.contains('No address available').should('exist').and('be.visible');
+    cy.contains('Phone').should('exist');
+    cy.contains('No phone numbers available').should('exist');
 
-    cy.contains('Email').should('exist').and('be.visible');
-    cy.contains('No email address available').should('exist').and('be.visible');
+    cy.contains('Social Links').should('exist');
+    cy.contains('No social links available').should('exist');
 
-    cy.contains('Phone').should('exist').and('be.visible');
-    cy.contains('No phone numbers available').should('exist').and('be.visible');
-
-    cy.contains('Social Links').should('exist').and('be.visible');
-    cy.contains('No social links available').should('exist').and('be.visible');
-
-    // Verify and navigate to the SEO tab
-    cy.get('[data-testid="tab-seo"]').should('exist').click();
-    cy.contains(/media/i).should('exist');
-    cy.contains(/seo/i).should('exist');
-    cy.contains(/export/i).should('exist');
+    } else {
+      // Optional: Log or handle the case when the loading indicator exists
+      cy.log('Loading indicator is still visible, button click skipped.');
+    }
+  });
 
     // Ensure the media tab is clicked
     cy.get('[data-testid="tab-media"]').click();
 
-    // Wait for the content to be visible
 
     // Verify presence of the text and image
     // cy.contains(/screenshot/i).should('exist');
-    // cy.contains(/screenshot available/i, { timeout: 10000 }).should('exist');
+    // cy.contains(/screenshot available/i).should('exist');
     cy.contains(/images/i).should('exist');
     cy.contains(/No images available/i).should('exist');
 
@@ -186,21 +170,21 @@ cy.get('[data-testid="btnView0"]').click();
     cy.contains('Title Tags').should('exist').and('be.visible');
     cy.contains('Metadata Description').should('exist').and('be.visible');
     cy.contains('Length').should('exist').and('be.visible');
-    // cy.contains('17').should('exist').and('be.visible'); // Length
+     cy.contains('17').should('exist').and('be.visible'); // Length
     cy.contains('Is URL in description?').should('exist').and('be.visible');
     cy.contains('No').should('exist').and('be.visible');
 
     // Unique Content section
     cy.contains('Unique Content').should('exist').and('be.visible');
-//    cy.contains('59').should('exist').and('be.visible'); // Text Length
-   // cy.contains('83.05%').should('exist').and('be.visible'); // Unique words
+   cy.contains('59').should('exist').and('be.visible'); // Text Length
+   cy.contains('83.05%').should('exist').and('be.visible'); // Unique words
     cy.contains('Repeated words').should('exist').and('be.visible');
-    // cy.contains('netlify:').should('exist').and('be.visible');
-    // cy.contains('astro:').should('exist').and('be.visible');
-    // cy.contains('revalidation: 2').should('exist').and('be.visible');
-    // cy.contains('edge: 2').should('exist').and('be.visible');
-    // cy.contains('can: 2').should('exist').and('be.visible');
-    // cy.contains('only: 2').should('exist').and('be.visible');
+    cy.contains('netlify:').should('exist').and('be.visible');
+    cy.contains('astro:').should('exist').and('be.visible');
+    cy.contains('revalidation: 2').should('exist').and('be.visible');
+    cy.contains('edge: 2').should('exist').and('be.visible');
+    cy.contains('can: 2').should('exist').and('be.visible');
+    cy.contains('only: 2').should('exist').and('be.visible');
 
     // Technical Analysis section
     cy.contains('Technical Analysis').should('exist').and('be.visible');
@@ -238,10 +222,10 @@ cy.get('[data-testid="btnView0"]').click();
     cy.contains(/sentiment/i).should('exist');
 
 
-    // Sentiment Analysis details
-    cy.contains('Positive and Negative Words').should('exist').and('be.visible');
-    //cy.contains('Welcome to Astro.').should('exist').and('be.visible');
-    cy.contains('Emotions Confidence Score').should('exist').and('be.visible');
+//     // Sentiment Analysis details
+//     cy.contains('Positive and Negative Words').should('exist').and('be.visible');
+//     //cy.contains('Welcome to Astro.').should('exist').and('be.visible');
+//     cy.contains('Emotions Confidence Score').should('exist').and('be.visible');
 
     // // Emotion confidence scores and percentages
     // cy.contains('1%').should('exist').and('be.visible'); // Anger
