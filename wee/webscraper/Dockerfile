@@ -47,7 +47,7 @@ WORKDIR /app
 RUN mkdir -p /app/webscraper /app/.nx/cache /app/dist
 
 COPY ../.editorconfig ./
-COPY ../.prettierignore ./
+COPY ../.eslintignore ./
 COPY ../.eslintrc.json ./
 COPY ../jest.config.ts ./
 COPY ../jest.preset.js ./
