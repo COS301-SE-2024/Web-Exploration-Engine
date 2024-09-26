@@ -113,3 +113,100 @@ export function AreaChart({ areaCategories, areaSeries }: AreaInterface) {
         </div>        
     );
 }
+
+export function SentimentAreaChart({ areaCategories, areaSeries }: AreaInterface) {
+    const { resolvedTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const generateOptions = (currentTheme: string): ApexOptions => ({
+        chart: {
+            id: 'apexchart-bar',
+            fontFamily: "'Poppins', sans-serif",
+            background: 'transparent',
+            height: 100, // or any other fixed height
+            width: '100%',
+            type: 'area',
+            toolbar: {
+                tools: {
+                    zoom: false,
+                    zoomin: true,
+                    zoomout: true,
+                    pan: false,
+                    reset: false,
+                    download: false,
+                }
+            }
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        colors: currentTheme === 'light' ? ['#60d143', '#f76e25', '#aa0825'] : ['#7aff82', '#eb8945', '#ca677a'],
+        plotOptions: {
+            radar: {
+                polygons: {
+                    
+                    strokeColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+                    connectorColors: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',                  
+                }
+            }
+        },
+        theme: {
+            mode: currentTheme === 'dark' ? 'dark' : 'light'
+        },
+        yaxis: {
+            stepSize: 20,
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },
+        xaxis: {
+            categories: areaCategories,
+            labels: {
+                style: {
+                    colors: currentTheme === 'light' ? new Array(areaCategories.length).fill('#000000') : new Array(areaCategories.length).fill('#ffffff')
+                },                
+            },
+            axisBorder: {
+                show: true,
+                color: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+            }
+        },    
+        grid: {
+            borderColor: currentTheme === 'dark' ? '#D7D7D7' : '#BBBBBB',
+        },
+    });
+
+    const [options, setOptions] = useState<ApexOptions>(generateOptions(resolvedTheme || 'light'));
+    const series = areaSeries;      
+
+    useEffect(() => {
+        if (mounted) {
+            setOptions(generateOptions(resolvedTheme || 'light'));
+        }
+    }, [resolvedTheme, mounted]);
+
+    if (!mounted) {
+        return null;
+    }
+
+    return (
+        <div className="app">
+            <div className="row">
+                <div className="mixed-chart">
+                    <Chart
+                        options={options}
+                        series={series}
+                        type="area"
+                        height={400}
+                        width="100%"
+                    />
+                </div>
+            </div>
+        </div>        
+    );
+}

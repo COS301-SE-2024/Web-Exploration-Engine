@@ -25,7 +25,7 @@ import { AreaChart } from '../../components/Graphs/AreaChart';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 import { sum } from 'cypress/types/lodash';
-import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
+import { StackedColumnChart, SentimentStackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 
 interface weakClassification {
   url: string;
@@ -682,7 +682,7 @@ export default function SummaryReport() {
           {summaryReport.newsSentiment && summaryReport.newsSentiment.urls.length > 0 && summaryReport.newsSentiment.positive.length > 0 && summaryReport.newsSentiment.negative.length > 0 && summaryReport.newsSentiment.neutral.length > 0 ? (
             <span data-testid='stacked-column-chart-news-sentiment'>
 
-              <StackedColumnChart
+              <SentimentStackedColumnChart
                 dataLabel={summaryReport.newsSentiment.urls}
                 dataSeries={[
                   { name: 'Positive', data: summaryReport.newsSentiment.positive },
