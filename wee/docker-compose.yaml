@@ -24,8 +24,8 @@ services:
     user: webscraper
     depends_on:
       - redis-cache
-    # volumes:
-      # - /home/techodyssey/logs/webscraper:/logs
+    volumes:
+      - /home/techodyssey/logs/webscraper:/logs
     restart: unless-stopped
 
   api-service:
