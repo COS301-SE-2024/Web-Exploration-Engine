@@ -38,7 +38,7 @@ import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-
 //   return 'url' in data && !('domainStatus' in data) && !('errorStatus' in data);
 // }
 
-function isScrapedResult(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ScraperResult {
+export function isScrapedResult(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ScraperResult {
   return (
     'url' in data &&
     'domainStatus' in data &&
@@ -503,7 +503,7 @@ function ResultsComponent() {
             data-testid="btn-report-summary"
             className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
             onClick={handleSummaryPage}
-            disabled={isLoading || results.length === 1}
+            disabled={isLoading || results.length <= 1}
           >
             View overall summary report
           </Button>
