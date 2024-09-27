@@ -1171,9 +1171,9 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
 
     const expectedTopNPSUrls = [
-      "http://example2.com",
-      "http://example1.com",
-      "http://example4.com",
+      "example2.com",
+      "example1.com",
+      "example4.com",
     ];
 
     const expectedTopNPSScores = [-57, -58, -77]; 
@@ -1188,9 +1188,9 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
 
     const expectedTopTrustIndexUrls = [
-      "http://example2.com",
-      "http://example1.com",
-      "http://example4.com",
+      "example2.com",
+      "example1.com",
+      "example4.com",
     ];
 
     const expectedTopTrustIndexScores = [2.8, 2.7, 2.2]; 
@@ -1205,9 +1205,9 @@ describe('SummaryService', () => {
     const summary = generateSummary(scraperResults);
 
     const expectedTopRatingUrls = [
-      "http://example1.com",
-      "http://example2.com",
-      "http://example4.com",
+      "example1.com",
+      "example2.com",
+      "example4.com",
     ];
 
     const expectedTopRatingScores = [1.83, 1.65, 1.56]; 
@@ -1221,14 +1221,14 @@ describe('SummaryService', () => {
   it('average star ratings', () => {
     const summary = generateSummary(scraperResults);
     expect(summary.averageStarRating).toEqual(
-      [827.75, 85, 98, 1757, 6846.25]
+      [828, 85, 98, 1757, 6846]
     )
   });
 
   it('social metrics', () => {
     const summary = generateSummary(scraperResults);
 
-    const socialMetricsUrls= ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"];
+    const socialMetricsUrls= ["example1.com", "example2.com", "example3.com", "example4.com"];
     const expectedShareCount = [7037, 6631, 15790, 3032];
     const expectedCommentCount = [180,714,589,841];
     const expectedReactionCount = [12103, 1905,17311,10190];
@@ -1244,7 +1244,7 @@ describe('SummaryService', () => {
   it('news sentiment', () => {
     const summary = generateSummary(scraperResults);
 
-    const newsSentimentUrls= ["http://example1.com", "http://example2.com", "http://example3.com", "http://example4.com"];
+    const newsSentimentUrls= ["example1.com", "example2.com", "example3.com", "example4.com"];
     const expectedPositive = [31,31,3,3];
     const expectedNeutral = [68,68,51,51];
     const expectedNegative = [0,0,46,46];

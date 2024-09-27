@@ -24,7 +24,7 @@ jest.mock('../../src/app/services/PubSubService', () => ({
 
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: () => ({
-        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com', 'https://www.example5.com'],
+        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com', 'https://www.example5.com', 'https://www/example6.com'],
         setUrls: jest.fn(),
         results: [        
             {
@@ -52,12 +52,16 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
                 url: 'https://www.example5.com'
             }
         ],
-        processedUrls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example5.com'],
+        undefinedResults: [
+            {url: 'https://www/example6.com'}
+        ],
+        processedUrls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example5.com', 'https://www/example6.com'],
         setProcessedUrls: jest.fn(),
         processingUrls: [],
         setProcessingUrls: jest.fn(), 
         setResults: jest.fn(),
         setErrorResults: jest.fn(),
+        setUndefinedResults: jest.fn(),
         setSummaryReport: jest.fn(),
     }),
 }));
@@ -77,12 +81,12 @@ describe('Scrape Results Component', () => {
         jest.clearAllMocks();
     });
 
-    it('should display 3 results', async () => {
+    it('should display 4 results', async () => {
         await act(async () => {
             render(<ScrapeResults />);
         });
 
-        expect(screen.getByText('Total 3 results')).toBeDefined();
+        expect(screen.getByText('Total 4 results')).toBeDefined();
     });
 
     it('should filter items based on searchValue - test 1', () => {
@@ -127,7 +131,7 @@ describe('Scrape Results Component', () => {
     it('count the number of view buttons', () => {
         render(<ScrapeResults />);
 
-        const viewButtons = screen.getAllByText('View');
+        const viewButtons = screen.getAllByRole('button', { name: /View/i });
         expect(viewButtons.length).toBe(2);
     });
 
