@@ -55,8 +55,10 @@ describe('Scraping and Results Page', () => {
     // If loading indicator does not exist, click the button
     if ($body.find('[data-testid="loading-indicator"]').length === 0) {
 
-      
-      cy.get('a[href*="https%3A%2F%2Fwee-test-site-1.netlify.app"]').click();
+
+      cy.get('a[href*="https%3A%2F%2Fwee-test-site-1.netlify.app"]')
+      .should('be.visible')  // Wait until the element is visible
+      .click();
 
     // Check if we are in the Overview tab by looking for "Welcome to Astro."
     cy.contains('Welcome to Astro.').should('exist');
