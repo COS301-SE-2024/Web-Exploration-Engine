@@ -29,36 +29,7 @@ import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-
 import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-result.json'
-
-// function isErrorResponse(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ErrorResponse {
-//   return 'errorStatus' in data || 'errorCode' in data || 'errorMessage' in data;
-// }
-
-// function isUndefinedResponse(data: ScraperResult | ErrorResponse | UndefinedResponse): data is UndefinedResponse {
-//   return 'url' in data && !('domainStatus' in data) && !('errorStatus' in data);
-// }
-
-export function isScrapedResult(data: ScraperResult | ErrorResponse | UndefinedResponse): data is ScraperResult {
-  return (
-    'url' in data &&
-    'domainStatus' in data &&
-    'robots' in data &&
-    'metadata' in data &&
-    'industryClassification' in data &&
-    'logo' in data &&
-    'images' in data &&
-    'slogan' in data &&
-    'contactInfo' in data &&
-    'time' in data &&
-    'addresses' in data &&
-    'screenshot' in data &&
-    'seoAnalysis' in data &&
-    'sentiment' in data &&
-    'scrapeNews' in data &&
-    'reviews' in data &&
-    'shareCountdata' in data
-  );
-}
+import { isScrapedResult } from 'frontend/src/Utils/scrapingUtils';
 
 function ResultsComponent() {
   const {
