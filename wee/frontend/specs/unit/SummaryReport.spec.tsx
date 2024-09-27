@@ -326,7 +326,7 @@ describe('SummaryReport Page', () => {
 
     await waitFor(() => {
       expect(jsPDF).toHaveBeenCalled();
-      expect(html2canvas).toHaveBeenCalledTimes(5);
+      expect(html2canvas).toHaveBeenCalledTimes(8);
     });
 
     // Cleanup mock elements
