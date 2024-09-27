@@ -7,3 +7,4 @@ my.secrets
 *-audit.json
 wee/webscraper/logging/logs.json
 /jmeter/Poll-Tests/root-poll/beginner results
+/jmeter/Poll-Tests
