@@ -332,13 +332,18 @@ export default function SummaryReport() {
                 placement="top"
               />
             </h3>
-
-            <span className='sm:hidden'>
-              <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"} />
-            </span>
-            <span className='hidden sm:block'>
-              <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"} />
-            </span>
+            {industries.length > 0 ? (
+              <>
+                <span className='sm:hidden'>
+                  <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"bottom"} />
+                </span>
+                <span className='hidden sm:block'>
+                  <PieChart dataLabel={industries} dataSeries={industryPercentages} legendPosition={"right"} />
+                </span>
+              </>
+            ) : (
+              <span className='flex flex-col justify-center text-center'>No data currently available</span>
+            )}
           </div>
           <div data-testid="visual-weak-classifications" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
@@ -466,7 +471,7 @@ export default function SummaryReport() {
               <span data-testid="metaRadar" className='hidden sm:block'>
                 <RadarChart radarCategories={metaRadar.categories} radarSeries={metaRadar.series} />
               </span>
-            ) : (<></>)}
+            ) : (<span className='flex flex-col justify-center text-center'>No data currently available</span>)}
           </div>
           <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-4 text-center">
@@ -479,7 +484,7 @@ export default function SummaryReport() {
               <span data-testid="domainRadar" className='hidden sm:block'>
                 <RadarChart radarCategories={domainRadar.categories} radarSeries={domainRadar.series} />
               </span>
-            ) : (<></>)}
+            ) : (<span className='flex flex-col justify-center text-center'>No data currently available</span>)}
           </div>
         </div>
 
@@ -488,8 +493,13 @@ export default function SummaryReport() {
           Website status
         </h3>
         <div className='gap-4 grid md:grid-cols-3'>
+
           <div id="bar-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center'>
-            <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus} />
+            {domainStatus.length > 0 ? (
+              <BarChart dataLabel={['Live', 'Parked']} dataSeries={domainStatus} />
+            ) : (
+              <span className='flex flex-col justify-center text-center'>No data currently available</span>
+            )}
           </div>
 
           <div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl md:col-span-1'>
@@ -536,13 +546,13 @@ export default function SummaryReport() {
           />
         </h3>
         {/* Sentiment Analysis */}
-        {
-          summaryReport.emotionsArea && summaryReport.emotionsArea.series.length > 0 ? (
-            <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+        <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+          {
+            summaryReport.emotionsArea && summaryReport.emotionsArea.series.length > 0 ? (
               <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={summaryReport.emotionsArea.series} />
-            </div>
-          ) : (<></>)
-        }
+            ) : (<span className='flex flex-col justify-center text-center'>No data currently available</span>)
+          }
+        </div>
 
         {/* Social Media Engagement */}
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
