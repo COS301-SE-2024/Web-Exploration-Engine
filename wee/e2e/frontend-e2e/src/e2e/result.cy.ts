@@ -30,7 +30,7 @@ describe('Scraping and Results Page', () => {
     cy.visit('/');
   });
 
-  it('should start scraping and display results', () => {
+  it('should start scraping and display results',{ defaultCommandTimeout: 600000 }, () => {
   // Define the URLs to scrape
   const urlsToScrape = 'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/';
   const encodedUrls = encodeURIComponent(urlsToScrape); // URL-encode the string

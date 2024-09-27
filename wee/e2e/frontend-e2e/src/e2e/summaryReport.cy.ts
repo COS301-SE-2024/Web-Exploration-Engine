@@ -1,4 +1,4 @@
-describe('Summary Report Page E2E Test', () => {
+describe('Summary Report Page E2E Test',{ defaultCommandTimeout: 600000 }, () => {
   before(() => {
     // Visit the homepage and start the scraping process with real URLs
     cy.visit('/');
