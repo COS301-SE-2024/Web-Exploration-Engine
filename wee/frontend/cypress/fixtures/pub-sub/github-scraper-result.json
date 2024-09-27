@@ -1,265 +1,417 @@
 {
-  "status":"completed",
-  "url": "https://github.com",
-  "domainStatus": "live",
-  "robots": {
-      "baseUrl": "https://github.com",
-      "allowedPaths": [
-          "/*?tab=achievements&achievement=*"
-      ],
-      "disallowedPaths": [
-          "/*/*/pulse",
-          "/*/*/projects",
-          "/*/*/forks",
-          "/*/*/issues/new",
-          "/*/*/issues/search",
-          "/*/*/commits/",
-          "/*/*/branches",
-          "/*/*/contributors",
-          "/*/*/tags",
-          "/*/*/stargazers",
-          "/*/*/watchers",
-          "/*/*/network",
-          "/*/*/graphs",
-          "/*/*/compare",
-          "/*/tree/",
-          "/gist/",
-          "/*/download",
-          "/*/revisions",
-          "/*/commits/*?author",
-          "/*/commits/*?path",
-          "/*/comments",
-          "/*/archive/",
-          "/*/blame/",
-          "/*/raw/",
-          "/*/cache/",
-          "/.git/",
-          "/*.git$",
-          "/search/advanced",
-          "/search$",
-          "/*q=",
-          "/*.atom$",
-          "/ekansa/Open-Context-Data",
-          "/ekansa/opencontext-*",
-          "/*source=*",
-          "/*ref_cta=*",
-          "/*plan=*",
-          "/*return_to=*",
-          "/*ref_loc=*",
-          "/*setup_organization=*",
-          "/*source_repo=*",
-          "/*ref_page=*",
-          "/*referrer=*",
-          "/*report=*",
-          "/*author=*",
-          "/*since=*",
-          "/*until=*",
-          "/*commits?author=*",
-          "/*report-abuse?report=*",
-          "/*tab=*",
-          "/account-login",
-          "/Explodingstuff/"
-      ],
-      "isUrlScrapable": true,
-      "isBaseUrlAllowed": true
-  },
-  "metadata": {
-      "title": "GitHub: Let’s build from here · GitHub",
-      "description": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
-      "keywords": null,
-      "ogTitle": "GitHub: Let’s build from here",
-      "ogDescription": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
-      "ogImage": "https://github.githubassets.com/assets/campaign-social-031d6161fa10.png"
-  },
-  "industryClassification": {
-      "metadataClass": {
-          "label": "Unknown",
-          "score": 0
-      },
-      "domainClass": {
-          "label": "Unknown",
-          "score": 0
-      },
-      "zeroShotMetaDataClassify": [
-          {
-              "label": "Construction",
-              "score": 0.36690080165863037
-          },
-          {
-              "label": "Defense and Security",
-              "score": 0.17253461480140686
-          },
-          {
-              "label": "Marine Resources",
-              "score": 0.15172386169433594
-          }
-      ],
-      "zeroShotDomainClassify": [
-          {
-              "label": "Mining and Minerals",
-              "score": 0.17835311591625214
-          },
-          {
-              "label": "Marine and Shipping",
-              "score": 0.1753484159708023
-          },
-          {
-              "label": "Arts and Culture",
-              "score": 0.14293985068798065
-          }
-      ]
-  },
-  "logo": "https://github.githubassets.com/assets/campaign-social-031d6161fa10.png",
-  "images": [],
-  "slogan": "",
-  "contactInfo": {
-      "emails": [],
-      "phones": [],
-      "socialLinks": [
-          "https://www.facebook.com/GitHub",
-          "https://www.linkedin.com/company/github"
-      ]
-  },
-  "addresses": [],
-  "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAyAAACmxCAIAAADp5TILAAAAAXNSR0IArs4c6QAAIABJREFUeJzsnXVgFMcXx9+bvRhESIIlQJCWtjj8oDgEKRLc3WlpKe7FSgtFS3F3LR4kQRIsBC/FCoUWC4EgxUICRG9nfn/M7t6eEiA0FObzux+9m52dnZ3d2/vmvTdvsGTZKiAQCAQCgUAgSD9IRndAIBAIBAKB4H1DCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCzB6+Ph7n72ZORHBfK/7QM5OzufPRlZuNCnr7HvkAF9fp447i10KuOpHlj5YHjI2z5Knty5zp6M9PXxeWlNm/eDVqjfumHNstYtm729nmQ4TRs12LpxTUb3Iv0JC9lSp1bNt3qIdLyr3953//VuYMGHhhBY/zHq1Kp5LCIso3uRzri6uDRr0tC6vED+vOXLfZ5RR38plSuWD8iT2+am0qVKnD0ZOXbMCH1h4UKf2tQH/85pZhQJiYlf9ex75+69jO7IO0Gr5k0MBkNG9+JfwsEXpHLF8vNnT4vct+t45N7tm3/t37tn5syZ+Kaz5y70Hzycv9eGy9fHx/pPrJHDBs2dOfUNO/",
-  "seoAnalysis": {
-      "titleTagsAnalysis": {
-          "titleTag": "GitHub: Let’s build from here · GitHubTwitchTikTok",
-          "length": 50,
-          "recommendations": ""
-      },
-      "metaDescriptionAnalysis": {
-          "metaDescription": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
-          "length": 280,
-          "isUrlWordsInDescription": true,
-          "recommendations": "Meta description length should be between 120 and 160 characters."
-      },
-      "headingAnalysis": {
-          "headings": [
-              "Navigation Menu",
-              "Search code, repositories, users, issues, pull requests...",
-              "Provide feedback",
-              "Saved searches",
-              "Use saved searches to filter your results more quickly",
-              "Let’s build from here",
-              "Productivity",
-              "Accelerate innovation\n        Our AI-powered platform increases the pace of software development.",
-              "GitHub Copilot empowers developers to complete tasks 55% faster with contextualized AI coding assistance across workflows.",
-              "22% increase",
-              "Application security",
-              "Empower developers With GitHub, you can secure code in minutes.",
-              "GitHub Advanced Security enables you to find and fix vulnerabilities with ease and ship secure code quickly.",
-              "7x faster",
-              "Collaboration",
-              "Supercharge collaboration\n        GitHub helps your teams work more efficiently together.",
-              "GitHub Issues and GitHub Projects supply project management tools that adapt to your team alongside your code.",
-              "80%",
-              "Over 100 million developers call GitHub home3",
-              "Site-wide Links",
-              "Subscribe to our developer newsletter",
-              "Product",
-              "Platform",
-              "Support",
-              "Company"
-          ],
-          "count": 25,
-          "recommendations": ""
-      },
-      "imageAnalysis": {
-          "totalImages": 52,
-          "missingAltTextCount": 35,
-          "nonOptimizedCount": 0,
-          "reasonsMap": {
-              "format": [],
-              "size": [],
-              "other": []
-          },
-          "recommendations": "35 images are missing alt text.",
-          "errorUrls": []
-      },
-      "uniqueContentAnalysis": {
-          "textLength": 804,
-          "uniqueWordsPercentage": 52.61194029850746,
-          "repeatedWords": [
-              {
-                  "word": "github",
-                  "count": 44
-              },
-              {
-                  "word": "and",
-                  "count": 20
-              },
-              {
-                  "word": "your",
-                  "count": 17
-              },
-              {
-                  "word": "to",
-                  "count": 16
-              },
-              {
-                  "word": "the",
-                  "count": 16
-              },
-              {
-                  "word": "with",
-                  "count": 13
-              },
-              {
-                  "word": "in",
-                  "count": 12
-              },
-              {
-                  "word": "you",
-                  "count": 12
-              },
-              {
-                  "word": "of",
-                  "count": 11
-              },
-              {
-                  "word": "on",
-                  "count": 11
-              }
-          ],
-          "recommendations": ""
-      },
-      "internalLinksAnalysis": {
-          "totalLinks": 50,
-          "uniqueLinks": 45,
-          "recommendations": ""
-      },
-      "mobileFriendlinessAnalysis": {
-          "isResponsive": true,
-          "recommendations": ""
-      },
-      "structuredDataAnalysis": {
-          "count": 0,
-          "recommendations": "No structured data found. Add structured data to improve SEO."
-      },
-      "indexabilityAnalysis": {
-          "isIndexable": true,
-          "recommendations": ""
-      },
-      "XMLSitemapAnalysis": {
-          "isSitemapValid": false,
-          "recommendations": "XML sitemap is missing or inaccessible. Ensure it is present and accessible."
-      },
-      "canonicalTagAnalysis": {
-          "canonicalTag": "https://github.com",
-          "isCanonicalTagPresent": true,
-          "recommendations": ""
-      }
-  },
-  "sentiment": {
-      "sentimentAnalysis": {
-          "positive": 0,
-          "negative": 0,
-          "neutral": 0
-      },
-      "positiveWords": [],
-      "negativeWords": [],
-      "emotions": {}
-  },
-  "time": 42.9034
+    "status": "completed",
+    "url": "https://github.com",
+    "domainStatus": "live",
+    "robots": {
+        "baseUrl": "https://github.com",
+        "allowedPaths": [
+            "/*?tab=achievements&achievement=*"
+        ],
+        "disallowedPaths": [
+            "/*/*/pulse",
+            "/*/*/projects",
+            "/*/*/forks",
+            "/*/*/issues/new",
+            "/*/*/issues/search",
+            "/*/*/commits/",
+            "/*/*/branches",
+            "/*/*/contributors",
+            "/*/*/tags",
+            "/*/*/stargazers",
+            "/*/*/watchers",
+            "/*/*/network",
+            "/*/*/graphs",
+            "/*/*/compare",
+            "/*/tree/",
+            "/gist/",
+            "/*/download",
+            "/*/revisions",
+            "/*/commits/*?author",
+            "/*/commits/*?path",
+            "/*/comments",
+            "/*/archive/",
+            "/*/blame/",
+            "/*/raw/",
+            "/*/cache/",
+            "/.git/",
+            "/*.git$",
+            "/search/advanced",
+            "/search$",
+            "/*q=",
+            "/*.atom$",
+            "/ekansa/Open-Context-Data",
+            "/ekansa/opencontext-*",
+            "/*source=*",
+            "/*ref_cta=*",
+            "/*plan=*",
+            "/*return_to=*",
+            "/*ref_loc=*",
+            "/*setup_organization=*",
+            "/*source_repo=*",
+            "/*ref_page=*",
+            "/*referrer=*",
+            "/*report=*",
+            "/*author=*",
+            "/*since=*",
+            "/*until=*",
+            "/*commits?author=*",
+            "/*report-abuse?report=*",
+            "/*tab=*",
+            "/account-login",
+            "/Explodingstuff/"
+        ],
+        "isUrlScrapable": true,
+        "isBaseUrlAllowed": true
+    },
+    "metadata": {
+        "title": "GitHub: Let’s build from here · GitHub",
+        "description": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
+        "keywords": null,
+        "ogTitle": "GitHub: Let’s build from here",
+        "ogDescription": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
+        "ogImage": "https://github.githubassets.com/assets/campaign-social-031d6161fa10.png"
+    },
+    "industryClassification": {
+        "metadataClass": {
+            "label": "Unknown",
+            "score": 0
+        },
+        "domainClass": {
+            "label": "Unknown",
+            "score": 0
+        },
+        "zeroShotMetaDataClassify": [
+            {
+                "label": "Construction",
+                "score": 0.36690080165863037
+            },
+            {
+                "label": "Defense and Security",
+                "score": 0.17253461480140686
+            },
+            {
+                "label": "Marine Resources",
+                "score": 0.15172386169433594
+            }
+        ],
+        "zeroShotDomainClassify": [
+            {
+                "label": "Mining and Minerals",
+                "score": 0.17835311591625214
+            },
+            {
+                "label": "Marine and Shipping",
+                "score": 0.1753484159708023
+            },
+            {
+                "label": "Arts and Culture",
+                "score": 0.14293985068798065
+            }
+        ]
+    },
+    "logo": "https://github.githubassets.com/assets/campaign-social-031d6161fa10.png",
+    "images": [],
+    "slogan": "",
+    "contactInfo": {
+        "emails": [],
+        "phones": [],
+        "socialLinks": [
+            "https://www.facebook.com/GitHub",
+            "https://www.linkedin.com/company/github"
+        ]
+    },
+    "addresses": [],
+    "screenshot": "iVBORw0KGgoAAAANSUhEUgAAAyAAACmxCAIAAADp5TILAAAAAXNSR0IArs4c6QAAIABJREFUeJzsnXVgFMcXx9+bvRhESIIlQJCWtjj8oDgEKRLc3WlpKe7FSgtFS3F3LR4kQRIsBC/FCoUWC4EgxUICRG9nfn/M7t6eEiA0FObzux+9m52dnZ3d2/vmvTdvsGTZKiAQCAQCgUAgSD9IRndAIBAIBAKB4H1DCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCyBQCAQCASCdEYILIFAIBAIBIJ0RggsgUAgEAgEgnRGCCzB6+Ph7n72ZORHBfK/7QM5OzufPRlZuNCnr7HvkAF9fp447i10KuOpHlj5YHjI2z5Knty5zp6M9PXxeWlNm/eDVqjfumHNstYtm729nmQ4TRs12LpxTUb3Iv0JC9lSp1bNt3qIdLyr3953//VuYMGHhhBY/zHq1Kp5LCIso3uRzri6uDRr0tC6vED+vOXLfZ5RR38plSuWD8iT2+am0qVKnD0ZOXbMCH1h4UKf2tQH/85pZhQJiYlf9ex75+69jO7IO0Gr5k0MBkNG9+JfwsEXpHLF8vNnT4vct+t45N7tm3/t37tn5syZ+Kaz5y70Hzycv9eGy9fHx/pPrJHDBs2dOfUNO/",
+    "seoAnalysis": {
+        "titleTagsAnalysis": {
+            "titleTag": "GitHub: Let’s build from here · GitHubTwitchTikTok",
+            "length": 50,
+            "recommendations": ""
+        },
+        "metaDescriptionAnalysis": {
+            "metaDescription": "GitHub is where over 100 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and features, power your CI/CD and DevOps workflows, and secure code before you commit it.",
+            "length": 280,
+            "isUrlWordsInDescription": true,
+            "recommendations": "Meta description length should be between 120 and 160 characters."
+        },
+        "headingAnalysis": {
+            "headings": [
+                "Navigation Menu",
+                "Search code, repositories, users, issues, pull requests...",
+                "Provide feedback",
+                "Saved searches",
+                "Use saved searches to filter your results more quickly",
+                "Let’s build from here",
+                "Productivity",
+                "Accelerate innovation\n        Our AI-powered platform increases the pace of software development.",
+                "GitHub Copilot empowers developers to complete tasks 55% faster with contextualized AI coding assistance across workflows.",
+                "22% increase",
+                "Application security",
+                "Empower developers With GitHub, you can secure code in minutes.",
+                "GitHub Advanced Security enables you to find and fix vulnerabilities with ease and ship secure code quickly.",
+                "7x faster",
+                "Collaboration",
+                "Supercharge collaboration\n        GitHub helps your teams work more efficiently together.",
+                "GitHub Issues and GitHub Projects supply project management tools that adapt to your team alongside your code.",
+                "80%",
+                "Over 100 million developers call GitHub home3",
+                "Site-wide Links",
+                "Subscribe to our developer newsletter",
+                "Product",
+                "Platform",
+                "Support",
+                "Company"
+            ],
+            "count": 25,
+            "recommendations": ""
+        },
+        "imageAnalysis": {
+            "totalImages": 52,
+            "missingAltTextCount": 35,
+            "nonOptimizedCount": 0,
+            "reasonsMap": {
+                "format": [],
+                "size": [],
+                "other": []
+            },
+            "recommendations": "35 images are missing alt text.",
+            "errorUrls": []
+        },
+        "uniqueContentAnalysis": {
+            "textLength": 804,
+            "uniqueWordsPercentage": 52.61194029850746,
+            "repeatedWords": [
+                {
+                    "word": "github",
+                    "count": 44
+                },
+                {
+                    "word": "and",
+                    "count": 20
+                },
+                {
+                    "word": "your",
+                    "count": 17
+                },
+                {
+                    "word": "to",
+                    "count": 16
+                },
+                {
+                    "word": "the",
+                    "count": 16
+                },
+                {
+                    "word": "with",
+                    "count": 13
+                },
+                {
+                    "word": "in",
+                    "count": 12
+                },
+                {
+                    "word": "you",
+                    "count": 12
+                },
+                {
+                    "word": "of",
+                    "count": 11
+                },
+                {
+                    "word": "on",
+                    "count": 11
+                }
+            ],
+            "recommendations": ""
+        },
+        "internalLinksAnalysis": {
+            "totalLinks": 50,
+            "uniqueLinks": 45,
+            "recommendations": ""
+        },
+        "mobileFriendlinessAnalysis": {
+            "isResponsive": true,
+            "recommendations": ""
+        },
+        "structuredDataAnalysis": {
+            "count": 0,
+            "recommendations": "No structured data found. Add structured data to improve SEO."
+        },
+        "indexabilityAnalysis": {
+            "isIndexable": true,
+            "recommendations": ""
+        },
+        "XMLSitemapAnalysis": {
+            "isSitemapValid": false,
+            "recommendations": "XML sitemap is missing or inaccessible. Ensure it is present and accessible."
+        },
+        "canonicalTagAnalysis": {
+            "canonicalTag": "https://github.com",
+            "isCanonicalTagPresent": true,
+            "recommendations": ""
+        }
+    },
+    "sentiment": {
+        "sentimentAnalysis": {
+            "positive": 0,
+            "negative": 0,
+            "neutral": 0
+        },
+        "positiveWords": [],
+        "negativeWords": [],
+        "emotions": {}
+    },
+    "scrapeNews": [
+        {
+            "title": "Halaal Restaurants to visit in Pretoria for Iftar - Food & Home Magazine",
+            "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOTDU0Mmx4QnRLNVpJS2NsWkFmelB2d2praWxXX0k0UU5uaDJFNXREZ2hvX1o2NnRtcGtNZ2ZtOWItWWt3czItUHh1Y3pJd1AtVWk1WmNNdmJ3SEM0S2FNbVA2MWVsVlQ2bVhEb0VTQzR2Q0w5MS10ZGJZLS1pTThBNmZkMjdtWWExNkFmUHViaDh6UGMycDBYN1FZTG9GQU5Mbl93Yzl5cjlrVzDSAbMBQVVfeXFMUGpuSmc4RlpBVHU0MDBtMXJwLTlOaGxOWjRqTWI0bFlvREdQWWI1VGltZmtFN3Z2ajNaYTdqTDBmeXc0Zi1WeGNxSHVUbjRaSU54QkYtenpMc2ZwNTByQWRjU055aVotQ1JKT1M2amNrMTBGS1BwVHRTajNLU1MyXzJZdFc1RUNqelc3T2QxSDJhdkU2NTBRcHUwekVDSUxUb21tRWo4Yng0MDVVck01SG1xVjg?oc=5",
+            "source": "Food & Home Magazine",
+            "pubDate": "Thu, 07 Mar 2024 08:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.027678756043314934,
+                "negative": 0.0034260652028024197,
+                "neutral": 0.9688951373100281
+            }
+        },
+        {
+            "title": "Lucky winner walks away with new car - The Citizen",
+            "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOVVF4M1V2ZzEwX1R3VFNkNmE0dzlJRXpocmNpVnFKSklTVW9mRWd3MDd2X1JCVlVhS0JlS0JGSERhODBEMEJGZzdya3E4Z2hFVXdORzdtai1OaDgyMW5IVzZSeXNkaTN5ZW10NlJ0ejBLSGpsQjJ0NEF2dkZDdDV6R2dsWlc0Y3l1WkNTM1UzX2hnaU1YdlFxc083QU4tdlBONndjamI2SnBKYzhnTmRKNEtrd2t1cEVS0gG8AUFVX3lxTE5kQkFfVkxFSlBuQ3Z6Z1UtWVpxbkxhX2ZCWUVBY0JkRmhUZ051OXpZVkRhY2g4UWdHYlNNOThCb0drdE96Mk1meGdFYXQ2UmowMGhzY1UtTDdFbWNRS1BCU0xQZVNaVmJhSXpIMUU3elFKMzE3SEF3d25SNndZYmRwOFEtT294MUMxWS1uS1ZKVTZEU25QU094TGhLLUwzQ2RRM1NuVEdLYnlDN1p0RXprc1VoWjVDc1pIbFVu?oc=5",
+            "source": "The Citizen",
+            "pubDate": "Thu, 15 Feb 2024 08:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.9598616361618042,
+                "negative": 0.001013559172861278,
+                "neutral": 0.039124853909015656
+            }
+        },
+        {
+            "title": "#OrchidsandOnions: Mochachos on fire - Bizcommunity.com",
+            "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE00c1pCcmdTeERPZWlmSmZFRmFhSEFFOTNJcXN0aFBfNjI3OGhNXzZoMW01M1phc3JmaVo1bTF6dUQ3UnlVV3M3Mm9fTjlfZ2NBQmlUNFBQbm1fb0VIOGstN0pSVXdMRWM?oc=5",
+            "source": "Bizcommunity.com",
+            "pubDate": "Tue, 30 Mar 2021 07:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.018747808411717415,
+                "negative": 0.12942437827587128,
+                "neutral": 0.85182785987854
+            }
+        },
+        {
+            "title": "We tried chips from McDonald's, Steers and other takeaway joints - and the winner was clear - News24",
+            "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxON2FSWmstVWRxNEk5LVY1allPakNyUENXT1JhZk1SUzhNbzktUFhiQzVjeEYydmlZNFhCTnBSVFZBeUJ5bnY4MmYwa2djMm5oNVVudjRLSi1XUWlHNndoYW92M05ZbU5nM1MtNHdSNkhFdm9BNk9RQ0N1c3RjcWtxeHV2NG5CYUVCOHZUZE9oZ1BaQzB0dHY5aDhvamV6MWM?oc=5",
+            "source": "News24",
+            "pubDate": "Thu, 30 Aug 2018 07:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.6897976398468018,
+                "negative": 0.0022103972733020782,
+                "neutral": 0.3079919219017029
+            }
+        },
+        {
+            "title": "JUST IN: WATCH | Popular mall catches fire! | Daily Sun - SNL24",
+            "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQWFF2OXZwaEVpdHdpQmcyaVVrMFZCc3Z3cGV0ckp2T2x1VDlFdU5Yc1F5OVUzU29FVk5uUWQyQkNSVFhuOVdIRzFCNzlGU1htcnFBVFZ6ZDh6QjFRejJNTjhzN3JrMUdNbHNmeTNJUFNOOXVwd1ZOSEkyZzBEcGhTUW00Y0lTaERUTE5mWXgzU0M0MUlYODFKRXFIeTd6X3N1VkZF?oc=5",
+            "source": "SNL24",
+            "pubDate": "Fri, 06 Sep 2024 07:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.009050153195858002,
+                "negative": 0.48360753059387207,
+                "neutral": 0.5073423385620117
+            }
+        },
+        {
+            "title": "The most fattening fast-food meals in SA - BusinessTech",
+            "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNenBpR3JXYjF0NEhHVkczbG1IdEdyc2V0TFhxLWtNUDRyRmpIb3dHOHJ2QVBTTTNxN0JWdkc5YTk3MlRKejhVeUVqU1kxMkZYZkpDb2xJLWh3U2d6TGtKaVpUUkpUdVBselJmWkZkMnJtdnpYTEMzaGNDS1ljekg2T0ZNbXJYNmY3NkVfYktXYVc0QQ?oc=5",
+            "source": "BusinessTech",
+            "pubDate": "Wed, 28 Jan 2015 08:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.015273532830178738,
+                "negative": 0.6356027126312256,
+                "neutral": 0.34912383556365967
+            }
+        },
+        {
+            "title": "Mochachos Karaglen takes their Hats Off - The Citizen",
+            "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxNTU45bUxRNzJ5OHJYT0JScTU3UG14RzM5ZG5zRmJ4MFN0OFhqSWRvSTdQYTMyRWZLNmRYUTJITEY3MFJ0dTJsX2pna2ptY2UwOFhkeUdmUGFpNGh6YlVVR0lucGo2blhyZGFESjVsV3Q2clY1VHFXQlM3RkcycDlBNzZqVDJRUnhiSkpBUkxVZUwzZkloXzdZc1FlOXlVc3o4SWJaYXRjVzZoM1pZQkxfSWdkazZwMV93SEHSAb4BQVVfeXFMT0RmZkEydFVLanVTeGF2NUNrZndOTGVVZXV2ejhKaEJTbnlnQnRBT0NYR0RudnUxaFdFRWljaUpCOHpNZWJvOEktYVdWWTJPa1pfcHJjb2FITVBKZVdVaGVNNWFmdFQ4Q2o2bml0RzNRM1BuaTlwQy05UkFOWUR1dXFIZFRBcGllX2hPaW1jNG92VnJqaXI2cWptUkhkZ0pFNmRDc1lDLTVWR1h1Q0szNE5MdVZlYlY5UGVUVXo4Zw?oc=5",
+            "source": "The Citizen",
+            "pubDate": "Mon, 30 Oct 2023 18:41:03 GMT",
+            "sentimentScores": {
+                "positive": 0.8948276042938232,
+                "negative": 0.0016968296840786934,
+                "neutral": 0.10347560793161392
+            }
+        },
+        {
+            "title": "LISTEN: Massive Durban waves cause devastation for business owners - East Coast Radio",
+            "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOekQxeHdNcmZRRURsVlhWS19zNlBrWHdfS2xHNkRlcnprNUQyZC1YclZqbi1uUWQ1anY5NldnbC1FWEJNWG9sV3VmTTFELW4wbUV5Q0NaSFNWWERtbGhNYzBYMVFyYmFDb3U2ampEd3Y2aVV1bTJSNThrRFFpQ0tfbVpWcncwcG9ONHFIYmVSajBCVDFEdlh0RE9B?oc=5",
+            "source": "East Coast Radio",
+            "pubDate": "Mon, 13 Mar 2017 07:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.002565480535849929,
+                "negative": 0.9526364803314209,
+                "neutral": 0.04479801654815674
+            }
+        },
+        {
+            "title": "Splash brings Mochachos to Zim - NewsDay",
+            "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQU3ZVNzU1NzRQR2NlQld4a1p1X2M3TTZ0Rzc4Y0F6VmUtY2RxWDhZT29VaXpXNEU3ejg2NUl1RHVHWEVxUXZxY0Nmek1aYlRMVFlNRGl6RDRHX1daamU1eVVjbUhDeUoyOG9CaVByNlZXOTN4SXRjelp3eTRnU0U5cHNxVjR0Z9IBiwFBVV95cUxQYWlhS0tnVmpSWWx3RVF4X202cUdxWS03ZHJPNElyV1JteWdlRGF5QlRBM3A3WVdMZGFCcE5YUDRVcWFZMWhrcGsyc05tLUtyMVU0MnlKb0tDY3hzWllxdi1wU3p2cWZGMkYtajF6RUMyazlsNHJ2cGduVFI3aGpwdGRkZ0FSRVdjMVZj?oc=5",
+            "source": "NewsDay",
+            "pubDate": "Thu, 10 May 2018 07:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.036738600581884384,
+                "negative": 0.004898706451058388,
+                "neutral": 0.9583626985549927
+            }
+        },
+        {
+            "title": "What no avocado? ASA rules that food advert was misleading - TimesLIVE",
+            "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPWjN5MTVPblYtQ2NaTUFKN1RNRE0tS3AxX0ZSd2xNM1hJX0d2MkhGM3NYYVdKdW40alhjNG9KUkVNUk5MNlQ3Y0JHMGxzdnBpNGV5WHJZWmZ1NmJnY1J1enJTejZxdHVlakVvMG1FMGNweUhONFFMYUMtbjN5ZklhYkxyX3BiSE8yaWRHcUwtMF92TFRxNjNuQUhYNEpuM0s4eDZ0NzhzdFNZV0hwOWQyOFByeE94UdIBuwFBVV95cUxOTXIxWlpGa1ZDTjJTMUxvLU9oVWtYb29QLTd5dEtFOTV2UUMyblB4ZXlJM3NjTzFzengtMUhxZ1ZGam1jMVNOQVBQckFjaDNnemZOTjJFVEFoQWxPU3NSOHFGa1pERm9uRzQ1NWhNS1JmMmNRLUZHSG1vSEFXemxtbWJSNVFSeTdtcGpRRnlqUVlfVUU3cE9qZUxJZEk1TTREdmdvbWd1cklvM3g2QVprUFBGY1VvUkZKZDM0?oc=5",
+            "source": "TimesLIVE",
+            "pubDate": "Fri, 02 Feb 2018 08:00:00 GMT",
+            "sentimentScores": {
+                "positive": 0.0035498328506946564,
+                "negative": 0.7812162637710571,
+                "neutral": 0.21523386240005493
+            }
+        }
+    ],
+    "reviews": {
+        "rating": 1.67,
+        "numberOfReviews": 703,
+        "trustIndex": 2.5,
+        "NPS": -62,
+        "recommendationStatus": "Unlikely",
+        "starRatings": [
+            {
+                "stars": 5,
+                "numReviews": 72
+            },
+            {
+                "stars": 4,
+                "numReviews": 14
+            },
+            {
+                "stars": 3,
+                "numReviews": 10
+            },
+            {
+                "stars": 2,
+                "numReviews": 123
+            },
+            {
+                "stars": 1,
+                "numReviews": 484
+            }
+        ]
+    },
+    "shareCountdata": {
+        "Facebook": {
+            "comment_plugin_count": 0,
+            "total_count": 9128,
+            "og_object": null,
+            "comment_count": 163,
+            "share_count": 3800,
+            "reaction_count": 5165
+        },
+        "Pinterest": 1
+    },
+    "time": 42.9034
 }
