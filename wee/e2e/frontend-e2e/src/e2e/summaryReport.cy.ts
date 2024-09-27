@@ -11,6 +11,11 @@ describe('Summary Report Page E2E Test', () => {
   it('should navigate to the summary report page and verify content', () => {
     // Wait for the scraping process to complete and navigate to the summary report
     cy.url().should('include', 'scraperesults', { timeout: 120000 })
+
+
+     // Wait for the loading indicator to disappear
+  cy.get('[data-testid="loading-indicator"]').should('not.exist');
+  
     cy.get('[data-testid="btn-report-summary"]')
     .should('be.visible')
     .should('not.be.disabled', { timeout: 120000 }) // Wait until the button is enabled
