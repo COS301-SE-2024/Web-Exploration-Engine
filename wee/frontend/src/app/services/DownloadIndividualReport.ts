@@ -1051,31 +1051,30 @@ if (scrapeNews) {
   doc.setTextColor(0, 0, 0);
 
   scrapeNewsRows.forEach(row => {
-    row.forEach((cell, index) => {
+    row.forEach((cell) => {
       const text = String(cell);
   
-      // Split the text into lines based on the page width minus margins (no more column width constraints)
-      const lines = splitText(text, doc.internal.pageSize.width - margin * 2);
   
-      lines.forEach((line, i) => {
-        // Render the text at the current Y position
+      const lines = doc.splitTextToSize(text, doc.internal.pageSize.width - margin * 2);
+  
+      lines.forEach((line: string, i: number) => {
+
         doc.text(line, margin + 2, y + (i * rowHeight) + 7);
       });
+      
   
-      // Update y position based on how many lines the cell content took
       y += lines.length * rowHeight;
   
-      // If y exceeds the page height, add a new page
+    
       if (y > 270) {
         doc.addPage();
-        y = 20; // Reset y position on the new page
+        y = 20; 
       }
     });
   
-    // Add some space between rows
+  
     y += rowHeight;
   
-    // Draw a line between rows for visual separation
     drawLine(y + 3);
   });
   
