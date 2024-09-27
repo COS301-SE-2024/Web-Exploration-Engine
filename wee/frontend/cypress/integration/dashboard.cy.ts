@@ -5,6 +5,12 @@ describe('Dashboard Page', () => {
   });
 
   it('should contain the correct dashboard content', () => {
+
+
+    cy.url().should('include', '/dashboard');
+
+
+
     // Check for the dashboard header
     cy.contains('Dashboard of N/A').should('be.visible');
 

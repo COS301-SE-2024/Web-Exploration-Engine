@@ -4,6 +4,8 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
   it('Should display scheduled tasks', () => {
     // Wait for the scheduled tasks message to appear
     cy.visit('/scheduledscrape')
+
+    cy.url().should('include', '/scheduledscrape');
     cy.contains('Scheduled Scraping Tasks').should('be.visible');
 
     // Check for the task count message
