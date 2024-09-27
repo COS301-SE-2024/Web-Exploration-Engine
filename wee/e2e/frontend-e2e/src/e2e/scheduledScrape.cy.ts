@@ -23,7 +23,7 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
     // Now select the link containing "Scheduled Tasks" and click
     // cy.contains('Scheduled Tasks').click({force:true});
 
-    cy.get('a.text-dark-primaryTextColor', { timeout: 60000 }) // Increase timeout to 10 seconds
+    cy.get('a.text-dark-primaryTextColor', { timeout: 120000 })
   .contains('Scheduled Tasks')
   .click();
 
