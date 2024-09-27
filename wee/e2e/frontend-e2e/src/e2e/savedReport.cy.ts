@@ -49,33 +49,32 @@ describe('saved reports page', () => {
        .should('be.visible')  // Ensure the button is visible
        .click();
 
-      //contents that should be in the page
-       const contentToVerify = [
+       cy.contains(/crawlable/i).should('exist');
+       cy.contains(/yes/i).should('exist'); // Check for Crawlable status
 
-        'site2Report: https://wee-test-site-2.netlify.app/',
-        'Thu Sep 19 2024',
-        'Summary',
-        'Homev | Bluise',
-        'A quickstart for Nuxt & Netlify CMS',
-        'SCRAPING CATEGORY',
-        'INFORMATION',
-        'Crawlable',
-        'Yes',
-        'Status',
-        'Live',
-        'Industry',
-        'Confidence Score: 0%',
-        'Domain match',
-        'Confidence Score: 0%',
-        'No images available.',
+       cy.contains(/status/i).should('exist');
+       cy.contains(/live/i).should('exist'); // Check for Status
 
-      ];
+       cy.contains(/industry/i).should('exist');
+       cy.contains(/health care/i).should('exist'); // Check for Industry
 
-      // Iterate over the content to verify each item
-      contentToVerify.forEach((text) => {
-        cy.contains(text, { timeout: 60000 }) // Set timeout to 10 seconds (10000ms)
-          .should('be.visible');
-      });
+       cy.contains(/confidence score/i).should('exist'); // Check for Confidence Score
+
+       // Verify Confidence Scores for various industries
+       cy.contains(/information technology/i).should('exist');
+       cy.contains(/42.80%/i).should('exist'); // Confidence Score for Health Care
+       cy.contains(/36.68%/i).should('exist'); // Confidence Score for Information Technology
+       cy.contains(/chemicals/i).should('exist');
+       cy.contains(/24.80%/i).should('exist'); // Confidence Score for Chemicals
+
+       // Verify Domain Matches
+       cy.contains(/domain match/i).should('exist');
+       cy.contains(/telecommunications/i).should('exist'); // Domain match
+       cy.contains(/63.31%/i).should('exist'); // Confidence Score for Telecommunications
+       cy.contains(/information technology/i).should('exist'); // Domain match again
+       cy.contains(/20.83%/i).should('exist'); // Confidence Score for Information Technology
+       cy.contains(/marine and shipping/i).should('exist'); // Domain match
+       cy.contains(/16.76%/i).should('exist'); // Confidence Score for Marine and Shipping
 
 
       //go back
@@ -138,5 +137,5 @@ cy.contains('Download the report to your device')
 
   });
 
-
+87
 });

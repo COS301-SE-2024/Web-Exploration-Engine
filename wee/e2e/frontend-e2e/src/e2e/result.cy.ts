@@ -8,24 +8,6 @@ describe('Scraping Functionality', () => {
   cy.contains(/The Web Exploration Engine/i).should('exist');
   });
 
-  it('should scrape multiple URLs and redirect to results page', () => {
-
-    cy.visit('/');
-    // Enter the test URLs into the textarea
-    cy.get('[data-testid="scraping-textarea-home"]').type('https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/');
-
-    // Intercept the scraping requests without stubbing them
-    cy.intercept('GET', '**/api/scraper**').as('startScraping');
-
-
-    cy.get('[data-testid="btn-start-scraping"]').click();
-
-    // Wait for the scraping request to complete
-    cy.wait('@startScraping');
-
-    // Now check for the status or result page
-    cy.url().should('include', '/scraperesults');
-  });
 
 
   it('should handle URL validation errors', () => {

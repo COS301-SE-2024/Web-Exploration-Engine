@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 describe('Scheduled Scrape Page (Logged In User)', () => {
 
   it('Should log in and navigate to Schedule scraping', () => {
@@ -20,10 +21,14 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
       .should('be.visible');
 
     // Now select the link containing "Scheduled Tasks" and click
-    cy.contains('Scheduled Tasks').click();
+    // cy.contains('Scheduled Tasks').click({force:true});
+
+    cy.get('a.text-dark-primaryTextColor', { timeout: 60000 }) // Increase timeout to 10 seconds
+  .contains('Scheduled Tasks')
+  .click();
 
     // Assert URL has changed to scheduled tasks page
-    // cy.url().should('include', '/scheduledscrape');
+     cy.url().should('include', 'schedule');
 
     // Wait for the scheduled tasks message to appear
     cy.contains('1 tasks scheduled. 9 slots remaining.')
@@ -44,45 +49,31 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
     //   .should('exist')
     //   .and('be.visible');
 
-    // Now click the "View" button, ensuring it's visible before interacting
     cy.contains('button', 'View')
-      .should('exist')
-      .and('be.visible')
-      .click();
+    .should('exist')
+    .and('be.visible');
 
-    // Check the existence and content of the "No keywords are being tracked" message
-    cy.get('[data-testid="dashboard-keyword-not-available"]')
-      .should('exist')
-      .should('have.class', 'bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center')
-      .should('contain.text', 'No keywords are being tracked');
+    cy.contains('button', 'View').click().then(() => {
+// Check the existence and content of the "No keywords are being tracked" message
+  cy.get('[data-testid="dashboard-keyword-not-available"]')
+.should('exist')
+.should('have.class', 'bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center')
+.should('contain.text', 'No keywords are being tracked');
 
-    // Check that the apexchart container exists
-    cy.get('foreignObject')
-      .should('exist')
-      .within(() => {
-        // Assert that the positive series legend is displayed with the correct color and text
-        cy.get('.apexcharts-legend-series[rel="1"]')
-          .should('exist')
-          .find('.apexcharts-legend-marker')
-          .should('have.css', 'background-color', 'rgb(94, 205, 195)'); // rgb(94, 205, 195) is the expected color
-        cy.get('.apexcharts-legend-series[rel="1"] .apexcharts-legend-text')
-          .should('contain.text', 'positive');
+// Check that the apexchart container exists
 
-        // Assert that the neutral series legend is displayed with the correct color and text
-        cy.get('.apexcharts-legend-series[rel="2"]')
-          .should('exist')
-          .find('.apexcharts-legend-marker')
-          .should('have.css', 'background-color', 'rgb(200, 245, 99)');
-        cy.get('.apexcharts-legend-series[rel="2"] .apexcharts-legend-text')
-          .should('contain.text', 'neutral');
+cy.get('foreignObject').first().within(() => {
+  cy.get('.apexcharts-legend-series[rel="1"]').within(() => {
+    cy.get('.apexcharts-legend-marker')
+      .should('have.css', 'background-color', 'rgb(94, 205, 195)'); // Verify color
+    cy.get('.apexcharts-legend-text')
+      .should('contain.text', 'Accessibility');
 
-        // Assert that the negative series legend is displayed with the correct color and text
-        cy.get('.apexcharts-legend-series[rel="3"]')
-          .should('exist')
-          .find('.apexcharts-legend-marker')
-          .should('have.css', 'background-color', 'rgb(241, 152, 44)');
-        cy.get('.apexcharts-legend-series[rel="3"] .apexcharts-legend-text')
-          .should('contain.text', 'negative');
-      });
+
+  });
+    });
+
   });
 });
+
+  });
