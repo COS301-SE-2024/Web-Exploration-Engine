@@ -54,6 +54,8 @@ describe('Scraping and Results Page', () => {
   cy.get('body').then($body => {
     // If loading indicator does not exist, click the button
     if ($body.find('[data-testid="loading-indicator"]').length === 0) {
+
+      
       cy.get('a[href*="https%3A%2F%2Fwee-test-site-1.netlify.app"]').click();
 
     // Check if we are in the Overview tab by looking for "Welcome to Astro."
