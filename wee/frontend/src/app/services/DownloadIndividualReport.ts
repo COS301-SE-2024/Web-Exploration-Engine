@@ -1052,31 +1052,34 @@ if (scrapeNews) {
 
   scrapeNewsRows.forEach(row => {
     row.forEach((cell, index) => {
-      // Get the text to render and split it into lines if needed
-      const lines = splitText(String(cell), columnWidth[index] - 4);
-      
+      const text = String(cell);
+  
+      // Split the text into lines based on the page width minus margins (no more column width constraints)
+      const lines = splitText(text, doc.internal.pageSize.width - margin * 2);
+  
       lines.forEach((line, i) => {
-        // Calculate the position for each column based on the index
-        const xPos = margin + (index === 0 ? 2 : columnWidth.slice(0, index).reduce((a, b) => a + b, 0) + 2);
-        doc.text(line, xPos, y + (i * rowHeight) + 7);
+        // Render the text at the current Y position
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
       });
+  
+      // Update y position based on how many lines the cell content took
+      y += lines.length * rowHeight;
+  
+      // If y exceeds the page height, add a new page
+      if (y > 270) {
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+      }
     });
   
-    // Draw a horizontal line after the row for separation
-    drawLine(y + rowHeight + 3);
-  
-    // Increment y position by the height of the row
+    // Add some space between rows
     y += rowHeight;
   
-    // Add a new page if y exceeds the page height
-    if (y > 270) {
-      doc.addPage();
-      y = 20; // Reset y position on the new page
-      doc.text('Category', margin + 2, y + 7);
-      doc.text('Information', margin + columnWidth[0] + 2, y + 7);
-      y += headerHeight;
-    }
+    // Draw a line between rows for visual separation
+    drawLine(y + 3);
   });
+  
+  
   }
 //
   const cleanFilename = (url: string | null): string => {
