@@ -244,7 +244,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
 
     // calculate industry classification percentages
-    if (result.industryClassification &&
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify && result.industryClassification.zeroShotMetaDataClassify.length > 0 &&
       result.industryClassification.zeroShotMetaDataClassify[0].label &&
       result.industryClassification.zeroShotMetaDataClassify[0].label !== 'Unknown') {
       const industry = result.industryClassification.zeroShotMetaDataClassify[0].label;
@@ -262,7 +262,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
     }
 
     // domain match classification
-    if (result.industryClassification &&
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify && result.industryClassification.zeroShotDomainClassify.length > 0 && 
       result.industryClassification.zeroShotDomainClassify[0].label &&
       result.industryClassification.zeroShotMetaDataClassify[0].label) {
       const domainClass = result.industryClassification.zeroShotDomainClassify[0].label;
