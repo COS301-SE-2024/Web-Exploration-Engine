@@ -9,7 +9,16 @@ export default defineConfig({
       ciWebServerCommand: 'nx run frontend:serve-static',
     }),
     baseUrl: 'http://localhost:3000',
-    defaultCommandTimeout: 600000, // Set default timeout to 60 seconds (or any value you prefer)
+    defaultCommandTimeout: 600000,
+  },
+
+  retries: {
+    experimentalStrategy: 'detect-flake-but-always-fail',
+    experimentalOptions: {
+      maxRetries: 3,
+      stopIfAnyPassed: true,
+    },
+    openMode: true,
+    runMode: true,
   },
 });
-
