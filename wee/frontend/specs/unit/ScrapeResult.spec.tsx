@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
 import userEvent from '@testing-library/user-event';
 import { pollForResult } from '../../src/app/services/PubSubService';
-import { isScrapedResult } from 'frontend/src/Utils/scrapingUtils';
+import { isScrapedResult } from '../../src/Utils/scrapingUtils';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),

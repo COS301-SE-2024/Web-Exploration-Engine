@@ -29,7 +29,7 @@ import MockWimpyResult from '../../../../cypress/fixtures/pub-sub/wimpy-scraper-
 import MockInsecureResult from '../../../../cypress/fixtures/pub-sub/insecure-scraper-result.json'
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import MockCiscoResult from '../../../../cypress/fixtures/pub-sub/cisco-scraper-result.json'
-import { isScrapedResult } from 'frontend/src/Utils/scrapingUtils';
+import { isScrapedResult } from '../../../Utils/scrapingUtils';
 
 function ResultsComponent() {
   const {
