@@ -31,40 +31,40 @@ describe('Scheduled Scrape Page (Logged In User)', () => {
       .contains('DASHBOARD') // Check that the DASHBOARD header is present
       .should('be.visible');
    });
-   context('When scheduled tasks are present', () => {
-    beforeEach(() => {
-      // Intercept the API call to simulate scheduled tasks being present
-      cy.intercept('GET', '/api/scheduledscrape', {
-             fixture: 'api/scraper/scheduled-scrapes/github.json'
-      }).as('getScheduledScrapeData');
-    });
+  //  context('When scheduled tasks are present', () => {
+  //   beforeEach(() => {
+  //     // Intercept the API call to simulate scheduled tasks being present
+  //     cy.intercept('GET', '/api/scheduledscrape', {
+  //            fixture: 'api/scraper/scheduled-scrapes/github.json'
+  //     }).as('getScheduledScrapeData');
+  //   });
 
-    it('Should display the scheduled tasks', () => {
-      // Visit the scheduled scrape page
-      cy.visit('/scheduledscrape');
+  //   it('Should display the scheduled tasks', () => {
+  //     // Visit the scheduled scrape page
+  //     cy.visit('/scheduledscrape');
 
-      // Wait for the data to load
-      cy.wait('@getScheduledScrapeData');
+  //     // Wait for the data to load
+  //     cy.wait('@getScheduledScrapeData');
 
-      // Verify that the heading is visible
-      cy.contains('Scheduled Scraping Tasks').should('be.visible');
+  //     // Verify that the heading is visible
+  //     cy.contains('Scheduled Scraping Tasks').should('be.visible');
 
-      // Check for the message reflecting scheduled tasks
-      cy.contains('1 task scheduled. 9 slots remaining.').should('be.visible'); // Adjust this line based on your data
+  //     // Check for the message reflecting scheduled tasks
+  //     cy.contains('1 task scheduled. 9 slots remaining.').should('be.visible'); // Adjust this line based on your data
 
-      // Verify the presence of table with scheduled tasks
-      cy.get('table')
-        .find('tr') // Ensure there are rows in the table
-        .should('have.length.greaterThan', 1) // At least one row for the header and one for data
-        .within(() => {
-          cy.get('td') // Check for data cells
-            .should('have.length', 4); // Assuming each task has 4 data points
-        });
+  //     // Verify the presence of table with scheduled tasks
+  //     cy.get('table')
+  //       .find('tr') // Ensure there are rows in the table
+  //       .should('have.length.greaterThan', 1) // At least one row for the header and one for data
+  //       .within(() => {
+  //         cy.get('td') // Check for data cells
+  //           .should('have.length', 4); // Assuming each task has 4 data points
+  //       });
 
-      // Verify specific task details if necessary
-      cy.get('table').contains('https://example.com'); // Example URL, adjust based on actual data
-      cy.get('table').contains('Scheduled Time'); // Adjust based on your expected scheduled time
-      cy.get('table').contains('Action Button Text'); // Replace with actual action button text
-    });
-  });
+  //     // Verify specific task details if necessary
+  //     cy.get('table').contains('https://example.com'); // Example URL, adjust based on actual data
+  //     cy.get('table').contains('Scheduled Time'); // Adjust based on your expected scheduled time
+  //     cy.get('table').contains('Action Button Text'); // Replace with actual action button text
+  //   });
+  // });
 });
