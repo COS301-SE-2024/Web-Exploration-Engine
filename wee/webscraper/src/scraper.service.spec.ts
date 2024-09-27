@@ -52,6 +52,7 @@ describe('ScraperService', () => {
     let mockScrapeNewsService:NewsScraperService;
     let mockShareCountService: ShareCountService;
     let mockReviewService: ScrapeReviewsService;
+    let mockProxyService: ProxyService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -210,6 +211,7 @@ describe('ScraperService', () => {
         mockScrapeNewsService=module.get<NewsScraperService>(NewsScraperService);
         mockShareCountService = module.get<ShareCountService>(ShareCountService);
         mockReviewService = module.get<ScrapeReviewsService>(ScrapeReviewsService);
+        mockProxyService = module.get<ProxyService>(ProxyService);
         process.env.GOOGLE_CLOUD_SUBSCRIPTION = 'mock-subscription';
     });
 
@@ -717,15 +719,28 @@ describe('ScraperService', () => {
             const url = 'http://example.com';
             const type = 'scrape';
 
-            const mockBrowser = {
-                newPage: jest.fn().mockResolvedValue({
-                    goto: jest.fn(),
-                    screenshot: jest.fn(),
-                    authenticate: jest.fn(),
-                    close: jest.fn(),
-                }),
+            const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn(),
+                authenticate: jest.fn(),
                 close: jest.fn(),
+            } as unknown as puppeteer.Page;
+
+            const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
+
+            // Mock environment variables
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });  
 
 
             // Mock responses
@@ -870,6 +885,29 @@ describe('ScraperService', () => {
             jest.spyOn(mockMetadataService, 'scrapeMetadata').mockRejectedValue(new Error('Some error'));
             jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(null);
 
+            const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn(),
+                authenticate: jest.fn(),
+                close: jest.fn(),
+            } as unknown as puppeteer.Page;
+
+            const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
+            } as unknown as puppeteer.Browser;
+
+            // Mock environment variables
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });  
+
             await expect(service.scrape(url)).rejects.toThrowError('Some error');
         });
     });
@@ -917,7 +955,6 @@ describe('ScraperService', () => {
       });
     });
 
-
     describe('scrapeMetadata', () => {
 
         it('should scrape metadata and return the result', async () => {
@@ -948,13 +985,19 @@ describe('ScraperService', () => {
               const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
               } as unknown as puppeteer.Browser;
 
               // Mock environment variables
               process.env.PROXY_USERNAME = 'username';
               process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
+                   
 
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
             jest.spyOn(mockMetadataService, 'scrapeMetadata').mockResolvedValue(metadataResult);
@@ -962,7 +1005,7 @@ describe('ScraperService', () => {
             const result = await service.scrapeMetadata(url);
 
             expect(result).toEqual(metadataResult);
-            expect(mockMetadataService.scrapeMetadata).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
+            expect(mockMetadataService.scrapeMetadata).toHaveBeenCalledWith(url, robotsResult, mockPage);
         });
     });
 
@@ -1003,6 +1046,30 @@ describe('ScraperService', () => {
                 zeroShotDomainClassify: [{ label: 'Technology', score: 0.9 }],
                 zeroShotMetaDataClassify: [{ label: 'Technology', score: 0.9 }],
             };
+
+            const mockPage = {
+                goto: jest.fn(),
+                evaluate: jest.fn(),
+                authenticate: jest.fn(),
+                close: jest.fn(),
+            } as unknown as puppeteer.Page;
+
+            const mockBrowser = {
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
+            } as unknown as puppeteer.Browser;
+
+            // Mock environment variables
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });  
+
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
             jest.spyOn(mockMetadataService, 'scrapeMetadata').mockResolvedValue(metadataResult);
             jest.spyOn(mockIndustryClassificationService, 'classifyIndustry').mockResolvedValue(industryResult);
@@ -1041,16 +1108,20 @@ describe('ScraperService', () => {
             } as unknown as puppeteer.Page;
 
             const mockBrowser = {
-            newPage: jest.fn().mockResolvedValue(mockPage),
-            close: jest.fn(),
+                newPage: jest.fn().mockResolvedValue(mockPage),
+                close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
-
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });  
 
             const logoResult = 'http://example.com/logo.jpg';
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
@@ -1061,7 +1132,7 @@ describe('ScraperService', () => {
             const result = await service.scrapeLogo(url);
 
             expect(result).toEqual(logoResult);
-            expect(mockScrapeLogoService.scrapeLogo).toHaveBeenCalledWith(url, metadataResult, robotsResult, mockBrowser);
+            expect(mockScrapeLogoService.scrapeLogo).toHaveBeenCalledWith(url, metadataResult, robotsResult, mockPage);
         });
     });
 
@@ -1094,13 +1165,18 @@ describe('ScraperService', () => {
             const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
 
             const imagesResult = ['http://example.com/image.jpg'];
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
@@ -1110,7 +1186,7 @@ describe('ScraperService', () => {
             const result = await service.scrapeImages(url);
 
             expect(result).toEqual(imagesResult);
-            expect(mockScrapeImagesService.scrapeImages).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
+            expect(mockScrapeImagesService.scrapeImages).toHaveBeenCalledWith(url, robotsResult, mockPage);
         });
     });
 
@@ -1135,13 +1211,18 @@ describe('ScraperService', () => {
             const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
 
             const screenshotResult = 'screenshot';
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
@@ -1150,7 +1231,7 @@ describe('ScraperService', () => {
             const result = await service.getScreenshot(url);
 
             expect(result).toEqual({ screenshot: screenshotResult });
-            expect(mockScreenshotService.captureScreenshot).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
+            expect(mockScreenshotService.captureScreenshot).toHaveBeenCalledWith(url, robotsResult, mockPage);
         });
     });
 
@@ -1176,13 +1257,18 @@ describe('ScraperService', () => {
             const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
 
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
             jest.spyOn(mockScrapeContactInfoService, 'scrapeContactInfo').mockResolvedValue(contactInfoResult);
@@ -1190,7 +1276,7 @@ describe('ScraperService', () => {
             const result = await service.scrapeContactInfo(url);
 
             expect(result).toEqual(contactInfoResult);
-            expect(mockScrapeContactInfoService.scrapeContactInfo).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
+            expect(mockScrapeContactInfoService.scrapeContactInfo).toHaveBeenCalledWith(url, robotsResult, mockPage);
         });
     });
 
@@ -1215,13 +1301,18 @@ describe('ScraperService', () => {
             const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
             const addressResult = { addresses: [] };
             jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue(robotsResult);
             jest.spyOn(mockScrapeAddressService, 'scrapeAddress').mockResolvedValue(addressResult);
@@ -1229,7 +1320,7 @@ describe('ScraperService', () => {
             const result = await service.scrapeAddress(url);
 
             expect(result).toEqual(addressResult);
-            expect(mockScrapeAddressService.scrapeAddress).toHaveBeenCalledWith(url, robotsResult, mockBrowser);
+            expect(mockScrapeAddressService.scrapeAddress).toHaveBeenCalledWith(url, robotsResult, mockPage);
         });
     });
 
@@ -1260,13 +1351,18 @@ describe('ScraperService', () => {
             const mockBrowser = {
                 newPage: jest.fn().mockResolvedValue(mockPage),
                 close: jest.fn(),
+                pages: jest.fn().mockResolvedValue([mockPage]),
             } as unknown as puppeteer.Browser;
 
             // Mock environment variables
             process.env.PROXY_USERNAME = 'username';
             process.env.PROXY_PASSWORD = 'password';
 
-            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+            jest.spyOn(service, 'getPage').mockResolvedValue({
+                page: mockPage,
+                browser: mockBrowser,
+                response: null,
+            });     
 
             jest.spyOn(mockKeywordAnalysisService, 'getKeywordRanking').mockResolvedValue(keywordResult);
 
@@ -1275,9 +1371,8 @@ describe('ScraperService', () => {
             expect(result).toEqual(keywordResult);
             expect(mockKeywordAnalysisService.getKeywordRanking).toHaveBeenCalledWith(url, keyword, mockBrowser);
         });
-
-
     });
+
     describe('newsScraping', () => {
         it('should return the news articles with sentiment scores for the given URL', async () => {
           const url = 'http://example.com';
@@ -1310,65 +1405,169 @@ describe('ScraperService', () => {
           jest.spyOn(mockScrapeNewsService, 'fetchNewsArticles').mockResolvedValue(expectedNewsArticles);
       
         });
-      });
+    });
     
-      describe('scrapeReviews', () => {
-            it('should scrape reviews and return the result in the expected format', async () => {
-              const url = 'http://example.com';
-              
-              const expectedReviewsResult = {
-                rating: 5,
-                numberOfReviews: 120,
-                trustIndex: 4.2,
-                NPS: 60,
-                recommendationStatus: 'Unlikely',
-                starRatings: [
-                  { stars: 5, numReviews: 50 },
-                  { stars: 4, numReviews: 30 },
-                  { stars: 3, numReviews: 20 },
-                  { stars: 2, numReviews: 10 },
-                  { stars: 1, numReviews: 10 },
-                ],
-            } as ReviewData;
+    describe('scrapeReviews', () => {
+        it('should scrape reviews and return the result in the expected format', async () => {
+            const url = 'http://example.com';
             
-          
-              const mockPage = {
-                goto: jest.fn(),
-                evaluate: jest.fn().mockResolvedValue({
-                  rating: '4.5',
-                  reviewCount: '120',
-                  trustindexRating: '4.2',
-                  nps: '60',
-                  recommendationStatus: 'Unlikely',
-                  reviewNumbers: ['50', '30', '20', '10']
-                }),
-                close: jest.fn(),
-              } as unknown as puppeteer.Page;
-          
-              const mockBrowser = {
-                newPage: jest.fn().mockResolvedValue(mockPage),
-                close: jest.fn(),
-              } as unknown as puppeteer.Browser;
-          
-              process.env.PROXY_USERNAME = 'username';
-              process.env.PROXY_PASSWORD = 'password';
-          
-              jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
-          
-              jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue({
-                baseUrl: url,
-                allowedPaths: [],
-                disallowedPaths: [],
-                isUrlScrapable: true,
-                isBaseUrlAllowed: true,
-              });
-          
-              jest.spyOn(mockReviewService, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
-          
-              const result = await mockReviewService.scrapeReviews(url, mockBrowser);
-          
-              expect(result).toEqual(expectedReviewsResult);
+            const expectedReviewsResult = {
+            rating: 5,
+            numberOfReviews: 120,
+            trustIndex: 4.2,
+            NPS: 60,
+            recommendationStatus: 'Unlikely',
+            starRatings: [
+                { stars: 5, numReviews: 50 },
+                { stars: 4, numReviews: 30 },
+                { stars: 3, numReviews: 20 },
+                { stars: 2, numReviews: 10 },
+                { stars: 1, numReviews: 10 },
+            ],
+        } as ReviewData;
+        
+        
+            const mockPage = {
+            goto: jest.fn(),
+            evaluate: jest.fn().mockResolvedValue({
+                rating: '4.5',
+                reviewCount: '120',
+                trustindexRating: '4.2',
+                nps: '60',
+                recommendationStatus: 'Unlikely',
+                reviewNumbers: ['50', '30', '20', '10']
+            }),
+            close: jest.fn(),
+            } as unknown as puppeteer.Page;
+        
+            const mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn(),
+            } as unknown as puppeteer.Browser;
+        
+            process.env.PROXY_USERNAME = 'username';
+            process.env.PROXY_PASSWORD = 'password';
+        
+            jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+        
+            jest.spyOn(mockRobotsService, 'readRobotsFile').mockResolvedValue({
+            baseUrl: url,
+            allowedPaths: [],
+            disallowedPaths: [],
+            isUrlScrapable: true,
+            isBaseUrlAllowed: true,
             });
-          });
+        
+            jest.spyOn(mockReviewService, 'scrapeReviews').mockResolvedValue(expectedReviewsResult);
+        
+            const result = await mockReviewService.scrapeReviews(url, mockBrowser);
+        
+            expect(result).toEqual(expectedReviewsResult);
+        });
+    });
     
+    describe('ScraperService - getPage', () => {
+      
+        it('should throw an error if proxy credentials are missing', async () => {
+          // Mock the environment variables to be undefined
+          process.env.PROXY_USERNAME = '';
+          process.env.PROXY_PASSWORD = '';
+      
+          await expect(service.getPage('http://example.com')).rejects.toThrow('Proxy username or password not set');
+        });
+      
+        it('should launch the browser and successfully load the page', async () => {
+          // Mock the environment variables
+          process.env.PROXY_USERNAME = 'username';
+          process.env.PROXY_PASSWORD = 'password';
+      
+          const proxy = 'http://proxy-server:8080';
+          jest.spyOn(mockProxyService, 'getProxy').mockReturnValue(proxy);
+      
+          const mockPage = {
+            authenticate: jest.fn().mockResolvedValue(undefined),
+            goto: jest.fn().mockResolvedValue({ status: () => 200, statusText: 'OK' }),
+          } as unknown as puppeteer.Page;
+      
+          const mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn(),
+          } as unknown as puppeteer.Browser;
+      
+          jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+      
+          const result = await service.getPage('http://example.com');
+      
+          expect(puppeteer.launch).toHaveBeenCalledWith({
+            protocolTimeout: 60000,
+            headless: true,
+            args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+          });
+          expect(mockPage.authenticate).toHaveBeenCalledWith({ username: 'username', password: 'password' });
+          expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', { waitUntil: 'networkidle0', timeout: 60000 });
+          expect(result).toEqual({ browser: mockBrowser, page: mockPage, response: { status: expect.any(Function), statusText: "OK"} });
+        });
+      
+        it('should throw an error if page fails to load', async () => {
+          // Mock the environment variables
+          process.env.PROXY_USERNAME = 'username';
+          process.env.PROXY_PASSWORD = 'password';
+      
+          const proxy = 'http://proxy-server:8080';
+          jest.spyOn(mockProxyService, 'getProxy').mockReturnValue(proxy);
+      
+          const mockPage = {
+            authenticate: jest.fn().mockResolvedValue(undefined),
+            goto: jest.fn().mockResolvedValue(null), // Simulating a failed page load
+          } as unknown as puppeteer.Page;
+      
+          const mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn(),
+          } as unknown as puppeteer.Browser;
+      
+          jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+      
+          await expect(service.getPage('http://example.com')).rejects.toThrow('Failed to load page');
+        });
+      
+        it('should throw an error for pages with a 400+ status code', async () => {
+          // Mock the environment variables
+          process.env.PROXY_USERNAME = 'username';
+          process.env.PROXY_PASSWORD = 'password';
+      
+          const proxy = 'http://proxy-server:8080';
+          jest.spyOn(mockProxyService, 'getProxy').mockReturnValue(proxy);
+      
+          const mockPage = {
+            authenticate: jest.fn().mockResolvedValue(undefined),
+            goto: jest.fn().mockResolvedValue({
+                status: () => 404, // Mocking the status method to return 404
+                statusText: () => 'Not Found', // Mocking the statusText method
+            }),
+          } as unknown as puppeteer.Page;
+      
+          const mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn(),
+          } as unknown as puppeteer.Browser;
+      
+          jest.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser);
+      
+          await expect(service.getPage('http://example.com')).rejects.toThrow('Failed to load page: 404 Not Found');
+        });
+      
+        it('should throw an error if Puppeteer fails to launch the browser', async () => {
+          // Mock the environment variables
+          process.env.PROXY_USERNAME = 'username';
+          process.env.PROXY_PASSWORD = 'password';
+      
+          const proxy = 'http://proxy-server:8080';
+          jest.spyOn(mockProxyService, 'getProxy').mockReturnValue(proxy);
+      
+          jest.spyOn(puppeteer, 'launch').mockRejectedValue(new Error('Puppeteer failed'));
+      
+          await expect(service.getPage('http://example.com')).rejects.toThrow('Failed to launch browser: Puppeteer failed');
+        });
+      });
 });

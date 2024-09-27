@@ -37,10 +37,20 @@ export class NewsScraperService {
 
       const xmlData = response.data;
       console.log(`${serviceName} Successfully fetched RSS feed.`);
+      if(!xmlData){
+        logger.error(`${serviceName} Failed to fetch Google News RSS feed for ${businessName}`);
+        throw new Error(`Failed to fetch news for ${businessName}`);
+      }
 
       const parser = new xml2js.Parser();
       const parsedData = await parser.parseStringPromise(xmlData);
       console.log(`${serviceName} RSS feed parsed successfully.`);
+
+      if (!parsedData || !parsedData.rss || !parsedData.rss.channel || !parsedData.rss.channel[0].item) {
+        logger.error(`${serviceName} Unexpected RSS feed format`);
+        throw new Error('Unexpected RSS feed format');
+      }
+      
 
       const articles = parsedData.rss.channel[0].item.map((item: any) => ({
         title: item.title[0],
@@ -72,7 +82,7 @@ export class NewsScraperService {
     } catch (error) {
       logger.error(`${serviceName} Error fetching news articles: ${error.message}`);
       console.error(`${serviceName} Error fetching news articles: ${error.message}`);
-      throw new Error(`Error fetching news articles: ${error.message}`);
+      return [];
     }
   }
 

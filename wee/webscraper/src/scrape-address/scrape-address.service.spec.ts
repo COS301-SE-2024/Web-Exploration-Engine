@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ScrapeAddressService } from './scrape-address.service';
 import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
+import { mock } from 'node:test';
 
 describe('ScrapeAddressService', () => {
   let service: ScrapeAddressService;
@@ -47,12 +48,10 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, mockBrowser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
     expect(result.addresses).toContain('456 Elm Street, Springfield, IL');
-    expect(mockBrowser.newPage).toHaveBeenCalledTimes(1);
-    expect(mockPage.close).toHaveBeenCalledTimes(1);
   });
 
   it('should return empty addresses if crawling is not allowed', async () => {
@@ -65,7 +64,7 @@ describe('ScrapeAddressService', () => {
       isUrlScrapable: true,
     };
 
-    const result = await service.scrapeAddress(url, robots, {} as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, {} as puppeteer.Page);
 
     expect(result.addresses).toEqual([]);
   });
@@ -83,9 +82,9 @@ describe('ScrapeAddressService', () => {
     delete process.env.PROXY_USERNAME;
     delete process.env.PROXY_PASSWORD;
 
-    const mockBrowser = {} as puppeteer.Browser;
+    const mockPage = {} as puppeteer.Page;
 
-    const result = await service.scrapeAddress(url, robots, mockBrowser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toEqual([]);
   });
@@ -112,7 +111,7 @@ describe('ScrapeAddressService', () => {
       close: jest.fn(),
     } as unknown as puppeteer.Browser;
 
-    const result = await service.scrapeAddress(url, robots, mockBrowser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toEqual([]);
   });
@@ -134,7 +133,7 @@ describe('ScrapeAddressService', () => {
       evaluate: jest.fn().mockResolvedValue(mockAddresses),
       authenticate: jest.fn(),
       close: jest.fn(),
-    };
+    }as unknown as puppeteer.Page;
 
     const browser = {
       newPage: jest.fn().mockResolvedValue(mockPage),
@@ -145,8 +144,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
-
+    const result = await service.scrapeAddress(url, robots, mockPage);
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
     expect(result.addresses).not.toContain('456 Country Road, Springfield, IL');
   });
@@ -178,7 +176,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
   });
@@ -209,7 +207,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toEqual([]);
   });
@@ -245,7 +243,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('123 Main Street');
     expect(result.addresses).toContain('456 Elm St, Springfield, IL');
@@ -289,7 +287,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('456-A Elm Street, Springfield, IL');
     expect(result.addresses).toContain('101 Maple Boulevard, Springfield');
@@ -334,7 +332,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
     expect(result.addresses).toContain('456 Elm St, Springfield, IL');
@@ -375,7 +373,7 @@ describe('ScrapeAddressService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeAddress(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeAddress(url, robots, mockPage);
 
     expect(result.addresses).toContain('123 Main Street, Springfield, IL');
     expect(result.addresses).toContain('456 Elm St, Springfield, IL');

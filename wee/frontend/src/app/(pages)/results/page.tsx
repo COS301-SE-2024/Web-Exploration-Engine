@@ -793,14 +793,14 @@ function ResultsComponent() {
                       className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 py-6 pt-3"
                     >
                       {currentImages.map((item, index) => (
-                        <Card shadow="sm" key={index} id="unique-results-image">
-                          <CardBody className="overflow-visible p-0">
+                        <Card key={index} id="unique-results-image">
+                          <CardBody className="flex items-center justify-center overflow-visible p-0">
                             <Image
-                              shadow="sm"
-                              radius="lg"
-                              width="100%"
+                              // shadow="sm"
+                              // radius="lg"
+                              // width="100%"
                               alt={'Image'}
-                              className="w-full object-cover h-[140px]"
+                              className=" object-contain h-[140px] w-full"
                               src={item}
                             />
                           </CardBody>

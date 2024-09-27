@@ -48,7 +48,7 @@ describe('SeoAnalysisService', () => {
       process.env.PROXY_USERNAME = 'username';
       process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.seoAnalysis('http://example.com', robots, mockBrowser);
+      const result = await service.seoAnalysis('http://example.com', robots, mockPage, mockBrowser);
 
       expect(result).toEqual({ error: 'Crawling not allowed for this URL' });
     });
@@ -192,15 +192,17 @@ describe('SeoAnalysisService', () => {
     it('should analyze image optimization', async () => {
       const url = 'http://example.com';
 
+      const mockPage = {
+        goto: jest.fn(),
+        $$eval: jest.fn().mockResolvedValue([
+          { src: 'http://example.com/image.jpg', alt: 'Test image' },
+        ]),
+        close: jest.fn(),
+        authenticate: jest.fn(),
+      } as unknown as puppeteer.Page;
+
       const browser = {
-        newPage: jest.fn().mockResolvedValue({
-          goto: jest.fn(),
-          $$eval: jest.fn().mockResolvedValue([
-            { src: 'http://example.com/image.jpg', alt: 'Test image' },
-          ]),
-          close: jest.fn(),
-          authenticate: jest.fn(),
-        }),
+        newPage: jest.fn().mockResolvedValue(mockPage),
         close: jest.fn(),
       } as unknown as puppeteer.Browser;
 
@@ -215,7 +217,7 @@ describe('SeoAnalysisService', () => {
         reasons: [],
       });
 
-      const result = await service.analyzeImageOptimization(url, browser);
+      const result = await service.analyzeImageOptimization(url, mockPage);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -232,6 +234,15 @@ describe('SeoAnalysisService', () => {
     });
     it('should handle non-optimized images with format issues', async () => {
       const url = 'http://example.com';
+
+      const mockPage = {
+        goto: jest.fn(),
+        $$eval: jest.fn().mockResolvedValue([
+          { src: 'http://example.com/image.png', alt: 'Test image' },
+        ]),
+        close: jest.fn(),
+        authenticate: jest.fn(),
+      } as unknown as puppeteer.Page;
 
       const browser = {
         newPage: jest.fn().mockResolvedValue({
@@ -252,7 +263,7 @@ describe('SeoAnalysisService', () => {
         reasons: ['format'],
       });
 
-      const result = await service.analyzeImageOptimization(url, browser);
+      const result = await service.analyzeImageOptimization(url, mockPage);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -270,6 +281,15 @@ describe('SeoAnalysisService', () => {
 
     it('should handle non-optimized images with size issues', async () => {
       const url = 'http://example.com';
+
+      const mockPage = {
+        goto: jest.fn(),
+        $$eval: jest.fn().mockResolvedValue([
+          { src: 'http://example.com/image.jpg', alt: 'Test image' },
+        ]),
+        close: jest.fn(),
+        authenticate: jest.fn(),
+      } as unknown as puppeteer.Page;
 
       const browser = {
         newPage: jest.fn().mockResolvedValue({
@@ -290,7 +310,7 @@ describe('SeoAnalysisService', () => {
         reasons: ['size'],
       });
 
-      const result = await service.analyzeImageOptimization(url, browser);
+      const result = await service.analyzeImageOptimization(url, mockPage);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -308,6 +328,15 @@ describe('SeoAnalysisService', () => {
 
     it('should handle non-optimized images with other issues', async () => {
       const url = 'http://example.com';
+
+      const mockPage = {
+        goto: jest.fn(),
+        $$eval: jest.fn().mockResolvedValue([
+          { src: 'http://example.com/image.gif', alt: 'Test image' },
+        ]),
+        close: jest.fn(),
+        authenticate: jest.fn(),
+      } as unknown as puppeteer.Page;
 
       const browser = {
         newPage: jest.fn().mockResolvedValue({
@@ -328,7 +357,7 @@ describe('SeoAnalysisService', () => {
         reasons: ['other issue'],
       });
 
-      const result = await service.analyzeImageOptimization(url, browser);
+      const result = await service.analyzeImageOptimization(url, mockPage);
 
       expect(result).toEqual({
         totalImages: 1,
@@ -347,6 +376,15 @@ describe('SeoAnalysisService', () => {
     it('should handle errors during image optimization', async () => {
       const url = 'http://example.com';
 
+      const mockPage = {
+        goto: jest.fn(),
+        $$eval: jest.fn().mockResolvedValue([
+          { src: 'http://example.com/image.jpg', alt: 'Test image' },
+        ]),
+        close: jest.fn(),
+        authenticate: jest.fn(),
+      } as unknown as puppeteer.Page;
+
       const browser = {
         newPage: jest.fn().mockResolvedValue({
           goto: jest.fn(),
@@ -363,7 +401,7 @@ describe('SeoAnalysisService', () => {
 
       jest.spyOn(service, 'isImageOptimized').mockRejectedValue(new Error('Unexpected error'));
 
-      const result = await service.analyzeImageOptimization(url, browser);
+      const result = await service.analyzeImageOptimization(url, mockPage);
 
       expect(result).toEqual({
         totalImages: 1,

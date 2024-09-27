@@ -11,7 +11,7 @@ const serviceName = "[SeoAnalysisService]";
 @Injectable()
 export class SeoAnalysisService {
   private readonly API_KEY = process.env.TECHNICAL_SEO_API_KEY;
-  async seoAnalysis(url: string, robots: RobotsResponse, browser: puppeteer.Browser) {
+  async seoAnalysis(url: string, robots: RobotsResponse, page: puppeteer.Page, browser: puppeteer.Browser) {
   
     logger.debug(`${serviceName}`);
     const start = performance.now();
@@ -54,7 +54,7 @@ export class SeoAnalysisService {
       this.analyzeTitleTag(htmlContent),
       this.analyzeMetaDescription(htmlContent, url),
       this.analyzeHeadings(htmlContent),
-      this.analyzeImageOptimization(url, browser),
+      this.analyzeImageOptimization(url, page),
       this.analyzeContentQuality( htmlContent),
       this.analyzeInternalLinks( htmlContent),
       this.analyzeSiteSpeed(url),
@@ -191,30 +191,9 @@ export class SeoAnalysisService {
       recommendations,
     };
   }  
-  async analyzeImageOptimization(url: string, browser: puppeteer.Browser) {    
-    // proxy authentication
-    const username = process.env.PROXY_USERNAME;
-    const password = process.env.PROXY_PASSWORD;
-  
-    if (!username || !password) {
-      //console.error('Proxy username or password not set');
-      logger.error(serviceName,'Proxy username or password not set');
-      return {
-        error: 'Proxy username or password not set',
-      };
-    }
-  
-    let page: puppeteer.Page;
-    try {
-      page = await browser.newPage();
-  
-      // authenticate page with proxy
-      await page.authenticate({
-        username,
-        password
-      });
-  
-      await page.goto(url, { waitUntil: 'networkidle0' });
+  async analyzeImageOptimization(url: string, page: puppeteer.Page) {    
+      try {
+ 
   
       const images = await page.$$eval('img', imgs => imgs.map(img => ({
         src: img.getAttribute('src') || '',
@@ -304,14 +283,9 @@ export class SeoAnalysisService {
       return {
         error: `Error analyzing images using Puppeteer: ${error.message}`,
       };
-    } finally {
-      if (page) {
-        await page.close();
-      }
     }
   }
   
-
   async isImageOptimized(imageUrl: string): Promise<{ optimized: boolean; reasons: string[] }> {
     try {
       // Check if the URL ends with a supported image format
@@ -522,10 +496,6 @@ export class SeoAnalysisService {
       //   error: `Error analyzing mobile-friendliness: ${error.message}`,
       // };
 
-    } finally {
-      if (page) {
-        await page.close();
-      }
     }
   }
   
