@@ -554,7 +554,7 @@ export default function SummaryReport() {
             placement="top"
           />
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4' data-testid="socialMetricsGraph">
+        <div id="stacked-column-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4' data-testid="socialMetricsGraph">
           {summaryReport.socialMetrics
             && summaryReport.socialMetrics.urls?.length > 0
             && summaryReport.socialMetrics.facebookCommentCount?.length > 0
@@ -647,7 +647,7 @@ export default function SummaryReport() {
 
         </div>
         {summaryReport.averageStarRating && summaryReport.averageStarRating.length == 5 ? (
-          <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+          <div id="star-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
               Average Star Ratings for Reviews
             </h3>
@@ -687,7 +687,7 @@ export default function SummaryReport() {
             placement="top"
           />
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4'>
+        <div id="news-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4'>
           {summaryReport.newsSentiment && summaryReport.newsSentiment.urls.length > 0 && summaryReport.newsSentiment.positive.length > 0 && summaryReport.newsSentiment.negative.length > 0 && summaryReport.newsSentiment.neutral.length > 0 ? (
             <span data-testid='stacked-column-chart-news-sentiment'>
 
