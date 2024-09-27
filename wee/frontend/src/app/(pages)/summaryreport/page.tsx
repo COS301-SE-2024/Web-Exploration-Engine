@@ -549,7 +549,8 @@ export default function SummaryReport() {
           Social Media Engagement
           <InfoPopOver
             heading="Social Media Engagement"
-            content="abc"
+            content="This chart displays Facebook engagement metrics such as shares, reactions, and comments for various URLs. The stack height for each URL indicates the total engagement for each URL. </br></br>
+              Note: WEE used SharedCount - a platform that provides up-to-date information of Facebook"
             placement="top"
           />
         </h3>
@@ -578,7 +579,14 @@ export default function SummaryReport() {
           Reviews
           <InfoPopOver
             heading="Reviews"
-            content="abc"
+            content="
+                  The top 3 URLs for the NPS, Trust Index and Average Rating Scores respectively.</br>
+                  Combined average star ratings for all URLs.
+                  </br></br>
+                  <i>Star Ratings for Reviews: </i>Displays how reviews are distributed across various star levels, providing an overview of customer feedback.</br>
+                  <i>NPS (Net Promoter Score): </i>Reflects the likelihood of customers recommending a business, with scores below 0 indicating low likelihood, scores between 1 and 49 showing moderate likelihood, and scores above 49 signifying a strong likelihood of recommendation.</br>
+                  <i>Hellopeter TrustIndex: </i>Assesses a business's credibility by analyzing factors such as star ratings, response times, review volume, and recent review relevance. Scores range from 0 to 10, representing the quality of customer service.</br>
+                  <i>Average Star Rating: </i>Offers an overall indication of customer satisfaction based on the ratings given."
             placement="top"
           />
         </h3>
@@ -622,7 +630,7 @@ export default function SummaryReport() {
           {summaryReport.topRating && summaryReport.topRating.urls.length > 0 ? (
             <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
               <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
-                Top 3 Rating Scores
+                Top 3 Average Rating Scores
               </h3>
               <span data-testid='rating-scores-graph'>
                 <ColumnChartWithLables
@@ -674,7 +682,8 @@ export default function SummaryReport() {
           Average News Sentiment
           <InfoPopOver
             heading="Average News Sentiment"
-            content="abc"
+            content="The average sentiment is calculated for each URL based on the 10 most recent news articles.
+            </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
             placement="top"
           />
         </h3>
