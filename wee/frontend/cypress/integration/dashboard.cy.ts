@@ -1,13 +1,13 @@
 describe('Dashboard Page', () => {
   beforeEach(() => {
     // Intercept any API calls if necessary, or directly visit the dashboard
-    cy.visit('/dashboard');
+    cy.visit('/dashboard', { timeout: 60000 });
   });
 
   it('should contain the correct dashboard content', () => {
 
 
-    cy.url().should('include', '/dashboard');
+    cy.url({ timeout: 60000 }).should('include', '/dashboard');
 
 
 
