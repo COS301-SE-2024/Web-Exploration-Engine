@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ScrapeAddressService } from './scrape-address.service';
 import { RobotsResponse } from '../models/ServiceModels';
 import * as puppeteer from 'puppeteer';
-import { mock } from 'node:test';
 
 describe('ScrapeAddressService', () => {
   let service: ScrapeAddressService;
