@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "url": "https://example.com",
+    "next_scrape": "2024-09-28T10:00:00Z",
+    "keywords": ["example", "test"],
+    "updated_at": "2024-09-27T09:00:00Z",
+    "keyword_results": {
+      "positive": 10,
+      "negative": 2,
+      "neutral": 5
+    },
+    "result_history": [
+      {
+        "scrape_date": "2024-09-01T10:00:00Z",
+        "result": {
+          "positive": 8,
+          "negative": 1,
+          "neutral": 3
+        }
+      },
+      {
+        "scrape_date": "2024-09-15T10:00:00Z",
+        "result": {
+          "positive": 9,
+          "negative": 2,
+          "neutral": 4
+        }
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "url": "https://anotherexample.com",
+    "next_scrape": "2024-09-29T10:00:00Z",
+    "keywords": ["another", "example"],
+    "updated_at": "2024-09-26T09:00:00Z",
+    "keyword_results": {
+      "positive": 5,
+      "negative": 1,
+      "neutral": 2
+    },
+    "result_history": [
+      {
+        "scrape_date": "2024-09-10T10:00:00Z",
+        "result": {
+          "positive": 4,
+          "negative": 0,
+          "neutral": 1
+        }
+      }
+    ]
+  }
+]
