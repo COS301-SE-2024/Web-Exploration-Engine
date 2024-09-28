@@ -8,6 +8,7 @@ import WEEInput from '../../components/Util/Input';
 import WEETextarea from '../../components/Util/Textarea';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { submitFeedback } from '../../services/feedback';
+import { sanitizeInputText } from '../../../Utils/sanitizeInputText';
 
 const faqs = [
   {
@@ -149,7 +150,7 @@ export default function Help() {
       return () => clearTimeout(timer);
     }
 
-    const { success, error: feedbackError } = await submitFeedback(email, name, message);
+    const { success, error: feedbackError } = await submitFeedback(email, sanitizeInputText(name), sanitizeInputText(message));
 
     if (success) {
       setSuccess('Feedback submitted successfully');
