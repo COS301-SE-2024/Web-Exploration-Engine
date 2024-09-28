@@ -8,7 +8,7 @@ export default defineConfig({
       webServerCommands: { default: 'nx run frontend:start' },
       ciWebServerCommand: 'nx run frontend:serve-static',
     }),
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://capstone-wee.dns.net.za',
     defaultCommandTimeout: 600000,
     video: true, // Enable video recording
     videoUploadOnPasses: false, // Only keep videos for failing tests
