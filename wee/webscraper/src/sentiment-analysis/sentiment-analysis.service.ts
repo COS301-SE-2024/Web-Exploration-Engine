@@ -30,7 +30,7 @@ export class SentimentAnalysisService {
 
       // Performance Logging
       const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}`);
+      console.log(`Duration of ${serviceName} : ${duration}, for url: ${url}`);
       logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       return {

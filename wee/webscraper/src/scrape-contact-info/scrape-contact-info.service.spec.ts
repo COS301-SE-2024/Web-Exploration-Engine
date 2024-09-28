@@ -28,16 +28,16 @@ describe('ScrapeContactInfoService', () => {
       isUrlScrapable: true,
     };
 
-    const browser = {
-      newPage: jest.fn().mockRejectedValue(new Error('Failed to open page')),
+    const mockPage = {
+      goto: jest.fn().mockRejectedValue(new Error('Failed to navigate to page')),
       close: jest.fn(),
-    } as unknown as puppeteer.Browser;
+    } as unknown as puppeteer.Page;
 
     // Mock environment variables
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeContactInfo(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeContactInfo(url, robots, mockPage);
     expect(result).toEqual({ emails: [], phones: [], socialLinks: [] });
   });
 
@@ -68,10 +68,8 @@ describe('ScrapeContactInfoService', () => {
       'https://twitter.com/example'
     ];
 
-
-    const browser = {
-      newPage: jest.fn().mockResolvedValue({
-        goto: jest.fn(),
+    const mockPage = {
+      goto: jest.fn(),
         evaluate: jest.fn()
           .mockImplementation((fn: () => any) => {
             if (fn.toString().includes('document.body.innerText')) {
@@ -83,7 +81,10 @@ describe('ScrapeContactInfoService', () => {
           }),
         authenticate: jest.fn(),
         close: jest.fn(),
-      }),
+    } as unknown as puppeteer.Page;
+
+    const browser = {
+      newPage: jest.fn().mockResolvedValue(mockPage),
       close: jest.fn(),
     } as unknown as puppeteer.Browser;
 
@@ -91,7 +92,7 @@ describe('ScrapeContactInfoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeContactInfo(url, robots, browser as puppeteer.Browser);
+    const result = await service.scrapeContactInfo(url, robots, mockPage);
 
     expect(result.emails).toContain('contact@example.com');
     expect(result.phones).toContain('+1-800-555-1234');

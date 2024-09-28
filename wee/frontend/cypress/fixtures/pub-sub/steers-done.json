@@ -230,6 +230,158 @@
                 "fear": 0.0023888777941465378
             }
         },
+        "scrapeNews": [
+            {
+                "title": "Menlyn Babel’s problems are not ours, says Ocean Basket's Grace Harding - Daily Maverick",
+                "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPLWVtZXZrQ01TYnJOSWlXQ0t4ZXBNOFE1QTNIZG94WlNrLVR0RS1tV1ZNQXNGangzR3BsWXZ6NmV3Wk9uVTJLTnRUTExkYWpObXJyTzhBbVRfZ05kdXA3dU9aVFlVcVVZN0tsUjZCSm43VE5ZZDA0R0hxNzNkbmVrMFNzZGoyM0pYTHBCLWZTemFLa3NmbU5IRWVvbzBYUFl6ZVpycDFkYVI?oc=5",
+                "source": "Daily Maverick",
+                "pubDate": "Wed, 18 Sep 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.014444112777709961,
+                    "negative": 0.04933277517557144,
+                    "neutral": 0.9362231492996216
+                }
+            },
+            {
+                "title": "Ocean Basket fights back against labour department - Sunday World",
+                "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNaVkwWlNPXzZ0Ujlac3NGeF9lcExyZWkzcVdCcTZINnBjNnhrcGJkVHhSTWwxSUdDOTBBOW91SEJCcGxteWdveURiSnF6Ykt6Mkl3M2JVbjhOeDBOSWRIeVZqcFlvR1dqUUhwdWNieS1YNTlPenU5RzB3WmhwcjlnWDZqWERJdVRpbXc?oc=5",
+                "source": "Sunday World",
+                "pubDate": "Sat, 21 Sep 2024 04:00:51 GMT",
+                "sentimentScores": {
+                    "positive": 0.01853589154779911,
+                    "negative": 0.03133276849985123,
+                    "neutral": 0.950131356716156
+                }
+            },
+            {
+                "title": "Ocean Basket denies it owes staff R800,000 in unpaid wages, calls for meeting with Department of Labour - IOL",
+                "link": "https://news.google.com/rss/articles/CBMihAJBVV95cUxPcjJNV2l5a3BnUDJYejVpQXoxRGYza1VXcTlOWEJYSW1SQlZTeDQwTmw3bURVcEpVUFZtcHdwWTRReUNrai01dkJxWF9nR2ZuT1lnb2k3bHZlU3AxNk1GRzBtbU10LUJ2WjM5a2NFZXpBeEowRDRIa1hjeFZjaGYyVmxtRE1taURCSW8tcVVFWFY2cExiUkwteFJGWmpSeV9aSnFXcmxQcUFkajU4am4wTU1PZUhCNmZYSjlWdFJWSEoxZW5sZGY0UW5yWnVCT1JNUFFpLUFWTWRsTDZSeGJsbGNEcG9FMWhqU0JNdnlHZXN2VmNmRlZQREU3Qk1aalBQMWNYYg?oc=5",
+                "source": "IOL",
+                "pubDate": "Wed, 18 Sep 2024 12:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.00538965268060565,
+                    "negative": 0.573153018951416,
+                    "neutral": 0.4214573800563812
+                }
+            },
+            {
+                "title": "From humble beginnings to global empire: Mama Liza's culinary legacy fuels Ocean Basket's rise - News24",
+                "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPdnR3UTEzckZtUkdWTHlUc1FlMmdNcy11NEl2VElGT2JrWExVOEE0RFJWeDNuYjdWdnlTS2NtcWtKNXV0QU9oQlFNVUNXQVRoeUs4MXo0WVlKNEM4bmUyNFc3Qy1kaktMVHY0YU0za3FfM3VrU3pHYVFLbUItdk1sS2NzV3VXbHhBYTJrSXo3ZTNUdHFMTEpqV1gzN2JIM0tOTTdfc1NIaEVxX0Z4czdJQTUwb1lkU3hMUDJmQTQ0akZCTzVFQXFLekFVLU04UQ?oc=5",
+                "source": "News24",
+                "pubDate": "Wed, 17 Jul 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.8849384784698486,
+                    "negative": 0.0014173827366903424,
+                    "neutral": 0.11364413797855377
+                }
+            },
+            {
+                "title": "'It's false' — Ocean Basket slams labour department claims that staff are underpaid at Menlyn franchise - TimesLIVE",
+                "link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNdG03dDRERFhURXNOVFlwVXFNcExxRUt1MXJlWnJNdS1Mdk1FUlR4LWNvdGp4c0J4blRNaGlDXzZRTlB2VFdhS1U0RVkxZnZHeWx6NTFxMFJBY2gyZ3RreFJKdVhzdV9WOVVqUm5sUkZhZk5xM3A4bDJmdFVNRVFWUTE0TUY5VnlBLWV3emRRaVJPcDAtanZsZHV2TXJKWGUxVUZiWlp2V0pBSGNBRkNxem1vWXhDTXhtSVdrMl9ZRDQwalJwMTlLZzB4RHZldmV2YjNnV3p0bEFoeVRnQUU3bW5lTVYzbW9RYThrRTJ3WmROSEdk0gH6AUFVX3lxTE9Bb2hWTVlrZ1YxdEFycDMtdXY4Y0k3bllFTWtzTnZRbHZrUUU1UG5wVXRYWUF3LUJ5eVhCSVozOVNMRFRrbXIxelNnRllvUjRyX1QyaDh1T3NRbloyUlBlNWNWbDQzcVE4aDdGV19OX3lUWUJwcWdUdGt1cDV2M0U2S0hEWmJjTUNQUFlzcGo2TWtNX1pFYWV6bHJEZ1ZjUzNjd1pYZDJiTjFsel9RSTRJLUJ4U1lTU284S3d6VF9IQkt4UzBtN19GQmxpYUI1V1ZtNWtObWN2SDZQSnJPNkttYTBWNEQyQkdTdTBBSW1FejdIWjA0ZndKZEE?oc=5",
+                "source": "TimesLIVE",
+                "pubDate": "Tue, 17 Sep 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.0026960857212543488,
+                    "negative": 0.924635648727417,
+                    "neutral": 0.07266824692487717
+                }
+            },
+            {
+                "title": "Ocean Basket, Abalobi partner to promote sustainable, fair fishing practices - Bizcommunity.com",
+                "link": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOSmlOTk13TmdmeURYX05wLXJxdmw1d0JRWmkySEFDc3VVQmpmRlNOMXoyODlPaG1BTDFkYjB2bjhDZnd4Z2t0RUhTWjhJeDFMdkEzMzNoaUtTZGdlLUYzSU5VbU1VZGFyUTQ4NnpmNFFMNlpCaVFOVFQ5QnprZ0FmcWg4d1Y0enNWNTF0M1FBV09jYmt1RHFWako2VTZiQVVHM0E4aTBxU2R3cm14WXFMbXAxdDV0TVZfbkFz?oc=5",
+                "source": "Bizcommunity.com",
+                "pubDate": "Tue, 11 Jun 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.8664397597312927,
+                    "negative": 0.0015105119673535228,
+                    "neutral": 0.13204969465732574
+                }
+            },
+            {
+                "title": "Grand Opening of Ocean Basket Mall @55 in August 2024 - The Citizen",
+                "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPdEx0RUZ5amd0MXBEUTFZVC1PSUxVaG02OExTYVNNUVVMMWd5S2JYLWNxZWJVSG5mem95VkJZTDdYR0hsYjd2NHNiT2M3UGtpWmpNMG03b0VxRXJjXzJKTUs0N0llRlNTYUpWc01mNUpzNnpXNEdLeUR1aV9HZFBQX2Nla1plODM4M1M3cU02MXRTSmg3dF9LTHpIYjZuUzJZYkxGbGRJRUVSd1FKanNHYnpR0gG2AUFVX3lxTE1CdHkyb0dCcXJ2LVZIZlFFZFYtM3owZWZFSlZVT3pmMGZjVER6aDFfQjZTNzhQVGZCdTZ5cVpuV1RZeFJJYjZUYVBsTzZ4RkhNVHA4eWRxUW1CU2RQOUpqdWp3czRla3k2VjhnU2M3bnFKcUR2cGFmeW9GanpjUnhneGpiWWVybjR2bHU4NGo4VVNCWWdjcDJpMThfS0ZMNWR1aW5BdDdmd0dJWjdJWU8yMEJKOFZB?oc=5",
+                "source": "The Citizen",
+                "pubDate": "Fri, 26 Jul 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.03584570065140724,
+                    "negative": 0.0029473481699824333,
+                    "neutral": 0.9612069725990295
+                }
+            },
+            {
+                "title": "Ocean Basket Restaurant Review - - Foodepedia",
+                "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQSUI5YXA4RUVhNV9HM21DcnhPeldIX05yNE5lSlZqVXBLY2ZPZVF1SXNwZ1ExWkV1a2JBNHp6cS1WSDNvT2Q1Q1VuamtPSlZob05uSGhDeVNwcThvTk5TSmdlNlJCYjd3YkdjUUFZelIwTFFCLWZqWmtzZlA2V1R4amhackJRQQ?oc=5",
+                "source": "Foodepedia",
+                "pubDate": "Tue, 25 Jun 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.04130374267697334,
+                    "negative": 0.00359418336302042,
+                    "neutral": 0.9551020860671997
+                }
+            },
+            {
+                "title": "Ocean Basket CEO co-operating with authorities after being caught in Babel restaurant saga - IOL",
+                "link": "https://news.google.com/rss/articles/CBMijwJBVV95cUxNeFFFM2NxRktNUW1QTzFlcnlpczVoSW9uTk5UT3UyWXRmdVFEaGNSVGNwckhVZ0VHZF9kaEVxcWY2TV95aEdkcVVIUFA1OUdJdGF1Y1hrbElDbldKZ0hWTU9sV1JhRGx6Wk1zcEZhdFdZVkJzYUVINk5HdFRkRFRhV28xQmh5aGFGcEZSY1FKSE1lLTBzdHBPUVlScHhGblRsWHV0ZjNVTjRfVDRyeXcyX1czcHlhb2R0SmQ4NW9yeEJiY0NrQzRNaHlMMzd3em9qUGNLVGxTSmZjMWVJenRDcEprYmRERnNaM19ZOXM4cmJLaGRhRHYyTEl1ZkwzcGIwMHNZYnVlR1dmVlFsMm0w?oc=5",
+                "source": "IOL",
+                "pubDate": "Tue, 17 Sep 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.012560262344777584,
+                    "negative": 0.09014994651079178,
+                    "neutral": 0.8972898125648499
+                }
+            },
+            {
+                "title": "Ocean Basket Menlyn denies owing workers more than R800 000 in unpaid wages - News24",
+                "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQNC1OWXN2cmFGdGZrcUFscTVsc0g2S0xXT0R3aWVQZUVYXzd3a2hqeXJYRm5mMjFGbzh0cWVQNXA4eWQzS3hIZDZSdW8ybS1ZMW54S1J2WTZQcmFpQTUtbnNnbHdPMVZlSDdwUGJuLUZMYXRSdFdfLTFRWTFYUGo1YUp0aXJHTUprUTN0NWJjNmxBd1pCUDhTcDVKY0p0OE9Wa0xZWTFvTVpXQTFkZGluTXFLSmRTSU5SbnFLR0xMekFYNWx4ZzdtQnlvQQ?oc=5",
+                "source": "News24",
+                "pubDate": "Tue, 17 Sep 2024 07:00:00 GMT",
+                "sentimentScores": {
+                    "positive": 0.00442590331658721,
+                    "negative": 0.7350159287452698,
+                    "neutral": 0.26055821776390076
+                }
+            }
+        ],
+        "reviews": {
+            "rating": 2.1,
+            "numberOfReviews": 1771,
+            "trustIndex": 2.9,
+            "NPS": -63,
+            "recommendationStatus": "Unlikely",
+            "starRatings": [
+                {
+                    "stars": 5,
+                    "numReviews": 351
+                },
+                {
+                    "stars": 4,
+                    "numReviews": 47
+                },
+                {
+                    "stars": 3,
+                    "numReviews": 13
+                },
+                {
+                    "stars": 2,
+                    "numReviews": 373
+                },
+                {
+                    "stars": 1,
+                    "numReviews": 987
+                }
+            ]
+        },
+        "shareCountdata": {
+            "Facebook": {
+                "comment_plugin_count": 0,
+                "total_count": 2380,
+                "og_object": null,
+                "comment_count": 213,
+                "share_count": 1176,
+                "reaction_count": 991
+            },
+            "Pinterest": 5
+        },
         "time": 73.8786
     }
 }

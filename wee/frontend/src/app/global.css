@@ -52,10 +52,10 @@
   stroke: var(--dark-indicator-color);
 }
 
-.bg-default-100 {
+#datepickerscheduledscrape {
   background-color: rgb(228 228 231);
 }
 
-.dark .bg-default-100 {
+.dark #datepickerscheduledscrape {
   background-color: rgb(63 63 70);
 }

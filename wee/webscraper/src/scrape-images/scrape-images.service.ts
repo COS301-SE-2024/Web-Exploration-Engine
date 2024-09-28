@@ -12,7 +12,7 @@ export class ScrapeImagesService {
      * @param url - The URL to scrape images from.
      * @returns {Promise<string[]>} - Returns a promise that resolves to an array of image URLs.
      */
-   async scrapeImages(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<string[]> {
+   async scrapeImages(url: string, robots: RobotsResponse, page: puppeteer.Page): Promise<string[]> {
     logger.debug(`${serviceName}`);  
     const start = performance.now();
 
@@ -22,52 +22,26 @@ export class ScrapeImagesService {
         logger.error(serviceName,` Crawling not allowed for this URL`,url);  
         return [];
     }
-
-    // proxy authentication
-    const username = process.env.PROXY_USERNAME;
-    const password = process.env.PROXY_PASSWORD;
-
-    if (!username || !password) {
-        console.error('Proxy username or password not set');
-        return [];
-    }
-
-    let page;
     
     try {
-        page = await browser.newPage();
-        
-        // authenticate page with proxy
-        await page.authenticate({
-            username,
-            password,
-        });
-
-        await page.goto(url);
         const imageUrls = await page.evaluate(() => {
             const images = document.querySelectorAll('img');
-
-      // Performance Logging
-      const duration = performance.now() - start;
-      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
+            if (!images) {
+                return [];
+            }
+           
             return Array.from(images).map((img: HTMLImageElement) => img.src);
         });
 
         return imageUrls.slice(0, 50);
     } catch (error) {
-      logger.error(serviceName,` Failed to scrape images: ${error.message}`);  
-
-
+        logger.error(serviceName,` Failed to scrape images: ${error.message}`);  
         return [];
     } finally {
         // Performance Logging
         const duration = performance.now() - start;
-        console.log(`Duration of ${serviceName} : ${duration}`);
+        console.log(`Duration of ${serviceName} : ${duration}, for url: ${url}`);
         logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
-        
-        if (page) {
-            await page.close();
-        }
     }
 }
 }

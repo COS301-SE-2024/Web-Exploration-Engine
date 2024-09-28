@@ -37,7 +37,7 @@ import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pu
 import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
 import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
 import { result } from 'cypress/types/lodash';
-import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
+import { ColumnChartWithLables, SentimentColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface Classifications {
   label: string;
@@ -56,10 +56,6 @@ export default function Results() {
     </Suspense>
   );
 }
-
-// function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
-//   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
-// }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
   return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
@@ -88,10 +84,6 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
 function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
   return 'title' in data || 'description' in data || 'keywords' in data || 'ogTitle' in data || 'ogDescription' in data || 'ogImage' in data;
 }
-
-// function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
-//   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
-// }
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
   return 'scores' in data || 'diagnostics' in data;
@@ -204,28 +196,37 @@ function ResultsComponent() {
           setDomainClassification(urlResults[0].industryClassification ? urlResults[0].industryClassification.zeroShotDomainClassify : []);
           setMetaData(urlResults[0].metadata);
 
-          const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
-          const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
-          setHomePageScreenShot(screenShotUrl);
+          if (urlResults[0].screenshot) {
+            const screenShotBuffer = Buffer.from(urlResults[0].screenshot, 'base64');
+            const screenShotUrl = `data:image/png;base64,${screenShotBuffer.toString('base64')}`;
+            setHomePageScreenShot(screenShotUrl);
+          }
 
           setAddresses(urlResults[0].addresses);
-          setEmails(urlResults[0].contactInfo.emails);
-          setPhones(urlResults[0].contactInfo.phones);
-          setSocialLinks(urlResults[0].contactInfo.socialLinks);
-          setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
-          setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
-          setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
-          setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
-          setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
-          setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
-          setSentimentAnalysis(urlResults[0].sentiment);
-          setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
-          setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
-          setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
-          setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
-          setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
-          setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
-          setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+
+          if (urlResults[0].contactInfo) {
+            setEmails(urlResults[0].contactInfo.emails);
+            setPhones(urlResults[0].contactInfo.phones);
+            setSocialLinks(urlResults[0].contactInfo.socialLinks);
+          }
+
+          if (urlResults[0].seoAnalysis) {
+            setTitleTagAnalysis(urlResults[0].seoAnalysis.titleTagsAnalysis);
+            setHeadingAnalysis(urlResults[0].seoAnalysis.headingAnalysis);
+            setImageAnalysis(urlResults[0].seoAnalysis.imageAnalysis);
+            setInternalLinkingAnalysis(urlResults[0].seoAnalysis.internalLinksAnalysis);
+            setMetaDescriptionAnalysis(urlResults[0].seoAnalysis.metaDescriptionAnalysis);
+            setUniqueContentAnalysis(urlResults[0].seoAnalysis.uniqueContentAnalysis);
+            setSentimentAnalysis(urlResults[0].sentiment);
+            setLightHouseAnalysis(urlResults[0].seoAnalysis.lighthouseAnalysis);
+            setSiteSpeedAnalysis(urlResults[0].seoAnalysis.siteSpeedAnalysis);
+            setMobileFriendlinesAnalysis(urlResults[0].seoAnalysis.mobileFriendlinessAnalysis);
+            setXmlSitemapAnalysis(urlResults[0].seoAnalysis.XMLSitemapAnalysis);
+            setCanonicalTagAnalysis(urlResults[0].seoAnalysis.canonicalTagAnalysis);
+            setIndexibilityAnalysis(urlResults[0].seoAnalysis.indexabilityAnalysis);
+            setStructuredDataAnalysis(urlResults[0].seoAnalysis.structuredDataAnalysis);
+          }
+
           setScrapeNews(urlResults[0].scrapeNews);
           setReviews(urlResults[0].reviews);
           setShareCountData(urlResults[0].shareCountdata);
@@ -785,14 +786,14 @@ function ResultsComponent() {
                       className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 py-6 pt-3"
                     >
                       {currentImages.map((item, index) => (
-                        <Card shadow="sm" key={index} id="unique-results-image">
-                          <CardBody className="overflow-visible p-0">
+                        <Card key={index} id="unique-results-image">
+                          <CardBody className="flex items-center justify-center overflow-visible p-0">
                             <Image
-                              shadow="sm"
-                              radius="lg"
-                              width="100%"
+                              // shadow="sm"
+                              // radius="lg"
+                              // width="100%"
                               alt={'Image'}
-                              className="w-full object-cover h-[140px]"
+                              className=" object-contain h-[140px] w-full"
                               src={item}
                             />
                           </CardBody>
@@ -2167,7 +2168,7 @@ function ResultsComponent() {
                                   Read article
                                 </Link>
 
-                                <ColumnChartWithLables
+                                <SentimentColumnChartWithLables
                                   dataLabel={[
                                     'Positive', 'Neutral', 'Negative'
                                   ]}

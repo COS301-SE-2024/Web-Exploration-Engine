@@ -50,7 +50,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // news sentiment average for each url
   for (const result of scraperResults) {
     if (result.url && result.scrapeNews && result.scrapeNews.length > 0) {
-      newsSentimentUrls.push(result.url);
+      newsSentimentUrls.push((new URL(result.url)).hostname);
 
       newsSentimentPositive.push(
         Math.round(
@@ -75,7 +75,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // social media metrics
   for (const result of scraperResults) {
     if (result.url && result.shareCountdata && result.shareCountdata.Facebook) {
-      socialMediaUrls.push(result.url);
+      socialMediaUrls.push((new URL(result.url)).hostname);
       socialMediaFacebookShareCount.push(result.shareCountdata.Facebook.share_count);
       socialMediaFacebookCommentCount.push(result.shareCountdata.Facebook.comment_count);
       socialMediaFacebookReactionCount.push(result.shareCountdata.Facebook.reaction_count);
@@ -84,14 +84,14 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
   // Get top 3 NPS scores
   for (const result of scraperResults) {
-    if (result.url && result.reviews !== undefined && result.reviews.NPS !== undefined && result.reviews.trustIndex !== undefined && result.reviews.rating !== undefined && result.reviews.starRatings !== undefined && result.reviews.starRatings.length > 0 ) {
-      topNPSUrls.push(result.url);
+    if (result.url && result.reviews && result.reviews.NPS && result.reviews.trustIndex && result.reviews.rating && result.reviews.starRatings && result.reviews.starRatings.length > 0 ) {
+      topNPSUrls.push((new URL(result.url)).hostname);;
       topNPSScores.push(result.reviews.NPS);
 
-      topTrustIndexUrls.push(result.url);
+      topTrustIndexUrls.push((new URL(result.url)).hostname);
       topTrustIndexScores.push(result.reviews.trustIndex);
 
-      topRatingUrls.push(result.url);
+      topRatingUrls.push((new URL(result.url)).hostname);
       topRatingScores.push(result.reviews.rating);
 
       for (let i = 0; i < result.reviews.starRatings.length; i++) {
@@ -104,7 +104,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
   // calculate the average for the review stars
   for (let i = 0; i < 5; i++) {
     if (numberStars[i] !== 0) {
-      averageStars[i] = totalStars[i] / numberStars[i];
+      averageStars[i] = Math.round(totalStars[i] / numberStars[i]);
     }
   }
 
@@ -244,7 +244,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
 
 
     // calculate industry classification percentages
-    if (result.industryClassification &&
+    if (result.industryClassification && result.industryClassification.zeroShotMetaDataClassify && result.industryClassification.zeroShotMetaDataClassify.length > 0 &&
       result.industryClassification.zeroShotMetaDataClassify[0].label &&
       result.industryClassification.zeroShotMetaDataClassify[0].label !== 'Unknown') {
       const industry = result.industryClassification.zeroShotMetaDataClassify[0].label;
@@ -262,7 +262,7 @@ export function generateSummary(scraperResults: ScraperResult[]): Summary {
     }
 
     // domain match classification
-    if (result.industryClassification &&
+    if (result.industryClassification && result.industryClassification.zeroShotDomainClassify && result.industryClassification.zeroShotDomainClassify.length > 0 && 
       result.industryClassification.zeroShotDomainClassify[0].label &&
       result.industryClassification.zeroShotMetaDataClassify[0].label) {
       const domainClass = result.industryClassification.zeroShotDomainClassify[0].label;
