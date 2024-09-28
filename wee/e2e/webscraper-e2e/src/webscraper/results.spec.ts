@@ -289,7 +289,7 @@ describe('Scraping Functionality', () => {
   ];
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: false ,slowMo: 50,  }); // Set to true for headless mode
+    browser = await puppeteer.launch({ headless:true}); // Set to true for headless mode
     page = await browser.newPage();
   });
 
@@ -322,7 +322,7 @@ describe('Scraping and Results Page', () => {
   let page;
 
   beforeAll(async () => {
-    browser = await puppeteer.launch({ headless: false ,slowMo: 50 });
+    browser = await puppeteer.launch({ headless: true});
     page = await browser.newPage();
     await page.goto('https://capstone-wee.dns.net.za/');
   },60000);
