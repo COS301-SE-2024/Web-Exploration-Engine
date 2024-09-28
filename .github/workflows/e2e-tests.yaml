@@ -1,49 +1,80 @@
-name: E2E Tests
+name: End-to-End Tests
 
 on:
   pull_request:
-    branches: [master, development]
-  push:
-    branches: [master, development]
-
-permissions:
-  contents: read
+    branches:
+      - master
 
 jobs:
-  run-cypress-e2e-tests:
-    name: Cypress E2E Tests
-    runs-on: ubuntu-latest
-
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
-      NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      NEXT_PUBLIC_SENTRY_DSN_LINK: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN_LINK }}
-      NEXT_PUBLIC_SENTRY_ORG: ${{ secrets.NEXT_PUBLIC_SENTRY_ORG }}
-      NEXT_PUBLIC_SENTRY_PROJECT: ${{ secrets.NEXT_PUBLIC_SENTRY_PROJECT }}
-      NEXT_PUBLIC_TESTING_ENVIRONMENT: true
-
+  end-to-end-tests:
+    runs-on: ubuntu-latest   
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379  # Expose Redis on the default port
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js 21
-        uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 21
+          node-version: '18'
 
       - name: Install dependencies
         run: |
-          cd wee/frontend
-          npm ci
+          cd wee
+          npm install
+          sudo apt-get install lsof
 
-      - name: Start application
+      - name: Start Redis container
         run: |
-          cd wee/frontend
-          npx nx dev frontend &
-          npx wait-on http://localhost:3000
+          docker run -d -p 6379:6379 --name myRedisContainer redis redis-server --requirepass 
+          sudo docker start myRedisContainer
+        continue-on-error: true
 
-      - name: Run Cypress E2E tests
+      - name: Start webscraper
         run: |
-          cd wee/e2e/frontend-e2e
-          npx cypress run --config video=false
+          cd wee
+          npx nx serve webscraper --port 3003 &
+
+      - name: Wait for Webscraper service
+        run: |
+          while ! lsof -i:3003 > /dev/null; do   
+            sleep 1
+            echo "Waiting for Webscraper service on port 3003..."
+          done
+
+      - name: Start API service
+        run: |
+          cd wee
+          npx nx serve api-service --port 3002 &
+
+      - name: Wait for API service
+        run: |
+          while ! lsof -i:3002 > /dev/null; do   
+            sleep 1
+            echo "Waiting for Webscraper service on port 3002..."
+          done
+
+
+      - name: Start frontend
+        run: |
+          cd wee
+          npx nx dev frontend --port 3000 &
+
+      - name: Wait for Frontend service
+        run: |
+          while ! lsof -i:3000 > /dev/null; do   
+            sleep 1
+            echo "Waiting for Webscraper service on port 3000..."
+          done
+
+      - name: Run Cypress end-to-end tests
+        run: |
+          cd wee/e2e/frontend-e2e/src/e2e
+          npx cypress run
+
+      - name: Stop all services
+        run: sudo docker stop myRedisContainer
