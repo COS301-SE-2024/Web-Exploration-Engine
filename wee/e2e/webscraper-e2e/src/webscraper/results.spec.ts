@@ -110,6 +110,72 @@ import axios from 'axios';
       }
     }
   };
+
+ const newsSentimentData = {
+    reviewData: null, // Represents no review data currently available
+    articles: [
+      {
+        title: "Netlify sponsors Astro and becomes official deployment partner, as CEO takes aim at 'vendor lock-in'",
+        publishedDate: "Wed, 17 Jul 2024 07:00:00 GMT",
+        source: "DevClass",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Netlify Announces Adobe Experience Manager Headless Integration",
+        publishedDate: "Mon, 17 Jun 2024 07:00:00 GMT",
+        source: "PR Newswire",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Astro Launches New Server Islands and Partners With Netlify",
+        publishedDate: "Sat, 20 Jul 2024 07:00:00 GMT",
+        source: "The New Stack",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "LambdaTest Integrates with Netlify to Enhance Developer Workflows",
+        publishedDate: "Tue, 23 Jul 2024 07:00:00 GMT",
+        source: "Business Wire",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Netlify introduces AI-enabled tool to streamline web development deployments",
+        publishedDate: "Thu, 07 Mar 2024 08:00:00 GMT",
+        source: "SiliconANGLE News",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Netlify AI analyzes failed deployments",
+        publishedDate: "Thu, 07 Mar 2024 08:00:00 GMT",
+        source: "InfoWorld",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Netlify Customer Story - CrowdStrike",
+        publishedDate: "Sat, 23 Mar 2024 02:31:13 GMT",
+        source: "CrowdStrike",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Agility CMS and Netlify Connect Launch New Unified Content Integration Solution",
+        publishedDate: "Wed, 14 Feb 2024 08:00:00 GMT",
+        source: "CMS Critic",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "Netlify begins rolling out latest version of its Next.js runtime",
+        publishedDate: "Wed, 03 Apr 2024 07:00:00 GMT",
+        source: "SDTimes.com",
+        readArticleLink: "Read article"
+      },
+      {
+        title: "User got a $104K bill from hosting provider: 'I thought it was a joke'",
+        publishedDate: "Tue, 27 Feb 2024 08:00:00 GMT",
+        source: "CyberNews.com",
+        readArticleLink: "Read article"
+      }
+    ]
+  };
 // describe('making requests', () => {
 
 
@@ -228,7 +294,7 @@ describe('Scraping Functionality', () => {
   // });
 
   // afterAll(async () => {
-  //   await browser.close();
+  //
   // });
 
   // it('should load the home page correctly', async () => {
@@ -440,12 +506,30 @@ describe('Scraping and Results Page', () => {
     expect(sentimentAnalysis.emotionsConfidenceScore.surprise.emoji).toBe('😲');
    await page.click('[data-testid="tab-rep-management"]');
 
+   expect(newsSentimentData.reviewData).toBeNull();
+    expect(newsSentimentData.articles).toHaveLength(10);
+
+    // Validate individual articles
+    expect(newsSentimentData.articles[0]).toEqual({
+      title: "Netlify sponsors Astro and becomes official deployment partner, as CEO takes aim at 'vendor lock-in'",
+      publishedDate: "Wed, 17 Jul 2024 07:00:00 GMT",
+      source: "DevClass",
+      readArticleLink: "Read article"
+    });
+
+    expect(newsSentimentData.articles[1]).toEqual({
+      title: "Netlify Announces Adobe Experience Manager Headless Integration",
+      publishedDate: "Mon, 17 Jun 2024 07:00:00 GMT",
+      source: "PR Newswire",
+      readArticleLink: "Read article"
+    });
 
 
       }
     } catch (error) {
       console.error('An error occurred:', error);
     }
+    await browser.close();
   }, 360000);
 
 
