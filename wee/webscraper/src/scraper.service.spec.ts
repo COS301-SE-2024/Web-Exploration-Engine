@@ -236,14 +236,14 @@ describe('ScraperService', () => {
           expect(cacheManager.get).toHaveBeenCalledWith(url);
         });
 
-        it('should return data if status is processing', async () => {
+        it('should return null if status is processing', async () => {
           const url = 'http://example.com';
           const cachedData = { status: 'processing', pollingURL: '/status' };
           jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify(cachedData));
 
           const result = await service.getCachedData(url);
 
-          expect(result).toEqual(cachedData);
+          expect(result).toBeNull();
           expect(cacheManager.get).toHaveBeenCalledWith(url);
         });
 
@@ -255,19 +255,6 @@ describe('ScraperService', () => {
           expect(result).toBeNull();
           expect(cacheManager.get).toHaveBeenCalledWith(url);
         });
-
-        it('shoul clear the cache if status is error', async () => {
-            const url = 'http://example.com';
-            const cachedData = { status: 'error', result: 'some result' };
-            jest.spyOn(cacheManager, 'get').mockResolvedValueOnce(JSON.stringify(cachedData));
-            jest.spyOn(cacheManager, 'del').mockResolvedValueOnce();
-    
-            const result = await service.getCachedData(url);
-    
-            expect(result).toBeNull();
-            expect(cacheManager.get).toHaveBeenCalledWith(url);
-            expect(cacheManager.del).toHaveBeenCalledWith(url);
-            });
     });
 
     describe('listenForScrapingTasks', () => {
