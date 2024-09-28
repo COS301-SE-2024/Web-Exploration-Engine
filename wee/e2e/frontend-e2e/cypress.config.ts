@@ -10,6 +10,8 @@ export default defineConfig({
     }),
     baseUrl: 'http://localhost:3000',
     defaultCommandTimeout: 600000,
+    video: true, // Enable video recording
+    videoUploadOnPasses: false, // Only keep videos for failing tests
   },
 
   retries: {
