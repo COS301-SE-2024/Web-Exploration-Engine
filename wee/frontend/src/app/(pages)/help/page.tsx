@@ -85,8 +85,8 @@ const faqs = [
     answer:
       "Yes, WEE supports scheduled scraping, allowing you to automate data extraction at regular intervals. This feature ensures that your data is always up-to-date without the need for manual intervention, making it easier to track changes over time and stay informed on key metrics."
   }
-  
-  
+
+
 ];
 
 const VideoThumbnail: React.FC<{
@@ -111,7 +111,7 @@ export default function Help() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  
+
   useBeforeUnload();
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -213,14 +213,14 @@ export default function Help() {
 
         <div className=" md:flex md:justify-left gap-2 lg:px-36 md:">
           <VideoThumbnail
-            message="What formats can I export the scraped data?"
-            thumbnail="images/video-thumbnail.svg"
-            link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
+            message="How to start scraping?"
+            thumbnail="images/StartScraping.svg"
+            link="https://drive.google.com/file/d/1RHAZqJYLDp0QfoVW2yWjtgSLnJFsL6Zh/view?usp=sharing"
           />
           <VideoThumbnail
-            message="How to scrape multiple reports?"
-            thumbnail="images/video-thumbnail.svg"
-            link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
+            message="Radar graphs explained"
+            thumbnail="images/RadarGraphs.svg"
+            link="https://drive.google.com/file/d/19HNm1MmcB3hELx9XXwLlc4LX5dzDJr9M/view?usp=sharing"
           />
         </div>
       </div>
@@ -236,17 +236,17 @@ export default function Help() {
         </div>
 
         <div className="mb-10 flex flex-col justify-center items-center sm:w-4/5 md:w-full lg:w-4/5 mx-auto">
-    {error && (
-      <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-        <p>{error}</p>
-      </span>
-    )}
+          {error && (
+            <span className="mx-auto mt-4 p-2 w-full text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+              <p>{error}</p>
+            </span>
+          )}
 
-    {success && (
-      <span className="mx-auto mt-4 p-2 w-full text-white bg-jungleGreen-700 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
-        <p>{success}</p>
-      </span>
-    )}
+          {success && (
+            <span className="mx-auto mt-4 p-2 w-full text-white bg-jungleGreen-700 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+              <p>{success}</p>
+            </span>
+          )}
 
 
           <div className="flex w-full flex-wrap md:flex-nowrap gap-x-2">

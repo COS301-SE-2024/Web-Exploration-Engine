@@ -225,7 +225,7 @@ describe('SummaryReport Page', () => {
   it('renders the summary report page correctly', async () => {
     render(<SummaryReport />);
     expect(screen.getByText('Summary Report')).toBeInTheDocument();
-    expect(screen.getByText('General stats')).toBeInTheDocument();
+    expect(screen.getByText('General Statistics')).toBeInTheDocument();
     expect(screen.getByText('Domain match')).toBeInTheDocument();
     expect(screen.getByText('Industry Classification Distribution')).toBeInTheDocument();
     expect(screen.getByText('Website status')).toBeInTheDocument();

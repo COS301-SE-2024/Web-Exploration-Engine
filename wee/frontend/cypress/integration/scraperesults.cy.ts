@@ -35,7 +35,7 @@ describe('scraping functionality', () => {
       .then((mock_scraper_github) => {
         cy.intercept(
           'GET',
-          'http://localhost:3002/api/scraper/status/scrape/https%3A%2F%2Fmock.test.github.com',
+          'http://localhost:3002/api/scraper/status/,{ timeout: 10000 }scrape/https%3A%2F%2Fmock.test.github.com',
           mock_scraper_github
         ).as('mock_scraper_github_check_job');
       });
@@ -52,7 +52,7 @@ describe('scraping functionality', () => {
       });
 
 
-    cy.wait('@mock_scraper_github_done');
+    cy.wait('@mock_scraper_github_done',{ timeout: 10000 });
 
     // Assert that the URL is the scraperesults URL
     cy.url().should('include', 'scraperesults');

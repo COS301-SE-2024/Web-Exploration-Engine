@@ -90,14 +90,14 @@ export default function App() {
 
                 <div className="flex justify-left gap-2">
                   <VideoThumbnail
-                    message="What formats can I export the scraped data?"
-                    thumbnail="images/video-thumbnail.svg"
-                    link="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"
+                    message="How to start scraping?"
+                    thumbnail="images/StartScraping.svg"
+                    link="https://drive.google.com/file/d/1RHAZqJYLDp0QfoVW2yWjtgSLnJFsL6Zh/view?usp=sharing"
                   />
                   <VideoThumbnail
-                    message="How to scrape multiple reports?"
-                    thumbnail="images/video-thumbnail.svg"
-                    link="https://www.youtube.com/watch?v=ZKcuvdnVF80&pp=ygURYSBiaXJkcyBsYXN0IGxvb2s%3D"
+                    message="Radar graphs explained"
+                    thumbnail="images/RadarGraphs.svg"
+                    link="https://drive.google.com/file/d/19HNm1MmcB3hELx9XXwLlc4LX5dzDJr9M/view?usp=sharing"
                   />
                 </div>
 
