@@ -9,7 +9,7 @@ const serviceName = "[ScreenshotService]";
 
 @Injectable()
 export class ScreenshotService {
-  async captureScreenshot(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ screenshot: string } | ErrorResponse> {
+  async captureScreenshot(url: string, robots: RobotsResponse, page: puppeteer.Page): Promise<{ screenshot: string } | ErrorResponse> {
     logger.debug(`${serviceName}`);
     const start = performance.now();
 
@@ -34,37 +34,24 @@ export class ScreenshotService {
       } as ErrorResponse;
     }
 
-    let page;
-
     try {
-      page = await browser.newPage();
-
-      // authenticate page with proxy
-      await page.authenticate({
-        username,
-        password,
-      });
-
-      await page.goto(url, { waitUntil: 'networkidle2' });
       const screenshotBuffer = await page.screenshot({ fullPage: true });
 
       // Convert the screenshot to base64
       const screenshotBase64 = screenshotBuffer.toString('base64');
       //logger.info("Screenshot", url, typeof screenshotBase64);
-
+      // Performance Logging
+      const duration = performance.now() - start;
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
       return { screenshot: screenshotBase64 };
 
     } catch (error) {
       logger.error(serviceName,'Failed to capture screenshot', error);
-      return {
-        screenshot: '',
-      }
-    } finally {
       // Performance Logging
       const duration = performance.now() - start;
       logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
-      if (page) {
-        await page.close();
+      return {
+        screenshot: '',
       }
     }
   }

@@ -42,7 +42,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toHaveLength(2); // Asserting that two images are returned
     expect(imageUrls).toEqual(['/image1.jpg', '/image2.jpg']); // Asserting the exact URLs
@@ -76,7 +76,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array as no scraping is allowed
   });
@@ -92,6 +92,13 @@ describe('ScrapeImagesService', () => {
       isUrlScrapable: true 
     };
 
+    const mockPage = {
+      goto: jest.fn().mockResolvedValue(new Error('Failed to launch browser')),
+      evaluate: jest.fn().mockResolvedValue([]),
+      authenticate: jest.fn(),
+      close: jest.fn(),
+    } as unknown as puppeteer.Page;
+
     const mockBrowser = {
       newPage: jest.fn().mockRejectedValue(new Error('Failed to launch browser')),
       close: jest.fn(),
@@ -101,7 +108,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array due to launch failure
   });
@@ -134,7 +141,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array due to no images found
   });
@@ -164,7 +171,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array due to navigation failure
   });
@@ -198,7 +205,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toHaveLength(50); // Expecting only 50 images to be returned
   });
@@ -214,6 +221,13 @@ describe('ScrapeImagesService', () => {
       isUrlScrapable: true 
     };
 
+    const mockPage = {
+      goto: jest.fn().mockResolvedValue(new Error('Failed to create new page')),
+      evaluate: jest.fn().mockResolvedValue([]),
+      authenticate: jest.fn(),
+      close: jest.fn(),
+    } as unknown as puppeteer.Page;
+
     const mockBrowser = {
       newPage: jest.fn().mockRejectedValue(new Error('Failed to create new page')),
       close: jest.fn(),
@@ -223,7 +237,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array due to newPage failure
   });
@@ -256,7 +270,7 @@ describe('ScrapeImagesService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockBrowser);
+    const imageUrls = await scrapeImagesService.scrapeImages(url, robots, mockPage);
 
     expect(imageUrls).toEqual([]); // Expecting empty array due to evaluate failure
   });

@@ -69,7 +69,6 @@ export class ScrapeReviewsService {
         if (url.includes('hellopeter.com')) {
           reviews = await this.scrapeReviewsFromHelloPeter(reviewPage);
         }
-        await reviewPage.close();
       } catch (error) {
         console.error(`Failed to scrape reviews from ${url}: ${error.message}`);
       }

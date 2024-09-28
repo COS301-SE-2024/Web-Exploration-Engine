@@ -8,7 +8,7 @@ const serviceName = "[ScrapeMetadataService]";
 @Injectable()
 export class ScrapeMetadataService {
 
-  async scrapeMetadata( url: string, data: RobotsResponse, browser: puppeteer.Browser): Promise<Metadata | ErrorResponse> {
+  async scrapeMetadata( url: string, data: RobotsResponse, page: puppeteer.Page): Promise<Metadata | ErrorResponse> {
     logger.debug(`${serviceName}`);    
     const start = performance.now();
     const allowed = data.isBaseUrlAllowed;
@@ -22,31 +22,7 @@ export class ScrapeMetadataService {
       } as ErrorResponse;
     }
 
-    // proxy authentication
-    const username = process.env.PROXY_USERNAME;
-    const password = process.env.PROXY_PASSWORD;
-
-    if (!username || !password) {
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Proxy username or password not set',
-      } as ErrorResponse;
-    }
-
-    let page
-
     try {
-      page = await browser.newPage();
-
-      // authenticate page with proxy
-      await page.authenticate({
-        username,
-        password,
-      });
-
-      await page.goto(url, { waitUntil: 'domcontentloaded' });
-
       const getMetaTagContent = (name: string) => {
         const element =
           document.querySelector(`meta[name='${name}']`) ||
@@ -79,6 +55,10 @@ export class ScrapeMetadataService {
           ogImage: null,
         } as Metadata;
       }
+      // Performance Logging
+      const duration = performance.now() - start;
+      console.log(`Duration of ${serviceName} : ${duration}`);
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
       return { ...metadata };
 
@@ -89,16 +69,7 @@ export class ScrapeMetadataService {
         errorCode: '500 Internal Server Error',
         errorMessage: `Error scraping metadata: ${error.message}`,
       } as ErrorResponse;
-    } finally {
-      // Performance Logging
-      const duration = performance.now() - start;
-      console.log(`Duration of ${serviceName} : ${duration}, for url: ${url}`);
-      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
-
-      if (page) {
-        await page.close();
-      }
-    }
+    } 
   }
 
   // Expose the function for testing

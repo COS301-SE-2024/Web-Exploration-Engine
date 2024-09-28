@@ -39,6 +39,13 @@ describe('ScreenshotService', () => {
       const mockScreenshot = 'mock-base64-screenshot';
       const screenshotBuffer = Buffer.from(mockScreenshot, 'base64');
 
+      const mockPage = {
+        goto: jest.fn(),
+        screenshot: jest.fn().mockResolvedValue(screenshotBuffer),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+      } as unknown as puppeteer.Page;
+
       const browser = {
         newPage: jest.fn().mockResolvedValue({
           goto: jest.fn(),
@@ -53,7 +60,7 @@ describe('ScreenshotService', () => {
       process.env.PROXY_USERNAME = 'username';
       process.env.PROXY_PASSWORD = 'password';
 
-      const result = await service.captureScreenshot(mockUrl, mockRobotsAllow, browser);
+      const result = await service.captureScreenshot(mockUrl, mockRobotsAllow, mockPage);
 
       expect(result).toBeDefined();
       if ('screenshot' in result) {
@@ -64,6 +71,14 @@ describe('ScreenshotService', () => {
    });
 
     it('should return an eror response if URL is not scrapable', async () => {
+
+      const mockPage = {
+        goto: jest.fn(),
+        screenshot: jest.fn(),
+        authenticate: jest.fn(),
+        close: jest.fn(),
+      } as unknown as puppeteer.Page;
+      
       const browser = {
         newPage: jest.fn().mockResolvedValue({
           goto: jest.fn(),
@@ -79,7 +94,7 @@ describe('ScreenshotService', () => {
       process.env.PROXY_PASSWORD = 'password';
 
 
-      const result = await service.captureScreenshot(mockUrl, mockRobotsDisallow, browser);
+      const result = await service.captureScreenshot(mockUrl, mockRobotsDisallow, mockPage);
       
       if ('errorMessage' in result) {
         expect(result.errorMessage).toBe('Not allowed to scrape this URL');
