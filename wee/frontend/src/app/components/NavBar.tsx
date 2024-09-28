@@ -194,7 +194,17 @@ export default function NavBar() {
               color="foreground"                
               size="lg"
             >
-                Saved Reports
+              Saved Reports
+            </Link>
+          }
+          {user &&           
+            <Link 
+              onClick={() => {handleScheduledScrape(); setIsMenuOpen(false)}} 
+              className="w-full"
+              color="foreground"                
+              size="lg"
+            >
+              Scheduled Tasks
             </Link>
           }
         </NavbarMenuItem>

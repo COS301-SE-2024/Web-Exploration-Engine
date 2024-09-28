@@ -23,6 +23,8 @@ import { RadarChart } from '../../components/Graphs/RadarChart';
 import { generatePDFReport } from '../../services/DownloadSummaryReport'
 import { AreaChart } from '../../components/Graphs/AreaChart';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
+import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
+import { SentimentStackedColumnChart, StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 
 interface weakClassification {
     url: string;
@@ -75,6 +77,7 @@ function SummaryComponent() {
     const searchParams = useSearchParams();
     const id = searchParams.get('id') as number | null;
 
+    const [ summaryReport, setSummaryReport ] = useState<any>({});
     const [domainStatus, setDomainStatus] = useState<number[]>([]);
     const [domainErrorStatus, setDomainErrorStatus] = useState<number>(0);
     const [unclassifiedUrls, setUnclassifiedUrls] = useState<string[]>([]);
@@ -107,6 +110,7 @@ function SummaryComponent() {
           if(summaryData) {
             // format timestamp
             const date = new Date(savedSummary[0].savedAt ?? "");
+            setSummaryReport(summaryData);
             setSummaryDate(date.toDateString());
             setSummaryName(savedSummary[0].reportName);
             setDomainStatus(summaryData.domainStatus ?? []);
@@ -487,15 +491,180 @@ function SummaryComponent() {
               />
             </h3>
             {/* Sentiment Analysis */}
-            {
-              emotionsArea && emotionsArea.series.length > 0 ? (
-                <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
-                  <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={emotionsArea.series} />
-                </div>
-              ) : (<></>)
-            }
-    
+        <div id="area-chart" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center md:col-span-2 flex flex-col justify-center m-[4px]'>
+          {
+            summaryReport.emotionsArea && summaryReport.emotionsArea.series.length > 0 ? (
+              <AreaChart areaCategories={['Anger', 'Disgust', 'Fear', 'Joy', 'Neutral', 'Sadness', 'Surprise']} areaSeries={summaryReport.emotionsArea.series} />
+            ) : (<span className='flex flex-col justify-center text-center'>No data currently available</span>)
+          }
+        </div>
+
+        {/* Social Media Engagement */}
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
+          Social Media Engagement
+          <InfoPopOver
+            heading="Social Media Engagement"
+            content="This chart displays Facebook engagement metrics such as shares, reactions, and comments for various URLs. The stack height for each URL indicates the total engagement for each URL. </br></br>
+              Note: WEE used SharedCount - a platform that provides up-to-date information of Facebook"
+            placement="top"
+          />
+        </h3>
+        <div id="stacked-column-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4' data-testid="socialMetricsGraph">
+          {summaryReport.socialMetrics
+            && summaryReport.socialMetrics.urls?.length > 0
+            && summaryReport.socialMetrics.facebookCommentCount?.length > 0
+            && summaryReport.socialMetrics.facebookReactionCount?.length > 0
+            && summaryReport.socialMetrics.facebookShareCount?.length > 0
+            ? (
+              <StackedColumnChart
+                dataLabel={summaryReport.socialMetrics.urls}
+                dataSeries={[
+                  { name: 'Share Count', data: summaryReport.socialMetrics.facebookShareCount },
+                  { name: 'Reaction Count', data: summaryReport.socialMetrics.facebookReactionCount },
+                  { name: 'Comment Count', data: summaryReport.socialMetrics.facebookCommentCount }]}
+              />
+
+            ) : (
+              <div>There are no social metric data currently available</div>
+            )}
+        </div>
+
+        {/* Reviews */}
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
+          Reviews
+          <InfoPopOver
+            heading="Reviews"
+            content="
+                  The top 3 URLs for the NPS, Trust Index and Average Rating Scores respectively.</br>
+                  Combined average star ratings for all URLs.
+                  </br></br>
+                  <i>Star Ratings for Reviews: </i>Displays how reviews are distributed across various star levels, providing an overview of customer feedback.</br>
+                  <i>NPS (Net Promoter Score): </i>Reflects the likelihood of customers recommending a business, with scores below 0 indicating low likelihood, scores between 1 and 49 showing moderate likelihood, and scores above 49 signifying a strong likelihood of recommendation.</br>
+                  <i>Hellopeter TrustIndex: </i>Assesses a business's credibility by analyzing factors such as star ratings, response times, review volume, and recent review relevance. Scores range from 0 to 10, representing the quality of customer service.</br>
+                  <i>Average Star Rating: </i>Offers an overall indication of customer satisfaction based on the ratings given."
+            placement="top"
+          />
+        </h3>
+        <div className='gap-2 grid lg:grid-cols-3'>
+          {summaryReport.topNPS && summaryReport.topNPS.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 NPS Scores
+              </h3>
+              <span data-testid='nps-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topNPS.urls}
+                  dataSeries={summaryReport.topNPS.scores}
+                />
+              </span>
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no NPS score data currently available
+            </div>
+          )}
+
+          {summaryReport.topTrustIndex && summaryReport.topTrustIndex.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 Trust Index Scores
+              </h3>
+              <span data-testid='trustindex-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topTrustIndex.urls}
+                  dataSeries={summaryReport.topTrustIndex.scores}
+                />
+              </span>
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no trust index score data currently available
+            </div>
+          )}
+
+          {summaryReport.topRating && summaryReport.topRating.urls.length > 0 ? (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 my-2 text-center">
+                Top 3 Average Rating Scores
+              </h3>
+              <span data-testid='rating-scores-graph'>
+                <ColumnChartWithLables
+                  dataLabel={summaryReport.topRating.urls}
+                  dataSeries={summaryReport.topRating.scores}
+                />
+              </span>
+            </div>
+          ) : (
+            <div className='bg-zinc-200 dark:bg-zinc-700 p-2 rounded-xl'>
+              There are no rating score data currently available
+            </div>
+          )}
+
+        </div>
+        {summaryReport.averageStarRating && summaryReport.averageStarRating.length == 5 ? (
+          <div id="star-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+            <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
+              Average Star Ratings for Reviews
+            </h3>
+            <span data-testid='star-ratings-review-graph'>
+              <ColumnChartWithLables
+                dataLabel={[
+                  '1 star',
+                  '2 stars',
+                  '3 stars',
+                  '4 stars',
+                  '5 stars',
+                ]}
+                dataSeries={[
+                  summaryReport.averageStarRating[4],
+                  summaryReport.averageStarRating[3],
+                  summaryReport.averageStarRating[2],
+                  summaryReport.averageStarRating[1],
+                  summaryReport.averageStarRating[0],
+                ]}
+              />
+            </span>
           </div>
+        ) : (
+          <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+            There are no average star rating data currently available
+          </div>
+        )
+        }
+
+        {/* News */}
+        <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 mt-10">
+          Average News Sentiment
+          <InfoPopOver
+            heading="Average News Sentiment"
+            content="The average sentiment is calculated for each URL based on the 10 most recent news articles.
+            </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
+            placement="top"
+          />
+        </h3>
+        <div id="news-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4'>
+          {summaryReport.newsSentiment && summaryReport.newsSentiment.urls.length > 0 && summaryReport.newsSentiment.positive.length > 0 && summaryReport.newsSentiment.negative.length > 0 && summaryReport.newsSentiment.neutral.length > 0 ? (
+            <span data-testid='stacked-column-chart-news-sentiment'>
+
+              <SentimentStackedColumnChart
+                dataLabel={summaryReport.newsSentiment.urls}
+                dataSeries={[
+                  { name: 'Positive', data: summaryReport.newsSentiment.positive },
+                  { name: 'Neutral', data: summaryReport.newsSentiment.neutral },
+                  { name: 'Negative', data: summaryReport.newsSentiment.negative }]}
+              />
+            </span>
+
+          ) : (
+            <div>There are no news sentiment data currently available</div>
+          )}
+        </div>
+
+      </div>
+
+
+
+          
         </>
       );
 }
