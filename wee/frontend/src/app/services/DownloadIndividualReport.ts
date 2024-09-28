@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis,LightHouseAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis,MobileFriendlinessAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis} from '../models/ScraperModels';
+import { TitleTagsAnalysis, SEOError, HeadingAnalysis, ImageAnalysis,LightHouseAnalysis, InternalLinksAnalysis,MetaDescriptionAnalysis,SiteSpeedAnalysis,MobileFriendlinessAnalysis, UniqueContentAnalysis, IndustryClassificationCriteria, SentimentAnalysis,XMLSitemapAnalysis,CanonicalTagAnalysis,IndexabilityAnalysis,StructuredDataAnalysis,ScrapeNews, Reviews,ShareCountData} from '../models/ScraperModels';
 
 interface SummaryInfo {
   title: string;
@@ -29,7 +29,10 @@ export const handleDownloadReport = (
   siteSpeedAnalysis: SiteSpeedAnalysis | SEOError |undefined,
   structuredDataAnalysis: StructuredDataAnalysis | SEOError |undefined,
   mobileFriendlinessAnalysis: MobileFriendlinessAnalysis | SEOError |undefined,
-  lighthouseAnalysis: LightHouseAnalysis | SEOError |undefined
+  lighthouseAnalysis: LightHouseAnalysis | SEOError |undefined,
+  scrapeNews: ScrapeNews[]  |undefined,
+  reviews: Reviews  |undefined,
+  shareCountData : ShareCountData | undefined,
 ) => {
   const doc = new jsPDF();
 
@@ -907,7 +910,177 @@ doc.addPage();
       }
     });
   }
+  
+  // Review Analysis
+  doc.addPage();
+  doc.setFontSize(20);
+  const title16 = 'Review Analysis';
+  const titleWidth16 = doc.getStringUnitWidth(title16) * 20 / doc.internal.scaleFactor;
+  const x16 = (doc.internal.pageSize.width - titleWidth16) / 2;
+  doc.text(title16, x16, 20);
+  
+  
+  if (headingAnalysis) {
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+
+    const reviewRows = [
+      ['NPS', reviews && 'NPS' in reviews ? `${reviews.NPS}` : 'N/A'],
+      ['Number Of Reviews', reviews && 'numberOfReviews' in reviews ? `${reviews.numberOfReviews}` : 'N/A'],
+      ['Rating', reviews && 'rating' in reviews ? `${reviews.rating}` : 'N/A'],
+      ['Recommendation Status', reviews && 'recommendationStatus' in reviews ? `${reviews.recommendationStatus}` : 'N/A'],
+      ['TrustIndex', reviews && 'trustIndex' in reviews ? `${reviews.trustIndex}` : 'N/A'],
+    ];
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    reviewRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
   //
+  
+  // SahredCount Analysis
+  doc.addPage();
+  doc.setFontSize(20);
+  const title17 = 'Social Media Metrics';
+  const titleWidth17 = doc.getStringUnitWidth(title17) * 20 / doc.internal.scaleFactor;
+  const x17 = (doc.internal.pageSize.width - titleWidth17) / 2;
+  doc.text(title17, x17, 20);
+  
+  if (shareCountData) {
+    console.log('shareCountData:', shareCountData);
+    doc.setFontSize(14);
+    doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+    doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Category', margin + 2, startY + 7);
+    doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+
+    const shareCountDataRows = [
+      ['Facebook', shareCountData && shareCountData.Facebook && 'total_count' in shareCountData.Facebook ? shareCountData.Facebook.total_count : 'N/A'],
+      ['Pinterest', shareCountData && 'Pinterest' in shareCountData ? shareCountData.Pinterest : 'N/A'],
+    ];    
+
+    y = startY + headerHeight;
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    shareCountDataRows.forEach(row => {
+      const [category, info] = row;
+      const categoryLines = splitText(String(category), columnWidth[0] - 4);
+      const infoLines = splitText(String(info), columnWidth[1] - 4);
+
+      categoryLines.forEach((line, i) => {
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      infoLines.forEach((line, i) => {
+        doc.text(line, margin + columnWidth[0] + 2, y + (i * rowHeight) + 7);
+      });
+
+      // Draw line after each row
+      drawLine(y + Math.max(categoryLines.length, infoLines.length) * rowHeight + 3);
+
+      y += Math.max(categoryLines.length, infoLines.length) * rowHeight;
+
+      if (y > 270) { // Check if the y position exceeds the page limit
+        doc.addPage();
+        y = 20; // Reset y position on the new page
+        doc.text('Category', margin + 2, y + 7);
+        doc.text('Information', margin + columnWidth[0] + 2, y + 7);
+        y += headerHeight;
+      }
+    });
+  }
+//  
+doc.addPage();
+doc.setFontSize(20);
+const title19 = 'News Analysis';
+const titleWidth19 = doc.getStringUnitWidth(title19) * 20 / doc.internal.scaleFactor;
+const x19 = (doc.internal.pageSize.width - titleWidth19) / 2;
+doc.text(title19, x19, 20);
+
+
+if (scrapeNews) {
+  doc.setFontSize(14);
+  doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
+  doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Category', margin + 2, startY + 7);
+  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+
+  const scrapeNewsRows = scrapeNews.map(news => [
+    news.link || 'N/A',
+    news.pubDate || 'N/A',
+    news.sentimentScores ? JSON.stringify(news.sentimentScores) : 'N/A',
+    news.source || 'N/A',
+    news.title || 'N/A'
+  ]);
+   
+
+  y = startY + headerHeight;
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 0);
+
+  scrapeNewsRows.forEach(row => {
+    row.forEach((cell) => {
+      const text = String(cell);
+  
+  
+      const lines = doc.splitTextToSize(text, doc.internal.pageSize.width - margin * 2);
+  
+      lines.forEach((line: string, i: number) => {
+
+        doc.text(line, margin + 2, y + (i * rowHeight) + 7);
+      });
+      
+  
+      y += lines.length * rowHeight;
+  
+    
+      if (y > 270) {
+        doc.addPage();
+        y = 20; 
+      }
+    });
+  
+  
+    y += rowHeight;
+  
+    drawLine(y + 3);
+  });
+  
+  
+  }
+//
   const cleanFilename = (url: string | null): string => {
     if (!url) return 'website-summary-report';
     let filename = url.replace('http://', '').replace('https://', '');

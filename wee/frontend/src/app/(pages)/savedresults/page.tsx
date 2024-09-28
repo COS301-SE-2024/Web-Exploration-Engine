@@ -245,7 +245,7 @@ function ResultsComponent() {
     // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
 
     try {
-      handleDownloadReport(reportUrl, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis);
+      handleDownloadReport(reportUrl, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis,sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis,indexibilityAnalysis,siteSpeedAnalysis,structuredDataAnalysis,mobileFriendlinessAnalysis,lighthouseAnalysis,scrapeNews,reviews,shareCountData);
     }
     finally {
       setIsDownloadInProgress(false);
