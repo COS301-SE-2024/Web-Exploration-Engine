@@ -138,4 +138,19 @@ describe('NavBar Component', () => {
     fireEvent.click(screen.getByText('Saved Reports'));
     expect(mockPush).toHaveBeenCalledWith('/savedreports');
   });
+
+  it('should display Scheduled Scrape link as disabled when user is not logged in', () => {
+    render(<NavBar />);
+    expect(screen.getByText('Scheduled Tasks')).toHaveClass('cursor-not-allowed');
+  });
+
+  it('should navigate to scheduled scrape page when Scheduled Tasks link is clicked and user is logged in', () => {
+    (useUserContext as jest.Mock).mockReturnValue({
+      user: { name: 'John Doe' },
+      setUser: mockSetUser,
+    });
+    render(<NavBar />);
+    fireEvent.click(screen.getByText('Scheduled Tasks'));
+    expect(mockPush).toHaveBeenCalledWith('/scheduledscrape');
+  });
 });
