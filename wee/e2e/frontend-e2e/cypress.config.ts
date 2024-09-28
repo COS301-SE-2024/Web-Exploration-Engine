@@ -10,8 +10,6 @@ export default defineConfig({
     }),
     baseUrl: 'https://capstone-wee.dns.net.za',
     defaultCommandTimeout: 600000,
-    video: false, // Enable video recording
-    // Only keep videos for failing tests
   },
 
   retries: {
