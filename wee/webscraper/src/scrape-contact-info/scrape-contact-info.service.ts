@@ -13,7 +13,7 @@ export class ScrapeContactInfoService {
    * @returns {Promise<{ emails: string[], phones: string[] , socialLinks:string[]}>} 
    */
 
-  async scrapeContactInfo(url: string, robots: RobotsResponse, browser: puppeteer.Browser): Promise<{ emails: string[], phones: string[], socialLinks: string[] } > {
+  async scrapeContactInfo(url: string, robots: RobotsResponse, page: puppeteer.Page): Promise<{ emails: string[], phones: string[], socialLinks: string[] } > {
     logger.debug(`${serviceName}`);
     const start = performance.now();
 
@@ -23,28 +23,7 @@ export class ScrapeContactInfoService {
       return { emails: [], phones: [], socialLinks: [] };
     }
 
-    // proxy authentication
-    const username = process.env.PROXY_USERNAME;
-    const password = process.env.PROXY_PASSWORD;
-
-    if (!username || !password) {
-      console.error('Proxy username or password not set');
-      return { emails: [], phones: [], socialLinks: [] };
-    }
-    
-    let page;
-
     try {
-      page = await browser.newPage();
-
-      // authenticate page with proxy
-      await page.authenticate({
-        username,
-        password,
-      });
-      
-      await page.goto(url);
-
       // Extract text content from the page
       const textContent = await page.evaluate(() => document.body.innerText);
       const links = await page.evaluate(() => Array.from(document.querySelectorAll('a'), a => a.href));
@@ -56,20 +35,19 @@ export class ScrapeContactInfoService {
       const phones = textContent.match(phonePattern) || [];
       const socialLinks = links.filter(link => /facebook|twitter|linkedin|instagram/.test(link.toLowerCase()));
 
+      // Performance Logging
+      const duration = performance.now() - start;
+      logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
+      
       return { emails, phones, socialLinks };
     } catch (error) {
       logger.error(`${serviceName} Failed to scrape contact info `,error.message);
-
-      return { emails: [], phones: [], socialLinks: [] };
-    } finally {
-      if (page) {
-        await page.close();
-      }
 
       // Performance Logging
       const duration = performance.now() - start;
       logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
-    }
+      return { emails: [], phones: [], socialLinks: [] };
+    } 
   }
 }

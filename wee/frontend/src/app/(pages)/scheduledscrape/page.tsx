@@ -358,6 +358,7 @@ export default function ScheduledScrape() {
                 {/* Start scraping */}
                 <DatePicker
                   label="Start scraping date and time"
+                  id="datepickerscheduledscrape"
                   hideTimeZone
                   showMonthAndYearPickers
                   defaultValue={now(getLocalTimeZone())}

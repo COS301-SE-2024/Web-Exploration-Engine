@@ -1,7 +1,11 @@
 import winston, { createLogger, format, transports } from 'winston';
 import 'winston-daily-rotate-file';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid'; // Import the UUID function
 
+
+// get random uuid for log file name - no overwrite issues when running multiple instances
+const uniqueLogFileId = uuidv4();
 // Custom format to handle message and service extraction
 const customFormat = winston.format((info) => {
 
@@ -23,7 +27,7 @@ const customFormat = winston.format((info) => {
 
 const getLogger = (fileName = 'application') => {
   const fileLogTransport = new transports.DailyRotateFile({
-    filename: `../logs/${fileName}-%DATE%.log`,
+    filename: `.../logs/${fileName}-${uniqueLogFileId}-%DATE%.log'`, // Save logs to a file
     datePattern: 'YYYY-MM-DD',
     zippedArchive: true,
     maxSize: '20m',

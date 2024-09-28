@@ -17,9 +17,8 @@ export class NewsScraperService {
     try {
       console.log(`${serviceName} Starting fetchNewsArticles for URL: ${url}`);
       logger.info(`${serviceName} Starting fetchNewsArticles for URL: ${url}`,'url',url,'service',serviceName);
-
+      
       const businessName = this.extractBusinessName(url);
-      console.log(`${serviceName} Extracted business name: ${businessName}`);
 
       if (!businessName) {
         logger.error(`${serviceName} Failed to extract business name from URL: ${url}`);
@@ -27,7 +26,6 @@ export class NewsScraperService {
       }
 
       const rssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(businessName)}`;
-      console.log(`${serviceName} Constructed Google News RSS feed URL: ${rssUrl}`);
 
       const response = await axios.get(rssUrl);
       if (response.status !== 200) {
@@ -37,10 +35,19 @@ export class NewsScraperService {
 
       const xmlData = response.data;
       console.log(`${serviceName} Successfully fetched RSS feed.`);
+      if(!xmlData){
+        logger.error(`${serviceName} Failed to fetch Google News RSS feed for ${businessName}`);
+        throw new Error(`Failed to fetch news for ${businessName}`);
+      }
 
       const parser = new xml2js.Parser();
       const parsedData = await parser.parseStringPromise(xmlData);
-      console.log(`${serviceName} RSS feed parsed successfully.`);
+
+      if (!parsedData || !parsedData.rss || !parsedData.rss.channel || !parsedData.rss.channel[0].item) {
+        logger.error(`${serviceName} Unexpected RSS feed format`);
+        throw new Error('Unexpected RSS feed format');
+      }
+      
 
       const articles = parsedData.rss.channel[0].item.map((item: any) => ({
         title: item.title[0],
@@ -50,29 +57,18 @@ export class NewsScraperService {
       }));
 
       const limitedArticles = articles.slice(0, 10);
-      console.log(`${serviceName} Total articles fetched: ${limitedArticles.length}`);
 
       for (const article of limitedArticles) {
         const sentimentScores = await this.getSentiment(article.title);
         article.sentimentScores = sentimentScores;
       }
 
-      limitedArticles.forEach((article, index) => {
-        console.log(`Article ${index + 1}:`);
-        console.log(`Title: ${article.title}`);
-        console.log(`Link: ${article.link}`);
-        console.log(`Source: ${article.source}`);
-        console.log(`PubDate: ${article.pubDate}`);
-        console.log(`Sentiment Scores:`, article.sentimentScores);
-        console.log('-----------------------------');
-      });
-
       return limitedArticles;
 
     } catch (error) {
       logger.error(`${serviceName} Error fetching news articles: ${error.message}`);
       console.error(`${serviceName} Error fetching news articles: ${error.message}`);
-      throw new Error(`Error fetching news articles: ${error.message}`);
+      return [];
     }
   }
 
@@ -88,7 +84,6 @@ export class NewsScraperService {
       }
 
       const businessName = filteredParts.length > 1 ? filteredParts[filteredParts.length - 2] : filteredParts[0];
-      console.log(`${serviceName} Business name extracted from URL: ${businessName}`);
       return businessName;
     } catch (error) {
       logger.error(`${serviceName} Invalid URL provided: ${url}`);
@@ -110,8 +105,6 @@ export class NewsScraperService {
         }
       );
 
-      //console.log('Response from Hugging Face sentiment analysis API:', response.data);
-
       if (response.data && Array.isArray(response.data)) {
         const sentimentScores = {
           positive: 0,
@@ -121,7 +114,6 @@ export class NewsScraperService {
 
         response.data[0].forEach((result: any) => {
           if (result.label && result.score) {
-            //console.log(`Label: ${result.label}, Score: ${result.score}`);
             switch (result.label) {
               case 'POS':
                 sentimentScores.positive = result.score;
@@ -133,7 +125,6 @@ export class NewsScraperService {
                 sentimentScores.neutral = result.score;
                 break;
               default:
-                //console.log(`Unknown label: ${result.label}`);
             }
           }
         });

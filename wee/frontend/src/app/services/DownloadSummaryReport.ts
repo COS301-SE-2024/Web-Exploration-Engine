@@ -210,6 +210,9 @@ export const generatePDFReport = async (summaryReport: any, weakClassification: 
         }
         await captureChart('radar-chart', 'Industry and Domain Classification Distribution', 30);
         await captureChart('area-chart', 'Emotion Confidence Classification Distribution', 30);
+        await captureChart('stacked-column-chart', 'Social Media Metrics Distribution', 30);
+        await captureChart('star-chart', 'Review Distribution', 30);
+        await captureChart('news-chart', 'News sentiment distribution', 30);
     };        
 
     await addChartToPDF();

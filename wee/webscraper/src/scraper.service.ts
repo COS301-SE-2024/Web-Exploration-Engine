@@ -104,24 +104,25 @@ export class ScraperService implements OnModuleInit {
 
   async scrape(url: string) {
     logger.info(serviceName,"Started scaping")
+    console.log(`Starting scraping for URL: ${url}`);
     const start = performance.now();
-
-    // create puppeteer instance
-    const proxy = this.proxyService.getProxy();
-    let browser: puppeteer.Browser;
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
 
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: `Failed to launch browser ${error}`,
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
+    
 
     const data = {
       url: '',
@@ -145,7 +146,7 @@ export class ScraperService implements OnModuleInit {
 
     data.url = url;
 
-  // Scrape robots.txt status concurrently
+    // Scrape robots.txt status concurrently
     const robotsPromise = this.robotsService.readRobotsFile(url);
     const statusPromise = this.scrapeStatusService.scrapeStatus(url);
 
@@ -166,25 +167,25 @@ export class ScraperService implements OnModuleInit {
 
     data.robots = robots as RobotsResponse;
 
-
-  // Serially scrape metadata and all services that depend on only robots.txt
-    const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, browser);
-    const screenshotPromise = this.screenshotService.captureScreenshot(url, data.robots, browser);
-    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, browser);
-    const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, browser);
-    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, browser);
+    // Serially scrape metadata and all services that depend on only robots.txt
+    const metadataPromise = this.metadataService.scrapeMetadata(data.robots.baseUrl, data.robots, page);
+    const contactInfoPromise = this.scrapeContactInfoService.scrapeContactInfo(url, data.robots, page);
+    const addressPromise = this.scrapeAddressService.scrapeAddress(url, data.robots, page);
+    const seoAnalysisPromise = this.seoAnalysisService.seoAnalysis(url, data.robots, page, browser);
 
 
+    const [metadata, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
 
-    const [metadata, screenshot, contactInfo, addresses, seoAnalysis] = await Promise.all([metadataPromise, screenshotPromise, contactInfoPromise, addressPromise, seoAnalysisPromise]);
-
+    const screenshot = await this.screenshotService.captureScreenshot(url, data.robots, page); // dont do this concurrently - may timeout
+    const images = await this.scrapeImagesService.scrapeImages(url, data.robots, page); // dont do this concurrently - may timeout
+    data.images = images;
     if ('errorStatus' in screenshot) {
       data.screenshot = screenshot as ErrorResponse;
     } else {
       data.screenshot = screenshot.screenshot;
     }
 
-    // add error handling for contactInfo and addresses
+   // add error handling for contactInfo and addresses
     data.contactInfo = contactInfo;
 
     data.addresses = addresses.addresses;
@@ -205,16 +206,15 @@ export class ScraperService implements OnModuleInit {
 
   // Scrape services dependent on metadata
     const industryClassificationPromise = this.industryClassificationService.classifyIndustry(url, data.metadata);
-    const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, browser);
-    const imagesPromise = this.scrapeImagesService.scrapeImages(url, data.robots, browser);
+    const logoPromise = this.scrapeLogoService.scrapeLogo(url, data.metadata, data.robots, page);
     const sentimentClassificationPromise = this.sentimentAnalysisService.classifySentiment(url, data.metadata);
 
     const newsScrapingPromise = this.newsScraperService.fetchNewsArticles(url);
     const shareCountPromise = this.shareCountService.getShareCount(url);
     const reviewsPromise = this.reviewsService.scrapeReviews(url, browser);
 
-    const [industryClassification, logo, images, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
-      industryClassificationPromise, logoPromise, imagesPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
+    const [industryClassification, logo, sentimentAnalysis, newsScraping, shareCount, reviews ] = await Promise.all([
+      industryClassificationPromise, logoPromise, sentimentClassificationPromise, newsScrapingPromise, shareCountPromise, reviewsPromise
     ]);
 
     // add error handling industryClassification
@@ -222,10 +222,7 @@ export class ScraperService implements OnModuleInit {
 
     data.logo = logo;
 
-    data.images = images;
-
     data.sentiment = sentimentAnalysis;
-
 
     data.scrapeNews = newsScraping;
     
@@ -233,7 +230,13 @@ export class ScraperService implements OnModuleInit {
 
     data.reviews = reviews;
 
-    // close browser
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
 
     const end = performance.now();
@@ -241,13 +244,6 @@ export class ScraperService implements OnModuleInit {
     data.time = parseFloat(time.toFixed(4));
 
     return data;
-
-  //  return {
-  //     errorStatus: 500,
-  //     errorCode: '500 Internal Server Error',
-  //     errorMessage: 'Not implemented',
-  //   } as ErrorResponse;
-   
   }
 
   async readRobotsFile(url: string) {
@@ -261,26 +257,38 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch(); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
       robotsResponse as RobotsResponse,
-      browser
+      page
     );
 
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
+    
     return metadataResponse;
   }
 
@@ -294,30 +302,40 @@ export class ScraperService implements OnModuleInit {
     if ('errorStatus' in robotsResponse) {
       return robotsResponse;
     }
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
       robotsResponse as RobotsResponse,
-      browser
+      page
     );
 
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
+    await browser.close();
+
     if ('errorStatus' in metadataResponse) {
-      await browser.close();
       return metadataResponse;
     }
 
@@ -331,33 +349,50 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
       robotsResponse as RobotsResponse,
-      browser
+      page
     );
+
+
     if ('errorStatus' in metadataResponse) {
+      // Close the page if it was opened
+      const pages = await browser.pages();
+      for (const page of pages) {
+          await page.close();
+      }
+
+      // Close the browser
       await browser.close();
       return metadataResponse;
     }
 
-    const logo = await this.scrapeLogoService.scrapeLogo(url, metadataResponse as Metadata, robotsResponse, browser);
+    const logo = await this.scrapeLogoService.scrapeLogo(url, metadataResponse as Metadata, robotsResponse, page);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return logo;
   }
@@ -368,33 +403,48 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
       robotsResponse as RobotsResponse,
-      browser
+      page
     );
     if ('errorStatus' in metadataResponse) {
+      // Close the page if it was opened
+      const pages = await browser.pages();
+      for (const page of pages) {
+          await page.close();
+      }
+
+      // Close the browser
       await browser.close();
       return metadataResponse;
     }
 
-    const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, browser);
+    const images = await this.scrapeImagesService.scrapeImages(url, robotsResponse, page);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return images;
   }
@@ -406,23 +456,32 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
+    
 
-    const screenshot = await this.screenshotService.captureScreenshot(url, robotsResponse, browser);
+    const screenshot = await this.screenshotService.captureScreenshot(url, robotsResponse, page);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return screenshot;
   }
@@ -433,23 +492,31 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
-    const contactInfo = await this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse, browser);
+    const contactInfo = await this.scrapeContactInfoService.scrapeContactInfo(url, robotsResponse, page);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return contactInfo;
   }
@@ -460,23 +527,31 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
-    const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, browser);
+    const addresses = await this.scrapeAddressService.scrapeAddress(url, robotsResponse, page);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return addresses;
   }
@@ -487,23 +562,31 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
-    const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, browser);
+    const seoAnalysis = await this.seoAnalysisService.seoAnalysis(url, robotsResponse, page, browser);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return seoAnalysis;
   }
@@ -514,55 +597,78 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    // create puppeteer instance
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const metadataResponse = await this.metadataService.scrapeMetadata(
       robotsResponse.baseUrl,
       robotsResponse as RobotsResponse,
-      browser
+      page
     );
     if ('errorStatus' in metadataResponse) {
+      // Close the page if it was opened
+    const pages = await browser.pages();
+      for (const page of pages) {
+          await page.close();
+      }
+
+      // Close the browser
       await browser.close();
       return metadataResponse;
     }
 
     const sentimentClassification = await this.sentimentAnalysisService.classifySentiment(url, metadataResponse as Metadata);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return sentimentClassification;
   }
 
   async keywordAnalysis(url: string, keyword: string) {
-    // create puppeteer instance
     let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      }); // add proxy here
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser } = result);
+
     } catch (error) {
       logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
 
     const keywordAnalysis = await this.keywordAnalysisService.getKeywordRanking(url, keyword, browser);
+    // Close the page if it was opened
+    const pages = await browser.pages();
+    for (const page of pages) {
+        await page.close();
+    }
+
+    // Close the browser
     await browser.close();
     return keywordAnalysis;
   }
@@ -587,22 +693,6 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
 
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
-
-    try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
-    } catch (error) {
-      logger.error(`${serviceName} Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
-      return {
-        errorStatus: 500,
-        errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
-      } as ErrorResponse;
-    }
-
     try {
       const newsData = await this.newsScraperService.fetchNewsArticles(url);
       return newsData;
@@ -613,11 +703,7 @@ export class ScraperService implements OnModuleInit {
         errorCode: '500 Internal Server Error',
         errorMessage: `Error scraping news: ${error instanceof Error ? error.message : String(error)}`,
       } as ErrorResponse;
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
+    } 
   }
 
   async scrapeReviews(url: string) {
@@ -626,19 +712,20 @@ export class ScraperService implements OnModuleInit {
       return robotsResponse;
     }
   
-    let browser: puppeteer.Browser;
-    const proxy = this.proxyService.getProxy();
-  
+    let browser: puppeteer.Browser, page: puppeteer.Page;
+    
+    // get puppeteer instances
     try {
-      browser = await puppeteer.launch({
-        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
-      });
+      const result = await this.getPage(url);
+      // Destructure the result to get browser, page, and response
+      ({ browser, page } = result);
+
     } catch (error) {
-      logger.error(`Failed to launch browser for scraping reviews: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(serviceName,'Failed to launch browser', error);
       return {
         errorStatus: 500,
         errorCode: '500 Internal Server Error',
-        errorMessage: 'Failed to launch browser',
+        errorMessage: `Puppeteer failed to launch the page:  ${error.message}`,
       } as ErrorResponse;
     }
   
@@ -653,9 +740,14 @@ export class ScraperService implements OnModuleInit {
         errorMessage: `Error scraping reviews: ${error instanceof Error ? error.message : String(error)}`,
       } as ErrorResponse;
     } finally {
-      if (browser) {
-        await browser.close();
+      // Close the page if it was opened
+      const pages = await browser.pages();
+      for (const page of pages) {
+          await page.close();
       }
+
+      // Close the browser
+      await browser.close();
     }
   }
 
@@ -760,6 +852,7 @@ export class ScraperService implements OnModuleInit {
           await this.cacheManager.set(cacheKey, JSON.stringify(completeData));
 
           logger.info(serviceName,`Scraping completed for URL: ${url}, Type: ${type}`);
+          console.log(`Scraping completed for URL: ${url}, Type: ${type}`);
           // Performance Logging
           const duration = performance.now() - start;
           logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-miss`);
@@ -782,12 +875,55 @@ export class ScraperService implements OnModuleInit {
         logger.info(serviceName,`Already processing ojb: ${cacheKey}`);
         return null;
       } else if (data.status === 'error') {
-        logger.error(serviceName,`Error during scraping job: ${cacheKey}`, data.error);
+        // clear cache if error
+        await this.cacheManager.del(cacheKey); // allow rescrape if error is cached
         return null;
       }
     }
     return null;
   }
 
+  async getPage(url: string) {
+    const proxy = this.proxyService.getProxy();
+    // proxy authentication
+    const username = process.env.PROXY_USERNAME;
+    const password = process.env.PROXY_PASSWORD;
+
+    if (!username || !password) {
+      throw new Error('Proxy username or password not set');
+    }
+
+    let browser: puppeteer.Browser;
+    let page: puppeteer.Page;
+    let response;
+    try {
+      browser = await puppeteer.launch({
+        protocolTimeout: 60000,
+        headless: true,
+        args: [`--proxy-server=${proxy}`, '--no-sandbox', '--disable-setuid-sandbox'],
+      });
+
+      page = await browser.newPage();
+
+      await page.authenticate({
+        username,
+        password,
+      });
+
+      // Store the result of page.goto in a variable
+      response = await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 }); // timeout 60s
+      if (!response) {
+        throw new Error('Failed to load page');
+      } else if (response.status() >= 400) {
+        throw new Error(`Failed to load page: ${response.status()} ${response.statusText()}`);
+      }
+
+    } catch (error) {
+      throw new Error(`Failed to launch browser: ${error instanceof Error ? error.message : String(error)}`);
+    }
+
+    return { browser, page, response };
+  }
+  
 }
 

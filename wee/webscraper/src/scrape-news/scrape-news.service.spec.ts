@@ -65,10 +65,10 @@ describe('NewsScraperService', () => {
       ]);
     });
 
-    it('should throw an error if unable to fetch news articles', async () => {
+    it('should return an empty array when unable to fetch news articles', async () => {
       mockedAxios.get.mockRejectedValueOnce(new Error('Failed to fetch'));
 
-      await expect(service.fetchNewsArticles('http://example.com')).rejects.toThrow('Error fetching news articles: Failed to fetch');
+      await expect(service.fetchNewsArticles('http://example.com')).resolves.toEqual([]);
     });
   });
 

@@ -2,7 +2,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { InfoPopOver } from '../../components/InfoPopOver';
 import { LineChartCustomAxis, LineChart } from '../../components/Graphs/LineChart';
-import { AreaChart } from '../../components/Graphs/AreaChart';
+import { SentimentAreaChart, AreaChart } from '../../components/Graphs/AreaChart';
 import { ColumnChartNPS } from '../../components/Graphs/ColumnChart';
 import { StackedColumnChart } from '../../components/Graphs/StackedColumnChart';
 import { HeatMapChart } from '../../components/Graphs/HeatMapChart';
@@ -390,7 +390,7 @@ function DashboardPage() {
 					(dashboardData.result_history.newsSentiment.positiveAvg.length === dashboardData.result_history.timestampArr.length)
 					? (
 						<div data-testid="dashboard-newssentiment-graph" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
-							<AreaChart
+							<SentimentAreaChart
 								areaCategories={dashboardData.result_history.timestampArr.slice(DISPLAY_NUMBER).map((timestamp) => new Date(timestamp).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }))}
 								areaSeries={[
 									{ name: 'positive', data: dashboardData.result_history.newsSentiment.positiveAvg.slice(DISPLAY_NUMBER).map(value => Math.round(value * 100)) },

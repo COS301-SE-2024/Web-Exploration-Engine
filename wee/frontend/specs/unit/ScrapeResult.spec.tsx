@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
 import userEvent from '@testing-library/user-event';
 import { pollForResult } from '../../src/app/services/PubSubService';
+import { isScrapedResult } from '../../src/Utils/scrapingUtils';
 
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
@@ -24,9 +25,9 @@ jest.mock('../../src/app/services/PubSubService', () => ({
 
 jest.mock('frontend/src/app/context/ScrapingContext', () => ({
     useScrapingContext: () => ({
-        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com', 'https://www.example5.com'],
+        urls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example3.com', 'https://www.example5.com', 'https://www/example6.com'],
         setUrls: jest.fn(),
-        results: [        
+        results: [
             {
                 url: "https://www.example.com'",
                 domainStatus: 'parked',
@@ -39,7 +40,7 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
             {
                 url: 'https://www.example2.com',
                 domainStatus: 'live',
-                robots: { 
+                robots: {
                     isUrlScrapable: true,
                 },
             },
@@ -52,15 +53,75 @@ jest.mock('frontend/src/app/context/ScrapingContext', () => ({
                 url: 'https://www.example5.com'
             }
         ],
-        processedUrls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example5.com'],
+        undefinedResults: [
+            { url: 'https://www/example6.com' }
+        ],
+        processedUrls: ['https://www.example.com', 'https://www.example2.com', 'https://www.example5.com', 'https://www/example6.com'],
         setProcessedUrls: jest.fn(),
         processingUrls: [],
-        setProcessingUrls: jest.fn(), 
+        setProcessingUrls: jest.fn(),
         setResults: jest.fn(),
         setErrorResults: jest.fn(),
+        setUndefinedResults: jest.fn(),
         setSummaryReport: jest.fn(),
     }),
 }));
+
+describe("isScrapedResult type guard", () => {
+    // Example ScraperResult object
+    const validScraperResult = {
+        url: "https://example.com",
+        domainStatus: "active",
+        robots: {},
+        metadata: {},
+        industryClassification: "technology",
+        logo: "https://example.com/logo.png",
+        images: [],
+        slogan: "Example Slogan",
+        contactInfo: { email: "contact@example.com" },
+        time: "2023-09-27",
+        addresses: [],
+        screenshot: "data:image/png;base64,...",
+        seoAnalysis: {},
+        sentiment: {},
+        scrapeNews: [],
+        reviews: [],
+        shareCountdata: {}
+    };
+
+    // Example ErrorResponse object
+    const errorResponse = {
+        error: "Some error message"
+    };
+
+    // Example UndefinedResponse object
+    const undefinedResponse = {
+        undefinedField: undefined
+    };
+
+    it("should return true for a valid ScraperResult", () => {
+        const result = isScrapedResult(validScraperResult);
+        expect(result).toBe(true);
+    });
+
+    it("should return false for an ErrorResponse", () => {
+        const result = isScrapedResult(errorResponse);
+        expect(result).toBe(false);
+    });
+
+    it("should return false for an UndefinedResponse", () => {
+        const result = isScrapedResult(undefinedResponse);
+        expect(result).toBe(false);
+    });
+
+    it("should return false if a required field is missing", () => {
+        const incompleteScraperResult = { ...validScraperResult };
+        delete incompleteScraperResult.url; // Missing required field
+
+        const result = isScrapedResult(incompleteScraperResult);
+        expect(result).toBe(false);
+    });
+});
 
 describe('Scrape Results Component', () => {
     const mockPush = jest.fn();
@@ -70,19 +131,19 @@ describe('Scrape Results Component', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        (useRouter as jest.Mock).mockReturnValue({ push: mockPush }); 
+        (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
     });
 
     afterEach(() => {
         jest.clearAllMocks();
     });
 
-    it('should display 3 results', async () => {
+    it('should display 4 results', async () => {
         await act(async () => {
             render(<ScrapeResults />);
         });
 
-        expect(screen.getByText('Total 3 results')).toBeDefined();
+        expect(screen.getByText('Total 4 results')).toBeDefined();
     });
 
     it('should filter items based on searchValue - test 1', () => {
@@ -127,7 +188,7 @@ describe('Scrape Results Component', () => {
     it('count the number of view buttons', () => {
         render(<ScrapeResults />);
 
-        const viewButtons = screen.getAllByText('View');
+        const viewButtons = screen.getAllByRole('button', { name: /View/i });
         expect(viewButtons.length).toBe(2);
     });
 
@@ -140,22 +201,22 @@ describe('Scrape Results Component', () => {
 
         const crawlableFilterTrigger = screen.getByTestId('crawlable-filter');
         expect(crawlableFilterTrigger).toBeInTheDocument();
-      
+
         fireEvent.click(crawlableFilterTrigger);
-      
+
         await waitFor(() => {
-          expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
-          expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
+            expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
+            expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
         });
-      
+
         const noCrawlableOption = screen.getByTestId('crawlable-filter-no');
         fireEvent.click(noCrawlableOption);
 
         await waitFor(() => {
             const rows = screen.getAllByTestId('table-row');
             expect(rows.length).toBeGreaterThan(0);
-        });    
-    
+        });
+
         await waitFor(() => {
             expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
             expect(screen.queryByText('https://www.example2.com')).toBeNull();
@@ -172,22 +233,22 @@ describe('Scrape Results Component', () => {
 
         const crawlableFilterTrigger = screen.getByTestId('crawlable-filter');
         expect(crawlableFilterTrigger).toBeInTheDocument();
-      
+
         fireEvent.click(crawlableFilterTrigger);
-      
+
         await waitFor(() => {
-          expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
-          expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
+            expect(screen.getByTestId('crawlable-filter-yes')).toBeInTheDocument();
+            expect(screen.getByTestId('crawlable-filter-no')).toBeInTheDocument();
         });
-      
+
         const yesCrawlableOption = screen.getByTestId('crawlable-filter-yes');
         fireEvent.click(yesCrawlableOption);
 
         await waitFor(() => {
             const rows = screen.getAllByTestId('table-row');
             expect(rows.length).toBeGreaterThan(0);
-        });    
-    
+        });
+
         await waitFor(() => {
             expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
             expect(screen.getByText('https://www.example2.com')).toBeDefined();
@@ -204,22 +265,22 @@ describe('Scrape Results Component', () => {
 
         const statusFilterTrigger = screen.getByTestId('status-filter');
         expect(statusFilterTrigger).toBeInTheDocument();
-      
+
         fireEvent.click(statusFilterTrigger);
-      
+
         await waitFor(() => {
-          expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
-          expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
+            expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
+            expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
         });
-      
+
         const parkedStatusOption = screen.getByTestId('status-filter-parked');
         fireEvent.click(parkedStatusOption);
 
         await waitFor(() => {
             const rows = screen.getAllByTestId('table-row');
             expect(rows.length).toBeGreaterThan(0);
-        });    
-    
+        });
+
         await waitFor(() => {
             expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
             expect(screen.queryByText('https://www.example2.com')).toBeNull();
@@ -236,22 +297,22 @@ describe('Scrape Results Component', () => {
 
         const statusFilterTrigger = screen.getByTestId('status-filter');
         expect(statusFilterTrigger).toBeInTheDocument();
-      
+
         fireEvent.click(statusFilterTrigger);
-      
+
         await waitFor(() => {
-          expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
-          expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
+            expect(screen.getByTestId('status-filter-parked')).toBeInTheDocument();
+            expect(screen.getByTestId('status-filter-live')).toBeInTheDocument();
         });
-      
+
         const parkedStatusOption = screen.getByTestId('status-filter-live');
         fireEvent.click(parkedStatusOption);
 
         await waitFor(() => {
             const rows = screen.getAllByTestId('table-row');
             expect(rows.length).toBeGreaterThan(0);
-        });    
-    
+        });
+
         await waitFor(() => {
             expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
             expect(screen.getByText('https://www.example2.com')).toBeDefined();
@@ -279,7 +340,7 @@ describe('Scrape Results Component', () => {
         const mockResult = {
             url: 'https://www.example7.com',
             domainStatus: 'live',
-            robots: { 
+            robots: {
                 isUrlScrapable: true,
             },
         };
