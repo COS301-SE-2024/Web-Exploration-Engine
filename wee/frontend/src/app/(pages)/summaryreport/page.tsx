@@ -548,7 +548,7 @@ export default function SummaryReport() {
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
           Social Media Engagement
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
+        <div id="stacked-column-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2' data-testid="socialMetricsGraph">
           {summaryReport.socialMetrics 
           && summaryReport.socialMetrics.urls?.length > 0 
             && summaryReport.socialMetrics.facebookCommentCount?.length > 0 
@@ -629,7 +629,7 @@ export default function SummaryReport() {
 
         </div>
         {summaryReport.averageStarRating && summaryReport.averageStarRating.length == 5 ? (
-          <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+          <div id="star-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
             <h3 className="font-poppins-semibold text-lg text-jungleGreen-700 dark:text-jungleGreen-100 mb-2 text-center">
               Average Star Ratings for Reviews
             </h3>
@@ -663,7 +663,7 @@ export default function SummaryReport() {
         <h3 className="font-poppins-semibold text-2xl text-jungleGreen-700 dark:text-jungleGreen-100 pb-2 mt-10">
           Average News Sentiment
         </h3>
-        <div className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
+        <div id="news-chart" className='bg-zinc-200 dark:bg-zinc-700 rounded-xl p-4 mt-2'>
           {summaryReport.newsSentiment ? (
             <span data-testid='stacked-column-chart-news-sentiment'>
 

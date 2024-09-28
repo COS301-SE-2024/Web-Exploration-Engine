@@ -17,13 +17,10 @@ export class ScrapeReviewsService {
       console.error('Failed to extract business name from URL');
       return null;
     }
-    console.log(`Extracted business name: ${businessName}`);
 
     const reviews = await this.scrapeReviewsViaGoogle(businessName, browser);
-    //console.log(`Scraped ${reviews.length} reviews.`);
     // Performance Logging
     const duration = performance.now() - start;
-    console.log(`Duration of ${serviceName} : ${duration}`);
     logger.info(serviceName,'duration',duration,'url',url,'service',serviceName);
 
     return reviews;
@@ -55,16 +52,12 @@ export class ScrapeReviewsService {
       
       await page.goto(searchUrl, { waitUntil: 'networkidle2' });
 
-      console.log(`Navigated to Google search results for "${businessName} reviews".`);
-
       const reviewUrls = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll('a'));
         return links
           .map(link => link.href)
           .filter(href => href.includes('hellopeter.com'));
       });
-
-      console.log(`Found review URLs: ${reviewUrls}`);
 
       // just use first url
       const url = reviewUrls[0];
@@ -92,7 +85,6 @@ export class ScrapeReviewsService {
   private async scrapeReviewsFromHelloPeter(page: puppeteer.Page): Promise<ReviewData> {
     try {
       await page.waitForSelector('span.has-text-weight-bold', { timeout: 15000 });
-      console.log('Review content and elements loaded.');
   
       const { rating, reviewCount, trustindexRating, nps, recommendationStatus, reviewNumbers } = await page.evaluate(() => {
         const elements = Array.from(document.querySelectorAll('div.perf-card__head'));
@@ -113,14 +105,6 @@ export class ScrapeReviewsService {
   
         return { rating, reviewCount, trustindexRating, nps, recommendationStatus, reviewNumbers };
       });
-  
-      console.log(`Extracted rating from Hello Peter: ${rating}`);
-      console.log(`Extracted review count from Hello Peter: ${reviewCount}`);
-      console.log(`Extracted Trustindex rating from Hello Peter: ${trustindexRating}`);
-      console.log(`Extracted NPS from Hello Peter: ${nps}`);
-      console.log(`Extracted recommendation status from Hello Peter: ${recommendationStatus}`);
-      console.log(`Extracted review numbers from Hello Peter: ${reviewNumbers.join(', ')}`);
-
 
       // format correctly
       // change rating to number
@@ -195,7 +179,6 @@ export class ScrapeReviewsService {
       const hostname = new URL(url).hostname;
       const businessName = hostname.replace('www.', '').split('.')[0].replace(/-/g, ' ');
 
-      console.log(`Business name extracted from URL: ${businessName}`);
       return businessName;
     } catch (error) {
       console.error(`Failed to extract business name from URL: ${error.message}`);
