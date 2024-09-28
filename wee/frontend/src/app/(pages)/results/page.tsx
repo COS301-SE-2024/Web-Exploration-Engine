@@ -37,7 +37,7 @@ import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pu
 import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
 import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
 import { result } from 'cypress/types/lodash';
-import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
+import { ColumnChartWithLables, SentimentColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface Classifications {
   label: string;
@@ -56,10 +56,6 @@ export default function Results() {
     </Suspense>
   );
 }
-
-// function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
-//   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
-// }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
   return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
@@ -88,10 +84,6 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
 function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
   return 'title' in data || 'description' in data || 'keywords' in data || 'ogTitle' in data || 'ogDescription' in data || 'ogImage' in data;
 }
-
-// function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
-//   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
-// }
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
   return 'scores' in data || 'diagnostics' in data;
@@ -2175,7 +2167,7 @@ function ResultsComponent() {
                                   Read article
                                 </Link>
 
-                                <ColumnChartWithLables
+                                <SentimentColumnChartWithLables
                                   dataLabel={[
                                     'Positive', 'Neutral', 'Negative'
                                   ]}
