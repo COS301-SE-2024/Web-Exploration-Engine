@@ -39,8 +39,6 @@ const serviceName = "[ScraperService]";
 logger.info(serviceName);
 @Injectable()
 export class ScraperService implements OnModuleInit {
-  private messageQueue: any[] = [];
-  private isProcessing = false;
 
   constructor(
     @Inject('CACHE_MANAGER') private cacheManager: Cache,
@@ -70,35 +68,35 @@ export class ScraperService implements OnModuleInit {
   async scrapeWebsite(data: {url: string, keyword?: string}, type: string) {
     switch (type) {
       case 'scrape':
-        return await this.scrape(data.url);
+        return this.scrape(data.url);
       case 'read-robots':
-        return await this.readRobotsFile(data.url);
+        return this.readRobotsFile(data.url);
       case 'scrape-metadata':
-        return await this.scrapeMetadata(data.url);
+        return this.scrapeMetadata(data.url);
       case 'scrape-status':
-        return await this.scrapeStatus(data.url);
+        return this.scrapeStatus(data.url);
       case 'classify-industry':
-        return await this.classifyIndustry(data.url);
+        return this.classifyIndustry(data.url);
       case 'scrape-logo':
-        return await this.scrapeLogo(data.url);
+        return this.scrapeLogo(data.url);
       case 'scrape-images':
-        return await this.scrapeImages(data.url);
+        return this.scrapeImages(data.url);
       case 'screenshot':
         return this.getScreenshot(data.url);
       case 'scrape-contact-info':
-        return await this.scrapeContactInfo(data.url);
+        return this.scrapeContactInfo(data.url);
       case 'scrape-addresses':
-        return await this.scrapeAddress(data.url);
+        return this.scrapeAddress(data.url);
       case 'seo-analysis':
-        return await this.seoAnalysis(data.url);
+        return this.seoAnalysis(data.url);
       case 'keyword-analysis':
-        return await this.keywordAnalysis(data.url, data.keyword);
+        return this.keywordAnalysis(data.url, data.keyword);
       case 'scrape-news':
-        return await this.scrapeNews(data.url);
+        return this.scrapeNews(data.url);
       case 'share-count':
-        return await this.getShareCount(data.url);
+        return this.getShareCount(data.url);
       case 'scrape-reviews':
-        return await this.scrapeReviews(data.url);
+        return this.scrapeReviews(data.url);
       default:
         throw new Error(`Unknown scraping type: ${type}`);
     }
@@ -756,42 +754,20 @@ export class ScraperService implements OnModuleInit {
   async listenForScrapingTasks() {
     const subscriptionName = process.env.GOOGLE_CLOUD_SUBSCRIPTION;
     if (!subscriptionName) {
-      logger.error(serviceName, 'GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
+      logger.error(serviceName,'GOOGLE_CLOUD_SUBSCRIPTION env variable not set');
       return;
     }
-  
-    const processNextMessage = async () => {
-      if (this.messageQueue.length === 0) {
-        this.isProcessing = false; // Unlock if queue is empty
-        return;
-      }
-  
-      this.isProcessing = true; // Lock to ensure only one message is processed at a time
-      const nextMessage = this.messageQueue.shift(); // Get the first message in the queue
-  
-      try {
-        await this.handleMessage(nextMessage); // Process the message
-      } catch (error) {
-        logger.error(serviceName, 'Error handling message', error);
-      } finally {
-        processNextMessage(); // Continue to the next message after processing
-      }
-    };
-  
+
     const messageHandler = async (message) => {
-      logger.info(serviceName, `Received message ${message.id}`);
-  
-      // Add the message to the queue
-      this.messageQueue.push(message);
-  
-      // If no message is being processed, start processing the queue
-      if (!this.isProcessing) {
-        processNextMessage();
+      try {
+        await this.handleMessage(message);
+      } catch (error) {
+        logger.error(serviceName,'Error handling message', error);
       }
     };
-  
+
     await this.pubsub.subscribe(subscriptionName, messageHandler);
-    logger.info(serviceName, 'Subscribed to scraping tasks, listening for messages...');
+    logger.info(serviceName,'Subscribed to scraping tasks, listening for messages...');
   }
 
   async handleMessage(message) {
@@ -854,11 +830,6 @@ export class ScraperService implements OnModuleInit {
               await this.cacheManager.set(cacheKey, JSON.stringify(cachedData));
             }
 
-            if (cachedData.status === 'processing') {
-              console.log(serviceName,`Already processing ojb: ${cacheKey}`);
-              return;
-            }
-
           // Performance Logging
           const duration = performance.now() - start;
           logger.info(serviceName,`Duration of ${serviceName} : ${duration}, cache-hit`);
@@ -899,15 +870,10 @@ export class ScraperService implements OnModuleInit {
     if (cachedDataString) {
       const data = JSON.parse(cachedDataString);
       if (data.status === 'completed') {
-        if (data.result.errorStatus) {
-          // clear cache if error
-          await this.cacheManager.del(cacheKey); // allow rescrape if error is cached
-          return null;
-        }
         return data;
       } else if (data.status === 'processing') {
         logger.info(serviceName,`Already processing ojb: ${cacheKey}`);
-        return data;
+        return null;
       } else if (data.status === 'error') {
         // clear cache if error
         await this.cacheManager.del(cacheKey); // allow rescrape if error is cached
