@@ -167,6 +167,14 @@ function DashboardPage() {
 				>
 					Back
 				</Button>
+				<div className='mb-8 text-center'>
+					<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+						Dashboard of {dashboardData ? dashboardData.url : 'N/A'}
+					</h1>
+					<h2 className="mt-2 font-poppins-bold text-md sm:text-lg md:text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
+						Date of last scheduled scrape: {dashboardData ? new Date(dashboardData.updated_at).toLocaleString('en-ZA') : 'N/A'}
+					</h2>
+				</div>
 				<div className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl mt-4'>
 					The dashboard is not available on mobile devices. Please access it on a desktop for the best experience.
 				</div>
