@@ -19,17 +19,9 @@ services:
     environment:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       PUPPETEER_EXECUTABLE_PATH: '/usr/bin/google-chrome-stable'
-    ports:
-      - "3003:3003"
     command: >
       sh -c "npx nx serve webscraper --skip-nx-cache --configuration=production --verbose"
     user: webscraper
-    healthcheck:
-      test: ["CMD", "curl", "-f", "https://capstone-wee.dns.net.za/api/health"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
     depends_on:
       - redis-cache
     volumes:
@@ -47,8 +39,7 @@ services:
     command: >
       sh -c "npx nx serve api-service --skip-nx-cache --configuration=production --verbose"
     depends_on:
-      webscraper:
-        condition: service_healthy
+      - webscraper
     restart: unless-stopped
 
   frontend:

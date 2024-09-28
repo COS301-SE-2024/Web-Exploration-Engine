@@ -51,7 +51,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe(metadata.ogImage);
   });
 
@@ -89,7 +89,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('');
   });
 
@@ -166,7 +166,7 @@ describe('ScrapeLogoService', () => {
       isUrlScrapable: true,
     };
 
-    const result = await service.scrapeLogo('http://example.com', metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo('http://example.com', metadata, robots, mockPage);
     expect(result).toEqual("");
   });
 
@@ -204,7 +204,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('');
   });
 
@@ -244,7 +244,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('http://example.com/logo1.png');
   });
 
@@ -284,7 +284,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('http://example.com/logo1.png');
   });
 
@@ -322,7 +322,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('');
   });
 
@@ -344,6 +344,13 @@ describe('ScrapeLogoService', () => {
       isUrlScrapable: true,
     };
 
+    const mockPage = {
+      goto: jest.fn().mockRejectedValue(new Error('Failed to launch browser')),
+      evaluate: jest.fn(),
+      authenticate: jest.fn(),
+      close: jest.fn(),
+    } as unknown as puppeteer.Page;
+
     const mockBrowser = {
       newPage: jest.fn().mockRejectedValue(new Error('Failed to launch browser')),
       close: jest.fn(),
@@ -353,7 +360,7 @@ describe('ScrapeLogoService', () => {
     process.env.PROXY_USERNAME = 'username';
     process.env.PROXY_PASSWORD = 'password';
 
-    const result = await service.scrapeLogo(url, metadata, robots, mockBrowser);
+    const result = await service.scrapeLogo(url, metadata, robots, mockPage);
     expect(result).toBe('');
   });
 

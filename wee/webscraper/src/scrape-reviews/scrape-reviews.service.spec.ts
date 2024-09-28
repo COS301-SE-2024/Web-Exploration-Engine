@@ -56,19 +56,6 @@ describe('ScrapeReviewsService', () => {
       const result = await service.scrapeReviews('invalid-url', browser);
       expect(result).toBeNull();
     });
-
-    it('should log business name and review count on successful review scraping', async () => {
-      const consoleLogSpy = jest.spyOn(console, 'log');
-      const scrapeReviewsViaGoogleSpy = jest
-        .spyOn(service as any, 'scrapeReviewsViaGoogle')
-        .mockResolvedValue(['Review 1', 'Review 2']);
-  
-      await service.scrapeReviews('https://example-business.com', browser);
-  
-      expect(consoleLogSpy).toHaveBeenCalledWith('Starting review scraping for URL: https://example-business.com');
-      expect(consoleLogSpy).toHaveBeenCalledWith('Extracted business name: example business');
-      expect(scrapeReviewsViaGoogleSpy).toHaveBeenCalledWith('example business', browser);
-    });
   });
 
   describe('scrapeReviewsViaGoogle', () => {

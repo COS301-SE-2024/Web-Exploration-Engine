@@ -698,17 +698,22 @@ export default function Comparison() {
                 </div>
                 <div className="flex justify-between ">
                     <div className="text-center w-1/3">
+                        <span className='flex md:hidden flex-col justify-center h-full'>
+                            Sorry, the donut graph is not available on mobile devices
+                        </span>
                         {
                             !websiteOne ? '' : (websiteOne.scrapeNews ?
-                                <DonutChart
-                                    dataLabel={['Positive', 'Neutral', 'Negative']}
-                                    dataSeries={[
-                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteOne.scrapeNews.length) * 100,
-                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteOne.scrapeNews.length) * 100,
-                                        (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteOne.scrapeNews.length) * 100
-                                    ]}
-                                    legendPosition='right'
-                                />
+                                <span className="hidden md:block">
+                                    <DonutChart
+                                        dataLabel={['Positive', 'Neutral', 'Negative']}
+                                        dataSeries={[
+                                            (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteOne.scrapeNews.length) * 100,
+                                            (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteOne.scrapeNews.length) * 100,
+                                            (websiteOne.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteOne.scrapeNews.length) * 100
+                                        ]}
+                                        legendPosition='right'
+                                    />
+                                </span>
                                 : ''
                             )
                         }
@@ -724,17 +729,22 @@ export default function Comparison() {
                     </div>
 
                     <div className="text-center w-1/3">
+                        <span className='flex md:hidden flex-col justify-center h-full'>
+                            Sorry, the donut graph is not available on mobile devices
+                        </span>
                         {
                             !websiteTwo ? '' : (websiteTwo.scrapeNews ?
-                                <DonutChart
-                                    dataLabel={['Positive', 'Neutral', 'Negative']}
-                                    dataSeries={[
-                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteTwo.scrapeNews.length) * 100,
-                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteTwo.scrapeNews.length) * 100,
-                                        (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteTwo.scrapeNews.length) * 100
-                                    ]}
-                                    legendPosition='right'
-                                />
+                                <span className="hidden md:block">
+                                    <DonutChart
+                                        dataLabel={['Positive', 'Neutral', 'Negative']}
+                                        dataSeries={[
+                                            (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.positive, 0) / websiteTwo.scrapeNews.length) * 100,
+                                            (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.neutral, 0) / websiteTwo.scrapeNews.length) * 100,
+                                            (websiteTwo.scrapeNews.reduce((sum, news) => sum + news.sentimentScores.negative, 0) / websiteTwo.scrapeNews.length) * 100
+                                        ]}
+                                        legendPosition='right'
+                                    />
+                                </span>
                                 : ''
                             )
                         }
@@ -822,7 +832,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website2-nps" className='font-poppins-bold text-5xl lg:text-4xl xl:text-5xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.reviews?
+                                        {websiteTwo?.reviews ?
                                             websiteTwo.reviews.NPS
                                             : '-'
                                         }
@@ -864,7 +874,7 @@ export default function Comparison() {
                             <div className='bg-zinc-300 dark:bg-zinc-800 p-2 rounded-xl text-center flex justify-center items-center'>
                                 <div>
                                     <div data-testid="website2-recommendation-status" className='font-poppins-bold text-4xl text-jungleGreen-800 dark:text-jungleGreen-400'>
-                                        {websiteTwo?.reviews && websiteTwo?.reviews.recommendationStatus !== ""  ?
+                                        {websiteTwo?.reviews && websiteTwo?.reviews.recommendationStatus !== "" ?
                                             websiteTwo.reviews.recommendationStatus
                                             : 'N/A'
                                         }

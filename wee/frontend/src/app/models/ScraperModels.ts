@@ -86,6 +86,10 @@ export interface ErrorResponse {
   }
 }
 
+export interface UndefinedResponse {
+  url: string;
+}
+
 export interface RobotsResponse {
   baseUrl: string;
   allowedPaths: string[];
