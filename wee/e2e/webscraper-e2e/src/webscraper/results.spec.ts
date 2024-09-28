@@ -176,108 +176,108 @@ import axios from 'axios';
       }
     ]
   };
-// describe('making requests', () => {
+describe('making requests', () => {
 
 
-// jest.setTimeout(180000); // Set a global timeout of 3 minutes for all tests
+jest.setTimeout(180000); // Set a global timeout of 3 minutes for all tests
 
-// describe('Scraper API Tests for all endpoints', () => {
-//   const baseUrl = 'https://capstone-wee.dns.net.za/api/scraper'; // Base URL for the scraper API
-//   const urlsToTest = [
-//     'https://wee-test-site-1.netlify.app/',
-//     'https://wee-test-site-2.netlify.app/'
-//   ];
+describe('Scraper API Tests for all endpoints', () => {
+  const baseUrl = 'https://capstone-wee.dns.net.za/api/scraper'; // Base URL for the scraper API
+  const urlsToTest = [
+    'https://wee-test-site-1.netlify.app/',
+    'https://wee-test-site-2.netlify.app/'
+  ];
 
-//   // Helper function to perform GET request and assert 200 status
-//   const performRequest = async (endpoint, url) => {
-//     try {
+  // Helper function to perform GET request and assert 200 status
+  const performRequest = async (endpoint, url) => {
+    try {
 
-//       const response = await axios.get(`${baseUrl}/${endpoint}?url=${encodeURIComponent(url)}`);
-//       expect(response.status).toBe(200);
+      const response = await axios.get(`${baseUrl}/${endpoint}?url=${encodeURIComponent(url)}`);
+      expect(response.status).toBe(200);
 
-//     } catch (error) {
-//       console.error(`Error for ${endpoint} and URL: ${url}`, error.message);
-//       throw error;
-//     }
-//   };
+    } catch (error) {
+      console.error(`Error for ${endpoint} and URL: ${url}`, error.message);
+      throw error;
+    }
+  };
 
-//   // Test for the /api/scraper/read-robots endpoint
-//   test.each(urlsToTest)('Read robots.txt for URL %s and expect status 200', async (url) => {
-//     await performRequest('read-robots', url); // Calling /read-robots endpoint
-//   });
+  // Test for the /api/scraper/read-robots endpoint
+  test.each(urlsToTest)('Read robots.txt for URL %s and expect status 200', async (url) => {
+    await performRequest('read-robots', url); // Calling /read-robots endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-metadata endpoint
-//   test.each(urlsToTest)('Scrape metadata for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-metadata', url); // Calling /scrape-metadata endpoint
-//   });
+  // Test for the /api/scraper/scrape-metadata endpoint
+  test.each(urlsToTest)('Scrape metadata for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-metadata', url); // Calling /scrape-metadata endpoint
+  });
 
-//   // Test for the /api/scraper/classify-industry endpoint
-//   test.each(urlsToTest)('Classify industry for URL %s and expect status 200', async (url) => {
-//     await performRequest('classify-industry', url); // Calling /classify-industry endpoint
-//   });
+  // Test for the /api/scraper/classify-industry endpoint
+  test.each(urlsToTest)('Classify industry for URL %s and expect status 200', async (url) => {
+    await performRequest('classify-industry', url); // Calling /classify-industry endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-images endpoint
-//   test.each(urlsToTest)('Scrape images for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-images', url); // Calling /scrape-images endpoint
-//   });
+  // Test for the /api/scraper/scrape-images endpoint
+  test.each(urlsToTest)('Scrape images for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-images', url); // Calling /scrape-images endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-logo endpoint
-//   test.each(urlsToTest)('Scrape logos for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-logo', url); // Calling /scrape-logo endpoint
-//   });
+  // Test for the /api/scraper/scrape-logo endpoint
+  test.each(urlsToTest)('Scrape logos for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-logo', url); // Calling /scrape-logo endpoint
+  });
 
-//   // Test for the /api/scraper/screenshot endpoint
-//   test.each(urlsToTest)('Capture screenshot for URL %s and expect status 200', async (url) => {
-//     await performRequest('screenshot', url); // Calling /screenshot endpoint
-//   });
+  // Test for the /api/scraper/screenshot endpoint
+  test.each(urlsToTest)('Capture screenshot for URL %s and expect status 200', async (url) => {
+    await performRequest('screenshot', url); // Calling /screenshot endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-contact-info endpoint
-//   test.each(urlsToTest)('Scrape contact info for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-contact-info', url); // Calling /scrape-contact-info endpoint
-//   });
+  // Test for the /api/scraper/scrape-contact-info endpoint
+  test.each(urlsToTest)('Scrape contact info for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-contact-info', url); // Calling /scrape-contact-info endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-addresses endpoint
-//   test.each(urlsToTest)('Scrape addresses for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-addresses', url); // Calling /scrape-addresses endpoint
-//   });
+  // Test for the /api/scraper/scrape-addresses endpoint
+  test.each(urlsToTest)('Scrape addresses for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-addresses', url); // Calling /scrape-addresses endpoint
+  });
 
-//   // Test for the /api/scraper/seo-analysis endpoint
-//   test.each(urlsToTest)('SEO analysis for URL %s and expect status 200', async (url) => {
-//     await performRequest('seo-analysis', url); // Calling /seo-analysis endpoint
-//   });
+  // Test for the /api/scraper/seo-analysis endpoint
+  test.each(urlsToTest)('SEO analysis for URL %s and expect status 200', async (url) => {
+    await performRequest('seo-analysis', url); // Calling /seo-analysis endpoint
+  });
 
-//   // // Test for the /api/scraper/ord-analysis endpoint
-//   // test.each(urlsToTest)('Keyword analysis for URL %s and expect status 200', async (url) => {
-//   //   await performRequest('keyword-analysis', url); // Calling /keyword-analysis endpoint
-//   // });
+  // // Test for the /api/scraper/ord-analysis endpoint
+  // test.each(urlsToTest)('Keyword analysis for URL %s and expect status 200', async (url) => {
+  //   await performRequest('keyword-analysis', url); // Calling /keyword-analysis endpoint
+  // });
 
-//   // Test for the /api/scraper/scrape-news endpoint
-//   test.each(urlsToTest)('Scrape news for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-news', url); // Calling /scrape-news endpoint
-//   });
+  // Test for the /api/scraper/scrape-news endpoint
+  test.each(urlsToTest)('Scrape news for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-news', url); // Calling /scrape-news endpoint
+  });
 
-//   // Test for the /api/scraper/shareCount endpoint
-//   test.each(urlsToTest)('Social media share count for URL %s and expect status 200', async (url) => {
-//     await performRequest('shareCount', url); // Calling /shareCount endpoint
-//   });
+  // Test for the /api/scraper/shareCount endpoint
+  test.each(urlsToTest)('Social media share count for URL %s and expect status 200', async (url) => {
+    await performRequest('shareCount', url); // Calling /shareCount endpoint
+  });
 
-//   // Test for the /api/scraper/scrape-reviews endpoint
-//   test.each(urlsToTest)('Scrape reviews for URL %s and expect status 200', async (url) => {
-//     await performRequest('scrape-reviews', url); // Calling /scrape-reviews endpoint
-//   });
+  // Test for the /api/scraper/scrape-reviews endpoint
+  test.each(urlsToTest)('Scrape reviews for URL %s and expect status 200', async (url) => {
+    await performRequest('scrape-reviews', url); // Calling /scrape-reviews endpoint
+  });
 
-//   // // Test for the /api/scraper/keyword-status endpoint
-//   // test.each(urlsToTest)('Keyword status for URL %s and expect status 200', async (url) => {
-//   //   await performRequest('keyword-status', url); // Calling /keyword-status endpoint
-//   // });
+  // // Test for the /api/scraper/keyword-status endpoint
+  // test.each(urlsToTest)('Keyword status for URL %s and expect status 200', async (url) => {
+  //   await performRequest('keyword-status', url); // Calling /keyword-status endpoint
+  // });
 
-//     // Test for the /api/scraper endpoint
-//     test.each(urlsToTest)('Scrape URL for %s and expect status 200', async (url) => {
-//       await performRequest('', url); // Calling base /api/scraper
-//     });
-// });
+    // Test for the /api/scraper endpoint
+    test.each(urlsToTest)('Scrape URL for %s and expect status 200', async (url) => {
+      await performRequest('', url); // Calling base /api/scraper
+    });
+});
 
-// })
+})
 
 describe('Scraping Functionality', () => {
   let browser;
@@ -288,33 +288,33 @@ describe('Scraping Functionality', () => {
     'https://wee-test-site-2.netlify.app/'
   ];
 
-  // beforeAll(async () => {
-  //   browser = await puppeteer.launch({ headless: false ,slowMo: 50,  }); // Set to true for headless mode
-  //   page = await browser.newPage();
-  // });
+  beforeAll(async () => {
+    browser = await puppeteer.launch({ headless: false ,slowMo: 50,  }); // Set to true for headless mode
+    page = await browser.newPage();
+  });
 
-  // afterAll(async () => {
-  //
-  // });
 
-  // it('should load the home page correctly', async () => {
-  //   await page.goto('https://capstone-wee.dns.net.za/');
-  //   const titleExists = await page.evaluate(() => {
-  //     return !!document.querySelector('h1') && document.querySelector('h1').textContent.includes('The Web Exploration Engine');
-  //   });
-  //   expect(titleExists).toBe(true);
-  // });
 
-  // it('should handle URL validation errors', async () => {
-  //   await page.goto('https://capstone-wee.dns.net.za/');
-  //   await page.type('[data-testid="scraping-textarea-home"]', 'invalid-url');
-  //   await page.click('[data-testid="btn-start-scraping"]');
+  it('should load the home page correctly', async () => {
+    await page.goto('https://capstone-wee.dns.net.za/');
+    const titleExists = await page.evaluate(() => {
+      return !!document.querySelector('h1') && document.querySelector('h1').textContent.includes('The Web Exploration Engine');
+    });
+    expect(titleExists).toBe(true);
+  });
 
-  //   const errorExists = await page.evaluate(() => {
-  //     return !!document.body.textContent.match(/Please enter valid URLs/i);
-  //   });
-  //   expect(errorExists).toBe(true);
-  // });
+  it('should handle URL validation errors', async () => {
+    await page.goto('https://capstone-wee.dns.net.za/');
+    await page.type('[data-testid="scraping-textarea-home"]', 'invalid-url');
+    await page.click('[data-testid="btn-start-scraping"]');
+
+    const errorExists = await page.evaluate(() => {
+      return !!document.body.textContent.match(/Please enter valid URLs/i);
+    });
+    expect(errorExists).toBe(true);
+    await browser.close();
+  });
+
 });
 
 describe('Scraping and Results Page', () => {
