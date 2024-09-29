@@ -188,15 +188,43 @@ describe('Scraper API Tests for all endpoints', () => {
     'https://wee-test-site-2.netlify.app/'
   ];
 
-  // Helper function to perform GET request and assert 200 status
   const performRequest = async (endpoint, url) => {
     try {
-      const response = await axios.get(`${baseUrl}/${endpoint}?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`/${endpoint}?url=${encodeURIComponent(url)}`);
       expect(response.status).toBe(200);
     } catch (error) {
-      console.error(`Error for ${endpoint} and URL: ${url}`, error.message); // Log only the error message
-      console.error('Full error object:', error); // Log the error object partially
-      throw error;
+      console.error(`Error for ${endpoint} and URL: ${url}`, error.message);
+
+      // Log more detailed information if available, such as response status and data
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('Request details:', error.request);
+      } else {
+        // Something happened in setting up the request
+        console.error('Error message:', error.message);
+      }
+
+      // Optional: Safe stringification of the error object to avoid circular references
+      const safeStringify = (obj) => {
+        const seen = new WeakSet();
+        return JSON.stringify(obj, (key, value) => {
+          if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) {
+              return; // Omit circular reference
+            }
+            seen.add(value);
+          }
+          return value;
+        });
+      };
+
+      // Log the full error object safely
+      console.error('Full error object:', safeStringify(error));
+
+      throw error; // Re-throw the error so the test fails properly
     }
   };
 
