@@ -34,7 +34,7 @@ describe('Comparison Page', () => {
     // Intercept the GET request to /api/scraper with the encoded URLs
     cy.intercept(
       'GET',
-      `http://localhost:3000/api/scraper?url=${encodedUrls}`
+      `https://capstone-wee.dns.net.za/api/scraper?url=${encodedUrls}`
     ).as('scrapeRequest');
 
     // Type the URLs into the textarea

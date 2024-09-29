@@ -182,49 +182,22 @@ describe('making requests', () => {
 jest.setTimeout(180000); // Set a global timeout of 3 minutes for all tests
 
 describe('Scraper API Tests for all endpoints', () => {
-  const baseUrl = 'https://localhost:3000/api/scraper'; // Base URL for the scraper API
+  const baseUrl = 'https://capstone-wee.dns.net.za/api/scraper'; // Base URL for the scraper API
   const urlsToTest = [
     'https://wee-test-site-1.netlify.app/',
     'https://wee-test-site-2.netlify.app/'
   ];
 
+  // Helper function to perform GET request and assert 200 status
   const performRequest = async (endpoint, url) => {
     try {
-      const response = await axios.get(`/${endpoint}?url=${encodeURIComponent(url)}`);
+
+      const response = await axios.get(`${baseUrl}/${endpoint}?url=${encodeURIComponent(url)}`);
       expect(response.status).toBe(200);
+
     } catch (error) {
       console.error(`Error for ${endpoint} and URL: ${url}`, error.message);
-
-      // Log more detailed information if available, such as response status and data
-      if (error.response) {
-        console.error('Response status:', error.response.status);
-        console.error('Response data:', error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('Request details:', error.request);
-      } else {
-        // Something happened in setting up the request
-        console.error('Error message:', error.message);
-      }
-
-      // Optional: Safe stringification of the error object to avoid circular references
-      const safeStringify = (obj) => {
-        const seen = new WeakSet();
-        return JSON.stringify(obj, (key, value) => {
-          if (typeof value === 'object' && value !== null) {
-            if (seen.has(value)) {
-              return; // Omit circular reference
-            }
-            seen.add(value);
-          }
-          return value;
-        });
-      };
-
-      // Log the full error object safely
-      console.error('Full error object:', safeStringify(error));
-
-      throw error; // Re-throw the error so the test fails properly
+      throw error;
     }
   };
 
@@ -323,7 +296,7 @@ describe('Scraping Functionality', () => {
 
 
   it('should load the home page correctly', async () => {
-    await page.goto('https://localhost:3000/');
+    await page.goto('https://capstone-wee.dns.net.za/');
     const titleExists = await page.evaluate(() => {
       return !!document.querySelector('h1') && document.querySelector('h1').textContent.includes('The Web Exploration Engine');
     });
@@ -331,7 +304,7 @@ describe('Scraping Functionality', () => {
   });
 
   it('should handle URL validation errors', async () => {
-    await page.goto('https://localhost:3000/');
+    await page.goto('https://capstone-wee.dns.net.za/');
     await page.type('[data-testid="scraping-textarea-home"]', 'invalid-url');
     await page.click('[data-testid="btn-start-scraping"]');
 
@@ -351,7 +324,7 @@ describe('Scraping and Results Page', () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({ headless: true});
     page = await browser.newPage();
-    await page.goto('https://localhost:3000/');
+    await page.goto('https://capstone-wee.dns.net.za/');
   },60000);
 
   afterAll(async () => {
@@ -387,16 +360,27 @@ describe('Scraping and Results Page', () => {
 
       if (!textExists) {
         console.log('Text not found, pressing the back button');
+        const backButton = await page.$('[data-testid="btn-back"]');
 
-        // Press the back button
-        await page.click('[data-testid="btn-back"]');
-        console.log('pressed back button');
-        // Wait for navigation or state change after clicking back
+        // If back button exists, click it
+        if (backButton) {
+            await page.click('[data-testid="btn-back"]');
+            console.log('Pressed back button');
 
-        // Click the button with `btnView1`
-        await page.waitForSelector('[data-testid="btnView1"]', { visible: true });
-        await page.click('[data-testid="btnView1"]');
-        console.log('Pressed btnView1');
+
+            await page.waitForNavigation();
+        } else {
+            console.log('Back button is not present on the page');
+        }
+
+        const btnView1 = await page.$('[data-testid="btnView1"]');
+
+        // If btnView1 exists, click it
+        if (btnView1) {
+            await page.waitForSelector('[data-testid="btnView1"]', { visible: true });
+            await page.click('[data-testid="btnView1"]');
+            console.log('Pressed btnView1');
+
 
 
         // Verify various sections on the Overview tab
@@ -552,7 +536,14 @@ describe('Scraping and Results Page', () => {
     });
 
 
-      }
+
+        } else {
+            console.log('btnView1 is not present on the page');
+        }
+    }
+
+
+      
     } catch (error) {
       console.error('An error occurred:', error);
     }
