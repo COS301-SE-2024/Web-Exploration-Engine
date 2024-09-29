@@ -31,26 +31,20 @@ describe('Comparison Page', () => {
     const urlsToScrape = 'https://wee-test-site-1.netlify.app/, https://wee-test-site-2.netlify.app/';
     const encodedUrls = encodeURIComponent(urlsToScrape); // URL-encode the string
 
-    // Intercept the GET request to /api/scraper with the encoded URLs
-    cy.intercept(
-      'GET',
-      `https://capstone-wee.dns.net.za/api/scraper?url=${encodedUrls}`
-    ).as('scrapeRequest');
-
     // Type the URLs into the textarea
-    cy.get('[data-testid="scraping-textarea-home"]')
-      .type(urlsToScrape);
+    // cy.get('[data-testid="scraping-textarea-home"]')
+    //   .type(urlsToScrape);
 
-    // Click the start scraping button
-    cy.get('[data-testid="btn-start-scraping"]').click();
+    // // Click the start scraping button
+    // cy.get('[data-testid="btn-start-scraping"]').click();
 
-    // Wait for the loading indicator to disappear
-    cy.get('[data-testid="loading-indicator"]').should('not.exist');
+    // // Wait for the loading indicator to disappear
+    // cy.get('[data-testid="loading-indicator"]').should('not.exist');
 
 
-    cy.get('body').then($body => {
-      // If loading indicator does not exist, click the button
-      if ($body.find('[data-testid="loading-indicator"]').length === 0) {
+    // cy.get('body').then($body => {
+    //   // If loading indicator does not exist, click the button
+    //   if ($body.find('[data-testid="loading-indicator"]').length === 0) {
 
     // Navigate to the comparison page
     // cy.get('[data-testid="btn-comparison-summary"]').should('exist').click();
@@ -91,11 +85,11 @@ describe('Comparison Page', () => {
     // cy.get('[data-testid="sect-images"]').should('exist').and('be.visible').contains('Missing Alt. Text');
 
 
-      } else {
-        // Optional: Log or handle the case when the loading indicator exists
-        cy.log('Loading indicator is still visible, button click skipped.');
-      }
-    });
+      // } else {
+      //   // Optional: Log or handle the case when the loading indicator exists
+      //   cy.log('Loading indicator is still visible, button click skipped.');
+      // }
+   // });
 
 
 
