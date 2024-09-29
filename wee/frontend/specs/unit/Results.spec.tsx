@@ -2118,6 +2118,43 @@ describe('Results Component', () => {
         expect(confirmButton).toBeDisabled();
     });
 
+    it('should enter an error state if invalid name is entered', async () => {
+        render(<Results />);
+
+        // Ensure the component has rendered and the dropdown button is available
+        const dropdownButton = screen.getByRole('button', { name: /export\/save/i });
+        expect(dropdownButton).toBeInTheDocument();
+
+        // Click the dropdown button to open the menu
+        fireEvent.click(dropdownButton);
+
+        // Wait for the save button to appear
+        const saveButton = await screen.findByTestId('save-report-button');
+        expect(saveButton).toBeInTheDocument();
+
+        // Click the save button
+        fireEvent.click(saveButton);
+
+        // Wait for the modal to appear
+        const modal = await screen.findByTestId('save-report-modal');
+        expect(modal).toBeInTheDocument();
+
+        // Enter a report name
+        const reportNameInput = screen.getByLabelText(/Report Name/i);
+        expect(reportNameInput).toBeInTheDocument();
+        fireEvent.change(reportNameInput, { target: { value: 'Here :)' } });
+
+        fireEvent.click(screen.getByTestId('submit-report-name'));
+
+        // Check if the input has entered an invalid state
+        expect(reportNameInput).toHaveAttribute('aria-invalid', 'true');
+    
+        // Check if the correct error message is displayed
+        const errorMessage = screen.getByText('Report name is invalid. Only letters, numbers, !?& are allowed.');
+        expect(errorMessage).toBeInTheDocument();
+    });
+
+
     it('should call the saveReport function when the save button is clicked', async () => {
         render(<Results />);
 
