@@ -277,6 +277,7 @@ function ResultsComponent() {
   const [reportName, setReportName] = useState('');
   const [isInvalid, setIsInvalid] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [error, setError] = useState('');
   const { isOpen, onOpenChange } = useDisclosure();
   const { isOpen: isSuccessOpen, onOpenChange: onSuccessOpenChange } = useDisclosure();
 
@@ -293,12 +294,21 @@ function ResultsComponent() {
   };
 
   const handleSave = async (reportName: string) => {
+    const onlyLettersPattern = /^[A-Za-z0-9!?&\s]+$/; 
+
     reportName = reportName.trim();
     if (reportName.length === 0) {
       setIsInvalid(true);
       setIsDisabled(true);
       return;
     }
+    else if (!onlyLettersPattern.test(reportName)) {
+      setIsInvalid(true);
+      setIsDisabled(true);
+      setError("Report name is invalid. Only letters, numbers, !?& are allowed.");
+      return;
+    }
+
     const urlResults = results.filter((res) => res.url === url);
     if (urlResults && urlResults[0]) {
       try {
@@ -323,6 +333,7 @@ function ResultsComponent() {
       setReportName('');
       setIsInvalid(false);
       setIsDisabled(true);
+      setError('');
     }
   }, [isOpen]);
 
@@ -2216,7 +2227,13 @@ function ResultsComponent() {
                   variant="bordered"
                   isInvalid={isInvalid}
                   color={isInvalid ? "danger" : "default"}
-                  errorMessage="Please provide a name for the report"
+                  errorMessage={
+                    isInvalid
+                      ? error === ''
+                        ? 'A name must be provided for the report.'
+                        : error
+                      : undefined
+                  }
                   value={reportName}
                   onChange={handleInputChange}
                 />
