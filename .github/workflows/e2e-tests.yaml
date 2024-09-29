@@ -22,7 +22,7 @@ jobs:
       NEXT_PUBLIC_SENTRY_ORG: ${{ secrets.NEXT_PUBLIC_SENTRY_ORG }}
       NEXT_PUBLIC_SENTRY_PROJECT: ${{ secrets.NEXT_PUBLIC_SENTRY_PROJECT }}
       NEXT_PUBLIC_TESTING_ENVIRONMENT: true
-      BASE_URL: 'https://localhost:3000'  # Set the base URL for your tests
+      BASE_URL: 'https://capstone-wee.dns.net.za'  # Set the base URL for your tests
 
     steps:
       - name: Checkout
