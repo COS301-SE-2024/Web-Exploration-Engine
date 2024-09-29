@@ -45,5 +45,5 @@ jobs:
 
       - name: Run Cypress E2E tests
         run: |
-          cd wee/e2e/frontend-e2e
-          npx cypress run --config video=false 
+          cd wee/e2e/frontend-e2e  # Navigate to the Cypress tests directory
+          npx cypress run --config video=false  # Run Cypress tests without video recording
