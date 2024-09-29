@@ -160,7 +160,7 @@ export default function SummaryReport() {
         onOpenChange();
         // report saved successfully popup
         onSuccessOpenChange();
-        
+
       } catch (error) {
         console.error("Error saving report:", error);
       }
@@ -775,6 +775,7 @@ export default function SummaryReport() {
                   className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                   onPress={() => handleSave(reportName)}
                   disabled={isDisabled}
+                  data-testid="submit-report-name-summary"
                 >
                   Save
                 </Button>
