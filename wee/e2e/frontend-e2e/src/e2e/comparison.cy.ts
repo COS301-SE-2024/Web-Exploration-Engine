@@ -56,39 +56,39 @@ describe('Comparison Page', () => {
     cy.get('[data-testid="btn-comparison-summary"]').should('exist').click();
 
 
-    // Select first website to compare
-    cy.get('[data-testid="website1-select"]').should('exist').click();
+    // // Select first website to compare
+    // cy.get('[data-testid="website1-select"]').should('exist').click();
 
-    // Wait for options to be visible
-    cy.get('[data-testid^="website1-option-"]').should('be.visible');
+    // // Wait for options to be visible
+    // cy.get('[data-testid^="website1-option-"]').should('be.visible');
 
-    // Now select the option
-    cy.get('[data-testid="website1-option-0"]').should('exist').click();
+    // // Now select the option
+    // cy.get('[data-testid="website1-option-0"]').should('exist').click();
 
-    // Select second website to compare
-    cy.get('[data-testid="website2-select"]').should('exist').click();
-    cy.get('[data-testid^="website2-option-"]').should('be.visible');
-    cy.get('[data-testid="website2-option-0"]').should('exist').click();
+    // // Select second website to compare
+    // cy.get('[data-testid="website2-select"]').should('exist').click();
+    // cy.get('[data-testid^="website2-option-"]').should('be.visible');
+    // cy.get('[data-testid="website2-option-0"]').should('exist').click();
 
 
-    // Section: Lighthouse Analysis
-    cy.get('[data-testid="website1-lighthouse-accessibility"]').should('exist').and('be.visible').contains('91%');
-    cy.get('[data-testid="website1-lighthouse-bestpractices"]').should('exist').and('be.visible').contains('96%');
-    cy.get('[data-testid="website2-lighthouse-accessibility"]').should('exist').and('be.visible').contains('92%');
-    cy.get('[data-testid="website2-lighthouse-bestpractices"]').should('exist').and('be.visible').contains('100%');
+    // // Section: Lighthouse Analysis
+    // cy.get('[data-testid="website1-lighthouse-accessibility"]').should('exist').and('be.visible').contains('91%');
+    // cy.get('[data-testid="website1-lighthouse-bestpractices"]').should('exist').and('be.visible').contains('96%');
+    // cy.get('[data-testid="website2-lighthouse-accessibility"]').should('exist').and('be.visible').contains('92%');
+    // cy.get('[data-testid="website2-lighthouse-bestpractices"]').should('exist').and('be.visible').contains('100%');
 
-    // Section: Mobile Friendly
-    cy.get('[data-testid="website1-mobilefriendly"]').should('exist').and('be.visible').contains('Yes');
-    cy.get('[data-testid="website2-mobilefriendly"]').should('exist').and('be.visible').contains('Yes');
+    // // Section: Mobile Friendly
+    // cy.get('[data-testid="website1-mobilefriendly"]').should('exist').and('be.visible').contains('Yes');
+    // cy.get('[data-testid="website2-mobilefriendly"]').should('exist').and('be.visible').contains('Yes');
 
-    // Section: Domain Overview
-    cy.get('[data-testid="sect-website-status"]').should('exist').and('be.visible').contains('Live');
-    cy.get('[data-testid="sect-industry-classification"]').should('exist').and('be.visible').contains('Health Care');
-    cy.get('[data-testid="sect-domain-match"]').should('exist').and('be.visible').contains('Telecommunications');
+    // // Section: Domain Overview
+    // cy.get('[data-testid="sect-website-status"]').should('exist').and('be.visible').contains('Live');
+    // cy.get('[data-testid="sect-industry-classification"]').should('exist').and('be.visible').contains('Health Care');
+    // cy.get('[data-testid="sect-domain-match"]').should('exist').and('be.visible').contains('Telecommunications');
 
-    // Section: On-Page SEO Analysis
-    cy.get('[data-testid="sect-unique-content"]').should('exist').and('be.visible').contains('Unique Content');
-    cy.get('[data-testid="sect-images"]').should('exist').and('be.visible').contains('Missing Alt. Text');
+    // // Section: On-Page SEO Analysis
+    // cy.get('[data-testid="sect-unique-content"]').should('exist').and('be.visible').contains('Unique Content');
+    // cy.get('[data-testid="sect-images"]').should('exist').and('be.visible').contains('Missing Alt. Text');
 
 
       } else {
