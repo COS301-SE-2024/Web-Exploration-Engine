@@ -46,4 +46,4 @@ jobs:
       - name: Run Cypress E2E tests
         run: |
           cd wee/e2e/frontend-e2e
-          npx cypress run --config video=false --spec 'src/comparison.cy.ts,src/loginSignUp.cy.ts,src/savedReport.cy.ts,src/scheduledScrape.cy.ts,src/summaryReport.cy.ts'
+          npx cypress run --config video=false 
