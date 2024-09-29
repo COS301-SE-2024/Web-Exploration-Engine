@@ -191,12 +191,11 @@ describe('Scraper API Tests for all endpoints', () => {
   // Helper function to perform GET request and assert 200 status
   const performRequest = async (endpoint, url) => {
     try {
-
       const response = await axios.get(`${baseUrl}/${endpoint}?url=${encodeURIComponent(url)}`);
       expect(response.status).toBe(200);
-
     } catch (error) {
-      console.error(`Error for ${endpoint} and URL: ${url}`, error.message);
+      console.error(`Error for ${endpoint} and URL: ${url}`, error.message); // Log only the error message
+      console.error('Full error object:', error); // Log the error object partially
       throw error;
     }
   };
