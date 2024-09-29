@@ -182,7 +182,7 @@ describe('making requests', () => {
 jest.setTimeout(180000); // Set a global timeout of 3 minutes for all tests
 
 describe('Scraper API Tests for all endpoints', () => {
-  const baseUrl = 'https://capstone-wee.dns.net.za/api/scraper'; // Base URL for the scraper API
+  const baseUrl = 'https://localhost:3000/api/scraper'; // Base URL for the scraper API
   const urlsToTest = [
     'https://wee-test-site-1.netlify.app/',
     'https://wee-test-site-2.netlify.app/'
@@ -296,7 +296,7 @@ describe('Scraping Functionality', () => {
 
 
   it('should load the home page correctly', async () => {
-    await page.goto('https://capstone-wee.dns.net.za/');
+    await page.goto('https://localhost:3000/');
     const titleExists = await page.evaluate(() => {
       return !!document.querySelector('h1') && document.querySelector('h1').textContent.includes('The Web Exploration Engine');
     });
@@ -304,7 +304,7 @@ describe('Scraping Functionality', () => {
   });
 
   it('should handle URL validation errors', async () => {
-    await page.goto('https://capstone-wee.dns.net.za/');
+    await page.goto('https://localhost:3000/');
     await page.type('[data-testid="scraping-textarea-home"]', 'invalid-url');
     await page.click('[data-testid="btn-start-scraping"]');
 
@@ -324,7 +324,7 @@ describe('Scraping and Results Page', () => {
   beforeAll(async () => {
     browser = await puppeteer.launch({ headless: true});
     page = await browser.newPage();
-    await page.goto('https://capstone-wee.dns.net.za/');
+    await page.goto('https://localhost:3000/');
   },60000);
 
   afterAll(async () => {

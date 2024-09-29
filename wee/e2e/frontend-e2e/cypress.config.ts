@@ -8,7 +8,7 @@ export default defineConfig({
       webServerCommands: { default: 'nx run frontend:start' },
       ciWebServerCommand: 'nx run frontend:serve-static',
     }),
-    baseUrl: 'https://capstone-wee.dns.net.za',
+    baseUrl: 'https://localhost:3000',
     defaultCommandTimeout: 600000,
   },
 
