@@ -33,13 +33,14 @@ Domain Name Services (Pty) Ltd.     </a>
 
 | Resource                             | Description                                                                                                                         |
 |--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| [Software Requirements Specification](https://drive.google.com/file/d/1hIByMMoiA6zoGM0YLabwd8MGNqZqX2Tg/view?usp=drive_link)     | Details on project requirements            |
-| [Architectural Specification](https://drive.google.com/file/d/1Za5tXMt_DuqFdsps3EYy9iLW0eXG6MoH/view?usp=drive_link)             | System design overview                     |
-| [User Manual](https://drive.google.com/file/d/1MRcQhdarDDe5C6epc5Zb6LLUcPG46zZR/view?usp=drive_link)                             | Guidelines to using WEE                    |
-| [Technical Installation Manual](https://drive.google.com/file/d/16cm_ga5pNMg-IPXeGS9LiORRwy188NQ_/view?usp=drive_link)           |  Instructions for system configuration     |
-| [Coding Standards](documentation/coding-standards.md)                                                                         | Guidelines for writing code                |
+| [Software Requirements Specification](https://drive.google.com/file/d/1MaFtYWnZ2zXstXiF1RS4HlPDrfohCJWV/view?usp=drive_link)     | Details on project requirements            |
+| [Architectural Specification](https://drive.google.com/file/d/1cYqBbYG7Q05_HZpL4xxfW74yTd5VWotS/view?usp=drive_link)             | System design overview                     |
+| [User Manual](https://drive.google.com/file/d/1joJ745H270WYZFsyDwDsgYrCYzvT7b7z/view?usp=drive_link)                             | Guidelines to using WEE                    |
+| [Technical Installation Manual](https://drive.google.com/file/d/1ZDje5oLLxuUHSR7mRGjzmekAQjT3vz9N/view?usp=drive_link)           |  Instructions for system configuration     |
+| [Coding Standards](https://drive.google.com/file/d/1ej3eurY4W6VFi7GLRBxFbi3qc6opm3RE/view?usp=drive_link)                                                                         | Guidelines for writing code                |
+| [Testing Policy Document](https://drive.google.com/file/d/14GK1PMEEvC90tCRgq2vfsNMf0_90r7yg/view?usp=drive_link)           |  Testing strategies and findings     |
 | [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
-| [Architecture Diagram](https://drive.google.com/file/d/19bszabKay4TnxgkcHCeUG_R5ovr6d5wl/view?usp=drive_link)                 | Diagram of system overview                 |
+| [Architecture Diagram](https://drive.google.com/file/d/18XeSEwOtY41mC4Lcr6jvrzPMW5n9fRTW/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
 | [Deployment Diagram](https://drive.google.com/file/d/113kGo7tnekoP_bN0uDI7ym5CjJaA8XVo/view?usp=drive_link)                   | Plan for project deployment                |
 | [Project Board](https://github.com/orgs/COS301-SE-2024/projects/71)                                                           | Team organisation and progress tracking    |
@@ -55,6 +56,7 @@ Domain Name Services (Pty) Ltd.     </a>
 | Demo 1 | [Demo 1 Video](https://drive.google.com/file/d/1k34Z3DkhtiaEYbC_AdqoMCpW2_Fb44wW/view?usp=drive_link) | [Demo 1 Slides](https://www.canva.com/design/DAGGIC5EA4E/Sgas9HDvyEG1E8QXFao5xw/edit?utm_content=DAGGIC5EA4E&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 | Demo 2 | [Demo 2 Video](https://drive.google.com/file/d/1fmjxiQVnpMjOAuttFO75xRElCkPtDDWh/view?usp=sharing) | [Demo 2 Slides](https://www.canva.com/design/DAGHjFa1XEo/w8trIf8dZMyJ7xtJLpWiag/edit?utm_content=DAGHjFa1XEo&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) |
 | Demo 3 | [Demo 3 Video](https://drive.google.com/file/d/1HYXFZeAeoHbty9NBG3c9h86kCwD3qBhI/view?usp=drive_link) | [Demo 3 Slides](https://www.canva.com/design/DAGM5VQp7f0/MTP7vC8GpmNQX7k_ND45SQ/edit?utm_content=DAGM5VQp7f0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+| Demo 4 | [Demo 4 Video](https://drive.google.com/file/d/1kIHoI6UXM2WT2x0QEtVY3sPKKny1Wo71/view?usp=drive_linkhttps://www.canva.com/design/DAGRe7Jg-ZE/ZPiYrEXpIPiLauxGehUgkQ/view?utm_content=DAGRe7Jg-ZE&utm_campaign=designshare&utm_medium=link&utm_source=editor) | [Demo 4 Slides](https://www.canva.com/design/DAGRe7Jg-ZE/ZPiYrEXpIPiLauxGehUgkQ/view?utm_content=DAGRe7Jg-ZE&utm_campaign=designshare&utm_medium=link&utm_source=editor)
 
 </div>
 
