@@ -108,6 +108,13 @@ Go to the 'Exec' tab in the docker container (this is where all the redis comman
 ```powershell
 npx nx serve webscraper
 ```
+
+## Deploy the api service 
+
+```powershell
+npx nx serve api-service
+```
+
 ## Deploy the frontend application
 
 ```powershell

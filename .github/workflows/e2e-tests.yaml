@@ -1,0 +1,49 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [master, development]
+  push:
+    branches: [master, development]
+
+permissions:
+  contents: read
+
+jobs:
+  run-tests:
+    name: Run Jest and Cypress Tests
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SRV_KEY }}
+      NEXT_PUBLIC_SUPABASE_ANON_PUBLIC_KEY: ${{ secrets.ANON_PUBLIC_KEY }}
+      NEXT_PUBLIC_SENTRY_DSN_LINK: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN_LINK }}
+      NEXT_PUBLIC_SENTRY_ORG: ${{ secrets.NEXT_PUBLIC_SENTRY_ORG }}
+      NEXT_PUBLIC_SENTRY_PROJECT: ${{ secrets.NEXT_PUBLIC_SENTRY_PROJECT }}
+      NEXT_PUBLIC_TESTING_ENVIRONMENT: true
+      BASE_URL: 'https://capstone-wee.dns.net.za'  # Set the base URL for your tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js 21
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+
+      - name: Install dependencies
+        run: |
+          cd wee/frontend
+          npm ci
+
+      - name: Run Jest Tests
+        run: |
+          cd wee/e2e/webscraper-e2e/src/webscraper  # Navigate to the Jest tests directory
+          npx jest results.spec.ts  # Run only the results.spec.ts file
+
+      - name: Run Cypress E2E tests
+        run: |
+          cd wee/e2e/frontend-e2e  # Navigate to the Cypress tests directory
+          npx cypress run --config video=false  # Run Cypress tests without video recording
