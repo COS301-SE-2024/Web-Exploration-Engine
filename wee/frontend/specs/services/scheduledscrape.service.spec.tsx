@@ -1,9 +1,9 @@
-import { createClient } from '../../src/app/utils/supabase/server'; // Adjust paths as necessary
+import { createClient } from '../../src/app/utils/supabase/client'; // Adjust paths as necessary
 import * as service from '../../src/app/services/ScheduledScrapingService';
 import { ScheduleTask, GetSchedulesResponse, ScheduleResult } from '../../src/app/models/ScheduleModels';
 
 
-jest.mock('../../src/app/utils/supabase/server', () => {
+jest.mock('../../src/app/utils/supabase/client', () => {
   const mockSupabaseClient = {
     from: jest.fn().mockReturnThis(),
     insert: jest.fn().mockReturnThis(),
