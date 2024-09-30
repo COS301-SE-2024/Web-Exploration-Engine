@@ -117,6 +117,7 @@ export default function SummaryReport() {
   const [reportName, setReportName] = useState('');
   const [isInvalid, setIsInvalid] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [error, setError] = useState('');
   const { isOpen, onOpenChange } = useDisclosure();
   const { isOpen: isSuccessOpen, onOpenChange: onSuccessOpenChange } = useDisclosure();
 
@@ -133,6 +134,21 @@ export default function SummaryReport() {
   };
 
   const handleSave = async (reportName: string) => {
+    const onlyLettersPattern = /^[A-Za-z0-9!?&\s]+$/; 
+
+    reportName = reportName.trim();
+    if (reportName.length === 0) {
+      setIsInvalid(true);
+      setIsDisabled(true);
+      return;
+    }
+    else if (!onlyLettersPattern.test(reportName)) {
+      setIsInvalid(true);
+      setIsDisabled(true);
+      setError("Report name is invalid. Only letters, numbers, !?& are allowed.");
+      return;
+    }
+
     if (summaryReport) {
       try {
         await saveReport({
@@ -144,6 +160,7 @@ export default function SummaryReport() {
         onOpenChange();
         // report saved successfully popup
         onSuccessOpenChange();
+
       } catch (error) {
         console.error("Error saving report:", error);
       }
@@ -156,6 +173,7 @@ export default function SummaryReport() {
       setReportName('');
       setIsInvalid(false);
       setIsDisabled(true);
+      setError('');
     }
   }, [isOpen]);
 
@@ -738,7 +756,13 @@ export default function SummaryReport() {
                   variant="bordered"
                   isInvalid={isInvalid}
                   color={isInvalid ? "danger" : "default"}
-                  errorMessage="Please provide a report name"
+                  errorMessage={
+                    isInvalid
+                      ? error === ''
+                        ? 'A name must be provided for the report.'
+                        : error
+                      : undefined
+                  }
                   value={reportName}
                   onChange={handleInputChange}
                 />
@@ -751,6 +775,7 @@ export default function SummaryReport() {
                   className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
                   onPress={() => handleSave(reportName)}
                   disabled={isDisabled}
+                  data-testid="submit-report-name-summary"
                 >
                   Save
                 </Button>

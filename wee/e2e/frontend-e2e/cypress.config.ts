@@ -1,14 +1,19 @@
-import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
-
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: {
-    ...nxE2EPreset(__filename, {
-      cypressDir: 'src',
-      webServerCommands: { default: 'nx run frontend:start' },
-      ciWebServerCommand: 'nx run frontend:serve-static',
-    }),
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'https://capstone-wee.dns.net.za',
+    specPattern: 'src/e2e/**/*.cy.{js,jsx,ts,tsx}', // Ensure this path matches your actual spec files
+    defaultCommandTimeout: 6000,
+    supportFile: false, // Set to false if you don't use a support file
+  },
+  retries: {
+    experimentalStrategy: 'detect-flake-but-always-fail',
+    experimentalOptions: {
+      maxRetries: 3,
+      stopIfAnyPassed: true,
+    },
+    openMode: true,
+    runMode: true,
   },
 });
