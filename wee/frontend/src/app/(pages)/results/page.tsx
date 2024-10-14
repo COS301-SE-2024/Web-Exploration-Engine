@@ -58,7 +58,7 @@ export default function Results() {
 }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
-  return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
+  return 'length' in data || 'titleTag' in data || 'recommendations' in data;
 }
 
 function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
@@ -74,7 +74,7 @@ function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is
 }
 
 function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
-  return 'length' in data || 'recommendations' in data || 'titleTag' in data;
+  return 'length' in data || 'recommendations' in data || 'metaDescription' in data || 'isUrlWordsInDescription' in data;
 }
 
 function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
@@ -1250,9 +1250,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Title Tag
+                              Metadata Description:
                             </h5>
-                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.titleTag}</p>
+                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.metaDescription}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1260,6 +1260,13 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-metadescription-length">{metaDescriptionAnalysis?.length}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Is URL in description?
+                            </h5>
+                            <p data-testid="isUrlWordsInDescription">{metaDescriptionAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
@@ -1305,9 +1312,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Metadata Description
+                              Title Tags:
                             </h5>
-                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.metaDescription}</p>
+                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.titleTag}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1315,13 +1322,6 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-titletag-length">{titleTagsAnalysis?.length}</p>
-                          </div>
-
-                          <div className='py-1'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Is URL in description?
-                            </h5>
-                            <p data-testid="titletagWordsInDesr">{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
