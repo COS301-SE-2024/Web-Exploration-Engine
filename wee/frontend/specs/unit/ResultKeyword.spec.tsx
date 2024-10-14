@@ -248,7 +248,7 @@ describe('Result SEO Keyword', () => {
     };
 
     beforeEach(() => {        
-        // (useSearchParams as jest.Mock).mockReturnValue([mockSearchParams, jest.fn()]);
+        process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT = 'false';
         (useSearchParams as jest.Mock).mockReturnValue({
             get: (key: string) => mockSearchParams.get(key),
         });

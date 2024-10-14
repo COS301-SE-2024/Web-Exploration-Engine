@@ -9,17 +9,19 @@ import { ChartColours, DarkChartColours } from "./colours";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const lightModeColors = [
-    { from: -Infinity, to: -1, color: '#54B38E', name: 'Very Low' },
-    { from: 0, to: 750, color: '#22795C', name: 'Low' },
-    { from: 751, to: 5000, color: '#184d3d', name: 'Medium' },
-    { from: 5001, to: Infinity, color: '#0A241D', name: 'High' },
+    { from: -Infinity, to: -10, color: '#f84c26', name: 'Large Decrease'},
+    { from: -10, to: -1, color: '#ff9844', name: 'Decrease'},
+    { from: 0, to: 0, color: '#d3d3d3', name: 'No Change'},
+    { from: 1, to: 10, color: '#54b38e', name: 'Increase'},
+    { from: 10, to: Infinity, color: '#22795c', name: 'Large Increase'}
 ];
 
 const darkModeColors = [
-    { from: -Infinity, to: -1, color: '#86cfb0', name: 'Very Low' },
-    { from: 0, to: 750, color: '#329874', name: 'Low' },
-    { from: 751, to: 5000, color: '#1B614B', name: 'Medium' },
-    { from: 5001, to: Infinity, color: '#144033', name: 'High' },
+    { from: -Infinity, to: -10, color: '#ff5c00', name: 'Large Decrease'},
+    { from: -10, to: -1, color: '#ffb95d', name: 'Decrease'},
+    { from: 0, to: 0, color: '#737379', name: 'No Change'},
+    { from: 1, to: 10, color: '#86cfb0', name: 'Increase'},
+    { from: 10, to: Infinity, color: '#329874', name: 'Large Increase'}
 ];
 
 export function HeatMapChart({ dataLabel, dataSeries }: IChart) {

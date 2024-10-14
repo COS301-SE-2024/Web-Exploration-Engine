@@ -37,6 +37,10 @@ export default function ScheduledScrape() {
 
   useBeforeUnload();
 
+  const sanitizeKeyword = (_keyword: string) => {
+    return _keyword.replace(/[<>"'`;()]/g, '');
+  }
+
   // Add keyword to keyword list
    const handleAddKeyword = () => {
     // show error message if the keyword list exceeds a length of 3
@@ -57,6 +61,13 @@ export default function ScheduledScrape() {
     }
     else if (keywordList.length == 3 && keyword.trim() !== '') {
       setModalError("Max of 3 keywords can be tracked");
+      const timer = setTimeout(() => {
+        setModalError('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+    else if (keyword !== sanitizeKeyword(keyword)) {
+      setModalError('Keywords cannot contain special characters like <, >, ", \', `, ;, (, or )');
       const timer = setTimeout(() => {
         setModalError('');
       }, 3000);

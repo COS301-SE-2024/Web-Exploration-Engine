@@ -37,7 +37,7 @@ import MockCiscoKeywordCiscoFrontendResult from '../../../../cypress/fixtures/pu
 import MockCiscoKeywordMerakiResult from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-status-result.json'
 import MockCiscoKeywordMerakiPollingStatus from '../../../../cypress/fixtures/pub-sub/cisco-keyword-meraki-analysis-poll.json'
 import { result } from 'cypress/types/lodash';
-import { ColumnChartWithLables } from '../../components/Graphs/ColumnChart';
+import { ColumnChartWithLables, SentimentColumnChartWithLables } from '../../components/Graphs/ColumnChart';
 
 interface Classifications {
   label: string;
@@ -56,10 +56,6 @@ export default function Results() {
     </Suspense>
   );
 }
-
-// function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
-//   return 'title' in data || 'ogTitle' in data || 'description' in data || 'ogDescription' in data;
-// }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
   return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
@@ -88,10 +84,6 @@ function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data i
 function isMetadata(data: Metadata | ErrorResponse): data is Metadata {
   return 'title' in data || 'description' in data || 'keywords' in data || 'ogTitle' in data || 'ogDescription' in data || 'ogImage' in data;
 }
-
-// function isSentimentAnalysis(data: SentimentAnalysis | SEOError): data is SentimentAnalysis {
-//   return 'sentimentAnalysis' in data || 'positiveWords' in data || 'negativeWords' in data || 'emotions' in data;
-// }
 
 function isLightHouse(data: LightHouseAnalysis | SEOError): data is LightHouseAnalysis {
   return 'scores' in data || 'diagnostics' in data;
@@ -253,7 +245,8 @@ function ResultsComponent() {
     // await new Promise((resolve) => setTimeout(resolve, 3000)); // test that it works
 
     try {
-      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis, sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis, indexibilityAnalysis, siteSpeedAnalysis, structuredDataAnalysis, mobileFriendlinessAnalysis, lighthouseAnalysis);
+      //console.log("=================",shareCountData);
+      handleDownloadReport(url, summaryInfo, websiteStatus, isCrawlable, industryClassification, domainClassification, addresses, emails, phones, socialLinks, titleTagsAnalysis, headingAnalysis, imagesAnalysis, internalLinkingAnalysis, metaDescriptionAnalysis, uniqContentAnalysis, sentimentAnalysis, xmlSitemapAnalysis, canonicalTagAnalysis, indexibilityAnalysis, siteSpeedAnalysis, structuredDataAnalysis, mobileFriendlinessAnalysis, lighthouseAnalysis,scrapeNews,reviews,shareCountData);
     }
     finally {
       setIsDownloadInProgress(false);
@@ -284,6 +277,7 @@ function ResultsComponent() {
   const [reportName, setReportName] = useState('');
   const [isInvalid, setIsInvalid] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [error, setError] = useState('');
   const { isOpen, onOpenChange } = useDisclosure();
   const { isOpen: isSuccessOpen, onOpenChange: onSuccessOpenChange } = useDisclosure();
 
@@ -300,12 +294,21 @@ function ResultsComponent() {
   };
 
   const handleSave = async (reportName: string) => {
+    const onlyLettersPattern = /^[A-Za-z0-9!?&\s]+$/; 
+
     reportName = reportName.trim();
     if (reportName.length === 0) {
       setIsInvalid(true);
       setIsDisabled(true);
       return;
     }
+    else if (!onlyLettersPattern.test(reportName)) {
+      setIsInvalid(true);
+      setIsDisabled(true);
+      setError("Report name is invalid. Only letters, numbers, !?& are allowed.");
+      return;
+    }
+
     const urlResults = results.filter((res) => res.url === url);
     if (urlResults && urlResults[0]) {
       try {
@@ -330,6 +333,7 @@ function ResultsComponent() {
       setReportName('');
       setIsInvalid(false);
       setIsDisabled(true);
+      setError('');
     }
   }, [isOpen]);
 
@@ -2175,7 +2179,7 @@ function ResultsComponent() {
                                   Read article
                                 </Link>
 
-                                <ColumnChartWithLables
+                                <SentimentColumnChartWithLables
                                   dataLabel={[
                                     'Positive', 'Neutral', 'Negative'
                                   ]}
@@ -2223,7 +2227,13 @@ function ResultsComponent() {
                   variant="bordered"
                   isInvalid={isInvalid}
                   color={isInvalid ? "danger" : "default"}
-                  errorMessage="Please provide a name for the report"
+                  errorMessage={
+                    isInvalid
+                      ? error === ''
+                        ? 'A name must be provided for the report.'
+                        : error
+                      : undefined
+                  }
                   value={reportName}
                   onChange={handleInputChange}
                 />
