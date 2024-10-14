@@ -313,7 +313,7 @@ function DashboardPage() {
 						) : (
 							<div data-testid="dashboard-lighthouse-not-available" className='bg-zinc-200 dark:bg-zinc-700 p-4 rounded-xl text-center'>
 								<p>
-									There are no Ligth House Technical SEO Analysis currently available
+									There are no Light House Technical SEO Analysis currently available
 								</p>
 							</div>
 						)}
