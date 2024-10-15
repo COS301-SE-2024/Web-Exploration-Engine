@@ -337,7 +337,7 @@ function ResultsComponent() {
           data-testid="search-urls"
           isClearable
           type="text"
-          placeholder="https://www.takealot.com/"
+          placeholder="Enter URL to search..."
           labelPlacement="outside"
           className="py-3  w-full md:w-4/5 md:px-5"
           startContent={
@@ -349,7 +349,7 @@ function ResultsComponent() {
       </div>
       <div className="md:flex md:justify-between md:w-4/5 md:m-auto md:px-5">
         <WEESelect
-          label="Live/Parked"
+          label="Filter by domain status"
           className="w-full pb-3 md:w-1/3"
           onChange={handleStatusFilterChange}
           data-testid="status-filter"
@@ -359,13 +359,13 @@ function ResultsComponent() {
         </WEESelect>
 
         <WEESelect
-          label="Crawlable"
+          label="Filter by crawlability"
           className="w-full pb-3 md:w-1/3"
           onChange={handleCrawlableFilterChange}
           data-testid="crawlable-filter"
         >
-          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Yes</SelectItem>
-          <SelectItem key={'No'} data-testid="crawlable-filter-no">No</SelectItem>
+          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Crawlable</SelectItem>
+          <SelectItem key={'No'} data-testid="Not Crawlable">Not Crawlable</SelectItem>
         </WEESelect>
       </div>
 
