@@ -313,7 +313,7 @@ function ResultsComponent() {
     "Performing SEO analysis...",
     "Crunching the numbers...",
     "Checking reputation status...",
-    "Scraping the you urls...",
+    "Scraping the urls...",
   ];
   const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
 
@@ -365,7 +365,7 @@ function ResultsComponent() {
           data-testid="crawlable-filter"
         >
           <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Crawlable</SelectItem>
-          <SelectItem key={'No'} data-testid="Not Crawlable">Not Crawlable</SelectItem>
+          <SelectItem key={'No'} data-testid="crawlable-filter-no">Not Crawlable</SelectItem>
         </WEESelect>
       </div>
 
