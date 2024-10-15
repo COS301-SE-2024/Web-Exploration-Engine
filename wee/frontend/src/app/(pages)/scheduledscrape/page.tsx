@@ -371,7 +371,7 @@ export default function ScheduledScrape() {
                   label="Start scraping date and time"
                   id="datepickerscheduledscrape"
                   hideTimeZone
-                  showMonthAndYearPickers
+                  // showMonthAndYearPickers
                   defaultValue={now(getLocalTimeZone()).add({minutes: 5})}
                   onChange={(value: any) => {
                     console.log('Selected date value:', value);
