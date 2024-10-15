@@ -400,7 +400,7 @@ function ResultsComponent() {
               <div className="flex flex-col w-full justify-center items-center">
                 <Spinner color="default" />
                 <p className="mt-2 text-lg text-gray-500 dark:text-grey-50">{currentMessage}</p>
-                <p className="mt-2 text-sm text-gray-500 dark:text-grey-50">Hold tight, processing can take up to 5 minutes</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-grey-50">Hold tight, processing can take up to 5 mins</p>
               </div>
             ) : null}
 
