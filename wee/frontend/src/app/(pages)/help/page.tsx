@@ -20,7 +20,7 @@ const faqs = [
     question: 'Why would I want to web scrape?',
     answer:
       'Web scraping provides a fast and efficient way to gather large amounts of data from multiple websites. This is valuable for businesses that need up-to-date information for competitor analysis, pricing strategies and content aggregation. It saves time and manual effort while offering real-time insights that would otherwise be difficult to obtain.',
-  }
+  },
   {
     question: 'Is web scraping legal?',
     answer:
