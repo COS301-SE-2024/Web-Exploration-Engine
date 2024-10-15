@@ -1937,7 +1937,7 @@ function ResultsComponent() {
                       data-testid="popup-emotions"
                       heading="Emotions Confidence Score"
                       content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune their metadata settings, thereby invoking the desired emotional responses. 
-                        Each score indicates the model's confidence in detecting a specific emotion based on the metadata
+                        </br></br>Each score indicates the model&apos;s confidence in detecting a specific emotion based on the metadata
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
                       placement="right-end"
                     />
