@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, Suspense, useRef } from 'react';
+import React, { useEffect, Suspense, useRef, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
@@ -308,6 +308,28 @@ function ResultsComponent() {
     router.push(`/comparison`);
   };
 
+  const loadingMessages = [
+    "Gathering the latest results...",
+    "Performing SEO analysis...",
+    "Crunching the numbers...",
+    "Checking reputation status...",
+    "Scraping the you urls...",
+  ];
+  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
+
+  
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        const randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+        setCurrentMessage(randomMessage);
+      }, 3000); // Change the message every 3 seconds
+
+      return () => clearInterval(interval); // Clean up on unmount or when loading stops
+    }
+  }, [isLoading]);
+  
+
   return (
     <div className="p-4 min-h-screen">
       <div className="flex justify-center">
@@ -375,8 +397,10 @@ function ResultsComponent() {
         bottomContent={
           <>
             {isLoading ? (
-              <div className="flex w-full justify-center">
+              <div className="flex flex-col w-full justify-center items-center">
                 <Spinner color="default" />
+                <p className="mt-2 text-lg text-gray-500 dark:text-grey-50">{currentMessage}</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-grey-50">Hold tight, processing can take up to 5 minutes</p>
               </div>
             ) : null}
 
@@ -414,7 +438,7 @@ function ResultsComponent() {
           </TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={'There are no results to be displayed'}>
+        <TableBody emptyContent={isLoading ? "" : "No results to display"}>
           {items.map((item, index) => (
             <TableRow key={index} data-testid="table-row">
               <TableCell >
