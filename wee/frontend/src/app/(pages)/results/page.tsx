@@ -119,6 +119,9 @@ function ResultsComponent() {
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
 
+  // businessName
+  const [businessName, setBusinessName] = useState('');
+
   const [keywordError, setKeywordError] = useState('');
   const [keyword, setKeyword] = useState('');
   const [isKeywordLoading, setKeywordLoading] = useState(false);
@@ -174,6 +177,21 @@ function ResultsComponent() {
 
       if (urlResults && urlResults[0]) {
         console.log(urlResults[0]);
+        
+        // set business name
+        const parsedUrl = new URL(url);
+        const domainParts = parsedUrl.hostname.split('.').filter(part => part !== 'www');
+        const commonDomains = ['com', 'org', 'net', 'co', 'gov', 'edu'];
+        let business = '';
+        if (domainParts.length > 2 && commonDomains.includes(domainParts[domainParts.length - 2])) {
+          business = domainParts[domainParts.length - 3];
+        } else {
+          // Otherwise, get the second last or last part of the domain
+          business = domainParts.length > 1 ? domainParts[domainParts.length - 2] : domainParts[0];
+        }
+        
+        setBusinessName(business || url);
+
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
@@ -2165,6 +2183,9 @@ function ResultsComponent() {
                             ]}
                             legendPosition='right'
                           />
+                        </div>
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          The results displayed are the closest match to the news articles related to the business name provided: {businessName}
                         </div>
                         <div className='gap-3 grid md:grid-cols-2 my-3'>
                           {scrapeNews.map((news, index) => (
