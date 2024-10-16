@@ -35,7 +35,10 @@ export const handleDownloadReport = (
   shareCountData : ShareCountData | undefined,
 ) => {
   const doc = new jsPDF();
-
+  const cleanDescription = (text: string): string => {
+    return text.replace(/[\r\n]+/g, ' ').replace(/\s\s+/g, ' ').trim();
+  };
+  
   // Title
   doc.setFontSize(20);
   const title = 'Web Exploration Engine Individual Report';
@@ -90,12 +93,12 @@ export const handleDownloadReport = (
 
     return lines;
   };
-
+  const cleanedDescription = cleanDescription(summaryInfo?.description || 'N/A');
   // Draw Table Rows
   const rows = [
     ['URL', url || 'N/A'],
     ['Title', summaryInfo?.title || 'N/A'],
-    ['Description', summaryInfo?.description || 'N/A'],
+    ['Description',cleanedDescription || 'N/A'],
     ['Website Status', websiteStatus || 'N/A'],
     ['Crawlable', isCrawlable ? 'Yes' : 'No'],
     ['Industry', industryClassification ?  industryClassification[0].label : 'N/A'],
@@ -211,7 +214,7 @@ export const handleDownloadReport = (
 
     const headingAnalysisRows = [
       ['Count', headingAnalysis && 'count' in headingAnalysis ? `${headingAnalysis.count}` : 'N/A'],
-      ['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
+      //['Headings', headingAnalysis && 'headings' in headingAnalysis ? headingAnalysis.headings.join(', ') : 'N/A'],
       ['Recommendations', headingAnalysis && 'recommendations' in headingAnalysis ? headingAnalysis.recommendations : 'N/A']
     ];
 
@@ -1034,15 +1037,15 @@ if (scrapeNews) {
   doc.setFillColor(darkTealGreenR, darkTealGreenG, darkTealGreenB); // Set header background color
   doc.rect(0, startY, columnWidth[0] + columnWidth[1], headerHeight, 'F');
   doc.setTextColor(255, 255, 255);
-  doc.text('Category', margin + 2, startY + 7);
-  doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
+  doc.text('News articles', margin + 2, startY + 7);
+  //doc.text('Information', margin + columnWidth[0] + 2, startY + 7);
 
   const scrapeNewsRows = scrapeNews.map(news => [
-    news.link || 'N/A',
+    //news.link || 'N/A',
+    news.title || 'N/A',
     news.pubDate || 'N/A',
     news.sentimentScores ? JSON.stringify(news.sentimentScores) : 'N/A',
-    news.source || 'N/A',
-    news.title || 'N/A'
+    news.source || 'N/A'
   ]);
    
 
