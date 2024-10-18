@@ -58,7 +58,7 @@ export default function Results() {
 }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
-  return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
+  return 'length' in data || 'titleTag' in data || 'recommendations' in data;
 }
 
 function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
@@ -74,7 +74,7 @@ function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is
 }
 
 function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
-  return 'length' in data || 'recommendations' in data || 'titleTag' in data;
+  return 'length' in data || 'recommendations' in data || 'metaDescription' in data || 'isUrlWordsInDescription' in data;
 }
 
 function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
@@ -118,6 +118,9 @@ function ResultsComponent() {
 
   const searchParams = useSearchParams();
   const url = searchParams.get('url');
+
+  // businessName
+  const [businessName, setBusinessName] = useState('');
 
   const [keywordError, setKeywordError] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -174,6 +177,21 @@ function ResultsComponent() {
 
       if (urlResults && urlResults[0]) {
         console.log(urlResults[0]);
+        
+        // set business name
+        const parsedUrl = new URL(url);
+        const domainParts = parsedUrl.hostname.split('.').filter(part => part !== 'www');
+        const commonDomains = ['com', 'org', 'net', 'co', 'gov', 'edu'];
+        let business = '';
+        if (domainParts.length > 2 && commonDomains.includes(domainParts[domainParts.length - 2])) {
+          business = domainParts[domainParts.length - 3];
+        } else {
+          // Otherwise, get the second last or last part of the domain
+          business = domainParts.length > 1 ? domainParts[domainParts.length - 2] : domainParts[0];
+        }
+        
+        setBusinessName(business || url);
+
         setWebsiteStatus(urlResults[0].domainStatus === 'live' ? 'Live' : 'Parked');
 
         if ('errorStatus' in urlResults[0].robots) {
@@ -1250,9 +1268,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Title Tag
+                              Metadata Description:
                             </h5>
-                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.titleTag}</p>
+                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.metaDescription}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1260,6 +1278,13 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-metadescription-length">{metaDescriptionAnalysis?.length}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Is URL in description?
+                            </h5>
+                            <p data-testid="isUrlWordsInDescription">{metaDescriptionAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
@@ -1305,9 +1330,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Metadata Description
+                              Title Tags:
                             </h5>
-                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.metaDescription}</p>
+                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.titleTag}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1315,13 +1340,6 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-titletag-length">{titleTagsAnalysis?.length}</p>
-                          </div>
-
-                          <div className='py-1'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Is URL in description?
-                            </h5>
-                            <p data-testid="titletagWordsInDesr">{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
@@ -1918,8 +1936,8 @@ function ResultsComponent() {
                     <InfoPopOver
                       data-testid="popup-emotions"
                       heading="Emotions Confidence Score"
-                      content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune 
-                        their metadata settings, thereby invoking the desired emotional responses.
+                      content="By analyzing users&apos; domain-specific metadata, we can discern specific emotional cues. This capability empowers users to fine-tune their metadata settings, thereby invoking the desired emotional responses. 
+                        </br></br>Each score indicates the model&apos;s confidence in detecting a specific emotion based on the metadata
                         </br></br>Note: WEE cannot guarantee the accuracy of the analysis as it is based on machine learning models."
                       placement="right-end"
                     />
@@ -2165,6 +2183,9 @@ function ResultsComponent() {
                             ]}
                             legendPosition='right'
                           />
+                        </div>
+                        <div className='py-2 bg-jungleGreen-200/60 dark:bg-jungleGreen-400/40 p-2 rounded-xl mt-2'>
+                          The results displayed are the closest match to the news articles related to the business name provided: {businessName}
                         </div>
                         <div className='gap-3 grid md:grid-cols-2 my-3'>
                           {scrapeNews.map((news, index) => (

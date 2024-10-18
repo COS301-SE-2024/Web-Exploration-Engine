@@ -59,9 +59,10 @@ export const mockSeoAnalysis: SeoAnalysis = {
     },
   },
   metaDescriptionAnalysis: {
+    isUrlWordsInDescription: false,
     length: 155,
     recommendations: "Meta description is well-formed, no changes needed.",
-    titleTag: "Home - Example Website",
+    metaDescription: "Home - Example Website",
   },
   mobileFriendlinessAnalysis: {
     isResponsive: true,
@@ -76,9 +77,8 @@ export const mockSeoAnalysis: SeoAnalysis = {
     recommendations: "Structured data is valid and correctly implemented.",
   },
   titleTagsAnalysis: {
-    isUrlWordsInDescription: false,
     length: 60,
-    metaDescription: "The best example website for your needs.",
+    titleTag: "The best example website for your needs.",
     recommendations: "Title tag length is optimal.",
   },
   uniqueContentAnalysis: {
