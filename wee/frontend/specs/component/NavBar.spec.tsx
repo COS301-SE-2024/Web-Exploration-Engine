@@ -65,6 +65,12 @@ describe('NavBar Component', () => {
     expect(mockPush).toHaveBeenCalledWith('/');
   });
 
+  it('should navigate to scraper result page when Results link is clicked', () => {
+    render(<NavBar />);
+    fireEvent.click(screen.getByText('Results'));
+    expect(mockPush).toHaveBeenCalledWith('/scraperesults');
+  });
+
   it('should navigate to help when Help link is clicked', () => {
     render(<NavBar />);
     fireEvent.click(screen.getByText('Help'));
