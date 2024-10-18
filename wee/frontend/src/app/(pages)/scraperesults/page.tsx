@@ -179,7 +179,7 @@ function ResultsComponent() {
 
   useEffect(() => {
     console.log('urls length: ', urls.length, urls);
-    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
+    if (urls && urls.length > 0 && urls[0] !== '' && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
           // add to array of urls still being processed
