@@ -225,7 +225,7 @@ export interface StructuredDataAnalysis {
 }
 
 export interface TitleTagsAnalysis {
-  titleTag: boolean;
+  titleTag: string;
   length: number;
   recommendations: string;
 }
