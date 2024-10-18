@@ -22,8 +22,8 @@ describe('Help Page Tests', () => {
     cy.visit('/help');
 
 
-    cy.get('a[href="https://drive.google.com/file/d/1RHAZqJYLDp0QfoVW2yWjtgSLnJFsL6Zh/view?usp=sharing"]').should('exist');
-    cy.get('a[href="https://drive.google.com/file/d/19HNm1MmcB3hELx9XXwLlc4LX5dzDJr9M/view?usp=sharing"]').should('exist');
+    cy.get('a[href="https://youtu.be/EuMXwwPIecw"]').should('exist');
+    cy.get('a[href="https://youtu.be/BkHlBYIHalA"]').should('exist');
   });
 
   it('should allow user to send feedback', () => {

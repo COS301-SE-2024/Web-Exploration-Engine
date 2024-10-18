@@ -20,7 +20,7 @@ import { InfoPopOver } from '../../components/InfoPopOver';
 import jsPDF from 'jspdf';
 import { saveReport } from '../../services/SaveReportService';
 import { FiSearch, FiImage, FiAnchor, FiLink, FiCode, FiUmbrella, FiBook, FiType } from "react-icons/fi";
-import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis, ScrapeNews, Reviews, ShareCountData, StarRating } from '../../models/ScraperModels';
+import { TitleTagsAnalysis, HeadingAnalysis, ImageAnalysis, InternalLinksAnalysis, MetaDescriptionAnalysis, UniqueContentAnalysis, SEOError, IndustryClassification, SentimentAnalysis, Metadata, ErrorResponse, LightHouseAnalysis, SiteSpeedAnalysis, MobileFriendlinessAnalysis, XMLSitemapAnalysis, CanonicalTagAnalysis, IndexabilityAnalysis, StructuredDataAnalysis, ScrapeNews, Reviews, ShareCountData, StarRating, ScraperResult } from '../../models/ScraperModels';
 import WEETabs from '../../components/Util/Tabs';
 import { handleDownloadReport } from '../../services/DownloadIndividualReport';
 import { DonutChart } from '../../components/Graphs/DonutChart';
@@ -113,6 +113,8 @@ function isStructuredDataAnalysis(data: StructuredDataAnalysis | SEOError): data
   return 'count' in data || 'recommendations' in data;
 }
 
+
+
 function ResultsComponent() {
   const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -127,6 +129,7 @@ function ResultsComponent() {
   const [isKeywordLoading, setKeywordLoading] = useState(false);
 
   const [isDownloadInProgress, setIsDownloadInProgress] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const { processedUrls, results } = useScrapingContext();
   const { user } = useUserContext();
@@ -257,6 +260,10 @@ function ResultsComponent() {
     router.back();
   };
 
+  const handleSaveModalNavigation = () => {
+    router.push('/savedreports');
+  }
+
   const downloadSummaryReport = (key: any) => {
     setIsDownloadInProgress(true);
 
@@ -310,8 +317,13 @@ function ResultsComponent() {
       setIsDisabled(true);
     }
   };
+  function wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   const handleSave = async (reportName: string) => {
+    
+    
     const onlyLettersPattern = /^[A-Za-z0-9!?&\s]+$/; 
 
     reportName = reportName.trim();
@@ -330,12 +342,14 @@ function ResultsComponent() {
     const urlResults = results.filter((res) => res.url === url);
     if (urlResults && urlResults[0]) {
       try {
+        setIsSaving(true); 
         await saveReport({
           reportName,
           reportData: urlResults[0],
           userId: user?.uuid,
           isSummary: false,
         });
+        setIsSaving(false);
         onOpenChange();
         // report saved successfully popup
         onSuccessOpenChange();
@@ -2270,6 +2284,30 @@ function ResultsComponent() {
                   onPress={() => handleSave(reportName)}
                   disabled={isDisabled}
                   data-testid="submit-report-name"
+                  isLoading={isSaving}
+                  variant="flat"
+                  spinner={
+                    <svg
+                      className="animate-spin h-5 w-5 text-current"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        fill="currentColor"
+                      />
+                    </svg>
+                  }
                 >
                   Save
                 </Button>
@@ -2291,6 +2329,16 @@ function ResultsComponent() {
             <h1 className="text-center my-4 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
               Report saved successfully
             </h1>
+            <p className="text-center my-2 text-lg text-gray-700 dark:text-gray-300">
+              Your report has been saved. You can view it in the <strong>
+                <a 
+                  onClick={handleSaveModalNavigation}
+                  className="text-jungleGreen-800 dark:text-dark-primaryTextColor hover:underline"
+                >
+                  Saved Reports
+                </a>
+              </strong> tab.
+            </p>
           </ModalBody>
         </ModalContent>
       </Modal>

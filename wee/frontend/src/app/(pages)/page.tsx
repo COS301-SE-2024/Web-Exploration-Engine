@@ -11,12 +11,46 @@ import { InfoPopOver } from "../components/InfoPopOver";
 import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
 
 
+
 export default function Home() {
     const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
     const [error, setError] = useState('');     
-    const MAX_URL_LENGTH = 2048;   
+    const MAX_URL_LENGTH = 2048; 
+    
+    const blacklistedSocialMedia: string[] = [
+      // Social Media Sites
+      "facebook.com",
+      "twitter.com",
+      "instagram.com",
+      "linkedin.com",
+      "snapchat.com",
+      "pinterest.com",
+      "tiktok.com",
+      "reddit.com",
+      "youtube.com",
+      "whatsapp.com",
+      "telegram.com",
+      "discord.com",
+      "tumblr.com",
+      "twitch.tv",
+      "vimeo.com",
+      "flickr.com",
+    ];
+
+    const blacklistedAdult: string[] = [
+      // Adult/Inappropriate Sites
+      "pornhub.com",
+      "xvideos.com",
+      "xnxx.com",
+      "adultfriendfinder.com",
+      "redtube.com",
+      "fling.com",
+      "onlyfans.com",
+      "hentaihaven.com",
+    ];
+    
    
     const isValidUrl = (urlString: string) => {
         try {
@@ -29,6 +63,22 @@ export default function Home() {
 
     const sanitizeURL = (url: string) => {
       return url.replace(/[<>"'`;()]/g, '');
+    }
+
+    function isUrlSocialMedia(url: string): boolean {
+      // Normalize the input URL by converting it to lowercase and removing the protocol
+      const normalizedUrl = url.toLowerCase().replace(/(^\w+:|^)\/\//, '');
+      
+      // Check if any blacklisted domain is included in the normalized URL
+      return blacklistedSocialMedia.some(domain => normalizedUrl.includes(domain));
+    }
+
+    function isUrlInappropriate(url: string): boolean {
+      // Normalize the input URL by converting it to lowercase and removing the protocol
+      const normalizedUrl = url.toLowerCase().replace(/(^\w+:|^)\/\//, '');
+      
+      // Check if any blacklisted domain is included in the normalized URL
+      return blacklistedAdult.some(domain => normalizedUrl.includes(domain));
     }
 
     const handleScraping = () => {
@@ -67,6 +117,26 @@ export default function Home() {
 
         if (sanitizedURL !== singleUrl) {
           setError('URLs cannot contain special characters like <, >, ", \', `, ;, (, or )');
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (isUrlSocialMedia(sanitizedURL)) {
+          setError('WEE does not support scraping of social media');
+
+          const timer = setTimeout(() => {
+              setError('');
+          }, 3000);
+
+          return () => clearTimeout(timer);
+        }
+
+        if (isUrlInappropriate(sanitizedURL)) {
+          setError('WEE does not support scraping of adult/inappropriate content');
 
           const timer = setTimeout(() => {
               setError('');
