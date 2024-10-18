@@ -178,7 +178,7 @@ function ResultsComponent() {
   }, [page, filteredItems, resultsPerPage]);
 
   useEffect(() => {
-    console.log('urls length: ', urls.length);
+    console.log('urls length: ', urls.length, urls);
     if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {

@@ -59,9 +59,9 @@ describe('NavBar Component', () => {
     expect(screen.getByTestId('navTitle')).toBeInTheDocument();
   });
 
-  it('should navigate to home when Home link is clicked', () => {
+  it('should navigate to home when Start Scraping link is clicked', () => {
     render(<NavBar />);
-    fireEvent.click(screen.getByText('Home'));
+    fireEvent.click(screen.getByText('Start Scraping'));
     expect(mockPush).toHaveBeenCalledWith('/');
   });
 
