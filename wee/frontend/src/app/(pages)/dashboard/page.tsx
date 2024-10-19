@@ -13,6 +13,7 @@ import { FiArrowUp, FiArrowDown } from "react-icons/fi";
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { useScheduledScrapeContext } from '../../context/ScheduledScrapingContext';
 import { GetSchedulesResponse } from '../../models/ScheduleModels';
+import { MdErrorOutline } from "react-icons/md";
 
 export default function Dashboard() {
 	return (
@@ -187,6 +188,15 @@ function DashboardPage() {
 				>
 					Back
 				</Button>
+
+				{!dashboardData && 
+					<div>
+						<span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+							<MdErrorOutline className="m-auto mx-1 mr-2" />
+							<p>You do not have access to this dashboard.</p>
+						</span>
+					</div>
+				}
 
 				<div className='mb-8 text-center'>
 					<h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
