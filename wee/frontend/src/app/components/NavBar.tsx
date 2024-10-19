@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect } from "react";
-import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Avatar, Tooltip} from "@nextui-org/react";
+import {Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Tooltip} from "@nextui-org/react";
 import ThemeSwitch from "./ThemeSwitch";
 import { useRouter } from 'next/navigation';
 import { useUserContext } from "../context/UserContext";
@@ -9,7 +9,7 @@ import { createClient } from "../utils/supabase/client";
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const { user, setUser } = useUserContext();
-    const supabase = createClient();    
+    const supabase = createClient();
 
     const router = useRouter();
 
@@ -30,7 +30,7 @@ export default function NavBar() {
               console.error("Error fetching user data:", error);
           }
       };
-  
+
       fetchUserData();
   }, []);
 
@@ -60,14 +60,14 @@ export default function NavBar() {
     router.push('/signup');
   }
 
-  const handleSavedReports = () => {  
+  const handleSavedReports = () => {
     router.push('/savedreports');
   }
 
   const handleScheduledScrape = () => {
     router.push('/scheduledscrape');
   }
-    
+
   return (
       <Navbar
         data-testid="header"
@@ -81,7 +81,7 @@ export default function NavBar() {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>            
+        <NavbarBrand>
           <p className="font-bold text-inherit" data-testid='navTitle'>WEE</p>
         </NavbarBrand>
       </NavbarContent>
@@ -95,7 +95,7 @@ export default function NavBar() {
             Home
           </Link>
         </NavbarItem>
-        <NavbarItem >            
+        <NavbarItem >
           <Link onClick={handleHelp} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
             Help
           </Link>
@@ -111,7 +111,7 @@ export default function NavBar() {
                   <Link onClick={handleSavedReports} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
                       Saved Reports
                   </Link>
-                  
+
               )}
         </NavbarItem>
         <NavbarItem>
@@ -125,7 +125,7 @@ export default function NavBar() {
                   <Link onClick={handleScheduledScrape} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
                      Scheduled Tasks
                   </Link>
-                  
+
               )}
         </NavbarItem>
       </NavbarContent>
@@ -143,9 +143,7 @@ export default function NavBar() {
                         {user.name}
                     </p>
                 </NavbarItem>
-                <NavbarItem className="hidden lg:flex">
-                  <Avatar showFallback src='https://images.unsplash.com/broken' />
-                </NavbarItem>
+
                 <NavbarItem>
                     <Button as={Link}  variant="bordered" className="font-poppins-semibold text-dark-primaryTextColor dark:text-primaryTextColor border-dark-primaryTextColor dark:border-primaryTextColor"
                       onClick={handleSignOut}>
@@ -171,37 +169,37 @@ export default function NavBar() {
 
       <NavbarMenu>
         <NavbarMenuItem>
-          <Link 
-            onClick={() => {handleHome(); setIsMenuOpen(false)}} 
+          <Link
+            onClick={() => {handleHome(); setIsMenuOpen(false)}}
             className="w-full"
-            color="foreground"                
+            color="foreground"
             size="lg"
           >
             Home
           </Link>
-          <Link 
-            onClick={() => {handleHelp(); setIsMenuOpen(false)}} 
+          <Link
+            onClick={() => {handleHelp(); setIsMenuOpen(false)}}
             className="w-full"
-            color="foreground"                
+            color="foreground"
             size="lg"
           >
             Help
           </Link>
-          {user &&           
-            <Link 
-              onClick={() => {handleSavedReports(); setIsMenuOpen(false)}} 
+          {user &&
+            <Link
+              onClick={() => {handleSavedReports(); setIsMenuOpen(false)}}
               className="w-full"
-              color="foreground"                
+              color="foreground"
               size="lg"
             >
               Saved Reports
             </Link>
           }
-          {user &&           
-            <Link 
-              onClick={() => {handleScheduledScrape(); setIsMenuOpen(false)}} 
+          {user &&
+            <Link
+              onClick={() => {handleScheduledScrape(); setIsMenuOpen(false)}}
               className="w-full"
-              color="foreground"                
+              color="foreground"
               size="lg"
             >
               Scheduled Tasks
