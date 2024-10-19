@@ -438,7 +438,7 @@ function ResultsComponent() {
           </TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={isLoading ? "" : "No results to display"}>
+        <TableBody emptyContent={isLoading ? "" : "No results to display. Begin scraping by going to the 'Start Scraping' page."}>
           {items.map((item, index) => (
             <TableRow key={index} data-testid="table-row">
               <TableCell >
