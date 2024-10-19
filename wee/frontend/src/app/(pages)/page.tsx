@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Button } from '@nextui-org/react';
 import { useRouter } from 'next/navigation';
 import { MdErrorOutline } from "react-icons/md";
@@ -9,15 +9,26 @@ import { InfoPopOver } from "../components/InfoPopOver";
 
 // Models
 import { ScraperResult, Summary, ErrorResponse } from "../models/ScraperModels";
-
+import { useSearchParams } from 'next/navigation';
 
 export default function Home() {
     const { setUrls, setProcessedUrls, setProcessingUrls, setResults, setSummaryReport, setErrorResults } = useScrapingContext();
     const router = useRouter();
     const [url, setUrl] = useState('');
-    const [error, setError] = useState('');     
-    const MAX_URL_LENGTH = 2048;   
-   
+    const [error, setError] = useState('');
+    const MAX_URL_LENGTH = 2048;
+
+
+  // Use search params to get the URL from the query string
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+      const urlParam = searchParams.get('url');
+      if (urlParam) {
+          setUrl(urlParam);
+      }
+  }, [searchParams]);
+
     const isValidUrl = (urlString: string) => {
         try {
             new URL(urlString);
@@ -26,6 +37,7 @@ export default function Home() {
             return false;
         }
     };
+
 
     const sanitizeURL = (url: string) => {
       return url.replace(/[<>"'`;()]/g, '');
@@ -39,7 +51,7 @@ export default function Home() {
         hour: '2-digit',
         minute: '2-digit',
       });
-      
+
       if (!url) {
           setError('URL cannot be empty');
 
@@ -54,13 +66,13 @@ export default function Home() {
 
       if (urlsToScrape.length > 10) {
         setError('Maximum of 10 URLs can be scraped');
-  
+
         const timer = setTimeout(() => {
             setError('');
         }, 3000);
 
         return () => clearTimeout(timer);
-      } 
+      }
 
       for (const singleUrl of urlsToScrape) {
         const sanitizedURL = sanitizeURL(singleUrl);
@@ -99,7 +111,7 @@ export default function Home() {
 
       // set the urls to scrape in the context
       setUrls(urlsToScrape);
-      
+
       // Clear the processing and processed urls
       setProcessedUrls([]);
       setProcessingUrls([]);
@@ -132,7 +144,7 @@ export default function Home() {
             <InfoPopOver
               data-testid="popup-home"
               heading="Start Scraping"
-              content="This section provides a brief overview of the website based on the information extracted from the website's metadata. Enter the URLs you wish to scrape below. 
+              content="This section provides a brief overview of the website based on the information extracted from the website's metadata. Enter the URLs you wish to scrape below.
               </br></br>
               Please ensure that:
               </br>
