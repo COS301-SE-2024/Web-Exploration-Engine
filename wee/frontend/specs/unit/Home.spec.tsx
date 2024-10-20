@@ -4,6 +4,17 @@ import Home from '../../src/app/(pages)/page';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useScrapingContext } from '../../src/app/context/ScrapingContext';
 
+  beforeEach(() => {
+    // Mock the searchParams to return a URL parameter
+    const mockSearchParams = new URLSearchParams({ url: 'http://example.com' });
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: {
+        search: mockSearchParams.toString(),
+      },
+    });
+  });
+
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
   useRouter: jest.fn(),
