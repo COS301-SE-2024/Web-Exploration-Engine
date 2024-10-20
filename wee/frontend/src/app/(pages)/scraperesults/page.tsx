@@ -53,9 +53,17 @@ function ResultsComponent() {
   const hasSearchFilter = Boolean(searchValue);
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState('');
   const [selectedCrawlableFilter, setSelectedCrawlableFilter] = React.useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
-  useBeforeUnload();
+  const handleButtonClick = () => {
+    if (isLoading || results.length <= 1) {
+      setShowTooltip(true);
+      setTimeout(() => setShowTooltip(false), 7000); // Hide tooltip after 7 seconds
+    } else {
+      handleSummaryPage();
+    }
+  };
 
   const filteredResultItems = React.useMemo(() => {
     let filteredUrls = [...results];
@@ -317,7 +325,7 @@ function ResultsComponent() {
   ];
   const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
 
-  
+
   useEffect(() => {
     if (isLoading) {
       const interval = setInterval(() => {
@@ -328,10 +336,11 @@ function ResultsComponent() {
       return () => clearInterval(interval); // Clean up on unmount or when loading stops
     }
   }, [isLoading]);
-  
+
 
   return (
     <div className="p-4 min-h-screen">
+
       <div className="flex justify-center">
         <WEEInput
           data-testid="search-urls"
@@ -494,14 +503,19 @@ function ResultsComponent() {
           <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Summary
           </h1>
-          <Button
-            data-testid="btn-report-summary"
-            className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
-            onClick={handleSummaryPage}
-            disabled={isLoading || results.length <= 1}
-          >
-            View overall summary report
-          </Button>
+          <Tooltip content="Button disabled until all results are loaded " >
+  <Button
+    data-testid="btn-report-summary"
+    className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
+    onClick={handleButtonClick}
+    disabled={isLoading || results.length <= 1}
+  >
+    View overall summary report
+  </Button>
+</Tooltip>
+
+
+
         </div>
 
         <div>
