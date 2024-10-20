@@ -204,13 +204,6 @@ const Home = () => {
 
   return (
     <div className="p-4 flex flex-col items-center min-h-screen">
-      <Suspense fallback={<div>Loading...</div>}>
-        {/* Render the part that requires useSearchParams inside Suspense */}
-        <div>
-          <h1>The Web Exploration Engine</h1>
-          <h2>URL: {url}</h2>
-        </div>
-      </Suspense>
       <div className="mb-4 md:my-8 text-center">
         <h1 className="mt-8 mb-5 font-poppins-bold text-4xl lg:text-5xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
           The Web Exploration Engine
