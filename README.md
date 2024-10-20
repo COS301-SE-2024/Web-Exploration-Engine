@@ -164,7 +164,7 @@ https://github.com/user-attachments/assets/b93efbef-643b-4b8d-91b2-d05437615d56
     </td>
     <td style="vertical-align: top; width: auto; border: 0; padding: 10px;">
       <h2><b style="font-size: 18px;">Caitlin Simon</b></h2>
-      <h3><b style="font-size: 16px;">Project Manager, Integration Engineer, DevOps Engineer</b></h3><br>
+      <h3><b style="font-size: 16px;">Project Manager, Integration Engineer, DevOps Engineer, Services Engineer</b></h3><br>
      As a computer science student with a passion for data science, I bring valuable skills and a collaborative approach to this project. My experience in data science includes modules, such as Applications in data science (WST 212) and Artificial Intelligence (COS 314) through languages such as C++, Java and R. I gained practical experience through a quantitative science internship, Quantify Your Future where I was able to apply my theoretical knowledge in machine learning and data analytics to real-world problems in the financial sector. 
       <br><br>
       <a href="https://github.com/CaitMS" style="text-decoration: none; margin-right: 10px; display: inline-block; vertical-align: middle;">
