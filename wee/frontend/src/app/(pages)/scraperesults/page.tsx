@@ -494,7 +494,19 @@ function ResultsComponent() {
           <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Summary
           </h1>
-          <Button
+          {isLoading ||  results.length <= 1 ?
+            <Tooltip content="Only available if there are more than one result and all URLs have successfully loaded">
+              <Button
+                data-testid="btn-report-summary"
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
+                onClick={handleSummaryPage}
+                disabled={isLoading || results.length <= 1}
+              >
+                View overall summary report
+              </Button>
+            </Tooltip>
+          :
+            <Button
             data-testid="btn-report-summary"
             className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
             onClick={handleSummaryPage}
@@ -502,6 +514,7 @@ function ResultsComponent() {
           >
             View overall summary report
           </Button>
+          }
         </div>
 
         <div>
