@@ -153,7 +153,7 @@ describe('Scrape Results Component', () => {
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
-        const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
+        const searchInput = screen.getByPlaceholderText('Enter URL to search...');
         fireEvent.change(searchInput, { target: { value: 'example2' } });
 
         expect(screen.queryByText(/https:\/\/www\.example\.com'/)).toBeNull();
@@ -168,7 +168,7 @@ describe('Scrape Results Component', () => {
         expect(screen.getByText('https://www.example2.com')).toBeDefined();
         expect(screen.getByText('https://www.example5.com')).toBeDefined();
 
-        const searchInput = screen.getByPlaceholderText('https://www.takealot.com/');
+        const searchInput = screen.getByPlaceholderText('Enter URL to search...');
         fireEvent.change(searchInput, { target: { value: '' } });
 
         expect(screen.getByText(/https:\/\/www\.example\.com'/)).toBeDefined();
