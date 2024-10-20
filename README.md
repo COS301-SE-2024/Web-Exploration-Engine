@@ -29,10 +29,13 @@ https://github.com/user-attachments/assets/b93efbef-643b-4b8d-91b2-d05437615d56
 
 </p>
 
+[Our Website](https://capstone-wee.dns.net.za/) | 
+[Summary Slides](https://www.canva.com/design/DAGUGhdECHI/wUZEdPKw-ikbcjl734b35w/edit?utm_content=DAGUGhdECHI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
   <h1 align="center"> Documentation and Resources </h1>
 
 <div align="center" >
+
 
 
 | Resource                             | Description                                                                                                                         |
