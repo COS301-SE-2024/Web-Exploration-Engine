@@ -12,25 +12,7 @@ import { InfoPopOver } from '../components/InfoPopOver';
 import { ScraperResult, Summary, ErrorResponse } from '../models/ScraperModels';
 import { useSearchParams } from 'next/navigation';
 
-interface SearchParamsComponentProps {
-  setUrl: (url: string) => void;
-}
-
-const SearchParamsComponent: React.FC<SearchParamsComponentProps> = ({
-  setUrl,
-}) => {
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const urlParam = searchParams.get('url');
-    if (urlParam) {
-      setUrl(urlParam);
-    }
-  }, [searchParams, setUrl]);
-
-  return null; // This component does not need to render anything
-};
-
-export default function Home() {
+const Home = () => {
   const {
     setUrls,
     setProcessedUrls,
@@ -44,7 +26,6 @@ export default function Home() {
   const [error, setError] = useState('');
   const MAX_URL_LENGTH = 2048;
 
-  // Use search params to get the URL from the query string
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -224,7 +205,11 @@ export default function Home() {
   return (
     <div className="p-4 flex flex-col items-center min-h-screen">
       <Suspense fallback={<div>Loading...</div>}>
-        <SearchParamsComponent setUrl={setUrl} />
+        {/* Render the part that requires useSearchParams inside Suspense */}
+        <div>
+          <h1>The Web Exploration Engine</h1>
+          <h2>URL: {url}</h2>
+        </div>
       </Suspense>
       <div className="mb-4 md:my-8 text-center">
         <h1 className="mt-8 mb-5 font-poppins-bold text-4xl lg:text-5xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
@@ -291,4 +276,6 @@ export default function Home() {
       )}
     </div>
   );
-}
+};
+
+export default Home;
