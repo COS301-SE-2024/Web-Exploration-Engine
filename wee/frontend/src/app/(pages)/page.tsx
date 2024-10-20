@@ -265,7 +265,7 @@ export default function Home() {
           data-testid="scraping-textarea-home"
           minRows={1}
           label="URLs to scrape"
-          placeholder="Enter the URLs you want to scrape comma seperated"
+          placeholder="Enter the URLs you want to scrape comma separated"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
         />
@@ -281,6 +281,10 @@ export default function Home() {
         <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
           <MdErrorOutline className="m-auto mx-1" />
           <p>{error}</p>
+          <span className="flex items-center mt-4 text-red-500">
+            <MdErrorOutline className="mr-2" />
+            {error}
+          </span>
         </span>
       ) : (
         <p className="mt-4 p-2 min-h-[3.5rem]"></p>
