@@ -92,12 +92,12 @@ export default function App() {
                   <VideoThumbnail
                     message="How to start scraping?"
                     thumbnail="images/StartScraping.svg"
-                    link="https://drive.google.com/file/d/1RHAZqJYLDp0QfoVW2yWjtgSLnJFsL6Zh/view?usp=sharing"
+                    link="https://youtu.be/BkHlBYIHalA"
                   />
                   <VideoThumbnail
                     message="Radar graphs explained"
                     thumbnail="images/RadarGraphs.svg"
-                    link="https://drive.google.com/file/d/19HNm1MmcB3hELx9XXwLlc4LX5dzDJr9M/view?usp=sharing"
+                    link="https://youtu.be/EuMXwwPIecw"
                   />
                 </div>
 

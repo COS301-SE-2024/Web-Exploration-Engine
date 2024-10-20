@@ -81,7 +81,7 @@ describe('Dashboard page - no data', () => {
 
         const dashboardLightHouse = screen.queryByTestId('dashboard-lighthouse-not-available');
         expect(dashboardLightHouse).toBeInTheDocument();
-        expect(dashboardLightHouse).toHaveTextContent('There are no Ligth House Technical SEO Analysis currently available');
+        expect(dashboardLightHouse).toHaveTextContent('There are no Light House Technical SEO Analysis currently available');
     });
 
     it('SEO Tech Analysis Site Speed section is not available', () => {

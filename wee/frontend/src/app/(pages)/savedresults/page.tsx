@@ -25,7 +25,7 @@ import CircularProgressComparison from "../../components/CircularProgressCompari
 import { SEOKeywordAnalysis } from '../../models/KeywordAnalysisModels';
 import useBeforeUnload from '../../hooks/useBeforeUnload';
 import { ColumnChartWithLables, SentimentColumnChartWithLables } from '../../components/Graphs/ColumnChart';
-
+import { MdErrorOutline } from "react-icons/md";
 
 interface Classifications {
   label: string;
@@ -46,7 +46,7 @@ export default function Results() {
 }
 
 function isTitleTagAnalysis(data: TitleTagsAnalysis | SEOError): data is TitleTagsAnalysis {
-  return 'length' in data || 'metaDescription' in data || 'recommendations' in data || 'isUrlWordsInDescription' in data;
+  return 'length' in data || 'titleTag' in data || 'recommendations' in data;
 }
 
 function isHeadingAnalysis(data: HeadingAnalysis | SEOError): data is HeadingAnalysis {
@@ -62,7 +62,7 @@ function isInternalLinkAnalysis(data: InternalLinksAnalysis | SEOError): data is
 }
 
 function isMetaDescriptionAnalysis(data: MetaDescriptionAnalysis | SEOError): data is MetaDescriptionAnalysis {
-  return 'length' in data || 'recommendations' in data || 'titleTag' in data;
+  return 'length' in data || 'recommendations' in data || 'metaDescription' in data || 'isUrlWordsInDescription' in data;
 }
 
 function isUniqueContentAnalysis(data: UniqueContentAnalysis | SEOError): data is UniqueContentAnalysis {
@@ -147,7 +147,7 @@ function ResultsComponent() {
   const [scrapeNews, setScrapeNews] = useState<ScrapeNews[]>([]);
   const [reviews, setReviews] = useState<Reviews>();
   const [shareCountData, setShareCountData] = useState<ShareCountData>();
-  const [reportName, setReportName] = useState<string>('');
+  const [reportName, setReportName] = useState<string>();
   const [reportUrl, setReportUrl] = useState<string>('');
   const [summaryDate, setSummaryDate] = useState<string>("");
 
@@ -213,6 +213,9 @@ function ResultsComponent() {
         setReviews(resultsData.reviews);
         setShareCountData(resultsData.shareCountdata);
       }
+      else {
+        setReportName('');
+      }
     }
   }, [id]);
 
@@ -263,6 +266,15 @@ function ResultsComponent() {
           Back
         </Button>
 
+        {reportName === '' &&
+          <div>
+            <span className="mt-4 mb-2 p-2 text-white bg-red-600 rounded-lg transition-opacity duration-300 ease-in-out flex justify-center align-middle">
+              <MdErrorOutline className="m-auto mx-1 mr-2" />
+              <p>You do not have access to this saved report.</p>
+            </span>
+          </div>
+        }
+
         <div className="mb-8 text-center">
           <h1 className="mt-4 font-poppins-bold text-lg sm:text-xl md:text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor"
             data-testid='saved-report-name'>
@@ -271,53 +283,55 @@ function ResultsComponent() {
           <h2 className="mt-4 font-poppins-semibold text-xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             {summaryDate}
           </h2>
-          <div className="mt-4 mr-4 flex justify-end">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  isLoading={isDownloadInProgress}
-                  variant="flat"
-                  data-testid="btn-export-save-report"
-                  startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
-                  spinner={
-                    <svg
-                      className="animate-spin h-5 w-5 text-current"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  }
-                >
-                  Export
-                </Button>
-              </DropdownTrigger>
-                <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
-                  <DropdownItem
-                    key="download"
-                    startContent={<FiDownload className={iconClasses} />}
-                    description="Download the report to your device"
-                    onAction={downloadSummaryReport}
-                    data-testid="download-report-button"
+          {reportName !== '' &&
+            <div className="mt-4 mr-4 flex justify-end">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    isLoading={isDownloadInProgress}
+                    variant="flat"
+                    data-testid="btn-export-save-report"
+                    startContent={!isDownloadInProgress && <FiShare className="h-5 w-5" />}
+                    spinner={
+                      <svg
+                        className="animate-spin h-5 w-5 text-current"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    }
                   >
-                    Download
-                  </DropdownItem>
-                </DropdownMenu>
-            </Dropdown>
-          </div>
+                    Export
+                  </Button>
+                </DropdownTrigger>
+                  <DropdownMenu variant="flat" aria-label="Dropdown menu with icons">
+                    <DropdownItem
+                      key="download"
+                      startContent={<FiDownload className={iconClasses} />}
+                      description="Download the report to your device"
+                      onAction={downloadSummaryReport}
+                      data-testid="download-report-button"
+                    >
+                      Download
+                    </DropdownItem>
+                  </DropdownMenu>
+              </Dropdown>
+            </div>
+          }
         </div>
 
         {/* Tabs */}
@@ -962,9 +976,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Title Tag
+                              Meta Description:
                             </h5>
-                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.titleTag}</p>
+                            <p data-testid="p-metadescription-tag">{metaDescriptionAnalysis?.metaDescription}</p>
                           </div>
 
                           <div className='py-1'>
@@ -972,6 +986,13 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-metadescription-length">{metaDescriptionAnalysis?.length}</p>
+                          </div>
+
+                          <div className='py-1'>
+                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
+                              Is URL in description?
+                            </h5>
+                            <p data-testid="isUrlWordsInDescription">{metaDescriptionAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {
@@ -1017,9 +1038,9 @@ function ResultsComponent() {
                         <div>
                           <div className='py-1'>
                             <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Metadata Description
+                              Title Tags:
                             </h5>
-                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.metaDescription}</p>
+                            <p data-testid="p-titletag-description">{titleTagsAnalysis?.titleTag}</p>
                           </div>
 
                           <div className='py-1'>
@@ -1027,13 +1048,6 @@ function ResultsComponent() {
                               Length
                             </h5>
                             <p data-testid="p-titletag-length">{titleTagsAnalysis?.length}</p>
-                          </div>
-
-                          <div className='py-1'>
-                            <h5 className='font-poppins-semibold text-jungleGreen-700 dark:text-jungleGreen-100'>
-                              Is URL in description?
-                            </h5>
-                            <p data-testid="titletagWordsInDesr">{titleTagsAnalysis?.isUrlWordsInDescription == true ? 'Yes' : 'No'}</p>
                           </div>
 
                           {

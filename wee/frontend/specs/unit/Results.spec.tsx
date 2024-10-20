@@ -88,7 +88,7 @@ describe('Results Component', () => {
                         "score": 15
                     }
                 ],
-                zeroShotMetaDataClassify: [                    
+                zeroShotMetaDataClassify: [
                     {
                         "label": "Tech",
                         "score": 69
@@ -100,7 +100,7 @@ describe('Results Component', () => {
                     {
                         "label": "Marine Resources",
                         "score": 18
-                    }                    
+                    }
                 ]
 
             },
@@ -117,20 +117,20 @@ describe('Results Component', () => {
             },
             sentiment: {
                 sentimentAnalysis: {
-                  positive: 0.94,
-                  negative: 0.001,
-                  neutral: 0.05,
+                    positive: 0.94,
+                    negative: 0.001,
+                    neutral: 0.05,
                 },
                 positiveWords: ['Flame', '100%', 'choice'],
                 negativeWords: ['Nothing', 'slaps'],
                 emotions: {
-                  neutral: 0.88,
-                  joy: 0.02,
-                  surprise: 0.1,
-                  anger: 0.01,
-                  disgust: 0.2,
-                  sadness: 0.003,
-                  fear: 0.002,
+                    neutral: 0.88,
+                    joy: 0.02,
+                    surprise: 0.1,
+                    anger: 0.01,
+                    disgust: 0.2,
+                    sadness: 0.003,
+                    fear: 0.002,
                 },
             },
             seoAnalysis: {
@@ -193,9 +193,10 @@ describe('Results Component', () => {
                     }
                 },
                 metaDescriptionAnalysis: {
-                    length: 80,
-                    recommendations: "Title tag length should be between 50 and 60 characters.",
-                    titleTag: "South African Online Computer Store",
+                    isUrlWordsInDescription: false,
+                    length: 88,
+                    metaDescription: "Buy computers, hardware, software, laptops & more from South Africa's best online store.",
+                    recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: wootware.',
                 },
                 mobileFriendlinessAnalysis: {
                     isResponsive: true,
@@ -210,10 +211,9 @@ describe('Results Component', () => {
                     recommendations: "Your site currently lacks structured data, which can help search engines understand your content better. Consider implementing structured data using Schema.org to enhance visibility and improve your SEO.",
                 },
                 titleTagsAnalysis: {
-                    isUrlWordsInDescription: false,
-                    length: 88,
-                    metaDescription: "Buy computers, hardware, software, laptops & more from South Africa's best online store.",
-                    recommendations: 'Meta description length should be between 120 and 160 characters. Consider including words from the URL in the meta description: wootware.',
+                    length: 80,
+                    recommendations: "Title tag length should be between 50 and 60 characters.",
+                    titleTag: "South African Online Computer Store",
                 },
                 uniqueContentAnalysis: {
                     recommendations: '',
@@ -365,7 +365,7 @@ describe('Results Component', () => {
                                 "score": 0.1515
                             }
                         ],
-                        zeroShotMetaDataClassify: [                    
+                        zeroShotMetaDataClassify: [
                             {
                                 "label": "Tech",
                                 "score": 0.6969
@@ -377,9 +377,9 @@ describe('Results Component', () => {
                             {
                                 "label": "Marine Resources",
                                 "score": 0.1818
-                            }                    
+                            }
                         ]
-        
+
                     },
                 },
             ],
@@ -430,7 +430,7 @@ describe('Results Component', () => {
                                 "score": 0
                             }
                         ],
-                        zeroShotMetaDataClassify: [                    
+                        zeroShotMetaDataClassify: [
                             {
                                 "label": "Tech",
                                 "score": 0.6969
@@ -442,9 +442,9 @@ describe('Results Component', () => {
                             {
                                 "label": "Marine Resources",
                                 "score": 0.1818
-                            }                    
+                            }
                         ]
-        
+
                     },
                 },
             ],
@@ -490,7 +490,7 @@ describe('Results Component', () => {
                                 "score": 0.1515
                             }
                         ],
-                        zeroShotMetaDataClassify: [                    
+                        zeroShotMetaDataClassify: [
                             {
                                 "label": "Unknown",
                                 "score": 0
@@ -502,9 +502,9 @@ describe('Results Component', () => {
                             {
                                 "label": "Unknown",
                                 "score": 0
-                            }                
+                            }
                         ]
-        
+
                     },
                 },
             ],
@@ -847,7 +847,7 @@ describe('Results Component', () => {
         });
     });
 
-    it('Onpage SEO: Meta Description - display title tag, length and recommendation', async () => {
+    it('Onpage SEO: Meta Description - display metadescription, length and recommendation', async () => {
         await act(async () => {
             render(<Results />);
         });
@@ -856,14 +856,15 @@ describe('Results Component', () => {
         fireEvent.click(SEOTab);
 
         await waitFor(() => {
-            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.metaDescription)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.length)).toBeDefined();
+            expect(screen.getByText('No')).toBeDefined();
             expect(screen.queryByTestId('meta_recommendations')).toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.recommendations)).toBeDefined();
         });
     });
 
-    it('Onpage SEO: Meta Description - display title tag, length and NO recommendation', async () => {
+    it('Onpage SEO: Meta Description - metadata description, length, is url in description and NO recommendation', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
                 {
@@ -871,9 +872,10 @@ describe('Results Component', () => {
                     seoAnalysis: {
                         ...mockResults[0].seoAnalysis,
                         metaDescriptionAnalysis: {
-                            length: 55,
+                            isUrlWordsInDescription: true,
+                            length: 121,
+                            metaDescription: "Meta description for title tag analysis",
                             recommendations: '',
-                            titleTag: "South African Online Computer Store",
                         },
                     }
                 },
@@ -888,8 +890,9 @@ describe('Results Component', () => {
         fireEvent.click(SEOTab);
 
         await waitFor(() => {
-            expect(screen.getByText(mockResults[0].seoAnalysis.metaDescriptionAnalysis.titleTag)).toBeDefined();
-            expect(screen.getByText('55')).toBeDefined();
+            expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
+            expect(screen.getByText("121")).toBeDefined();
+            expect(screen.queryByTestId('isUrlWordsInDescription')?.textContent).toBe('Yes');
             expect(screen.queryByTestId('meta_recommendations')).not.toBeInTheDocument();
         });
     });
@@ -952,7 +955,7 @@ describe('Results Component', () => {
         });
     });
 
-    it('Onpage SEO: Title Tags - metadata description, length, is url in description and recommendation', async () => {
+    it('Onpage SEO: Title Tags - title tag, length and recommendation', async () => {
         await act(async () => {
             render(<Results />);
         });
@@ -961,15 +964,14 @@ describe('Results Component', () => {
         fireEvent.click(SEOTab);
 
         await waitFor(() => {
-            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.metaDescription)).toBeDefined();
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.titleTag)).toBeDefined();
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.length)).toBeDefined();
-            expect(screen.getByText('No')).toBeDefined();
             expect(screen.queryByTestId('titleTag_recommendations')).toBeInTheDocument();
             expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.recommendations)).toBeDefined();
         });
     });
 
-    it('Onpage SEO: Title Tags - metadata description, length, is url in description and NO recommendation', async () => {
+    it('Onpage SEO: Title Tags - title tag, length and NO recommendation', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
                 {
@@ -977,10 +979,9 @@ describe('Results Component', () => {
                     seoAnalysis: {
                         ...mockResults[0].seoAnalysis,
                         titleTagsAnalysis: {
-                            isUrlWordsInDescription: true,
-                            length: 121,
-                            metaDescription: "Meta description for title tag analysis",
+                            length: 55,
                             recommendations: '',
+                            titleTag: "South African Online Computer Store",
                         },
                     }
                 },
@@ -995,9 +996,8 @@ describe('Results Component', () => {
         fireEvent.click(SEOTab);
 
         await waitFor(() => {
-            expect(screen.getByText("Meta description for title tag analysis")).toBeDefined();
-            expect(screen.getByText("121")).toBeDefined();
-            expect(screen.queryByTestId('titletagWordsInDesr')?.textContent).toBe('Yes');
+            expect(screen.getByText(mockResults[0].seoAnalysis.titleTagsAnalysis.titleTag)).toBeDefined();
+            expect(screen.getByText('55')).toBeDefined();
             expect(screen.queryByTestId('titleTag_recommendations')).not.toBeInTheDocument();
         });
     });
@@ -1173,7 +1173,7 @@ describe('Results Component', () => {
         });
     });
 
-    it('Technical SEO: Canonical Tags', async() => {
+    it('Technical SEO: Canonical Tags', async () => {
         await act(async () => {
             render(<Results />);
         });
@@ -1189,7 +1189,7 @@ describe('Results Component', () => {
         });
     })
 
-    it('Technical SEO: Canonical Tags, NO tag present', async() => {
+    it('Technical SEO: Canonical Tags, NO tag present', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
                 {
@@ -1221,7 +1221,7 @@ describe('Results Component', () => {
         });
     })
 
-    it('Technical SEO: Site Speed', async() => {
+    it('Technical SEO: Site Speed', async () => {
         await act(async () => {
             render(<Results />);
         });
@@ -1236,7 +1236,7 @@ describe('Results Component', () => {
         });
     });
 
-    it('Technical SEO: Site Speed with zero loadtime', async() => {
+    it('Technical SEO: Site Speed with zero loadtime', async () => {
         (useScrapingContext as jest.Mock).mockReturnValueOnce({
             results: [
                 {
@@ -1488,7 +1488,7 @@ describe('Results Component', () => {
             expect(screen.getByText(mockResults[0].seoAnalysis.structuredDataAnalysis.recommendations)).toBeDefined();
         });
     });
-    
+
     it('Technical SEO: Lighthouse analysis', async () => {
         await act(async () => {
             render(<Results />);
@@ -1551,20 +1551,20 @@ describe('Results Component', () => {
                     ...mockResults[0],
                     sentiment: {
                         sentimentAnalysis: {
-                          positive: 0.90,
-                          negative: 0.02,
-                          neutral: 0.08,
+                            positive: 0.90,
+                            negative: 0.02,
+                            neutral: 0.08,
                         },
                         positiveWords: ['Flame', '100%', 'choice'],
                         negativeWords: ['Nothing', 'slaps'],
                         emotions: {
-                          neutral: 0.88,
-                          joy: 0.02,
-                          surprise: 0.1,
-                          anger: 0.01,
-                          disgust: 0.2,
-                          sadness: 0.003,
-                          fear: 0.002,
+                            neutral: 0.88,
+                            joy: 0.02,
+                            surprise: 0.1,
+                            anger: 0.01,
+                            disgust: 0.2,
+                            sadness: 0.003,
+                            fear: 0.002,
                         },
                     },
                 },
@@ -1578,7 +1578,7 @@ describe('Results Component', () => {
         const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
         fireEvent.click(SentimentTab);
 
-        await waitFor(() => {            
+        await waitFor(() => {
             expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
 
             const sentimentMetaTitleDiv = screen.getByTestId('sentiment-meta-title');
@@ -1608,20 +1608,20 @@ describe('Results Component', () => {
                     ...mockResults[0],
                     sentiment: {
                         sentimentAnalysis: {
-                          positive: 0.90,
-                          negative: 0.02,
-                          neutral: 0.08,
+                            positive: 0.90,
+                            negative: 0.02,
+                            neutral: 0.08,
                         },
                         positiveWords: [],
                         negativeWords: [],
                         emotions: {
-                          neutral: 0.88,
-                          joy: 0.02,
-                          surprise: 0.1,
-                          anger: 0.01,
-                          disgust: 0.2,
-                          sadness: 0.003,
-                          fear: 0.002,
+                            neutral: 0.88,
+                            joy: 0.02,
+                            surprise: 0.1,
+                            anger: 0.01,
+                            disgust: 0.2,
+                            sadness: 0.003,
+                            fear: 0.002,
                         },
                     },
                 },
@@ -1635,7 +1635,7 @@ describe('Results Component', () => {
         const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
         fireEvent.click(SentimentTab);
 
-        await waitFor(() => {            
+        await waitFor(() => {
             expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
 
             const sentimentMetaTitleDiv = screen.queryByTestId('sentiment-meta-title');
@@ -1660,9 +1660,9 @@ describe('Results Component', () => {
                     ...mockResults[0],
                     sentiment: {
                         sentimentAnalysis: {
-                          positive: 0.90,
-                          negative: 0.02,
-                          neutral: 0.08,
+                            positive: 0.90,
+                            negative: 0.02,
+                            neutral: 0.08,
                         },
                         positiveWords: ['Flame', '100%', 'choice'],
                         negativeWords: ['Nothing', 'slaps'],
@@ -1679,7 +1679,7 @@ describe('Results Component', () => {
         const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
         fireEvent.click(SentimentTab);
 
-        await waitFor(() => {            
+        await waitFor(() => {
             expect(screen.getByTestId('sentiment-donut-chart')).toBeInTheDocument();
 
             const sentimentMetaTitleDiv = screen.getByTestId('sentiment-meta-title');
@@ -1710,20 +1710,20 @@ describe('Results Component', () => {
                     ...mockResults[0],
                     sentiment: {
                         sentimentAnalysis: {
-                          positive: 0,
-                          negative: 0,
-                          neutral: 0,
+                            positive: 0,
+                            negative: 0,
+                            neutral: 0,
                         },
                         positiveWords: ['Flame', '100%', 'choice'],
                         negativeWords: ['Nothing', 'slaps'],
                         emotions: {
-                          neutral: 0.88,
-                          joy: 0.02,
-                          surprise: 0.1,
-                          anger: 0.01,
-                          disgust: 0.2,
-                          sadness: 0.003,
-                          fear: 0.002,
+                            neutral: 0.88,
+                            joy: 0.02,
+                            surprise: 0.1,
+                            anger: 0.01,
+                            disgust: 0.2,
+                            sadness: 0.003,
+                            fear: 0.002,
                         },
                     },
                 },
@@ -1737,7 +1737,7 @@ describe('Results Component', () => {
         const SentimentTab = screen.getByRole('tab', { name: /Sentiment Analysis/i });
         fireEvent.click(SentimentTab);
 
-        await waitFor(() => {            
+        await waitFor(() => {
             expect(screen.queryByTestId('sentiment-donut-chart')).not.toBeInTheDocument();
             expect(screen.queryByText('No sentiment analysis data to display')).toBeInTheDocument();
 
@@ -2148,7 +2148,7 @@ describe('Results Component', () => {
 
         // Check if the input has entered an invalid state
         expect(reportNameInput).toHaveAttribute('aria-invalid', 'true');
-    
+
         // Check if the correct error message is displayed
         const errorMessage = screen.getByText('Report name is invalid. Only letters, numbers, !?& are allowed.');
         expect(errorMessage).toBeInTheDocument();

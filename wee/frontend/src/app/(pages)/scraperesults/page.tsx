@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, Suspense, useRef } from 'react';
+import React, { useEffect, Suspense, useRef, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { SelectItem } from '@nextui-org/react';
 import WEEInput from '../../components/Util/Input';
@@ -178,8 +178,8 @@ function ResultsComponent() {
   }, [page, filteredItems, resultsPerPage]);
 
   useEffect(() => {
-    console.log('urls length: ', urls.length);
-    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
+    console.log('urls length: ', urls.length, urls);
+    if (urls && urls.length > 0 && urls[0] !== '' && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
           // add to array of urls still being processed
@@ -308,6 +308,28 @@ function ResultsComponent() {
     router.push(`/comparison`);
   };
 
+  const loadingMessages = [
+    "Gathering the latest results...",
+    "Performing SEO analysis...",
+    "Crunching the numbers...",
+    "Checking reputation status...",
+    "Scraping the urls...",
+  ];
+  const [currentMessage, setCurrentMessage] = useState(loadingMessages[0]);
+
+  
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        const randomMessage = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+        setCurrentMessage(randomMessage);
+      }, 3000); // Change the message every 3 seconds
+
+      return () => clearInterval(interval); // Clean up on unmount or when loading stops
+    }
+  }, [isLoading]);
+  
+
   return (
     <div className="p-4 min-h-screen">
       <div className="flex justify-center">
@@ -315,7 +337,7 @@ function ResultsComponent() {
           data-testid="search-urls"
           isClearable
           type="text"
-          placeholder="https://www.takealot.com/"
+          placeholder="Enter URL to search..."
           labelPlacement="outside"
           className="py-3  w-full md:w-4/5 md:px-5"
           startContent={
@@ -327,7 +349,7 @@ function ResultsComponent() {
       </div>
       <div className="md:flex md:justify-between md:w-4/5 md:m-auto md:px-5">
         <WEESelect
-          label="Live/Parked"
+          label="Filter by domain status"
           className="w-full pb-3 md:w-1/3"
           onChange={handleStatusFilterChange}
           data-testid="status-filter"
@@ -337,13 +359,13 @@ function ResultsComponent() {
         </WEESelect>
 
         <WEESelect
-          label="Crawlable"
+          label="Filter by crawlability"
           className="w-full pb-3 md:w-1/3"
           onChange={handleCrawlableFilterChange}
           data-testid="crawlable-filter"
         >
-          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Yes</SelectItem>
-          <SelectItem key={'No'} data-testid="crawlable-filter-no">No</SelectItem>
+          <SelectItem key={'Yes'} data-testid="crawlable-filter-yes">Crawlable</SelectItem>
+          <SelectItem key={'No'} data-testid="crawlable-filter-no">Not Crawlable</SelectItem>
         </WEESelect>
       </div>
 
@@ -375,8 +397,10 @@ function ResultsComponent() {
         bottomContent={
           <>
             {isLoading ? (
-              <div className="flex w-full justify-center">
+              <div className="flex flex-col w-full justify-center items-center">
                 <Spinner color="default" />
+                <p className="mt-2 text-lg text-gray-500 dark:text-grey-50">{currentMessage}</p>
+                <p className="mt-2 text-sm text-gray-500 dark:text-grey-50">Hold tight, processing can take up to 5 mins</p>
               </div>
             ) : null}
 
@@ -414,7 +438,7 @@ function ResultsComponent() {
           </TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={'There are no results to be displayed'}>
+        <TableBody emptyContent={isLoading ? "" : "No results to display. Begin scraping by going to the 'Start Scraping' page."}>
           {items.map((item, index) => (
             <TableRow key={index} data-testid="table-row">
               <TableCell >
@@ -470,7 +494,19 @@ function ResultsComponent() {
           <h1 className="my-4 mt-6 font-poppins-bold text-2xl text-jungleGreen-800 dark:text-dark-primaryTextColor">
             Summary
           </h1>
-          <Button
+          {isLoading ||  results.length <= 1 ?
+            <Tooltip content="Only available if there are more than one result and all URLs have successfully loaded">
+              <Button
+                data-testid="btn-report-summary"
+                className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
+                onClick={handleSummaryPage}
+                disabled={isLoading || results.length <= 1}
+              >
+                View overall summary report
+              </Button>
+            </Tooltip>
+          :
+            <Button
             data-testid="btn-report-summary"
             className="text-md font-poppins-semibold bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor disabled:bg-jungleGreen-600 disabled:dark:bg-jungleGreen-300 disabled:cursor-not-allowed"
             onClick={handleSummaryPage}
@@ -478,6 +514,7 @@ function ResultsComponent() {
           >
             View overall summary report
           </Button>
+          }
         </div>
 
         <div>

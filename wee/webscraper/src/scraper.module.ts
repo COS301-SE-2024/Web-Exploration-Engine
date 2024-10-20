@@ -38,7 +38,7 @@ import { ScrapeReviewsService } from './scrape-reviews/scrape-reviews.service';
       imports: [ConfigModule],
       useFactory: async (config) => {
         const store = await redisStore({
-          ttl: 60 * 60 * 1000, // 60 minutes in cache
+          ttl: 24 * 60 * 60 * 1000, // 24 hours in cache
           socket: {
             host: config.get('redis.host'),
             port: config.get('redis.port')

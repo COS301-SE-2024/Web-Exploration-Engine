@@ -17,6 +17,11 @@ const faqs = [
       'Web scraping is the process of extracting data from websites. It is a technique that allows for the gathering of useful information from the internet for various purposes, such as data analysis, market research, and competitive intelligence',
   },
   {
+    question: 'Why would I want to web scrape?',
+    answer:
+      'Web scraping provides a fast and efficient way to gather large amounts of data from multiple websites. This is valuable for businesses that need up-to-date information for competitor analysis, pricing strategies and content aggregation. It saves time and manual effort while offering real-time insights that would otherwise be difficult to obtain.',
+  },
+  {
     question: 'Is web scraping legal?',
     answer:
       "Web scraping is legal as long as it is done within the boundaries of the law and respects the website's terms of service.",
@@ -29,7 +34,7 @@ const faqs = [
   {
     question: 'Is there a limit to the number of websites the WEE can scrape?',
     answer:
-      'No, the WEE can scrape an unlimited number of websites, depending on the requirements of the user.',
+      'Yes, the WEE allows scraping up to 10 websites at a time per project.',
   },
   {
     question: 'What types of reports can WEE generate?',
@@ -57,11 +62,6 @@ const faqs = [
       'Reports for individual and summary analyses can be downloaded directly from their respective pages. Clicking the download button will automatically download the report as a PDF file.',
   },
   {
-    question: 'How can I see the locations of the industries?',
-    answer:
-      'WEE provides the ability to view the locations of all addresses on a map, accessible on the summary report page.',
-  },
-  {
     question: 'What is SEO Analysis?',
     answer:
       'Search Engine Optimization (SEO) analysis involves auditing a website to identify opportunities for improving its ranking in search engine results. WEE conducts SEO analysis across three categories: On-Page, Technical, and Keyword.',
@@ -85,7 +85,8 @@ const faqs = [
     question: "Does WEE support scheduled scraping?",
     answer:
       "Yes, WEE supports scheduled scraping, allowing you to automate data extraction at regular intervals. This feature ensures that your data is always up-to-date without the need for manual intervention, making it easier to track changes over time and stay informed on key metrics."
-  }
+  },
+  
 
 
 ];
@@ -216,12 +217,12 @@ export default function Help() {
           <VideoThumbnail
             message="How to start scraping?"
             thumbnail="images/StartScraping.svg"
-            link="https://drive.google.com/file/d/1RHAZqJYLDp0QfoVW2yWjtgSLnJFsL6Zh/view?usp=sharing"
+            link="https://youtu.be/BkHlBYIHalA"
           />
           <VideoThumbnail
             message="Radar graphs explained"
             thumbnail="images/RadarGraphs.svg"
-            link="https://drive.google.com/file/d/19HNm1MmcB3hELx9XXwLlc4LX5dzDJr9M/view?usp=sharing"
+            link="https://youtu.be/EuMXwwPIecw"
           />
         </div>
       </div>

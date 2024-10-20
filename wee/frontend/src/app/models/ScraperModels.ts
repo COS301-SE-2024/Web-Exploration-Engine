@@ -203,9 +203,10 @@ export interface LightHouseRecommendations {
 }
 
 export interface MetaDescriptionAnalysis {
+  metaDescription: string;
   length: number;
+  isUrlWordsInDescription: boolean;
   recommendations: string;
-  titleTag: string;
 }
 
 export interface MobileFriendlinessAnalysis {
@@ -224,9 +225,8 @@ export interface StructuredDataAnalysis {
 }
 
 export interface TitleTagsAnalysis {
-  isUrlWordsInDescription: boolean;
+  titleTag: string;
   length: number;
-  metaDescription: string;
   recommendations: string;
 }
 

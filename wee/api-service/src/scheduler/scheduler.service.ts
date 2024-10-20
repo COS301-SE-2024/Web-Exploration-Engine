@@ -168,10 +168,10 @@ export class SchedulerService {
     if (email) {
       const emailText = 
 `Your scheduled scraping task for ${schedule.url} has been successfully scraped as of ${scheduleUpdateDate}.\nHere some key metrics:
-      - Average Star Rating: ${results.reviews?.rating || 'N/A'} / 5
-      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance || 'N/A'} / 100
-      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility || 'N/A'} / 100
-      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices || 'N/A'} / 100
+      - Average Star Rating: ${results.reviews?.rating|| 'N/A'} / 5
+      - Performance Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.performance.toFixed(2) || 'N/A'} / 100
+      - Accessibility Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.accessibility.toFixed(2) || 'N/A'} / 100
+      - Best Practices Score: ${results.seoAnalysis?.lighthouseAnalysis?.scores?.bestPractices.toFixed(2) || 'N/A'} / 100
       - Facebook Total Engagement: ${results.shareCountdata?.Facebook?.total_count || 0}
       - Facebook Reactions: ${results.shareCountdata?.Facebook?.reaction_count || 0}
       - Facebook Comments: ${results.shareCountdata?.Facebook?.comment_count || 0}
