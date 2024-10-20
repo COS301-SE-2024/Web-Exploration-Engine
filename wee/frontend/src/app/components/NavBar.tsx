@@ -48,6 +48,10 @@ export default function NavBar() {
     router.push('/help');
   }
 
+  const handleScrapeResults = () => {
+    router.push('/scraperesults');
+  }
+
   const handleHome = () => {
     router.push('/');
   }
@@ -76,28 +80,28 @@ export default function NavBar() {
         onMenuOpenChange={setIsMenuOpen}
         className="bg-jungleGreen-700 text-dark-primaryTextColor dark:bg-jungleGreen-400 dark:text-primaryTextColor"
       >
-      <NavbarContent className="sm:hidden" justify="start">
+      <NavbarContent className="md:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden pr-3" justify="center">
+      <NavbarContent className="md:hidden pr-3" justify="center">
         <NavbarBrand>            
-          <p className="font-bold text-inherit" data-testid='navTitle'>WEE</p>
+          <p onClick={handleHome} className="font-bold text-inherit cursor-pointer" data-testid='navTitle'>WEE</p>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden md:flex gap-4" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit">WEE</p>
+          <p onClick={handleHome} className="font-bold text-inherit cursor-pointer">WEE</p>
         </NavbarBrand>
         <NavbarItem>
           <Link onClick={handleHome} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer" >
-            Home
+            Start Scraping
           </Link>
         </NavbarItem>
-        <NavbarItem >            
-          <Link onClick={handleHelp} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
-            Help
+        <NavbarItem>
+          <Link onClick={handleScrapeResults} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer" >
+            Results
           </Link>
         </NavbarItem>
         <NavbarItem>
@@ -127,6 +131,11 @@ export default function NavBar() {
                   </Link>
                   
               )}
+        </NavbarItem>
+        <NavbarItem >            
+          <Link onClick={handleHelp} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer">
+            Help
+          </Link>
         </NavbarItem>
       </NavbarContent>
 
@@ -177,16 +186,17 @@ export default function NavBar() {
             color="foreground"                
             size="lg"
           >
-            Home
+            Start Scraping
           </Link>
           <Link 
-            onClick={() => {handleHelp(); setIsMenuOpen(false)}} 
+            onClick={() => {handleScrapeResults(); setIsMenuOpen(false)}} 
             className="w-full"
             color="foreground"                
             size="lg"
           >
-            Help
+            Results
           </Link>
+
           {user &&           
             <Link 
               onClick={() => {handleSavedReports(); setIsMenuOpen(false)}} 
@@ -207,6 +217,14 @@ export default function NavBar() {
               Scheduled Tasks
             </Link>
           }
+          <Link 
+            onClick={() => {handleHelp(); setIsMenuOpen(false)}} 
+            className="w-full"
+            color="foreground"                
+            size="lg"
+          >
+            Help
+          </Link>
         </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>

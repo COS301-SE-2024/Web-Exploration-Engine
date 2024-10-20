@@ -204,7 +204,7 @@ function ResultsComponent() {
                       {splitReports.map((item, index) => (
                           <TableRow key={item.id}>
                             <TableCell>
-                              <Link onClick={() => handleResultPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                              <Link onClick={() => handleResultPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }} className="cursor-pointer">
                                 {item.reportName}
                               </Link>
                             </TableCell>
@@ -317,7 +317,7 @@ function ResultsComponent() {
                     {splitSummaryReports.map((item, index) => (
                           <TableRow key={item.id}>
                             <TableCell>
-                              <Link onClick={() => handleSummaryPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }}>
+                              <Link onClick={() => handleSummaryPage(item.id as number)} style={{ textDecoration: 'none', color: 'inherit' }} className="cursor-pointer">
                                 {item.reportName}
                               </Link>
                             </TableCell>

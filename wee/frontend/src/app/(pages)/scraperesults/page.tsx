@@ -178,8 +178,8 @@ function ResultsComponent() {
   }, [page, filteredItems, resultsPerPage]);
 
   useEffect(() => {
-    console.log('urls length: ', urls.length);
-    if (urls && urls.length > 0 && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
+    console.log('urls length: ', urls.length, urls);
+    if (urls && urls.length > 0 && urls[0] !== '' && urls.length !== (results.length + errorResults.length + undefinedResults.length)) {
       urls.forEach((url) => {
         if (!processedUrls.includes(url) && !processingUrls.includes(url)) {
           // add to array of urls still being processed
@@ -438,7 +438,7 @@ function ResultsComponent() {
           </TableColumn>
         </TableHeader>
 
-        <TableBody emptyContent={isLoading ? "" : "No results to display"}>
+        <TableBody emptyContent={isLoading ? "" : "No results to display. Begin scraping by going to the 'Start Scraping' page."}>
           {items.map((item, index) => (
             <TableRow key={index} data-testid="table-row">
               <TableCell >

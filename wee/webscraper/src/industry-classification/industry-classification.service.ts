@@ -52,6 +52,12 @@ export class IndustryClassificationService {
     'Fitness and Wellness',
     'Jewelry',
     'Entertainment and Recreation',
+    'Cybersecurity',
+    'Advertising and Public Relations',
+    'Gaming and Interactive Entertainment',
+    'Social Networking Platforms',
+    'Cosmetic products',
+    'Chemical substance'
   ];
 
   async classifyIndustry(
