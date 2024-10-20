@@ -37,8 +37,9 @@ Domain Name Services (Pty) Ltd.     </a>
 | [Architectural Specification](https://drive.google.com/file/d/1cYqBbYG7Q05_HZpL4xxfW74yTd5VWotS/view?usp=drive_link)             | System design overview                     |
 | [User Manual](https://drive.google.com/file/d/1joJ745H270WYZFsyDwDsgYrCYzvT7b7z/view?usp=drive_link)                             | Guidelines to using WEE                    |
 | [Technical Installation Manual](https://drive.google.com/file/d/1ZDje5oLLxuUHSR7mRGjzmekAQjT3vz9N/view?usp=drive_link)           |  Instructions for system configuration     |
-| [Coding Standards](https://drive.google.com/file/d/1ej3eurY4W6VFi7GLRBxFbi3qc6opm3RE/view?usp=drive_link)                                                                         | Guidelines for writing code                |
-| [Testing Policy Document](https://drive.google.com/file/d/14GK1PMEEvC90tCRgq2vfsNMf0_90r7yg/view?usp=drive_link)           |  Testing strategies and findings     |
+| [Coding Standards](https://drive.google.com/file/d/1ej3eurY4W6VFi7GLRBxFbi3qc6opm3RE/view?usp=drive_link)                        | Guidelines for writing code                |
+| [Testing Policy Document](https://drive.google.com/file/d/14GK1PMEEvC90tCRgq2vfsNMf0_90r7yg/view?usp=drive_link)                 | Testing strategies and findings     |
+| [Usability Testing](https://drive.google.com/file/d/1mo-rY8wmWe5ZP9KkKDLLTr76pFFs-3pr/view?usp=sharing)                       | Enhance usability and user experience |
 | [Contributing](CONTRIBUTING.md)                                                                                               | Guidelines for contributing to WEE         |
 | [Architecture Diagram](https://drive.google.com/file/d/18XeSEwOtY41mC4Lcr6jvrzPMW5n9fRTW/view?usp=drive_link)                 | Diagram of system overview                 |
 | [Class Diagram](https://drive.google.com/file/d/16yyAfoXCBQyYV_wkpCMy29WbaI8auSaB/view?usp=drive_link)                        | Visual representation of WEE structure     |
@@ -67,9 +68,9 @@ Domain Name Services (Pty) Ltd.     </a>
 <p>Frontend</p>
   <img src="https://skillicons.dev/icons?i=tailwindcss,typescript,react,nextjs"/>
 <p>Backend</p>
-    <img src="https://skillicons.dev/icons?i=typescript,nestjs,supabase,tensorflow,postgres"/>
+    <img src="https://skillicons.dev/icons?i=typescript,nestjs,supabase,redis"/>
 <p>Project Management & Deployment</p>
-   <img src="https://skillicons.dev/icons?i=npm,docker,git,githubactions"/>
+   <img src="https://skillicons.dev/icons?i=git,githubactions,npm,docker,grafana,prometheus,nginx,sentry"/>
 <p>Testing</p>
     <img src="https://skillicons.dev/icons?i=jest,cypress,postman"/>
   </div>

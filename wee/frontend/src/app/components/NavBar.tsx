@@ -86,13 +86,13 @@ export default function NavBar() {
 
       <NavbarContent className="md:hidden pr-3" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit" data-testid='navTitle'>WEE</p>
+          <p onClick={handleHome} className="font-bold text-inherit cursor-pointer" data-testid='navTitle'>WEE</p>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden md:flex gap-4" justify="center">
         <NavbarBrand>
-          <p className="font-bold text-inherit">WEE</p>
+          <p onClick={handleHome} className="font-bold text-inherit cursor-pointer">WEE</p>
         </NavbarBrand>
         <NavbarItem>
           <Link onClick={handleHome} className="text-dark-primaryTextColor dark:text-primaryTextColor cursor-pointer" >
