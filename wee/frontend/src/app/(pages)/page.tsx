@@ -12,7 +12,7 @@ import { InfoPopOver } from '../components/InfoPopOver';
 import { ScraperResult, Summary, ErrorResponse } from '../models/ScraperModels';
 import { useSearchParams } from 'next/navigation';
 
-const Home = () => {
+function HomeComponent() {
   const {
     setUrls,
     setProcessedUrls,
@@ -271,4 +271,11 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeComponent />
+    </Suspense>
+  );
+}
+
